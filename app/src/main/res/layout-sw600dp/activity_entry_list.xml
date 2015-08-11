@@ -1,0 +1,22 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp" android:baselineAligned="false"
+    android:divider="?android:attr/dividerHorizontal" android:orientation="horizontal"
+    android:showDividers="middle" tools:context=".EntryListActivity">
+
+    <!--
+    This layout is a two-pane layout for the Entries
+    master/detail flow.
+    
+    -->
+
+    <fragment android:id="@+id/entry_list"
+        android:name="com.ultramegasoft.flavordex2.EntryListFragment" android:layout_width="0dp"
+        android:layout_height="match_parent" android:layout_weight="1"
+        tools:layout="@android:layout/list_content" />
+
+    <FrameLayout android:id="@+id/entry_detail_container" android:layout_width="0dp"
+        android:layout_height="match_parent" android:layout_weight="3" />
+
+</LinearLayout>
