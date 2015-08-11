@@ -48,8 +48,6 @@ public class EntryListActivity extends FragmentActivity
                     .findFragmentById(R.id.entry_list))
                     .setActivateOnItemClick(true);
         }
-
-        // TODO: If exposing deep links into your app, handle intents here.
     }
 
     /**
@@ -57,13 +55,13 @@ public class EntryListActivity extends FragmentActivity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(String id) {
+    public void onItemSelected(long id) {
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(EntryDetailFragment.ARG_ITEM_ID, id);
+            arguments.putLong(EntryDetailFragment.ARG_ITEM_ID, id);
             EntryDetailFragment fragment = new EntryDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
