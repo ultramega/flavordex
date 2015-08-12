@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2.provider;
+package com.ultramegasoft.flavordex2.provider.tables;
 
 import android.provider.BaseColumns;
 
