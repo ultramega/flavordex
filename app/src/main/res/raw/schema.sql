@@ -173,12 +173,20 @@ BEGIN
      AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `flavors`.`_id`) < 1;
 END;
 --
-CREATE TRIGGER `updateentry` AFTER UPDATE ON `entries`
+CREATE TRIGGER `updateentry` AFTER UPDATE OF `maker` ON `entries`
 BEGIN
     DELETE FROM `makers` WHERE `_id` = OLD.`maker`
      AND (SELECT COUNT() FROM `entries` WHERE `maker` = OLD.`maker`) < 1;
+END;
+--
+CREATE TRIGGER `deleteentryextras` AFTER DELETE ON `entries_extras`
+BEGIN
     DELETE FROM `extras` WHERE `deleted` = 1
      AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `extras`.`_id`) < 1;
+END;
+--
+CREATE TRIGGER `deleteentryflavors` AFTER DELETE ON `entries_flavors`
+BEGIN
     DELETE FROM `flavors` WHERE `deleted` = 1
      AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `flavors`.`_id`) < 1;
 END;
