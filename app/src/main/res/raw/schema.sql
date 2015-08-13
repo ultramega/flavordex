@@ -183,6 +183,18 @@ BEGIN
      AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `flavors`.`_id`) < 1;
 END;
 --
+CREATE TRIGGER `deleteextra` BEFORE DELETE ON `extras`
+BEGIN
+    UPDATE `extras` SET `deleted` = 1 WHERE `_id` = OLD.`_id`;
+    SELECT RAISE(IGNORE) WHERE EXISTS (SELECT 1 FROM `entries_extras` WHERE `extra` = OLD.`_id`);
+END;
+--
+CREATE TRIGGER `deleteflavor` BEFORE DELETE ON `flavors`
+BEGIN
+    UPDATE `flavors` SET `deleted` = 1 WHERE `_id` = OLD.`_id`;
+    SELECT RAISE(IGNORE) WHERE EXISTS (SELECT 1 FROM `entries_flavors` WHERE `flavor` = OLD.`_id`);
+END;
+--
 CREATE VIEW `viewentry` AS SELECT
 a.`_id` AS `_id`,
 a.`type` AS `type_id`,
