@@ -218,9 +218,11 @@ public class FlavordexProvider extends ContentProvider {
                 break;
             case TYPES:
                 table = Tables.Types.TABLE_NAME;
+                values.remove(Tables.Types.PRESET);
                 break;
             case EXTRAS:
                 table = Tables.Extras.TABLE_NAME;
+                values.remove(Tables.Extras.PRESET);
                 break;
             case FLAVORS:
                 table = Tables.Flavors.TABLE_NAME;
@@ -290,17 +292,25 @@ public class FlavordexProvider extends ContentProvider {
                 break;
             case TYPES:
                 table = Tables.Types.TABLE_NAME;
+                values.remove(Tables.Types.PRESET);
+                selection = appendWhere(selection, Tables.Types.PRESET + " = 0");
                 break;
             case TYPES_ID:
                 table = Tables.Types.TABLE_NAME;
+                values.remove(Tables.Types.PRESET);
+                selection = appendWhere(selection, Tables.Types.PRESET + " = 0");
                 selection = appendWhere(selection,
                         Tables.Types._ID + " = " + uri.getLastPathSegment());
                 break;
             case EXTRAS:
                 table = Tables.Extras.TABLE_NAME;
+                values.remove(Tables.Extras.PRESET);
+                selection = appendWhere(selection, Tables.Extras.PRESET + " = 0");
                 break;
             case EXTRAS_ID:
                 table = Tables.Extras.TABLE_NAME;
+                values.remove(Tables.Extras.PRESET);
+                selection = appendWhere(selection, Tables.Extras.PRESET + " = 0");
                 selection = appendWhere(selection,
                         Tables.Extras._ID + " = " + uri.getLastPathSegment());
                 break;
@@ -368,17 +378,21 @@ public class FlavordexProvider extends ContentProvider {
                 break;
             case TYPES:
                 table = Tables.Types.TABLE_NAME;
+                selection = appendWhere(selection, Tables.Types.PRESET + " = 0");
                 break;
             case TYPES_ID:
                 table = Tables.Types.TABLE_NAME;
+                selection = appendWhere(selection, Tables.Types.PRESET + " = 0");
                 selection = appendWhere(selection,
                         Tables.Types._ID + " = " + uri.getLastPathSegment());
                 break;
             case EXTRAS:
                 table = Tables.Extras.TABLE_NAME;
+                selection = appendWhere(selection, Tables.Extras.PRESET + " = 0");
                 break;
             case EXTRAS_ID:
                 table = Tables.Extras.TABLE_NAME;
+                selection = appendWhere(selection, Tables.Extras.PRESET + " = 0");
                 selection = appendWhere(selection,
                         Tables.Extras._ID + " = " + uri.getLastPathSegment());
                 break;
