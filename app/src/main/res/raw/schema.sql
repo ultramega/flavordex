@@ -186,25 +186,25 @@ BEGIN
     DELETE FROM `flavors` WHERE `type` = OLD.`_id`;
 END;
 --
-CREATE TRIGGER `updateentryextras` AFTER UPDATE OF `extra` ON `entries_extras`
-BEGIN
-    DELETE FROM `extras` WHERE `deleted` = 1
-     AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `extras`.`_id`) < 1;
-END;
---
-CREATE TRIGGER `updateentryflavors` AFTER UPDATE OF `flavor` ON `entries_flavors`
-BEGIN
-    DELETE FROM `flavors` WHERE `deleted` = 1
-     AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `flavors`.`_id`) < 1;
-END;
---
 CREATE TRIGGER `deleteentryextras` AFTER DELETE ON `entries_extras`
 BEGIN
     DELETE FROM `extras` WHERE `deleted` = 1
      AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `extras`.`_id`) < 1;
 END;
 --
+CREATE TRIGGER `updateentryextras` AFTER UPDATE OF `extra` ON `entries_extras`
+BEGIN
+    DELETE FROM `extras` WHERE `deleted` = 1
+     AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `extras`.`_id`) < 1;
+END;
+--
 CREATE TRIGGER `deleteentryflavors` AFTER DELETE ON `entries_flavors`
+BEGIN
+    DELETE FROM `flavors` WHERE `deleted` = 1
+     AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `flavors`.`_id`) < 1;
+END;
+--
+CREATE TRIGGER `updateentryflavors` AFTER UPDATE OF `flavor` ON `entries_flavors`
 BEGIN
     DELETE FROM `flavors` WHERE `deleted` = 1
      AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `flavors`.`_id`) < 1;
