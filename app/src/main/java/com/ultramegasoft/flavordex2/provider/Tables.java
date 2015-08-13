@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2.provider;
 
+import android.content.ContentResolver;
 import android.provider.BaseColumns;
 
 /**
@@ -8,6 +9,8 @@ import android.provider.BaseColumns;
  * @author Steve Guidetti
  */
 public class Tables {
+    public static final String AUTHORITY = "com.ultramegasoft.flavordex2";
+
     /**
      * Data contract for the 'entries' table and view.
      *
@@ -28,6 +31,11 @@ public class Tables {
         public static final String PRICE = "price";
         public static final String RATING = "rating";
         public static final String NOTES = "notes";
+
+        public static final String DATA_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".entry";
+        public static final String DATA_TYPE_ITEM =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".entry";
 
         private Entries() {
         }
@@ -78,6 +86,11 @@ public class Tables {
         public static final String PRESET = "preset";
         public static final String DELETED = "deleted";
 
+        public static final String DATA_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".extra";
+        public static final String DATA_TYPE_ITEM =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".extra";
+
         private Extras() {
         }
     }
@@ -93,6 +106,11 @@ public class Tables {
         public static final String TYPE = "type";
         public static final String NAME = "name";
         public static final String DELETED = "deleted";
+
+        public static final String DATA_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".flavor";
+        public static final String DATA_TYPE_ITEM =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".flavor";
 
         private Flavors() {
         }
@@ -110,6 +128,11 @@ public class Tables {
         public static final String NAME = "name";
         public static final String LOCATION = "location";
 
+        public static final String DATA_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".maker";
+        public static final String DATA_TYPE_ITEM =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".maker";
+
         private Makers() {
         }
     }
@@ -125,6 +148,11 @@ public class Tables {
         public static final String ENTRY = "entry";
         public static final String PATH = "path";
         public static final String FROM_GALLERY = "from_gallery";
+
+        public static final String DATA_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".photo";
+        public static final String DATA_TYPE_ITEM =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".photo";
 
         private Photos() {
         }
@@ -142,6 +170,11 @@ public class Tables {
         public static final String LONGITUDE = "lon";
         public static final String NAME = "name";
 
+        public static final String DATA_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".location";
+        public static final String DATA_TYPE_ITEM =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".location";
+
         private Locations() {
         }
     }
@@ -157,6 +190,11 @@ public class Tables {
         public static final String TYPE = "type";
         public static final String NAME = "name";
         public static final String PRESET = "preset";
+
+        public static final String DATA_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".type";
+        public static final String DATA_TYPE_ITEM =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".type";
 
         private Types() {
         }
