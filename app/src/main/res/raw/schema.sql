@@ -167,10 +167,6 @@ BEGIN
     DELETE FROM `entries_extras` WHERE `entry` = OLD.`_id`;
     DELETE FROM `photos` WHERE `entry` = OLD.`_id`;
     DELETE FROM `makers` WHERE NOT EXISTS (SELECT 1 FROM `entries` WHERE `maker` = OLD.`maker`);
-    DELETE FROM `extras` WHERE `deleted` = 1
-     AND NOT EXISTS (SELECT 1 FROM `entries_extras` WHERE `extra` = `extras`.`_id`);
-    DELETE FROM `flavors` WHERE `deleted` = 1
-     AND NOT EXISTS (SELECT 1 FROM `entries_extras` WHERE `extra` = `flavors`.`_id`);
 END;
 --
 CREATE TRIGGER `updateentry` AFTER UPDATE OF `maker` ON `entries`
