@@ -206,6 +206,7 @@ public class FlavordexProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         String table;
+        values = new ContentValues(values);
 
         switch(sUriMatcher.match(uri)) {
             case ENTRIES:
@@ -272,6 +273,7 @@ public class FlavordexProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         String table;
+        values = new ContentValues(values);
 
         switch(sUriMatcher.match(uri)) {
             case ENTRIES:
