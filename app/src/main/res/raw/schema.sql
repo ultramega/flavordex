@@ -166,17 +166,17 @@ BEGIN
     DELETE FROM `entries_flavors` WHERE `entry` = OLD.`_id`;
     DELETE FROM `entries_extras` WHERE `entry` = OLD.`_id`;
     DELETE FROM `photos` WHERE `entry` = OLD.`_id`;
-    DELETE FROM `makers` WHERE (SELECT COUNT() FROM `entries` WHERE `maker` = OLD.`maker`) < 1;
+    DELETE FROM `makers` WHERE NOT EXISTS (SELECT 1 FROM `entries` WHERE `maker` = OLD.`maker`);
     DELETE FROM `extras` WHERE `deleted` = 1
-     AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `extras`.`_id`) < 1;
+     AND NOT EXISTS (SELECT 1 FROM `entries_extras` WHERE `extra` = `extras`.`_id`);
     DELETE FROM `flavors` WHERE `deleted` = 1
-     AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `flavors`.`_id`) < 1;
+     AND NOT EXISTS (SELECT 1 FROM `entries_extras` WHERE `extra` = `flavors`.`_id`);
 END;
 --
 CREATE TRIGGER `updateentry` AFTER UPDATE OF `maker` ON `entries`
 BEGIN
     DELETE FROM `makers` WHERE `_id` = OLD.`maker`
-     AND (SELECT COUNT() FROM `entries` WHERE `maker` = OLD.`maker`) < 1;
+     AND NOT EXISTS (SELECT 1 FROM `entries` WHERE `maker` = OLD.`maker`);
 END;
 --
 CREATE TRIGGER `deletetype` AFTER DELETE ON `types`
@@ -189,25 +189,25 @@ END;
 CREATE TRIGGER `deleteentryextras` AFTER DELETE ON `entries_extras`
 BEGIN
     DELETE FROM `extras` WHERE `deleted` = 1
-     AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `extras`.`_id`) < 1;
+     AND NOT EXISTS (SELECT 1 FROM `entries_extras` WHERE `extra` = `extras`.`_id`);
 END;
 --
 CREATE TRIGGER `updateentryextras` AFTER UPDATE OF `extra` ON `entries_extras`
 BEGIN
     DELETE FROM `extras` WHERE `deleted` = 1
-     AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `extras`.`_id`) < 1;
+     AND NOT EXISTS (SELECT 1 FROM `entries_extras` WHERE `extra` = `extras`.`_id`);
 END;
 --
 CREATE TRIGGER `deleteentryflavors` AFTER DELETE ON `entries_flavors`
 BEGIN
     DELETE FROM `flavors` WHERE `deleted` = 1
-     AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `flavors`.`_id`) < 1;
+     AND NOT EXISTS (SELECT 1 FROM `entries_extras` WHERE `extra` = `flavors`.`_id`);
 END;
 --
 CREATE TRIGGER `updateentryflavors` AFTER UPDATE OF `flavor` ON `entries_flavors`
 BEGIN
     DELETE FROM `flavors` WHERE `deleted` = 1
-     AND (SELECT COUNT() FROM `entries_extras` WHERE `extra` = `flavors`.`_id`) < 1;
+     AND NOT EXISTS (SELECT 1 FROM `entries_extras` WHERE `extra` = `flavors`.`_id`);
 END;
 --
 CREATE TRIGGER `deleteextra` BEFORE DELETE ON `extras`
