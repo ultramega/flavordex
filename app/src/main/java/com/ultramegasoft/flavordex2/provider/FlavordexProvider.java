@@ -144,7 +144,7 @@ public class FlavordexProvider extends ContentProvider {
                 queryBuilder.appendWhere(Tables.Extras._ID + " = " + uri.getLastPathSegment());
                 break;
             case ENTRIES_EXTRAS:
-                queryBuilder.setTables(Tables.EntriesExtras.TABLE_NAME);
+                queryBuilder.setTables(Tables.EntriesExtras.VIEW_NAME);
                 queryBuilder.appendWhere(Tables.EntriesExtras.ENTRY + " = "
                         + uri.getPathSegments().get(1));
                 break;
@@ -156,7 +156,7 @@ public class FlavordexProvider extends ContentProvider {
                 queryBuilder.appendWhere(Tables.Flavors._ID + " = " + uri.getLastPathSegment());
                 break;
             case ENTRIES_FLAVOR:
-                queryBuilder.setTables(Tables.EntriesFlavors.TABLE_NAME);
+                queryBuilder.setTables(Tables.EntriesFlavors.VIEW_NAME);
                 queryBuilder.appendWhere(Tables.EntriesFlavors.ENTRY + " = "
                         + uri.getPathSegments().get(1));
                 break;
