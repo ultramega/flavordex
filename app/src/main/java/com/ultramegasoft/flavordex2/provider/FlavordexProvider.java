@@ -282,7 +282,6 @@ public class FlavordexProvider extends ContentProvider {
                         || values.containsKey(Tables.Entries.ORIGIN)) {
                     processMaker(values);
                 }
-                values.remove(Tables.Entries.MAKER_ID);
                 break;
             case ENTRIES_ID:
                 table = Tables.Entries.TABLE_NAME;
@@ -471,6 +470,7 @@ public class FlavordexProvider extends ContentProvider {
         }
 
         values.remove(Tables.Entries.ORIGIN);
+        values.remove(Tables.Entries.MAKER_ID);
     }
 
     /**
