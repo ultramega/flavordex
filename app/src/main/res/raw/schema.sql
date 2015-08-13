@@ -179,6 +179,13 @@ BEGIN
      AND (SELECT COUNT() FROM `entries` WHERE `maker` = OLD.`maker`) < 1;
 END;
 --
+CREATE TRIGGER `deletetype` AFTER DELETE ON `types`
+BEGIN
+    DELETE FROM `entries` WHERE `type` = OLD.`_id`;
+    DELETE FROM `extras` WHERE `type` = OLD.`_id`;
+    DELETE FROM `flavors` WHERE `type` = OLD.`_id`;
+END;
+--
 CREATE TRIGGER `updateentryextras` AFTER UPDATE OF `extra` ON `entries_extras`
 BEGIN
     DELETE FROM `extras` WHERE `deleted` = 1
