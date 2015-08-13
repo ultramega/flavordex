@@ -209,7 +209,7 @@ a.`price` AS `price`,
 a.`rating` AS `rating`,
 a.`notes` AS `notes`
 FROM `entries` a LEFT JOIN `types` b LEFT JOIN `makers` c
-ON a.`type` = b.`_id` AND a.`maker` = c.`_id`;
+WHERE a.`type` = b.`_id` AND a.`maker` = c.`_id`;
 --
 CREATE VIEW `viewentryextras` AS SELECT
 a.`_id` AS `_id`,
@@ -219,7 +219,7 @@ b.`name` AS `name`,
 a.`value` AS `value`,
 b.`preset` AS `preset`
 FROM `entries_extras` a LEFT JOIN `extras` b
-ON a.`extra` = b.`_id`;
+WHERE a.`extra` = b.`_id`;
 --
 CREATE VIEW `viewentryflavors` AS SELECT
 a.`_id` AS `_id`,
@@ -228,4 +228,4 @@ a.`flavor` AS `flavor`,
 b.`name` AS `name`,
 a.`value` AS `value`
 FROM `entries_flavors` a LEFT JOIN `flavors` b
-ON a.`flavor` = b.`_id`;
+WHERE a.`flavor` = b.`_id`;
