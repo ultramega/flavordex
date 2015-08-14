@@ -1,21 +1,35 @@
 package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ListView;
 
+import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
+
 /**
- * A list fragment representing a list of Entries. This fragment
- * also supports tablet devices by allowing list items to be given an
- * 'activated' state upon selection. This helps indicate which item is
- * currently being viewed in a {@link EntryDetailFragment}.
- * <p/>
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
+ * The main entry list fragment
+ *
+ * @author Steve Guidetti
  */
-public class EntryListFragment extends ListFragment {
+public class EntryListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    public static final String TAG = "EntryListFragment";
+
+    private static final int DELETE_ENTRY_REQUEST_CODE = 100;
+
+    private static final String[] LIST_PROJECTION = new String[] {
+            Tables.Entries._ID,
+            Tables.Entries.TITLE,
+            Tables.Entries.MAKER,
+            Tables.Entries.RATING,
+            Tables.Entries.DATE
+    };
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -43,7 +57,7 @@ public class EntryListFragment extends ListFragment {
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(long id);
+        void onItemSelected(long id);
     }
 
     /**
@@ -66,6 +80,20 @@ public class EntryListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+
+        registerForContextMenu(getListView());
+
+        setListShown(false);
+
+        setListAdapter(new EntryListAdapter(getActivity()));
+
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -137,5 +165,23 @@ public class EntryListFragment extends ListFragment {
         }
 
         mActivatedPosition = position;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        getActivity().setProgressBarIndeterminateVisibility(true);
+        return new CursorLoader(getActivity(), Tables.Entries.CONTENT_URI, LIST_PROJECTION, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        getActivity().setProgressBarIndeterminateVisibility(false);
+        ((EntryListAdapter)getListAdapter()).changeCursor(data);
+        setListShown(true);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        ((EntryListAdapter)getListAdapter()).changeCursor(null);
     }
 }

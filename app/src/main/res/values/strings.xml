@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name" translatable="false">Flavordex 2</string>
     <string name="title_entry_detail">Entry Detail</string>
+    <string name="date_format" translatable="false">MMM dd, yyyy</string>
 </resources>
