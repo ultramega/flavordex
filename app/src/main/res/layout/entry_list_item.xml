@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:background="?android:attr/activatedBackgroundIndicator"
     android:baselineAligned="false"
     android:orientation="horizontal">
 
@@ -24,6 +25,7 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceListItem"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -31,6 +33,7 @@
             android:id="@+id/maker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceListItemSmall"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -55,6 +58,7 @@
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceListItemSmall"
             android:textSize="12sp" />
     </LinearLayout>
 </LinearLayout>
