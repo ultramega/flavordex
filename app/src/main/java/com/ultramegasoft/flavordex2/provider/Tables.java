@@ -18,7 +18,7 @@ public class Tables {
      */
     public static class Entries implements BaseColumns {
         public static final String TABLE_NAME = "entries";
-        public static final String VIEW_NAME = "viewentry";
+        public static final String VIEW_NAME = "view_entry";
 
         public static final String TITLE = "title";
         public static final String TYPE_ID = "type_id";
@@ -48,7 +48,7 @@ public class Tables {
      */
     public static class EntriesExtras implements BaseColumns {
         public static final String TABLE_NAME = "entries_extras";
-        public static final String VIEW_NAME = "viewentryextras";
+        public static final String VIEW_NAME = "view_entry_extra";
 
         public static final String ENTRY = "entry";
         public static final String EXTRA = "extra";
@@ -65,7 +65,7 @@ public class Tables {
      */
     public static class EntriesFlavors implements BaseColumns {
         public static final String TABLE_NAME = "entries_flavors";
-        public static final String VIEW_NAME = "viewentryflavors";
+        public static final String VIEW_NAME = "view_entry_flavor";
 
         public static final String ENTRY = "entry";
         public static final String FLAVOR = "flavor";

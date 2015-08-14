@@ -161,7 +161,7 @@ INSERT INTO `types` VALUES
 (3, '_whiskey', 1),
 (4, '_coffee', 1);
 --
-CREATE TRIGGER `deleteentry` AFTER DELETE ON `entries`
+CREATE TRIGGER `delete_entry` AFTER DELETE ON `entries`
 BEGIN
     DELETE FROM `entries_flavors` WHERE `entry` = OLD.`_id`;
     DELETE FROM `entries_extras` WHERE `entry` = OLD.`_id`;
@@ -169,56 +169,56 @@ BEGIN
     DELETE FROM `makers` WHERE NOT EXISTS (SELECT 1 FROM `entries` WHERE `maker` = OLD.`maker`);
 END;
 --
-CREATE TRIGGER `updateentry` AFTER UPDATE OF `maker` ON `entries`
+CREATE TRIGGER `update_entry` AFTER UPDATE OF `maker` ON `entries`
 BEGIN
     DELETE FROM `makers` WHERE `_id` = OLD.`maker`
      AND NOT EXISTS (SELECT 1 FROM `entries` WHERE `maker` = OLD.`maker`);
 END;
 --
-CREATE TRIGGER `deletetype` AFTER DELETE ON `types`
+CREATE TRIGGER `delete_type` AFTER DELETE ON `types`
 BEGIN
     DELETE FROM `entries` WHERE `type` = OLD.`_id`;
     DELETE FROM `extras` WHERE `type` = OLD.`_id`;
     DELETE FROM `flavors` WHERE `type` = OLD.`_id`;
 END;
 --
-CREATE TRIGGER `deleteentryextras` AFTER DELETE ON `entries_extras`
+CREATE TRIGGER `delete_entry_extra` AFTER DELETE ON `entries_extras`
 BEGIN
     DELETE FROM `extras` WHERE `deleted` = 1
      AND NOT EXISTS (SELECT 1 FROM `entries_extras` WHERE `extra` = `extras`.`_id`);
 END;
 --
-CREATE TRIGGER `updateentryextras` AFTER UPDATE OF `extra` ON `entries_extras`
+CREATE TRIGGER `update_entry_extra` AFTER UPDATE OF `extra` ON `entries_extras`
 BEGIN
     DELETE FROM `extras` WHERE `deleted` = 1
      AND NOT EXISTS (SELECT 1 FROM `entries_extras` WHERE `extra` = `extras`.`_id`);
 END;
 --
-CREATE TRIGGER `deleteentryflavors` AFTER DELETE ON `entries_flavors`
+CREATE TRIGGER `delete_entry_flavor` AFTER DELETE ON `entries_flavors`
 BEGIN
     DELETE FROM `flavors` WHERE `deleted` = 1
      AND NOT EXISTS (SELECT 1 FROM `entries_extras` WHERE `extra` = `flavors`.`_id`);
 END;
 --
-CREATE TRIGGER `updateentryflavors` AFTER UPDATE OF `flavor` ON `entries_flavors`
+CREATE TRIGGER `update_entry_flavor` AFTER UPDATE OF `flavor` ON `entries_flavors`
 BEGIN
     DELETE FROM `flavors` WHERE `deleted` = 1
      AND NOT EXISTS (SELECT 1 FROM `entries_extras` WHERE `extra` = `flavors`.`_id`);
 END;
 --
-CREATE TRIGGER `deleteextra` BEFORE DELETE ON `extras`
+CREATE TRIGGER `delete_extra` BEFORE DELETE ON `extras`
 BEGIN
     UPDATE `extras` SET `deleted` = 1 WHERE `_id` = OLD.`_id`;
     SELECT RAISE(IGNORE) WHERE EXISTS (SELECT 1 FROM `entries_extras` WHERE `extra` = OLD.`_id`);
 END;
 --
-CREATE TRIGGER `deleteflavor` BEFORE DELETE ON `flavors`
+CREATE TRIGGER `delete_flavor` BEFORE DELETE ON `flavors`
 BEGIN
     UPDATE `flavors` SET `deleted` = 1 WHERE `_id` = OLD.`_id`;
     SELECT RAISE(IGNORE) WHERE EXISTS (SELECT 1 FROM `entries_flavors` WHERE `flavor` = OLD.`_id`);
 END;
 --
-CREATE VIEW `viewentry` AS SELECT
+CREATE VIEW `view_entry` AS SELECT
 a.`_id` AS `_id`,
 a.`type` AS `type_id`,
 b.`name` AS `type`,
@@ -234,7 +234,7 @@ a.`notes` AS `notes`
 FROM `entries` a LEFT JOIN `types` b LEFT JOIN `makers` c
 WHERE a.`type` = b.`_id` AND a.`maker` = c.`_id`;
 --
-CREATE VIEW `viewentryextras` AS SELECT
+CREATE VIEW `view_entry_extra` AS SELECT
 a.`_id` AS `_id`,
 a.`entry` AS `entry`,
 a.`extra` AS `extra`,
@@ -244,7 +244,7 @@ b.`preset` AS `preset`
 FROM `entries_extras` a LEFT JOIN `extras` b
 WHERE a.`extra` = b.`_id`;
 --
-CREATE VIEW `viewentryflavors` AS SELECT
+CREATE VIEW `view_entry_flavor` AS SELECT
 a.`_id` AS `_id`,
 a.`entry` AS `entry`,
 a.`flavor` AS `flavor`,
