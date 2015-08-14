@@ -39,9 +39,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         while(scanner.hasNext()) {
             db.execSQL(scanner.next());
         }
+
+        addDummyData(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    }
+
+    /**
+     * Add some sample data
+     *
+     * @param db The database
+     */
+    private void addDummyData(SQLiteDatabase db) {
+        final InputStream inputStream = mContext.getResources().openRawResource(R.raw.testdata);
+        final Scanner scanner = new Scanner(inputStream).useDelimiter("\\n--");
+        while(scanner.hasNext()) {
+            db.execSQL(scanner.next());
+        }
     }
 }
