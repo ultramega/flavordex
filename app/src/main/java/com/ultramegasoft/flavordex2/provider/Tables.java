@@ -1,6 +1,7 @@
 package com.ultramegasoft.flavordex2.provider;
 
 import android.content.ContentResolver;
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
@@ -10,6 +11,8 @@ import android.provider.BaseColumns;
  */
 public class Tables {
     public static final String AUTHORITY = "com.ultramegasoft.flavordex2";
+
+    private static final String URI_BASE = "content://" + AUTHORITY + "/";
 
     /**
      * Data contract for the 'entries' table and view.
@@ -36,6 +39,11 @@ public class Tables {
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".entry";
         public static final String DATA_TYPE_ITEM =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".entry";
+
+        public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
+        public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
+        public static final Uri CONTENT_FILTER_URI_BASE
+                = Uri.parse(URI_BASE + TABLE_NAME + "/filter/");
 
         private Entries() {
         }
@@ -93,6 +101,9 @@ public class Tables {
         public static final String DATA_TYPE_ITEM =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".extra";
 
+        public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
+        public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
+
         private Extras() {
         }
     }
@@ -113,6 +124,9 @@ public class Tables {
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".flavor";
         public static final String DATA_TYPE_ITEM =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".flavor";
+
+        public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
+        public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
 
         private Flavors() {
         }
@@ -135,6 +149,12 @@ public class Tables {
         public static final String DATA_TYPE_ITEM =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".maker";
 
+        public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
+        public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
+        public static final Uri CONTENT_FILTER_URI_BASE
+                = Uri.parse(URI_BASE + TABLE_NAME + "/filter/");
+
+
         private Makers() {
         }
     }
@@ -155,6 +175,9 @@ public class Tables {
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".photo";
         public static final String DATA_TYPE_ITEM =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".photo";
+
+        public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
+        public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
 
         private Photos() {
         }
@@ -177,6 +200,9 @@ public class Tables {
         public static final String DATA_TYPE_ITEM =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".location";
 
+        public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
+        public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
+
         private Locations() {
         }
     }
@@ -197,6 +223,9 @@ public class Tables {
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".type";
         public static final String DATA_TYPE_ITEM =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".type";
+
+        public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
+        public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
 
         private Types() {
         }
