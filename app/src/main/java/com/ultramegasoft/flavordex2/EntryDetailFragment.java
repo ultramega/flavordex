@@ -30,7 +30,7 @@ public class EntryDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
+        if(getArguments().containsKey(ARG_ITEM_ID)) {
         }
     }
 

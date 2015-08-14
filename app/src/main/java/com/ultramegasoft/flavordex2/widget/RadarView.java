@@ -130,10 +130,10 @@ public class RadarView extends View {
         int hPadding = 0;
         final String[] labels = mLabels;
         Rect bounds = new Rect();
-        for (int i = 0; i < labels.length; i++) {
+        for(int i = 0; i < labels.length; i++) {
             sLabelPaint.getTextBounds(labels[i], 0, labels[i].length(), bounds);
             int width = bounds.right - bounds.left;
-            if (width > hPadding) {
+            if(width > hPadding) {
                 hPadding = width;
             }
         }
@@ -142,30 +142,30 @@ public class RadarView extends View {
         final int radius = mCenter - hPadding;
         mScale = radius / mMaxValue;
 
-        if (mLabels != null) {
+        if(mLabels != null) {
             final int n = mLabels.length;
             mAngles = new double[n];
             mPoints = new float[n][mMaxValue + 2][2];
 
             // for each spoke
-            for (int i = 0; i < n; i++) {
+            for(int i = 0; i < n; i++) {
                 final double offset = Math.PI / 2 + mOffset;
                 mAngles[i] = (i * 2 * Math.PI / -n + offset);
                 final double cos = Math.cos(mAngles[i]);
                 final double sin = Math.sin(mAngles[i]);
 
                 // intersection points
-                for (int j = 0; j <= mMaxValue; j++) {
+                for(int j = 0; j <= mMaxValue; j++) {
                     final int r = mScale * j;
-                    final float x = (float) (mCenter + r * cos);
-                    final float y = (float) (mCenter - r * sin);
-                    mPoints[i][j] = new float[]{x, y};
+                    final float x = (float)(mCenter + r * cos);
+                    final float y = (float)(mCenter - r * sin);
+                    mPoints[i][j] = new float[] {x, y};
                 }
 
                 // label positions
-                mPoints[i][mMaxValue + 1][0] = (float) (mCenter + (radius + mScale / 3) * cos);
+                mPoints[i][mMaxValue + 1][0] = (float)(mCenter + (radius + mScale / 3) * cos);
                 mPoints[i][mMaxValue + 1][1] =
-                        (float) (mCenter - (radius + mScale) * sin) + vPadding / 2;
+                        (float)(mCenter - (radius + mScale) * sin) + vPadding / 2;
             }
         }
 
@@ -173,7 +173,7 @@ public class RadarView extends View {
     }
 
     public void setMaxValue(int maxValue) {
-        if (maxValue > 0) {
+        if(maxValue > 0) {
             mMaxValue = maxValue;
             mCalculated = false;
             invalidate();
@@ -185,11 +185,11 @@ public class RadarView extends View {
     }
 
     public void setData(int[] data) {
-        if (data == null) {
+        if(data == null) {
             mData = new int[mLabels.length];
             mHasData = false;
         } else {
-            for (int i = 0; i < data.length && i < mData.length; i++) {
+            for(int i = 0; i < data.length && i < mData.length; i++) {
                 mData[i] = data[i];
             }
             mHasData = true;
@@ -198,7 +198,7 @@ public class RadarView extends View {
     }
 
     public void setData(int key, int value) {
-        if (mData != null && key < mData.length && value <= mMaxValue) {
+        if(mData != null && key < mData.length && value <= mMaxValue) {
             mData[key] = value;
             mHasData = true;
             invalidate();
@@ -210,19 +210,19 @@ public class RadarView extends View {
     }
 
     public int getData(int key) {
-        if (mData != null && key < mData.length) {
+        if(mData != null && key < mData.length) {
             return mData[key];
         }
         return 0;
     }
 
     public void setLabels(String[] labels) {
-        if (labels == null) {
+        if(labels == null) {
             return;
         }
         mLabels = labels.clone();
 
-        if (mData == null) {
+        if(mData == null) {
             mData = new int[labels.length];
         }
 
@@ -231,17 +231,17 @@ public class RadarView extends View {
     }
 
     public void setEditable(boolean editable) {
-        if (editable) {
+        if(editable) {
             mFgPaint.setColor(COLOR_POLYGON_EDITABLE);
             mFgPaint.setStrokeWidth(4);
 
             mCenterPaint.setColor(COLOR_SELECTED);
 
-            if (!mHasData) {
+            if(!mHasData) {
                 mData = new int[mLabels.length];
             }
 
-            if (mAnimationQueue == null) {
+            if(mAnimationQueue == null) {
                 mAnimationQueue = new AnimationQueue();
             }
         } else {
@@ -268,10 +268,10 @@ public class RadarView extends View {
      * Turn counter-clockwise
      */
     public void turnCCW() {
-        if (!mEditable || mIsAnimating) {
+        if(!mEditable || mIsAnimating) {
             return;
         }
-        if (mSelected == mData.length - 1) {
+        if(mSelected == mData.length - 1) {
             mSelected = 0;
         } else {
             mSelected++;
@@ -283,10 +283,10 @@ public class RadarView extends View {
      * Turn clockwise
      */
     public void turnCW() {
-        if (!mEditable || mIsAnimating) {
+        if(!mEditable || mIsAnimating) {
             return;
         }
-        if (mSelected == 0) {
+        if(mSelected == 0) {
             mSelected = mData.length - 1;
         } else {
             mSelected--;
@@ -300,10 +300,10 @@ public class RadarView extends View {
      * @param key spoke to turn to
      */
     public void turnTo(int key) {
-        if (!mEditable || mIsAnimating) {
+        if(!mEditable || mIsAnimating) {
             return;
         }
-        if (key < 0 || key >= mData.length) {
+        if(key < 0 || key >= mData.length) {
             return;
         }
         mSelected = key;
@@ -316,7 +316,7 @@ public class RadarView extends View {
      * @return new value
      */
     public int increaseSelected() {
-        if (mEditable && mData[mSelected] < mMaxValue) {
+        if(mEditable && mData[mSelected] < mMaxValue) {
             mData[mSelected]++;
             invalidate();
         }
@@ -329,7 +329,7 @@ public class RadarView extends View {
      * @return new value
      */
     public int decreaseSelected() {
-        if (mEditable && mData[mSelected] > 0) {
+        if(mEditable && mData[mSelected] > 0) {
             mData[mSelected]--;
             invalidate();
         }
@@ -337,7 +337,7 @@ public class RadarView extends View {
     }
 
     public int getSelectedValue() {
-        if (mData == null) {
+        if(mData == null) {
             return 0;
         }
         return mData[mSelected];
@@ -365,17 +365,17 @@ public class RadarView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (!mCalculated) {
+        if(!mCalculated) {
             calculatePoints();
         }
 
         // draw circles
-        for (int i = 1; i < mMaxValue; i++) {
+        for(int i = 1; i < mMaxValue; i++) {
             canvas.drawCircle(mCenter, mCenter, mScale * i, sCirclePaint);
         }
         canvas.drawCircle(mCenter, mCenter, mScale * mMaxValue, sOuterCirclePaint);
 
-        if (mData == null || mData.length < 1 || mLabels.length < 1) {
+        if(mData == null || mData.length < 1 || mLabels.length < 1) {
             return;
         }
 
@@ -384,12 +384,12 @@ public class RadarView extends View {
         polygon.moveTo(mPoints[0][mData[0]][0], mPoints[0][mData[0]][1]);
 
         float x, y;
-        for (int i = 0; i < mData.length; i++) {
+        for(int i = 0; i < mData.length; i++) {
 
             // set colors
             final Paint linePaint;
             final Paint labelPaint;
-            if (mEditable && mSelected == i) {
+            if(mEditable && mSelected == i) {
                 linePaint = sSelectedLinePaint;
                 labelPaint = sSelectedLabelPaint;
             } else {
@@ -406,15 +406,15 @@ public class RadarView extends View {
             x = mPoints[i][mMaxValue + 1][0];
             y = mPoints[i][mMaxValue + 1][1];
 
-            if (Math.abs(x - mCenter) < mScale) {
+            if(Math.abs(x - mCenter) < mScale) {
                 labelPaint.setTextAlign(Paint.Align.CENTER);
-            } else if (x > mCenter) {
+            } else if(x > mCenter) {
                 labelPaint.setTextAlign(Paint.Align.LEFT);
             } else {
                 labelPaint.setTextAlign(Paint.Align.RIGHT);
             }
 
-            if (mEditable && mSelected == i) {
+            if(mEditable && mSelected == i) {
                 y -= mScale / 2;
             }
 
@@ -434,7 +434,7 @@ public class RadarView extends View {
         polyShape.setBounds(0, 0, 200, 200);
         polyShape.draw(canvas);
 
-        if (mEditable) {
+        if(mEditable) {
             final float[] selected = mPoints[mSelected][mData[mSelected]];
             canvas.drawCircle(selected[0], selected[1], 8, sSelectedLinePaint);
         }
@@ -459,7 +459,7 @@ public class RadarView extends View {
             public void run() {
                 double progress = (System.currentTimeMillis() - mStartTime) / mDuration;
 
-                if (progress >= 1.0) {
+                if(progress >= 1.0) {
                     mOffset = mTargetValue;
                     mIsAnimating = false;
                 } else {
@@ -484,9 +484,9 @@ public class RadarView extends View {
             mOriginalValue = mOffset;
 
             // prevent angle overflow by rotating original value
-            if (mOffset == 0.0 && target > 3.0) {
+            if(mOffset == 0.0 && target > 3.0) {
                 mOriginalValue = Math.PI * 2;
-            } else if (target == 0.0 && mOffset > 3.0) {
+            } else if(target == 0.0 && mOffset > 3.0) {
                 mOriginalValue = mOffset - Math.PI * 2;
             }
 
@@ -525,15 +525,15 @@ public class RadarView extends View {
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        if (state instanceof Bundle) {
-            final Bundle bundle = (Bundle) state;
+        if(state instanceof Bundle) {
+            final Bundle bundle = (Bundle)state;
 
             mMaxValue = bundle.getInt(MAX_VALUE_KEY, mMaxValue);
             mLabels = bundle.getStringArray(LABELS_KEY);
             mSelected = bundle.getInt(SELECTED_KEY, 0);
             mOffset = bundle.getDouble(OFFSET_KEY, 0.0);
             mHasData = true;
-            if (mEditable = bundle.getBoolean(EDITABLE_KEY, false)) {
+            if(mEditable = bundle.getBoolean(EDITABLE_KEY, false)) {
                 setEditable(true);
             }
 
