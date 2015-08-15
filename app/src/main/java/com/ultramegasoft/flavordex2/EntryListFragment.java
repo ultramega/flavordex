@@ -1,13 +1,13 @@
 package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
+import android.app.ListFragment;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,15 +19,19 @@ import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
 
 /**
- * The main entry list fragment
+ * The main entry list fragment. Shows a list of all the journal entries.
  *
  * @author Steve Guidetti
  */
 public class EntryListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    public static final String TAG = "EntryListFragment";
-
+    /**
+     * Request code for deleting an entry
+     */
     private static final int DELETE_ENTRY_REQUEST_CODE = 100;
 
+    /**
+     * The fields to query from the database
+     */
     private static final String[] LIST_PROJECTION = new String[] {
             Tables.Entries._ID,
             Tables.Entries.TITLE,
@@ -37,14 +41,13 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     };
 
     /**
-     * The serialization (saved instance state) Bundle key representing the
-     * activated item position. Only used on tablets.
+     * The serialization (saved instance state) Bundle key representing the activated item position.
+     * Only used on tablets.
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
     /**
-     * The fragment's current callback object, which is notified of list item
-     * clicks.
+     * The fragment's current callback object, which is notified of list item clicks.
      */
     private Callbacks mCallbacks = sDummyCallbacks;
 
@@ -54,9 +57,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
     /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
+     * A callback interface that all activities containing this fragment must implement. This
+     * mechanism allows activities to be notified of item selections.
      */
     public interface Callbacks {
         /**
@@ -66,8 +68,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     }
 
     /**
-     * A dummy implementation of the {@link Callbacks} interface that does
-     * nothing. Used only when this fragment is not attached to an activity.
+     * A dummy implementation of the Callbacks interface that does nothing. Used only when this
+     * fragment is not attached to an activity.
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
@@ -75,10 +77,6 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         }
     };
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public EntryListFragment() {
     }
 
@@ -105,10 +103,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Restore the previously serialized activated item position.
-        if(savedInstanceState != null
-                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-            setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
+        if(savedInstanceState != null && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
+            mActivatedPosition = savedInstanceState.getInt(STATE_ACTIVATED_POSITION);
         }
     }
 
@@ -116,7 +112,6 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        // Activities containing this fragment must implement its callbacks.
         if(!(activity instanceof Callbacks)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
@@ -127,17 +122,13 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     @Override
     public void onDetach() {
         super.onDetach();
-
-        // Reset the active callbacks interface to the dummy implementation.
         mCallbacks = sDummyCallbacks;
     }
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
-
-        // Notify the active callbacks interface (the activity, if the
-        // fragment is attached to one) that an item has been selected.
+        mActivatedPosition = position;
         mCallbacks.onItemSelected(id);
     }
 
@@ -145,7 +136,6 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if(mActivatedPosition != ListView.INVALID_POSITION) {
-            // Serialize and persist the activated item position.
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
         }
     }
@@ -188,12 +178,10 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     }
 
     /**
-     * Turns on activate-on-click mode. When this mode is on, list items will be
-     * given the 'activated' state when touched.
+     * Turns on activate-on-click mode. When this mode is on, list items will be given the
+     * 'activated' state when touched.
      */
     public void setActivateOnItemClick(boolean activateOnItemClick) {
-        // When setting CHOICE_MODE_SINGLE, ListView will automatically
-        // give items the 'activated' state when touched.
         getListView().setChoiceMode(activateOnItemClick
                 ? ListView.CHOICE_MODE_SINGLE
                 : ListView.CHOICE_MODE_NONE);
@@ -219,6 +207,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         getActivity().setProgressBarIndeterminateVisibility(false);
         ((EntryListAdapter)getListAdapter()).changeCursor(data);
+        setActivatedPosition(mActivatedPosition);
         setListShown(true);
     }
 
