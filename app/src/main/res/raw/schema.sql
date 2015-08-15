@@ -30,8 +30,8 @@ CREATE TABLE `extras` (
   `_id` INTEGER PRIMARY KEY,
   `type` INTEGER,
   `name` TEXT,
-  `preset` INTEGER,
-  `deleted` INTEGER
+  `preset` INTEGER DEFAULT 0,
+  `deleted` INTEGER DEFAULT 0
 );
 --
 INSERT INTO `extras` VALUES (1,1,'_style',1,0);
@@ -82,126 +82,8 @@ CREATE TABLE `flavors` (
   `_id` INTEGER PRIMARY KEY,
   `type` INTEGER,
   `name` TEXT,
-  `deleted` INTEGER
+  `deleted` INTEGER DEFAULT 0
 );
---
-INSERT INTO `flavors` VALUES (1,1,'Body',0);
---
-INSERT INTO `flavors` VALUES (2,1,'Syrup',0);
---
-INSERT INTO `flavors` VALUES (3,1,'Fruit',0);
---
-INSERT INTO `flavors` VALUES (4,1,'Citrus',0);
---
-INSERT INTO `flavors` VALUES (5,1,'Hops',0);
---
-INSERT INTO `flavors` VALUES (6,1,'Linger',0);
---
-INSERT INTO `flavors` VALUES (7,1,'Spice',0);
---
-INSERT INTO `flavors` VALUES (8,1,'Herb',0);
---
-INSERT INTO `flavors` VALUES (9,1,'Malt',0);
---
-INSERT INTO `flavors` VALUES (10,1,'Alcohol',0);
---
-INSERT INTO `flavors` VALUES (11,1,'Sweet',0);
---
-INSERT INTO `flavors` VALUES (12,1,'Sour',0);
---
-INSERT INTO `flavors` VALUES (13,1,'Bitter',0);
---
-INSERT INTO `flavors` VALUES (14,1,'Astringent',0);
---
-INSERT INTO `flavors` VALUES (15,2,'Body',0);
---
-INSERT INTO `flavors` VALUES (16,2,'Fruit',0);
---
-INSERT INTO `flavors` VALUES (17,2,'Citrus',0);
---
-INSERT INTO `flavors` VALUES (18,2,'Berry',0);
---
-INSERT INTO `flavors` VALUES (19,2,'Floral',0);
---
-INSERT INTO `flavors` VALUES (20,2,'Spice',0);
---
-INSERT INTO `flavors` VALUES (21,2,'Herb',0);
---
-INSERT INTO `flavors` VALUES (22,2,'Nut',0);
---
-INSERT INTO `flavors` VALUES (23,2,'Earth',0);
---
-INSERT INTO `flavors` VALUES (24,2,'Wood',0);
---
-INSERT INTO `flavors` VALUES (25,2,'Caramel',0);
---
-INSERT INTO `flavors` VALUES (26,2,'Sweet',0);
---
-INSERT INTO `flavors` VALUES (27,2,'Sour',0);
---
-INSERT INTO `flavors` VALUES (28,2,'Astringent',0);
---
-INSERT INTO `flavors` VALUES (29,2,'Linger',0);
---
-INSERT INTO `flavors` VALUES (30,2,'Heat',0);
---
-INSERT INTO `flavors` VALUES (31,3,'Body',0);
---
-INSERT INTO `flavors` VALUES (32,3,'Charcoal',0);
---
-INSERT INTO `flavors` VALUES (33,3,'Oak',0);
---
-INSERT INTO `flavors` VALUES (34,3,'Leather',0);
---
-INSERT INTO `flavors` VALUES (35,3,'Spice',0);
---
-INSERT INTO `flavors` VALUES (36,3,'Alcohol',0);
---
-INSERT INTO `flavors` VALUES (37,3,'Astringent',0);
---
-INSERT INTO `flavors` VALUES (38,3,'Linger',0);
---
-INSERT INTO `flavors` VALUES (39,3,'Sweet',0);
---
-INSERT INTO `flavors` VALUES (40,3,'Maple',0);
---
-INSERT INTO `flavors` VALUES (41,3,'Fruit',0);
---
-INSERT INTO `flavors` VALUES (42,3,'Vanilla',0);
---
-INSERT INTO `flavors` VALUES (43,3,'Smoke',0);
---
-INSERT INTO `flavors` VALUES (44,3,'Peat',0);
---
-INSERT INTO `flavors` VALUES (45,3,'Nut',0);
---
-INSERT INTO `flavors` VALUES (46,4,'Body',0);
---
-INSERT INTO `flavors` VALUES (47,4,'Citrus',0);
---
-INSERT INTO `flavors` VALUES (48,4,'Berry',0);
---
-INSERT INTO `flavors` VALUES (49,4,'Floral',0);
---
-INSERT INTO `flavors` VALUES (50,4,'Spice',0);
---
-INSERT INTO `flavors` VALUES (51,4,'Smoke',0);
---
-INSERT INTO `flavors` VALUES (52,4,'Nut',0);
---
-INSERT INTO `flavors` VALUES (53,4,'Chocolate',0);
---
-INSERT INTO `flavors` VALUES (54,4,'Caramel',0);
---
-INSERT INTO `flavors` VALUES (55,4,'Sweet',0);
---
-INSERT INTO `flavors` VALUES (56,4,'Sour',0);
---
-INSERT INTO `flavors` VALUES (57,4,'Bitter',0);
---
-INSERT INTO `flavors` VALUES (58,4,'Salt',0);
---
-INSERT INTO `flavors` VALUES (59,4,'Finish',0);
 --
 CREATE TABLE `locations` (
   `_id` INTEGER PRIMARY KEY,
@@ -229,7 +111,7 @@ CREATE TABLE `photos` (
 CREATE TABLE `types` (
   `_id` INTEGER PRIMARY KEY,
   `name`  TEXT COLLATE NOCASE,
-  `preset` INTEGER
+  `preset` INTEGER DEFAULT 0
 );
 --
 INSERT INTO `types` VALUES (1,'_beer',1);

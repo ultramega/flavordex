@@ -1,12 +1,14 @@
 package com.ultramegasoft.flavordex2.provider;
 
 import android.content.Context;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.ultramegasoft.flavordex2.R;
 
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.Scanner;
 
 /**
@@ -38,6 +40,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         final Scanner scanner = new Scanner(inputStream).useDelimiter("\\n--");
         while(scanner.hasNext()) {
             db.execSQL(scanner.next());
+        }
+
+        final int[] types = {
+                R.array.beer_flavor_names,
+                R.array.wine_flavor_names,
+                R.array.whiskey_flavor_names,
+                R.array.coffee_flavor_names
+        };
+        for(int i = 0; i < types.length; i++) {
+            final String[] flavors = mContext.getResources().getStringArray(types[i]);
+            for(String flavor : flavors) {
+                final String query = String.format(
+                        Locale.US,
+                        "INSERT INTO flavors (`type`, `name`) VALUES (%d, %s);",
+                        i + 1, DatabaseUtils.sqlEscapeString(flavor)
+                );
+                db.execSQL(query);
+            }
         }
 
         addDummyData(db);
