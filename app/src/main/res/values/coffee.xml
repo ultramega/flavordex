@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="coffee_hint_entry_title">Coffee Name</string>
+    <string name="coffee_hint_maker">Producer</string>
+    <string name="coffee_hint_roaster">Roaster</string>
+    <string name="coffee_hint_roast_date">Roast Date</string>
+    <string name="coffee_hint_grind">Grind Setting</string>
+    <string name="coffee_hint_brew_method">Brew Method</string>
+    <string name="coffee_hint_dose">Dose (grams)</string>
+    <string name="coffee_hint_esp_mass">Espresso Mass (grams)</string>
+    <string name="coffee_hint_water_mass">Water Mass (grams)</string>
+    <string name="coffee_hint_temp">Temperature (°C)</string>
+    <string name="coffee_hint_ext_time_m">mm</string>
+    <string name="coffee_hint_ext_time_s">ss</string>
+    <string name="coffee_hint_tds">TDS (%)</string>
+    <string name="coffee_hint_yield">Extraction Yield (%)</string>
+    <string name="coffee_hint_grams">g</string>
+    <string name="coffee_hint_degrees">°C</string>
+    <string name="coffee_hint_percent">%</string>
+    <string name="coffee_hint_colon">:</string>
+
+    <string name="coffee_label_maker">Producer: </string>
+    <string name="coffee_label_roaster">Roaster: </string>
+    <string name="coffee_label_roast_date">Roast Date: </string>
+    <string name="coffee_label_grind">Grind: </string>
+    <string name="coffee_label_brew_method">Brewed: </string>
+    <string name="coffee_label_stats">Brew Stats</string>
+    <string name="coffee_label_dose">Dose: </string>
+    <string name="coffee_label_esp_mass">Espresso Mass: </string>
+    <string name="coffee_label_water_mass">Water Mass: </string>
+    <string name="coffee_label_temp">Temperature: </string>
+    <string name="coffee_label_ext_time">Extraction Time: </string>
+    <string name="coffee_label_tds">TDS: </string>
+    <string name="coffee_label_yield">Extraction Yield: </string>
+    <string name="coffee_label_ebf">EBF: </string>
+    <string name="coffee_label_cbr">CBR: </string>
+
+    <string-array name="coffee_brew_methods">
+        <item>Unknown</item>
+        <item>Press</item>
+        <item>Drip</item>
+        <item>Percolator</item>
+        <item>Espresso</item>
+        <item>Vacuum</item>
+        <item>Pour-over</item>
+        <item>Turkish</item>
+        <item>Cupping</item>
+    </string-array>
+
+    <string-array name="coffee_flavor_names">
+        <item>Body</item>
+        <item>Citrus</item>
+        <item>Berry</item>
+        <item>Floral</item>
+        <item>Spice</item>
+        <item>Smoke</item>
+        <item>Nut</item>
+        <item>Chocolate</item>
+        <item>Caramel</item>
+        <item>Sweet</item>
+        <item>Sour</item>
+        <item>Bitter</item>
+        <item>Salt</item>
+        <item>Finish</item>
+    </string-array>
+</resources>

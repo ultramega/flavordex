@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="whiskey_hint_entry_title">Whiskey Name</string>
+    <string name="whiskey_hint_maker">Distiller</string>
+    <string name="whiskey_hint_type">Type</string>
+    <string name="whiskey_hint_age">Age</string>
+    <string name="whiskey_hint_abv">ABV</string>
+
+    <string name="whiskey_label_maker">Distiller: </string>
+    <string name="whiskey_label_type">Type: </string>
+    <string name="whiskey_label_stats">Stats</string>
+    <string name="whiskey_label_age">Age: </string>
+    <string name="whiskey_label_abv">ABV: </string>
+
+    <string-array name="whiskey_types">
+        <item>American - Blend</item>
+        <item>American - Single Malt</item>
+        <item>American - White Dog</item>
+        <item>Canadian - Blend</item>
+        <item>Irish - Blend</item>
+        <item>Irish - Single Malt</item>
+        <item>Scotch - Blend</item>
+        <item>Scotch - Single Malt</item>
+        <item>Straight Bourbon</item>
+        <item>Straight Rye</item>
+    </string-array>
+
+    <string-array name="whiskey_flavor_names">
+        <item>Body</item>
+        <item>Charcoal</item>
+        <item>Oak</item>
+        <item>Leather</item>
+        <item>Spice</item>
+        <item>Alcohol</item>
+        <item>Astringent</item>
+        <item>Linger</item>
+        <item>Sweet</item>
+        <item>Maple</item>
+        <item>Fruit</item>
+        <item>Vanilla</item>
+        <item>Smoke</item>
+        <item>Peat</item>
+        <item>Nut</item>
+    </string-array>
+</resources>
