@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:icon="@drawable/ic_menu_add"
         android:id="@+id/menu_add_entry"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menu_add_entry" />
+        android:icon="@drawable/ic_menu_add"
+        android:title="@string/menu_add_entry"
+        app:showAsAction="ifRoom|withText" />
     <item
-        android:icon="@drawable/ic_menu_search"
         android:id="@+id/menu_filter"
-        android:showAsAction="ifRoom"
-        android:title="@string/menu_filter" />
+        android:icon="@drawable/ic_menu_search"
+        android:title="@string/menu_filter"
+        app:showAsAction="ifRoom" />
     <item
-        android:icon="@drawable/ic_menu_export"
         android:id="@+id/menu_xport"
-        android:showAsAction="ifRoom"
-        android:title="@string/menu_xport" />
+        android:icon="@drawable/ic_menu_export"
+        android:title="@string/menu_xport"
+        app:showAsAction="ifRoom" />
     <item
-        android:icon="@drawable/ic_menu_preferences"
         android:id="@+id/menu_settings"
-        android:showAsAction="ifRoom"
-        android:title="@string/menu_settings" />
+        android:icon="@drawable/ic_menu_preferences"
+        android:title="@string/menu_settings"
+        app:showAsAction="ifRoom" />
 </menu>

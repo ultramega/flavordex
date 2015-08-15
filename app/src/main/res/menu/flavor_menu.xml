@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_edit_flavor"
         android:icon="@drawable/ic_menu_edit"
-        android:showAsAction="ifRoom"
-        android:title="@string/menu_edit_flavor" />
+        android:title="@string/menu_edit_flavor"
+        app:showAsAction="ifRoom" />
 </menu>

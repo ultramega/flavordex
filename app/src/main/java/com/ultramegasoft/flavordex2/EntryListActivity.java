@@ -2,7 +2,7 @@ package com.ultramegasoft.flavordex2;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 
 
 /**
@@ -12,16 +12,16 @@ import android.support.v4.app.FragmentActivity;
  * lead to a {@link EntryDetailActivity} representing
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
- * <p/>
+ * <p>
  * The activity makes heavy use of fragments. The list of items is a
  * {@link EntryListFragment} and the item details
  * (if present) is a {@link EntryDetailFragment}.
- * <p/>
+ * <p>
  * This activity also implements the required
  * {@link EntryListFragment.Callbacks} interface
  * to listen for item selections.
  */
-public class EntryListActivity extends FragmentActivity
+public class EntryListActivity extends AppCompatActivity
         implements EntryListFragment.Callbacks {
 
     /**
