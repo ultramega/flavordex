@@ -1,8 +1,76 @@
 <resources>
-
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
     </style>
 
+    <style name="Header" parent="android:TextAppearance.Large">
+        <item name="android:textStyle">bold</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">#FFFFFFFF</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:textIsSelectable">true</item>
+    </style>
+
+    <style name="PageHeader" parent="android:TextAppearance.Medium">
+        <item name="android:padding">4dp</item>
+        <item name="android:textColor">#FF448CCB</item>
+    </style>
+
+    <style name="SubHeader" parent="android:TextAppearance.Medium">
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="TableText">
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textIsSelectable">true</item>
+    </style>
+
+    <style name="TableText.Header">
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center|top</item>
+        <item name="android:textIsSelectable">false</item>
+    </style>
+
+    <style name="TableText.Label">
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">right|center_vertical</item>
+        <item name="android:textIsSelectable">false</item>
+    </style>
+
+    <style name="TableText.Sub">
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TableText.Stats">
+        <item name="android:textColor">#333333</item>
+        <item name="android:background">@android:drawable/editbox_background</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:paddingLeft">8dp</item>
+    </style>
+
+    <style name="TextInput">
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:width">0dp</item>
+        <item name="android:maxLength">256</item>
+    </style>
+
+    <style name="TextInput.Name">
+        <item name="android:capitalize">words</item>
+    </style>
+
+    <style name="TextInput.Stats">
+        <item name="android:maxLength">30</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginTop">1dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:background">@android:drawable/divider_horizontal_dark</item>
+    </style>
 </resources>

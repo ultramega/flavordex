@@ -1,6 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Flavordex 2</string>
-    <string name="title_entry_detail">Entry Detail</string>
+    <string name="app_name" translatable="false">FlavorDex</string>
     <string name="date_format" translatable="false">MMM dd, yyyy</string>
 
     <string name="menu_add_entry">Add</string>
@@ -15,6 +15,91 @@
     <string name="menu_filter">Filter</string>
     <string name="menu_xport">Import/Export</string>
 
-    <string name="message_no_media">External storage not found</string>
+    <string name="button_add">Add Entry</string>
+    <string name="button_save">Save</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_back">Back</string>
+    <string name="button_forward">Forward</string>
+    <string name="button_name">Name</string>
+    <string name="button_date">Date</string>
+    <string name="button_rating">Rating</string>
+    <string name="button_prev">Back</string>
+    <string name="button_next">Next</string>
+    <string name="button_finish">Finish</string>
+    <string name="button_add_photo">From Gallery</string>
+    <string name="button_take_photo">From Camera</string>
+    <string name="button_delete_photo">Remove photo</string>
+    <string name="button_skip">Skip</string>
+    <string name="button_clear_filter">Remove filters</string>
+    <string name="button_clear_date">X</string>
+    <string name="button_select_file">Select File</string>
+    <string name="button_import">Import Selected</string>
+    <string name="button_export">Export Selected</string>
+    <string name="button_select">Select</string>
 
+    <string name="tab_info">Info</string>
+    <string name="tab_chart">Flavor Radar</string>
+    <string name="tab_photos">Photos</string>
+    <string name="tab_import">Import</string>
+    <string name="tab_export">Export</string>
+
+    <string name="hint_entry_title">Name</string>
+    <string name="hint_maker">Maker</string>
+    <string name="hint_origin">Origin</string>
+    <string name="hint_location">Where are you?</string>
+    <string name="hint_price">Price</string>
+    <string name="hint_notes">Notes</string>
+    <string name="hint_empty" translatable="false">\?</string>
+    <string name="hint_location_filter">Tasting Location</string>
+    <string name="hint_file_name">File Name</string>
+
+    <string name="label_name">Name: </string>
+    <string name="label_maker">Maker: </string>
+    <string name="label_origin">Origin: </string>
+    <string name="label_location">Tasted: </string>
+    <string name="label_price">Price: </string>
+    <string name="label_rating">Rating</string>
+    <string name="label_notes">Notes</string>
+    <string name="label_radar">Flavor Radar</string>
+    <string name="label_photo">Photo</string>
+    <string name="label_date">Entry Date</string>
+    <string name="label_date_min">Starting: </string>
+    <string name="label_date_max">Ending:</string>
+
+    <string name="message_no_data">No entries have been added.</string>
+    <string name="message_no_data_filter">No entries found matching your filter.</string>
+    <string name="message_confirm_delete">Are you sure you want to delete %s?</string>
+    <string name="message_confirm_delete_photo">The photo will be deleted.</string>
+    <string name="message_confirm_remove_photo">The photo will be removed.</string>
+    <string name="message_no_photos">No Photos</string>
+    <string name="message_no_media">External storage not found</string>
+    <string name="message_active_filters">Filtered by %s.</string>
+    <string name="message_select_import_file">Select a .csv file to import.</string>
+    <string name="message_import_complete">Import complete.</string>
+    <string name="message_export_complete">Export complete.</string>
+    <string name="message_duplicates_unchecked">%d possible duplicates were unchecked.</string>
+
+    <string name="pref_cat_general">General Settings</string>
+    <string name="pref_detect_location">Remember locations</string>
+    <string name="pref_summary_detect_location">Autofill location name based on previous entries</string>
+    <string name="pref_retain_photos">Keep photos</string>
+    <string name="pref_summary_retain_photos">Keep photos of deleted entries</string>
+
+    <string name="title_add">Add Entry</string>
+    <string name="title_edit">Edit Entry</string>
+    <string name="title_add_entry">Entry Details</string>
+    <string name="title_add_photos">Add Photos</string>
+    <string name="title_add_flavor">Rate Flavors</string>
+    <string name="title_add_notes">Entry Notes</string>
+    <string name="title_share">Share via</string>
+    <string name="title_filter">Filter Entries</string>
+    <string name="title_error">Error</string>
+    <string name="title_select_file">Select File</string>
+
+    <string name="error_camera">Error: Unable to launch camera</string>
+    <string name="error_invalid_file">invalid file name</string>
+    <string name="error_csv_parse">Unable to parse the .csv file\n\nMake sure the first row is column names, and contains a \'title\' field.</string>
+
+    <string name="share_subject">I logged %s on Flavordex</string>
+    <string name="share_body">I logged %1$s in my %2$s with a %3$s rating.\n\nvia Flavordex</string>
 </resources>
