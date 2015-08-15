@@ -5,20 +5,20 @@
         android:id="@+id/menu_add_entry"
         android:icon="@drawable/ic_menu_add"
         android:title="@string/menu_add_entry"
-        app:showAsAction="ifRoom|withText" />
+        app:showAsAction="always|withText" />
     <item
         android:id="@+id/menu_filter"
         android:icon="@drawable/ic_menu_search"
         android:title="@string/menu_filter"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/menu_xport"
         android:icon="@drawable/ic_menu_export"
         android:title="@string/menu_xport"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
     <item
         android:id="@+id/menu_settings"
         android:icon="@drawable/ic_menu_preferences"
         android:title="@string/menu_settings"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom|withText" />
 </menu>

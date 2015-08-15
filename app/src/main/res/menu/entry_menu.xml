@@ -5,12 +5,12 @@
         android:id="@+id/menu_edit_entry"
         android:icon="@drawable/ic_menu_edit"
         android:title="@string/menu_edit_entry"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always|withText" />
     <item
         android:id="@+id/menu_share"
         android:icon="@drawable/ic_menu_share"
         android:title="@string/menu_share"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/menu_delete_entry"
         android:icon="@drawable/ic_menu_delete"

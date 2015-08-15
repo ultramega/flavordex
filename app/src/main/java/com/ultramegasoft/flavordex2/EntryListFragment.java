@@ -3,12 +3,17 @@ package com.ultramegasoft.flavordex2;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
@@ -143,6 +148,43 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             // Serialize and persist the activated item position.
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.menu_xport).setVisible(Environment.getExternalStorageState()
+                .equals(Environment.MEDIA_MOUNTED));
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menu_add_entry:
+                // TODO: 8/14/2015 Create activity for adding entries
+                return true;
+            case R.id.menu_filter:
+                // TODO: 8/14/2015 Add filtering
+                return true;
+            case R.id.menu_xport:
+                if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                    // TODO: 8/14/2015 Add import/export
+                } else {
+                    Toast.makeText(getActivity(), R.string.message_no_media, Toast.LENGTH_LONG)
+                            .show();
+                }
+                return true;
+            case R.id.menu_settings:
+                // TODO: 8/14/2015 Add preferences
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
