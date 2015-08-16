@@ -1,6 +1,5 @@
 package com.ultramegasoft.flavordex2;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -56,7 +55,9 @@ public class EntryDetailFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mActionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        final AppCompatActivity activity = (AppCompatActivity)getActivity();
+
+        mActionBar = activity.getSupportActionBar();
 
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         mActionBar.removeAllTabs();
@@ -68,21 +69,21 @@ public class EntryDetailFragment extends Fragment {
         tab = mActionBar.newTab()
                 .setIcon(R.drawable.ic_menu_details)
                 .setText(R.string.tab_info)
-                .setTabListener(new TabListener<>(getActivity(), "info",
+                .setTabListener(new TabListener<>(activity, "info",
                         EntryInfoFragment.class, args));
         mActionBar.addTab(tab);
 
         tab = mActionBar.newTab()
                 .setIcon(R.drawable.ic_menu_radar)
                 .setText(R.string.tab_chart)
-                .setTabListener(new TabListener<>(getActivity(), "flavors",
+                .setTabListener(new TabListener<>(activity, "flavors",
                         EntryFlavorsFragment.class, args));
         mActionBar.addTab(tab);
 
         tab = mActionBar.newTab()
                 .setIcon(R.drawable.ic_menu_camera)
                 .setText(R.string.tab_photos)
-                .setTabListener(new TabListener<>(getActivity(), "photos",
+                .setTabListener(new TabListener<>(activity, "photos",
                         EntryPhotosFragment.class, args));
         mActionBar.addTab(tab);
 
@@ -134,7 +135,7 @@ public class EntryDetailFragment extends Fragment {
      */
     public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
         private Fragment mFragment;
-        private final Activity mActivity;
+        private final AppCompatActivity mActivity;
         private final String mTag;
         private final Class<T> mClass;
         private final Bundle mArgs;
@@ -145,7 +146,7 @@ public class EntryDetailFragment extends Fragment {
          * @param clz      The fragment class
          * @param args     The arguments to pass to the fragment
          */
-        public TabListener(Activity activity, String tag, Class<T> clz, Bundle args) {
+        public TabListener(AppCompatActivity activity, String tag, Class<T> clz, Bundle args) {
             mActivity = activity;
             mTag = tag;
             mClass = clz;
@@ -154,6 +155,7 @@ public class EntryDetailFragment extends Fragment {
 
         @Override
         public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+            mFragment = mActivity.getSupportFragmentManager().findFragmentByTag(mTag);
             if(mFragment == null) {
                 mFragment = Fragment.instantiate(mActivity, mClass.getName(), mArgs);
                 ft.add(R.id.content, mFragment, mTag);
