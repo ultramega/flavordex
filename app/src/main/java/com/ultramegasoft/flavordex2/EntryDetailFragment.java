@@ -69,21 +69,21 @@ public class EntryDetailFragment extends Fragment {
         tab = mActionBar.newTab()
                 .setIcon(R.drawable.ic_menu_details)
                 .setText(R.string.tab_info)
-                .setTabListener(new TabListener<>(activity, "info",
+                .setTabListener(new TabListener<>(activity, "info_" + mEntryId,
                         EntryInfoFragment.class, args));
         mActionBar.addTab(tab);
 
         tab = mActionBar.newTab()
                 .setIcon(R.drawable.ic_menu_radar)
                 .setText(R.string.tab_chart)
-                .setTabListener(new TabListener<>(activity, "flavors",
+                .setTabListener(new TabListener<>(activity, "flavors_" + mEntryId,
                         EntryFlavorsFragment.class, args));
         mActionBar.addTab(tab);
 
         tab = mActionBar.newTab()
                 .setIcon(R.drawable.ic_menu_camera)
                 .setText(R.string.tab_photos)
-                .setTabListener(new TabListener<>(activity, "photos",
+                .setTabListener(new TabListener<>(activity, "photos_" + mEntryId,
                         EntryPhotosFragment.class, args));
         mActionBar.addTab(tab);
 
