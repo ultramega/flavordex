@@ -5,7 +5,6 @@
     <style name="Header" parent="android:TextAppearance.Large">
         <item name="android:textStyle">bold</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textColor">#FFFFFFFF</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:textIsSelectable">true</item>
     </style>
