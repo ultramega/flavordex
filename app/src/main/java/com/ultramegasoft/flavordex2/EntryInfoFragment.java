@@ -158,7 +158,7 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
                 textView = new TextView(getActivity());
                 textView.setPadding(padding, 0, padding, 0);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-                textView.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
+                textView.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
                 textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
                 textView.setText(data.getString(data.getColumnIndex(Tables.Extras.NAME)) + ": ");
                 tableRow.addView(textView);
