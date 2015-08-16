@@ -199,13 +199,11 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        getActivity().setProgressBarIndeterminateVisibility(true);
         return new CursorLoader(getActivity(), Tables.Entries.CONTENT_URI, LIST_PROJECTION, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        getActivity().setProgressBarIndeterminateVisibility(false);
         ((EntryListAdapter)getListAdapter()).changeCursor(data);
         setActivatedPosition(mActivatedPosition);
         setListShown(true);
