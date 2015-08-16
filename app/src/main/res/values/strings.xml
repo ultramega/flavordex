@@ -65,6 +65,7 @@
     <string name="label_date">Entry Date</string>
     <string name="label_date_min">Starting: </string>
     <string name="label_date_max">Ending:</string>
+    <string name="label_extras">Extras</string>
 
     <string name="message_no_data">No entries have been added.</string>
     <string name="message_no_data_filter">No entries found matching your filter.</string>

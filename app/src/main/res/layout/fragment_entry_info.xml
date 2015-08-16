@@ -79,6 +79,22 @@
             </TableRow>
         </TableLayout>
 
+        <TableLayout
+            android:id="@+id/entry_extras"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/SubHeader"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_extras" />
+
+        </TableLayout>
+
+
         <TextView
             style="@style/SubHeader"
             android:layout_width="fill_parent"
