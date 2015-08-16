@@ -94,7 +94,6 @@
 
         </TableLayout>
 
-
         <TextView
             style="@style/SubHeader"
             android:layout_width="match_parent"
