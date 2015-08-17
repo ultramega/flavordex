@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="4dp">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/wine_label_varietal" />
+
+                <TextView
+                    android:id="@+id/entry_varietal"
+                    style="@style/TableText"
+                    android:width="0dp" />
+            </TableRow>
+
+            <View style="@style/Divider" />
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/wine_label_maker" />
+
+                <LinearLayout android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/entry_maker"
+                        style="@style/TableText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:width="0dp" />
+
+                    <TextView
+                        android:id="@+id/entry_origin"
+                        style="@style/TableText.Sub"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:width="0dp" />
+                </LinearLayout>
+            </TableRow>
+
+            <View style="@style/Divider" />
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_price" />
+
+                <TextView
+                    android:id="@+id/entry_price"
+                    style="@style/TableText"
+                    android:width="0dp" />
+            </TableRow>
+
+            <View style="@style/Divider" />
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_location" />
+
+                <LinearLayout android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/entry_location"
+                        style="@style/TableText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:width="0dp" />
+
+                    <TextView
+                        android:id="@+id/entry_date"
+                        style="@style/TableText.Sub"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:width="0dp" />
+                </LinearLayout>
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            style="@style/SubHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_label_stats" />
+
+        <View style="@style/Divider" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1,3">
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/wine_label_vintage" />
+
+                <TextView
+                    android:id="@+id/entry_stats_vintage"
+                    style="@style/TableText.Stats" />
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/wine_label_abv" />
+
+                <TextView
+                    android:id="@+id/entry_stats_abv"
+                    style="@style/TableText.Stats" />
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            style="@style/SubHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_notes" />
+
+        <View style="@style/Divider" />
+
+        <TextView
+            android:id="@+id/entry_notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true" />
+    </LinearLayout>
+</ScrollView>

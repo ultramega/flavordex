@@ -17,6 +17,7 @@ import com.ultramegasoft.flavordex2.util.PhotoManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -34,6 +35,8 @@ public class EntryListAdapter extends CursorAdapter {
             };
 
     private final SimpleDateFormat mDateFormat;
+
+    private final HashMap<Long, Integer> mItemTypes = new HashMap<>();
 
     public EntryListAdapter(Context context) {
         super(context, null, true);
@@ -68,5 +71,17 @@ public class EntryListAdapter extends CursorAdapter {
         } else {
             dateView.setText(null);
         }
+
+        mItemTypes.put(id, cursor.getInt(cursor.getColumnIndex(Tables.Entries.TYPE_ID)));
+    }
+
+    /**
+     * Get the numeric representation of the item with the specified id.
+     *
+     * @param id The row id
+     * @return The type number
+     */
+    public int getItemType(long id) {
+        return mItemTypes.get(id);
     }
 }

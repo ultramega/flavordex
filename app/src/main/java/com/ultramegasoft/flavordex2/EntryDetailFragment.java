@@ -12,6 +12,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ultramegasoft.flavordex2.beer.BeerInfoFragment;
+import com.ultramegasoft.flavordex2.coffee.CoffeeInfoFragment;
+import com.ultramegasoft.flavordex2.whiskey.WhiskeyInfoFragment;
+import com.ultramegasoft.flavordex2.wine.WineInfoFragment;
+
 /**
  * This fragment contains all the details of a journal entry. This is a container for multiple
  * fragment in a tabbed navigation layout.
@@ -23,6 +28,19 @@ public class EntryDetailFragment extends Fragment {
      * The fragment argument representing the item ID that this fragment represents
      */
     public static final String ARG_ITEM_ID = "item_id";
+
+    /**
+     * The fragment argument representing the type of item
+     */
+    public static final String ARG_ITEM_TYPE = "item_type";
+
+    /**
+     * Special item types that have their own interface
+     */
+    private static final int TYPE_BEER = 1;
+    private static final int TYPE_WINE = 2;
+    private static final int TYPE_WHISKEY = 3;
+    private static final int TYPE_COFFEE = 4;
 
     /**
      * The saved state of the selected tab
@@ -70,7 +88,7 @@ public class EntryDetailFragment extends Fragment {
                 .setIcon(R.drawable.ic_menu_details)
                 .setText(R.string.tab_info)
                 .setTabListener(new TabListener<>(activity, "info_" + mEntryId,
-                        EntryInfoFragment.class, args));
+                        getEntryInfoClass(), args));
         mActionBar.addTab(tab);
 
         tab = mActionBar.newTab()
@@ -126,6 +144,27 @@ public class EntryDetailFragment extends Fragment {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Get the fragment class to use for displaying the main details of the entry.
+     *
+     * @return The Fragment class
+     */
+    private Class getEntryInfoClass() {
+        final int type = getArguments().getInt(ARG_ITEM_TYPE, 0);
+        switch(type) {
+            case TYPE_BEER:
+                return BeerInfoFragment.class;
+            case TYPE_WINE:
+                return WineInfoFragment.class;
+            case TYPE_WHISKEY:
+                return WhiskeyInfoFragment.class;
+            case TYPE_COFFEE:
+                return CoffeeInfoFragment.class;
+            default:
+                return EntryInfoFragment.class;
+        }
     }
 
     /**

@@ -25,7 +25,9 @@ import com.ultramegasoft.flavordex2.provider.Tables;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Fragment to display the main details of a journal entry.
@@ -33,6 +35,9 @@ import java.util.Locale;
  * @author Steve Guidetti
  */
 public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * Loader ids
+     */
     private static final int LOADER_MAIN = 0;
     private static final int LOADER_EXTRAS = 1;
 
@@ -42,19 +47,20 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
     private long mEntryId;
 
     /**
-     * All the view for displaying details
+     * Views from the parent fragment
      */
     private TextView mTxtTitle;
     private RatingBar mRatingBar;
 
+    /**
+     * All the views for displaying details
+     */
     private TextView mTxtMaker;
     private TextView mTxtOrigin;
     private TextView mTxtLocation;
     private TextView mTxtDate;
     private TextView mTxtPrice;
     private TextView mTxtNotes;
-
-    private TableLayout mTableExtras;
 
     public EntryInfoFragment() {
     }
@@ -78,7 +84,7 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_entry_info, container, false);
+        final View rootView = inflater.inflate(getLayoutId(), container, false);
 
         mTxtMaker = (TextView)rootView.findViewById(R.id.entry_maker);
         mTxtOrigin = (TextView)rootView.findViewById(R.id.entry_origin);
@@ -87,9 +93,16 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
         mTxtPrice = (TextView)rootView.findViewById(R.id.entry_price);
         mTxtNotes = (TextView)rootView.findViewById(R.id.entry_notes);
 
-        mTableExtras = (TableLayout)rootView.findViewById(R.id.entry_extras);
-
         return rootView;
+    }
+
+    /**
+     * Get the id for the layout to use.
+     *
+     * @return An id from R.layout
+     */
+    protected int getLayoutId() {
+        return R.layout.fragment_entry_info;
     }
 
     /**
@@ -140,19 +153,19 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
     /**
      * Populates the table of extra fields.
      *
-     * @param data The cursor containing the data
+     * @param data A LinkedHashMap containing the extra values
      */
-    private void populateExtras(Cursor data) {
-        if(data.moveToFirst()) {
+    protected void populateExtras(LinkedHashMap<String, String> data) {
+        if(data.size() > 0) {
+            final TableLayout table = (TableLayout)getActivity().findViewById(R.id.entry_extras);
+
             TableRow tableRow;
             TextView textView;
             View divider;
 
             final int padding = getPixelValue(TypedValue.COMPLEX_UNIT_DIP, 4);
 
-            while(!data.isLast()) {
-                data.moveToNext();
-
+            for(Map.Entry<String, String> entry : data.entrySet()) {
                 tableRow = new TableRow(getActivity());
 
                 textView = new TextView(getActivity());
@@ -160,14 +173,14 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                 textView.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
                 textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-                textView.setText(data.getString(data.getColumnIndex(Tables.Extras.NAME)) + ": ");
+                textView.setText(entry.getKey() + ": ");
                 tableRow.addView(textView);
 
                 textView = new TextView(getActivity());
                 textView.setPadding(padding, 0, padding, 0);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                 textView.setTextIsSelectable(true);
-                textView.setText(data.getString(data.getColumnIndex(Tables.EntriesExtras.VALUE)));
+                textView.setText(entry.getValue());
                 tableRow.addView(textView);
 
                 divider = new View(getActivity());
@@ -176,11 +189,11 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
                         getPixelValue(TypedValue.COMPLEX_UNIT_DIP, 1)));
                 divider.setBackgroundResource(android.R.drawable.divider_horizontal_dark);
 
-                mTableExtras.addView(divider);
-                mTableExtras.addView(tableRow);
+                table.addView(divider);
+                table.addView(tableRow);
             }
 
-            mTableExtras.setVisibility(View.VISIBLE);
+            table.setVisibility(View.VISIBLE);
         }
     }
 
@@ -191,7 +204,7 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
      * @param fromValue The value to convert
      * @return The pixel equivalent of the value as an integer
      */
-    private int getPixelValue(int fromType, int fromValue) {
+    public int getPixelValue(int fromType, int fromValue) {
         final DisplayMetrics metrics = getResources().getDisplayMetrics();
         return (int)TypedValue.applyDimension(fromType, fromValue, metrics);
     }
@@ -202,7 +215,7 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
      * @param view  The view
      * @param value The text
      */
-    private void setViewText(TextView view, CharSequence value) {
+    public static void setViewText(TextView view, CharSequence value) {
         if(view == null) {
             return;
         }
@@ -210,6 +223,34 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
             view.setText(R.string.hint_empty);
         } else {
             view.setText(value);
+        }
+    }
+
+    /**
+     * Convert a numeric string to an integer.
+     *
+     * @param string A numeric string
+     * @return The integer value or 0 if the string is not numeric
+     */
+    public static int stringToInt(String string) {
+        try {
+            return Integer.valueOf(string);
+        } catch(NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Convert a numeric string to a float.
+     *
+     * @param string A numeric string
+     * @return The float value or 0 if the string is not numeric
+     */
+    public static float stringToFloat(String string) {
+        try {
+            return Float.valueOf(string);
+        } catch(NumberFormatException e) {
+            return 0;
         }
     }
 
@@ -238,7 +279,15 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
                 }
                 break;
             case LOADER_EXTRAS:
-                populateExtras(data);
+                final LinkedHashMap<String, String> extras = new LinkedHashMap<>();
+                String key;
+                String value;
+                while(data.moveToNext()) {
+                    key = data.getString(data.getColumnIndex(Tables.Extras.NAME));
+                    value = data.getString(data.getColumnIndex(Tables.EntriesExtras.VALUE));
+                    extras.put(key, value);
+                }
+                populateExtras(extras);
                 getLoaderManager().destroyLoader(LOADER_EXTRAS);
         }
 

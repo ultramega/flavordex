@@ -21,9 +21,12 @@ public class EntryDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if(savedInstanceState == null) {
+            final Intent intent = getIntent();
             final Bundle arguments = new Bundle();
             arguments.putLong(EntryDetailFragment.ARG_ITEM_ID,
-                    getIntent().getLongExtra(EntryDetailFragment.ARG_ITEM_ID, 0));
+                    intent.getLongExtra(EntryDetailFragment.ARG_ITEM_ID, 0));
+            arguments.putInt(EntryDetailFragment.ARG_ITEM_TYPE,
+                    intent.getIntExtra(EntryDetailFragment.ARG_ITEM_TYPE, 0));
 
             final EntryDetailFragment fragment = new EntryDetailFragment();
             fragment.setArguments(arguments);
