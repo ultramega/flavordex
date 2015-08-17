@@ -33,11 +33,11 @@ public class EntryListActivity extends AppCompatActivity implements EntryListFra
     }
 
     @Override
-    public void onItemSelected(long id, int type) {
+    public void onItemSelected(long id, String type) {
         if(mTwoPane) {
             final Bundle arguments = new Bundle();
             arguments.putLong(EntryDetailFragment.ARG_ITEM_ID, id);
-            arguments.putInt(EntryDetailFragment.ARG_ITEM_TYPE, type);
+            arguments.putString(EntryDetailFragment.ARG_ITEM_TYPE, type);
 
             final EntryDetailFragment fragment = new EntryDetailFragment();
             fragment.setArguments(arguments);

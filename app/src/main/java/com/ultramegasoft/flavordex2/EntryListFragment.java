@@ -34,7 +34,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
      */
     private static final String[] LIST_PROJECTION = new String[] {
             Tables.Entries._ID,
-            Tables.Entries.TYPE_ID,
+            Tables.Entries.TYPE,
             Tables.Entries.TITLE,
             Tables.Entries.MAKER,
             Tables.Entries.RATING,
@@ -64,8 +64,11 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     public interface Callbacks {
         /**
          * Callback for when an item has been selected.
+         *
+         * @param id   The row id of the selected item
+         * @param type The type of item selected
          */
-        void onItemSelected(long id, int type);
+        void onItemSelected(long id, String type);
     }
 
     /**
@@ -74,7 +77,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(long id, int type) {
+        public void onItemSelected(long id, String type) {
         }
     };
 

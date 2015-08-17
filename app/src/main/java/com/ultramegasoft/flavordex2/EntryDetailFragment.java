@@ -37,10 +37,10 @@ public class EntryDetailFragment extends Fragment {
     /**
      * Special item types that have their own interface
      */
-    private static final int TYPE_BEER = 1;
-    private static final int TYPE_WINE = 2;
-    private static final int TYPE_WHISKEY = 3;
-    private static final int TYPE_COFFEE = 4;
+    private static final String TYPE_BEER = "_beer";
+    private static final String TYPE_WINE = "_wine";
+    private static final String TYPE_WHISKEY = "_whiskey";
+    private static final String TYPE_COFFEE = "_coffee";
 
     /**
      * The saved state of the selected tab
@@ -152,19 +152,22 @@ public class EntryDetailFragment extends Fragment {
      * @return The Fragment class
      */
     private Class getEntryInfoClass() {
-        final int type = getArguments().getInt(ARG_ITEM_TYPE, 0);
-        switch(type) {
-            case TYPE_BEER:
-                return BeerInfoFragment.class;
-            case TYPE_WINE:
-                return WineInfoFragment.class;
-            case TYPE_WHISKEY:
-                return WhiskeyInfoFragment.class;
-            case TYPE_COFFEE:
-                return CoffeeInfoFragment.class;
-            default:
-                return EntryInfoFragment.class;
+        final String type = getArguments().getString(ARG_ITEM_TYPE);
+
+        if(TYPE_BEER.equals(type)) {
+            return BeerInfoFragment.class;
         }
+        if(TYPE_WINE.equals(type)) {
+            return WineInfoFragment.class;
+        }
+        if(TYPE_WHISKEY.equals(type)) {
+            return WhiskeyInfoFragment.class;
+        }
+        if(TYPE_COFFEE.equals(type)) {
+            return CoffeeInfoFragment.class;
+        }
+
+        return EntryInfoFragment.class;
     }
 
     /**

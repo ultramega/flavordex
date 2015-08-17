@@ -36,7 +36,7 @@ public class EntryListAdapter extends CursorAdapter {
 
     private final SimpleDateFormat mDateFormat;
 
-    private final HashMap<Long, Integer> mItemTypes = new HashMap<>();
+    private final HashMap<Long, String> mItemTypes = new HashMap<>();
 
     public EntryListAdapter(Context context) {
         super(context, null, true);
@@ -72,16 +72,16 @@ public class EntryListAdapter extends CursorAdapter {
             dateView.setText(null);
         }
 
-        mItemTypes.put(id, cursor.getInt(cursor.getColumnIndex(Tables.Entries.TYPE_ID)));
+        mItemTypes.put(id, cursor.getString(cursor.getColumnIndex(Tables.Entries.TYPE)));
     }
 
     /**
-     * Get the numeric representation of the item with the specified id.
+     * Get the type of the item with the specified id.
      *
      * @param id The row id
-     * @return The type number
+     * @return The type name
      */
-    public int getItemType(long id) {
+    public String getItemType(long id) {
         return mItemTypes.get(id);
     }
 }

@@ -25,8 +25,8 @@ public class EntryDetailActivity extends AppCompatActivity {
             final Bundle arguments = new Bundle();
             arguments.putLong(EntryDetailFragment.ARG_ITEM_ID,
                     intent.getLongExtra(EntryDetailFragment.ARG_ITEM_ID, 0));
-            arguments.putInt(EntryDetailFragment.ARG_ITEM_TYPE,
-                    intent.getIntExtra(EntryDetailFragment.ARG_ITEM_TYPE, 0));
+            arguments.putString(EntryDetailFragment.ARG_ITEM_TYPE,
+                    intent.getStringExtra(EntryDetailFragment.ARG_ITEM_TYPE));
 
             final EntryDetailFragment fragment = new EntryDetailFragment();
             fragment.setArguments(arguments);
