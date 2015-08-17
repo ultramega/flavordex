@@ -151,7 +151,7 @@ public class EntryDetailFragment extends Fragment {
      *
      * @return The Fragment class
      */
-    private Class getEntryInfoClass() {
+    private Class<? extends EntryInfoFragment> getEntryInfoClass() {
         final String type = getArguments().getString(ARG_ITEM_TYPE);
 
         if(TYPE_BEER.equals(type)) {
