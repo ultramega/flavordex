@@ -142,7 +142,7 @@ INSERT INTO `entries_extras` VALUES (3,1,12,'47');
 --
 INSERT INTO `entries_extras` VALUES (4,2,1,'Double IPA');
 --
-INSERT INTO `entries_extras` VALUES (5,2,2,'Bottle');
+INSERT INTO `entries_extras` VALUES (5,2,2,'3');
 --
 INSERT INTO `entries_extras` VALUES (6,2,3,'100');
 --
@@ -164,7 +164,7 @@ INSERT INTO `entries_extras` VALUES (14,4,14,'');
 --
 INSERT INTO `entries_extras` VALUES (15,4,15,'');
 --
-INSERT INTO `entries_extras` VALUES (16,4,16,'Percolator');
+INSERT INTO `entries_extras` VALUES (16,4,16,'3');
 --
 INSERT INTO `entries_extras` VALUES (17,4,17,'');
 --
