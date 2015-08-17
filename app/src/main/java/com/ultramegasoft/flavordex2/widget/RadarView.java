@@ -1,7 +1,6 @@
 package com.ultramegasoft.flavordex2.widget;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -14,44 +13,37 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.ultramegasoft.flavordex2.R;
+import java.util.ArrayList;
 
 /**
- * Custom view to render a simple radar graph with configurable values, labels,
- * and scale. Also supports editing method calls. Can be rotated with animation.
+ * Custom view to render a simple radar graph with configurable values, labels, and scale. Also
+ * supports editing method calls. Can be rotated with animation.
  *
  * @author Steve Guidetti
  */
 public class RadarView extends View {
+    /**
+     * Keys for saving the state of the view
+     */
+    private static final String STATE_SUPER_STATE = "super_state";
+    private static final String STATE_MAX_VALUE = "max_value";
+    private static final String STATE_DATA = "data";
+    private static final String STATE_SELECTED = "selected";
+    private static final String STATE_OFFSET = "offset";
+    private static final String STATE_EDITABLE = "editable";
+
+    /**
+     * Static color values
+     */
     private static final int COLOR_CIRCLE = 0xffcccccc;
     private static final int COLOR_SELECTED = 0xffefac1d;
     private static final int COLOR_LABEL = 0xffffffff;
     private static final int COLOR_POLYGON = 0xdd0066ff;
     private static final int COLOR_POLYGON_EDITABLE = 0xddff66ff;
 
-    private static final String SUPER_STATE_KEY = "super_state";
-    private static final String MAX_VALUE_KEY = "max_value";
-    private static final String DATA_KEY = "data";
-    private static final String LABELS_KEY = "labels";
-    private static final String SELECTED_KEY = "selected";
-    private static final String OFFSET_KEY = "offset";
-    private static final String EDITABLE_KEY = "editable";
-
-    private int mMaxValue = 5;
-    private int[] mData;
-    private String[] mLabels = new String[0];
-    private boolean mHasData;
-
-    private int mCenter;
-    private int mScale;
-    private double[] mAngles;
-    private float[][][] mPoints;
-    private boolean mCalculated = false;
-    private int mSelected;
-    private double mOffset;
-
-    private boolean mEditable;
-
+    /**
+     * Static paints
+     */
     private static final Paint sCirclePaint;
     private static final Paint sOuterCirclePaint;
     private static final Paint sLinePaint;
@@ -84,18 +76,81 @@ public class RadarView extends View {
         sSelectedLabelPaint.setColor(COLOR_SELECTED);
     }
 
+    /**
+     * The maximum value any data point can have
+     */
+    private int mMaxValue = 5;
+
+    /**
+     * The data to render
+     */
+    private ArrayList<RadarHolder> mData;
+
+    /**
+     * The offset of the center point from the edges in pixels
+     */
+    private int mCenter;
+
+    /**
+     * The distance between values in pixels
+     */
+    private int mScale;
+
+    /**
+     * The pre-calculated coordinates of each intersection of spoke and value
+     */
+    private float[][][] mPoints;
+
+    /**
+     * Whether the coordinates have been calculated
+     */
+    private boolean mCalculated = false;
+
+    /**
+     * The array index of the currently selected data point
+     */
+    private int mSelected;
+
+    /**
+     * The current angle offset of the chart
+     */
+    private double mOffset;
+
+    /**
+     * Whether the chart is in edit mode
+     */
+    private boolean mEditable;
+
+    /**
+     * Paint used for drawing the polygon representing the data values
+     */
     private Paint mFgPaint;
+
+    /**
+     * Paint used for drawing the center point
+     */
     private Paint mCenterPaint;
 
+    /**
+     * Used to animate the chart in edit mode
+     */
     private AnimationQueue mAnimationQueue;
+
+    /**
+     * Whether the chart is currently moving
+     */
     private boolean mIsAnimating;
 
     public RadarView(Context context) {
-        this(context, null);
+        this(context, null, 0);
     }
 
     public RadarView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
+    }
+
+    public RadarView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
         mFgPaint = new Paint(sLinePaint);
         mFgPaint.setColor(COLOR_POLYGON);
         mFgPaint.setStyle(Paint.Style.STROKE);
@@ -105,17 +160,6 @@ public class RadarView extends View {
         mCenterPaint = new Paint();
         mCenterPaint.setColor(COLOR_CIRCLE);
         mCenterPaint.setAntiAlias(true);
-
-        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RadarView);
-        final String[] labels = a.getResources().getStringArray(
-                a.getResourceId(R.styleable.RadarView_labels, 0));
-        setLabels(labels);
-
-        a.recycle();
-    }
-
-    public RadarView(Context context, AttributeSet attrs, int defStyle) {
-        this(context, attrs);
     }
 
     /**
@@ -128,10 +172,9 @@ public class RadarView extends View {
 
         // calculate padding based on widest label
         int hPadding = 0;
-        final String[] labels = mLabels;
         Rect bounds = new Rect();
-        for(int i = 0; i < labels.length; i++) {
-            sLabelPaint.getTextBounds(labels[i], 0, labels[i].length(), bounds);
+        for(RadarHolder item : mData) {
+            sLabelPaint.getTextBounds(item.name, 0, item.name.length(), bounds);
             int width = bounds.right - bounds.left;
             if(width > hPadding) {
                 hPadding = width;
@@ -142,17 +185,17 @@ public class RadarView extends View {
         final int radius = mCenter - hPadding;
         mScale = radius / mMaxValue;
 
-        if(mLabels != null) {
-            final int n = mLabels.length;
-            mAngles = new double[n];
+        if(mData != null) {
+            final int n = mData.size();
+            double[] angles = new double[n];
             mPoints = new float[n][mMaxValue + 2][2];
 
             // for each spoke
             for(int i = 0; i < n; i++) {
                 final double offset = Math.PI / 2 + mOffset;
-                mAngles[i] = (i * 2 * Math.PI / -n + offset);
-                final double cos = Math.cos(mAngles[i]);
-                final double sin = Math.sin(mAngles[i]);
+                angles[i] = (i * 2 * Math.PI / -n + offset);
+                final double cos = Math.cos(angles[i]);
+                final double sin = Math.sin(angles[i]);
 
                 // intersection points
                 for(int j = 0; j <= mMaxValue; j++) {
@@ -172,106 +215,124 @@ public class RadarView extends View {
         mCalculated = true;
     }
 
-    public void setMaxValue(int maxValue) {
-        if(maxValue > 0) {
-            mMaxValue = maxValue;
-            mCalculated = false;
-            invalidate();
-        }
-    }
-
+    /**
+     * Get the maximum value any data point can have.
+     *
+     * @return The maximum value
+     */
     public int getMaxValue() {
         return mMaxValue;
     }
 
-    public void setData(int[] data) {
-        if(data == null) {
-            mData = new int[mLabels.length];
-            mHasData = false;
-        } else {
-            for(int i = 0; i < data.length && i < mData.length; i++) {
-                mData[i] = data[i];
-            }
-            mHasData = true;
-        }
-        invalidate();
-    }
-
-    public void setData(int key, int value) {
-        if(mData != null && key < mData.length && value <= mMaxValue) {
-            mData[key] = value;
-            mHasData = true;
-            invalidate();
-        }
-    }
-
-    public int[] getData() {
-        return mData.clone();
-    }
-
-    public int getData(int key) {
-        if(mData != null && key < mData.length) {
-            return mData[key];
-        }
-        return 0;
-    }
-
-    public void setLabels(String[] labels) {
-        if(labels == null) {
-            return;
-        }
-        mLabels = labels.clone();
-
-        if(mData == null) {
-            mData = new int[labels.length];
-        }
-
+    /**
+     * Set the maximum value any data point can have.
+     *
+     * @param maxValue The maximum value
+     */
+    public void setMaxValue(int maxValue) {
+        mMaxValue = Math.max(0, maxValue);
         mCalculated = false;
         invalidate();
     }
 
+    /**
+     * Does this chart have any data?
+     *
+     * @return Whether the chart has data
+     */
+    public boolean hasData() {
+        return mData != null && mData.size() > 0;
+    }
+
+    /**
+     * Get the data currently being rendered in this chart.
+     *
+     * @return An array of data points contained in RadarHolders
+     */
+    public ArrayList<RadarHolder> getData() {
+        if(!hasData()) {
+            return null;
+        }
+        return new ArrayList<>(mData);
+    }
+
+    /**
+     * Set the data to render in this chart.
+     *
+     * @param data An array of data points contained in RadarHolders
+     */
+    public void setData(ArrayList<RadarHolder> data) {
+        if(data != null) {
+            for(RadarHolder item : data) {
+                item.value = Math.max(0, item.value);
+                item.value = Math.min(mMaxValue, item.value);
+            }
+        }
+
+        mData = new ArrayList<>(data);
+        mCalculated = false;
+        invalidate();
+    }
+
+    /**
+     * Is the chart in edit mode?
+     *
+     * @return Whether the chart is in edit mode
+     */
+    public boolean isEditable() {
+        return mEditable;
+    }
+
+    /**
+     * Enable or disable edit mode. The chart must have data to enable edit mode.
+     *
+     * @param editable True to enable edit mode
+     */
     public void setEditable(boolean editable) {
-        if(editable) {
+        if(editable && hasData()) {
             mFgPaint.setColor(COLOR_POLYGON_EDITABLE);
             mFgPaint.setStrokeWidth(4);
 
             mCenterPaint.setColor(COLOR_SELECTED);
 
-            if(!mHasData) {
-                mData = new int[mLabels.length];
-            }
-
             if(mAnimationQueue == null) {
                 mAnimationQueue = new AnimationQueue();
             }
+
+            mEditable = true;
         } else {
             mFgPaint.setColor(COLOR_POLYGON);
             mFgPaint.setStrokeWidth(5);
 
             mCenterPaint.setColor(COLOR_CIRCLE);
 
-            turnTo(0);
+            if(hasData()) {
+                turnTo(0);
+            }
+
+            mEditable = false;
         }
-        mEditable = editable;
+
         invalidate();
     }
 
-    public boolean isEditable() {
-        return mEditable;
-    }
-
+    /**
+     * Get the index of the currently selected data point.
+     *
+     * @return The array index of the selected data point
+     */
     public int getSelected() {
         return mSelected;
     }
 
     /**
-     * Turn counter-clockwise
+     * Turn the chart counter-clockwise.
      */
     public void turnCCW() {
         if(!mEditable || mIsAnimating) {
             return;
         }
-        if(mSelected == mData.length - 1) {
+        if(mSelected == mData.size() - 1) {
             mSelected = 0;
         } else {
             mSelected++;
@@ -280,14 +341,14 @@ public class RadarView extends View {
     }
 
     /**
-     * Turn clockwise
+     * Turn the chart clockwise.
      */
     public void turnCW() {
         if(!mEditable || mIsAnimating) {
             return;
         }
         if(mSelected == 0) {
-            mSelected = mData.length - 1;
+            mSelected = mData.size() - 1;
         } else {
             mSelected--;
         }
@@ -295,15 +356,15 @@ public class RadarView extends View {
     }
 
     /**
-     * Turn to a specific spoke
+     * Turn the chart to a specific data point.
      *
-     * @param key spoke to turn to
+     * @param key The data point to turn to
      */
     public void turnTo(int key) {
         if(!mEditable || mIsAnimating) {
             return;
         }
-        if(key < 0 || key >= mData.length) {
+        if(key < 0 || key >= mData.size()) {
             return;
         }
         mSelected = key;
@@ -311,47 +372,37 @@ public class RadarView extends View {
     }
 
     /**
-     * Increment the selected value
+     * Get the value of the currently selected data point.
      *
-     * @return new value
+     * @return The value of the selected data point
      */
-    public int increaseSelected() {
-        if(mEditable && mData[mSelected] < mMaxValue) {
-            mData[mSelected]++;
-            invalidate();
-        }
-        return mData[mSelected];
-    }
-
-    /**
-     * Decrement the selected value
-     *
-     * @return new value
-     */
-    public int decreaseSelected() {
-        if(mEditable && mData[mSelected] > 0) {
-            mData[mSelected]--;
-            invalidate();
-        }
-        return mData[mSelected];
-    }
-
     public int getSelectedValue() {
-        if(mData == null) {
+        if(!hasData()) {
             return 0;
         }
-        return mData[mSelected];
-    }
-
-    public void setSelectedValue(int value) {
-        setData(mSelected, value);
+        return mData.get(mSelected).value;
     }
 
     /**
-     * Trigger turn animation
+     * Set the value of the currently selected data point.
+     *
+     * @param value
+     */
+    public void setSelectedValue(int value) {
+        if(!hasData()) {
+            return;
+        }
+        value = Math.max(0, value);
+        value = Math.min(mMaxValue, value);
+        mData.get(mSelected).value = value;
+        invalidate();
+    }
+
+    /**
+     * Trigger turn animation. This will animate the chart rotating to the selected point.
      */
     private void turn() {
-        mAnimationQueue.animateOffset(Math.PI / mData.length * 2 * mSelected);
+        mAnimationQueue.animateOffset(Math.PI / mData.size() * 2 * mSelected);
     }
 
     @Override
@@ -375,16 +426,19 @@ public class RadarView extends View {
         }
         canvas.drawCircle(mCenter, mCenter, mScale * mMaxValue, sOuterCirclePaint);
 
-        if(mData == null || mData.length < 1 || mLabels.length < 1) {
+        if(mData == null || mData.size() < 1) {
             return;
         }
 
+        RadarHolder item = mData.get(0);
+
         // start polygon
         final Path polygon = new Path();
-        polygon.moveTo(mPoints[0][mData[0]][0], mPoints[0][mData[0]][1]);
+        polygon.moveTo(mPoints[0][item.value][0], mPoints[0][item.value][1]);
 
         float x, y;
-        for(int i = 0; i < mData.length; i++) {
+        for(int i = 0; i < mData.size(); i++) {
+            item = mData.get(i);
 
             // set colors
             final Paint linePaint;
@@ -418,11 +472,11 @@ public class RadarView extends View {
                 y -= mScale / 2;
             }
 
-            canvas.drawText(mLabels[i], 0, mLabels[i].length(), x, y, labelPaint);
+            canvas.drawText(item.name, 0, item.name.length(), x, y, labelPaint);
 
             // add point to polygon
-            x = mPoints[i][mData[i]][0];
-            y = mPoints[i][mData[i]][1];
+            x = mPoints[i][item.value][0];
+            y = mPoints[i][item.value][1];
             polygon.lineTo(x, y);
         }
 
@@ -435,26 +489,80 @@ public class RadarView extends View {
         polyShape.draw(canvas);
 
         if(mEditable) {
-            final float[] selected = mPoints[mSelected][mData[mSelected]];
+            final float[] selected = mPoints[mSelected][getSelectedValue()];
             canvas.drawCircle(selected[0], selected[1], 8, sSelectedLinePaint);
         }
 
         canvas.drawCircle(mCenter, mCenter, 6, mCenterPaint);
     }
 
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        final Bundle bundle = new Bundle();
+        bundle.putParcelable(STATE_SUPER_STATE, super.onSaveInstanceState());
+
+        bundle.putInt(STATE_MAX_VALUE, mMaxValue);
+        bundle.putParcelableArrayList(STATE_DATA, mData);
+        bundle.putInt(STATE_SELECTED, mSelected);
+        bundle.putDouble(STATE_OFFSET, mOffset);
+        bundle.putBoolean(STATE_EDITABLE, mEditable);
+
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if(state instanceof Bundle) {
+            final Bundle bundle = (Bundle)state;
+
+            mMaxValue = bundle.getInt(STATE_MAX_VALUE, mMaxValue);
+            mSelected = bundle.getInt(STATE_SELECTED, 0);
+            mOffset = bundle.getDouble(STATE_OFFSET, 0.0);
+            if(mEditable = bundle.getBoolean(STATE_EDITABLE, false)) {
+                setEditable(true);
+            }
+
+            mData = bundle.getParcelableArrayList(STATE_DATA);
+
+            super.onRestoreInstanceState(bundle.getParcelable(STATE_SUPER_STATE));
+
+            return;
+        }
+
+        super.onRestoreInstanceState(state);
+    }
+
     /**
-     * Class to handle animations
+     * Class to handle animations.
      */
     private class AnimationQueue {
+        /**
+         * Time in milliseconds between frames
+         */
         private static final int DELAY_MS = 33;
-
-        private long mStartTime;
-        private double mDuration;
-        private double mOriginalValue;
-        private double mTargetValue;
-
+        /**
+         * Provides a queue for animations
+         */
         private final Handler mHandler = new Handler();
-
+        /**
+         * The time the current animation started
+         */
+        private long mStartTime;
+        /**
+         * The duration of the current animation
+         */
+        private double mDuration;
+        /**
+         * The offset before the current animation started
+         */
+        private double mOriginalValue;
+        /**
+         * The offset after the current animation ends
+         */
+        private double mTargetValue;
+        /**
+         * Runnable to handle animation
+         */
         private final Runnable mRunnable = new Runnable() {
             public void run() {
                 double progress = (System.currentTimeMillis() - mStartTime) / mDuration;
@@ -473,10 +581,10 @@ public class RadarView extends View {
         };
 
         /**
-         * Animate the offset value
+         * Animate the offset value.
          *
-         * @param target   target angle offset
-         * @param duration duration in ms
+         * @param target   Target angle offset
+         * @param duration Duration in milliseconds
          */
         public void animateOffset(double target, double duration) {
             mStartTime = System.currentTimeMillis();
@@ -499,51 +607,12 @@ public class RadarView extends View {
         }
 
         /**
-         * Animate the offset value
+         * Animate the offset value, with a duration of 400ms.
          *
-         * @param target target angle offset
+         * @param target Target angle offset
          */
         public void animateOffset(double target) {
             animateOffset(target, 400.0);
         }
-    }
-
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        final Bundle bundle = new Bundle();
-        bundle.putParcelable(SUPER_STATE_KEY, super.onSaveInstanceState());
-
-        bundle.putInt(MAX_VALUE_KEY, mMaxValue);
-        bundle.putIntArray(DATA_KEY, mData);
-        bundle.putStringArray(LABELS_KEY, mLabels);
-        bundle.putInt(SELECTED_KEY, mSelected);
-        bundle.putDouble(OFFSET_KEY, mOffset);
-        bundle.putBoolean(EDITABLE_KEY, mEditable);
-
-        return bundle;
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Parcelable state) {
-        if(state instanceof Bundle) {
-            final Bundle bundle = (Bundle)state;
-
-            mMaxValue = bundle.getInt(MAX_VALUE_KEY, mMaxValue);
-            mLabels = bundle.getStringArray(LABELS_KEY);
-            mSelected = bundle.getInt(SELECTED_KEY, 0);
-            mOffset = bundle.getDouble(OFFSET_KEY, 0.0);
-            mHasData = true;
-            if(mEditable = bundle.getBoolean(EDITABLE_KEY, false)) {
-                setEditable(true);
-            }
-
-            mData = bundle.getIntArray(DATA_KEY);
-
-            super.onRestoreInstanceState(bundle.getParcelable(SUPER_STATE_KEY));
-
-            return;
-        }
-
-        super.onRestoreInstanceState(state);
     }
 }
