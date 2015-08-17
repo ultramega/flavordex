@@ -416,6 +416,10 @@ public class RadarView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        if(!hasData()) {
+            return;
+        }
+
         if(!mCalculated) {
             calculatePoints();
         }
@@ -425,10 +429,6 @@ public class RadarView extends View {
             canvas.drawCircle(mCenter, mCenter, mScale * i, sCirclePaint);
         }
         canvas.drawCircle(mCenter, mCenter, mScale * mMaxValue, sOuterCirclePaint);
-
-        if(mData == null || mData.size() < 1) {
-            return;
-        }
 
         RadarHolder item = mData.get(0);
 
