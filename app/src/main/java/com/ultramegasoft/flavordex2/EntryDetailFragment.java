@@ -23,6 +23,7 @@ import com.ultramegasoft.flavordex2.wine.WineInfoFragment;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("deprecation")
 public class EntryDetailFragment extends Fragment {
     /**
      * The fragment argument representing the item ID that this fragment represents
@@ -119,9 +120,7 @@ public class EntryDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_entry_detail, container, false);
-
-        return rootView;
+        return inflater.inflate(R.layout.fragment_entry_detail, container, false);
     }
 
     @Override
