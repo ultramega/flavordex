@@ -38,16 +38,28 @@ import java.util.ArrayList;
  * @author Steve Guidetti
  */
 public class EntryFlavorsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * Keys for the saved state of this fragment
+     */
     private static final String STATE_EDIT_MODE = "edit_mode";
     private static final String STATE_DATA = "flavor_data";
 
+    /**
+     * The views from the fragment's layout
+     */
     private RadarView mRadarView;
     private LinearLayout mEditWidget;
     private SeekBar mEditSlider;
 
+    /**
+     * Animations for the editing layout
+     */
     private Animation mInAnimation;
     private Animation mOutAnimation;
 
+    /**
+     * The entry's flavor data
+     */
     private ArrayList<RadarHolder> mData;
 
     /**
@@ -118,6 +130,11 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Enable or disable the radar view's edit mode and show or hide the editing layout.
+     *
+     * @param editMode Whether to enable edit mode
+     */
     private void setEditMode(boolean editMode) {
         if(editMode) {
             final int scale = 100 / mRadarView.getMaxValue();
@@ -199,12 +216,18 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
         mRadarView.setEditable(editMode);
     }
 
+    /**
+     * Save the current flavor data to the database
+     */
     private void saveData() {
         setEditMode(false);
         mData = mRadarView.getData();
         new DataSaver(getActivity().getApplicationContext(), mEntryId).execute(mData);
     }
 
+    /**
+     * Reset the radar chart to the original data and disable edit mode.
+     */
     private void cancelEdit() {
         setEditMode(false);
         mRadarView.setData(mData);
@@ -238,14 +261,25 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
     }
 
     /**
-     * Async task to save the data
+     * Async task to save the data.
      */
     private static class DataSaver extends AsyncTask<ArrayList<RadarHolder>, Void, Void> {
-        private final long mRowId;
+        /**
+         * The entry id to save the flavors to
+         */
+        private final long mEntryId;
+
+        /**
+         * The context used to access the ContentManager
+         */
         private final Context mContext;
 
-        public DataSaver(Context context, long rowId) {
-            mRowId = rowId;
+        /**
+         * @param context The context
+         * @param entryId The entry to save flavors to
+         */
+        public DataSaver(Context context, long entryId) {
+            mEntryId = entryId;
             mContext = context;
         }
 
@@ -253,7 +287,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
         protected Void doInBackground(ArrayList<RadarHolder>... arg0) {
             final ArrayList<RadarHolder> data = arg0[0];
             final ContentResolver cr = mContext.getContentResolver();
-            Uri uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mRowId + "/flavor");
+            Uri uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/flavor");
 
             // do a bulk insert of all values (replaces existing)
             final ContentValues[] values = new ContentValues[data.size()];
