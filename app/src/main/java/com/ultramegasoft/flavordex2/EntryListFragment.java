@@ -27,7 +27,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     /**
      * Request code for deleting an entry
      */
-    private static final int DELETE_ENTRY_REQUEST_CODE = 100;
+    private static final int REQUEST_DELETE_ENTRY = 100;
 
     /**
      * The fields to query from the database
