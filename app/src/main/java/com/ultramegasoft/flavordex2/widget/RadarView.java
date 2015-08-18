@@ -171,16 +171,21 @@ public class RadarView extends View {
         sSelectedLabelPaint.setTextSize(mCenter / 8);
 
         // calculate padding based on widest label
-        int hPadding = 0;
-        Rect bounds = new Rect();
-        for(RadarHolder item : mData) {
-            sLabelPaint.getTextBounds(item.name, 0, item.name.length(), bounds);
-            int width = bounds.right - bounds.left;
-            if(width > hPadding) {
-                hPadding = width;
+        final Rect bounds = new Rect();
+
+        sLabelPaint.getTextBounds("A", 0, 1, bounds);
+        int vPadding = bounds.bottom - bounds.top;
+        int hPadding = vPadding;
+
+        if(mData != null) {
+            for(RadarHolder item : mData) {
+                sLabelPaint.getTextBounds(item.name, 0, item.name.length(), bounds);
+                int width = bounds.right - bounds.left;
+                if(width > hPadding) {
+                    hPadding = width;
+                }
             }
         }
-        final int vPadding = bounds.bottom - bounds.top;
 
         final int radius = mCenter - hPadding;
         mScale = radius / mMaxValue;
@@ -388,7 +393,7 @@ public class RadarView extends View {
     /**
      * Set the value of the currently selected data point.
      *
-     * @param value
+     * @param value The value
      */
     public void setSelectedValue(int value) {
         if(!hasData()) {
@@ -418,10 +423,6 @@ public class RadarView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if(!hasData()) {
-            return;
-        }
-
         if(!mCalculated) {
             calculatePoints();
         }
@@ -431,6 +432,10 @@ public class RadarView extends View {
             canvas.drawCircle(mCenter, mCenter, mScale * i, sCirclePaint);
         }
         canvas.drawCircle(mCenter, mCenter, mScale * mMaxValue, sOuterCirclePaint);
+
+        if(!hasData()) {
+            return;
+        }
 
         RadarHolder item = mData.get(0);
 
@@ -518,20 +523,17 @@ public class RadarView extends View {
             final Bundle bundle = (Bundle)state;
 
             mMaxValue = bundle.getInt(STATE_MAX_VALUE, mMaxValue);
+            mData = bundle.getParcelableArrayList(STATE_DATA);
             mSelected = bundle.getInt(STATE_SELECTED, 0);
             mOffset = bundle.getDouble(STATE_OFFSET, 0.0);
             if(mEditable = bundle.getBoolean(STATE_EDITABLE, false)) {
                 setEditable(true);
             }
 
-            mData = bundle.getParcelableArrayList(STATE_DATA);
-
             super.onRestoreInstanceState(bundle.getParcelable(STATE_SUPER_STATE));
-
-            return;
+        } else {
+            super.onRestoreInstanceState(state);
         }
-
-        super.onRestoreInstanceState(state);
     }
 
     /**
