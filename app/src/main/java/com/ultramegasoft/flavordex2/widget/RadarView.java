@@ -258,7 +258,11 @@ public class RadarView extends View {
         if(!hasData()) {
             return null;
         }
-        return new ArrayList<>(mData);
+        final ArrayList<RadarHolder> data = new ArrayList<>();
+        for(RadarHolder item : mData) {
+            data.add(new RadarHolder(item.id, item.name, item.value));
+        }
+        return data;
     }
 
     /**
@@ -268,11 +272,12 @@ public class RadarView extends View {
      */
     public void setData(ArrayList<RadarHolder> data) {
         if(data != null) {
+            mData = new ArrayList<>();
             for(RadarHolder item : data) {
                 item.value = Math.max(0, item.value);
                 item.value = Math.min(mMaxValue, item.value);
+                mData.add(new RadarHolder(item.id, item.name, item.value));
             }
-            mData = new ArrayList<>(data);
         } else {
             mData = null;
         }
