@@ -267,9 +267,11 @@ public class RadarView extends View {
                 item.value = Math.max(0, item.value);
                 item.value = Math.min(mMaxValue, item.value);
             }
+            mData = new ArrayList<>(data);
+        } else {
+            mData = null;
         }
 
-        mData = new ArrayList<>(data);
         mCalculated = false;
         invalidate();
     }
