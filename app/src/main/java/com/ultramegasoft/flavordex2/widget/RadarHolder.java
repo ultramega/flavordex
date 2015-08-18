@@ -48,9 +48,7 @@ public class RadarHolder implements Parcelable {
     }
 
     protected RadarHolder(Parcel in) {
-        id = in.readLong();
-        name = in.readString();
-        value = in.readInt();
+        this(in.readLong(), in.readString(), in.readInt());
     }
 
     @Override
