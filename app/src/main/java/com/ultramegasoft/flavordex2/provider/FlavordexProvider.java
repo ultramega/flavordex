@@ -237,7 +237,7 @@ public class FlavordexProvider extends ContentProvider {
                 break;
             case ENTRIES_PHOTOS:
                 table = Tables.Photos.TABLE_NAME;
-                values.put(Tables.Photos.TABLE_NAME, uri.getPathSegments().get(1));
+                values.put(Tables.Photos.ENTRY, uri.getPathSegments().get(1));
                 break;
             case PHOTOS:
                 table = Tables.Photos.TABLE_NAME;
