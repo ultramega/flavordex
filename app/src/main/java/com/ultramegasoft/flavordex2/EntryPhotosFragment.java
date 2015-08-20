@@ -2,11 +2,14 @@ package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -28,13 +31,15 @@ import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
-import com.ultramegasoft.flavordex2.util.PhotoManager;
+import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -80,6 +85,11 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
     private ProgressBar mProgressBar;
 
     /**
+     * Uri to the image currently being captured
+     */
+    private Uri mCapturedPhoto;
+
+    /**
      * The information about each photo
      */
     private ArrayList<PhotoHolder> mData = new ArrayList<>();
@@ -103,7 +113,8 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
             return;
         }
 
-        mHasCamera = getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
+        mHasCamera = getActivity().getPackageManager()
+                .hasSystemFeature(PackageManager.FEATURE_CAMERA);
 
         if(savedInstanceState != null) {
             mData = savedInstanceState.getParcelableArrayList(STATE_PHOTOS);
@@ -182,8 +193,16 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
                 case REQUEST_CAPTURE_IMAGE:
+                    final Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                    scanIntent.setData(mCapturedPhoto);
+                    getActivity().sendBroadcast(scanIntent);
+
+                    addPhoto(mCapturedPhoto);
                     break;
                 case REQUEST_SELECT_IMAGE:
+                    if(data != null) {
+                        addPhoto(data.getData());
+                    }
                     break;
                 case REQUEST_DELETE_IMAGE:
                     if(data != null) {
@@ -195,12 +214,27 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
     }
 
     /**
+     * Add a photo to this entry.
+     *
+     * @param uri The Uri to the image file
+     */
+    private void addPhoto(Uri uri) {
+        final PhotoHolder photo = new PhotoHolder(PhotoUtils.getPath(getActivity(), uri), true);
+        mData.add(photo);
+        notifyDataChanged();
+        mPager.setCurrentItem(mData.size() - 1, true);
+
+        new PhotoSaver(getActivity(), mEntryId).execute(photo);
+    }
+
+    /**
      * Show the message that there are no photos for this entry along with buttons to add one.
      */
     private void showNoDataLayout() {
         final AppCompatActivity activity = (AppCompatActivity)getActivity();
         if(mNoDataLayout == null) {
-            mNoDataLayout = (LinearLayout)((ViewStub)activity.findViewById(R.id.no_photos)).inflate();
+            mNoDataLayout = (LinearLayout)((ViewStub)activity.findViewById(R.id.no_photos))
+                    .inflate();
 
             final Button btnTakePhoto = (Button)mNoDataLayout.findViewById(R.id.button_take_photo);
             if(mHasCamera) {
@@ -229,14 +263,23 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
      * Launch an image capturing intent.
      */
     private void takePhoto() {
-        // TODO: 8/19/2015 Launch camera activity
+        try {
+            mCapturedPhoto = PhotoUtils.getOutputMediaUri();
+            final Intent intent = PhotoUtils.getTakePhotoIntent(mCapturedPhoto);
+            if(intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                startActivityForResult(intent, REQUEST_CAPTURE_IMAGE);
+            }
+        } catch(IOException e) {
+            Toast.makeText(getActivity(), R.string.error_camera, Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
      * Launch an image selection intent.
      */
     private void addPhotoFromGallery() {
-        // TODO: 8/19/2015 Launch gallery activity
+        final Intent intent = PhotoUtils.getSelectPhotoIntent();
+        startActivityForResult(intent, REQUEST_SELECT_IMAGE);
     }
 
     /**
@@ -295,11 +338,11 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
         if(!mData.isEmpty()) {
             new Handler().post(new Runnable() {
                 public void run() {
-                    PhotoManager.generateThumb(getActivity(), mData.get(0).path, mEntryId);
+                    PhotoUtils.generateThumb(getActivity(), mData.get(0).path, mEntryId);
                 }
             });
         } else {
-            PhotoManager.deleteThumb(getActivity(), mEntryId);
+            PhotoUtils.deleteThumb(getActivity(), mEntryId);
         }
         cr.notifyChange(Tables.Entries.CONTENT_URI, null);
     }
@@ -328,13 +371,15 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final Uri uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/photos");
+        final Uri uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE,
+                mEntryId + "/photos");
         final String[] projection = new String[] {
                 Tables.Photos._ID,
                 Tables.Photos.PATH,
                 Tables.Photos.FROM_GALLERY
         };
-        return new CursorLoader(getActivity(), uri, projection, null, null, Tables.Photos._ID + " ASC");
+        return new CursorLoader(getActivity(), uri, projection, null, null,
+                Tables.Photos._ID + " ASC");
     }
 
     @Override
@@ -382,6 +427,30 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
         @Override
         public int getItemPosition(Object object) {
             return POSITION_NONE;
+        }
+    }
+
+    private static class PhotoSaver extends AsyncTask<PhotoHolder, Void, Void> {
+        private final long mEntryId;
+        private final Context mContext;
+
+        public PhotoSaver(Context context, long entryId) {
+            mEntryId = entryId;
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(PhotoHolder... params) {
+            final PhotoHolder photo = params[0];
+            Uri uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/photos");
+
+            final ContentValues values = new ContentValues();
+            values.put(Tables.Photos.PATH, photo.path);
+            values.put(Tables.Photos.FROM_GALLERY, photo.fromGallery);
+
+            uri = mContext.getContentResolver().insert(uri, values);
+            photo.id = Long.valueOf(uri.getLastPathSegment());
+            return null;
         }
     }
 }

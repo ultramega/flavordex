@@ -7,7 +7,7 @@ import android.os.Handler;
 import android.widget.ImageView;
 
 import com.ultramegasoft.flavordex2.util.BitmapCache;
-import com.ultramegasoft.flavordex2.util.PhotoManager;
+import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;
@@ -27,7 +27,7 @@ public abstract class BackgroundThumbLoader<K> {
     /**
      * The memory cache for storing thumbnails
      */
-    private final BitmapCache mBitmapCache = PhotoManager.getThumbCache();
+    private final BitmapCache mBitmapCache = PhotoUtils.getThumbCache();
 
     private final Handler mHandler = new Handler();
     private final ExecutorService mPool = Executors.newFixedThreadPool(NUM_THREADS);
@@ -133,6 +133,7 @@ public abstract class BackgroundThumbLoader<K> {
         /**
          * @param key The key to reference this thumbnail
          */
+        @SuppressWarnings("deprecation")
         public ThumbDrawable(Object key) {
             this.key = key;
         }

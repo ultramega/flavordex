@@ -24,17 +24,17 @@ public class PhotoHolder implements Parcelable {
     /**
      * The database id for this photo
      */
-    public final long id;
+    public long id;
 
     /**
      * The path to the photo file
      */
-    public final String path;
+    public String path;
 
     /**
      * Whether the photo was added from the gallery
      */
-    public final boolean fromGallery;
+    public boolean fromGallery;
 
     /**
      * @param id          The database id for this photo

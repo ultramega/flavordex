@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.util.PhotoManager;
+import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,7 +30,7 @@ public class EntryListAdapter extends CursorAdapter {
             new BackgroundThumbLoader<Long>() {
                 @Override
                 protected Bitmap getBitmap(Thumb thumb) {
-                    return PhotoManager.getThumb(thumb.get().getContext(), (Long)thumb.key);
+                    return PhotoUtils.getThumb(thumb.get().getContext(), (Long)thumb.key);
                 }
             };
 

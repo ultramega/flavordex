@@ -32,10 +32,9 @@ import java.util.Locale;
  *
  * @author Steve Guidetti
  */
-public class PhotoManager {
-    private static final String TAG = "PhotoManager";
+public class PhotoUtils {
+    private static final String TAG = "PhotoUtils";
 
-    private static final String CAMERA_DIR = "/DCIM/";
     private static final String ALBUM_DIR = "Flavordex";
     private static final String JPEG_FILE_PREFIX = "IMG_";
     private static final String JPEG_FILE_SUFFIX = ".jpg";
@@ -45,29 +44,27 @@ public class PhotoManager {
 
     private static final BitmapCache sThumbCache = new BitmapCache("thumbs");
 
-    private Uri mCurrentPhotoPath;
-
     /**
      * Get an intent to capture a photo.
      *
+     * @param outputPath Path to save the captured photo
      * @return Image capture intent
-     * @throws IOException
      */
-    public Intent getTakePhotoIntent() throws IOException {
-        mCurrentPhotoPath = getOutputMediaFileUri();
-
+    public static Intent getTakePhotoIntent(Uri outputPath) {
         final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, mCurrentPhotoPath);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputPath);
         return intent;
     }
 
     /**
-     * Get the path to the current photo being captured.
+     * Get an intent to select a photo from the gallery.
      *
-     * @return Path as a string
+     * @return Get content intent
      */
-    public String getCurrentPhotoPath() {
-        return mCurrentPhotoPath.getPath();
+    public static Intent getSelectPhotoIntent() {
+        final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        return intent;
     }
 
     /**
@@ -292,15 +289,14 @@ public class PhotoManager {
     }
 
     /**
-     * Get the output file as a Uri for a new captured image.
+     * Get the Uri for a new captured image file.
      *
-     * @return A Uri pointing to the file
+     * @return A file Uri
      * @throws IOException
      */
-    private static Uri getOutputMediaFileUri() throws IOException {
+    public static Uri getOutputMediaUri() throws IOException {
         return Uri.fromFile(getOutputMediaFile());
     }
-
 
     /**
      * Get the output file for a new captured image.
@@ -308,14 +304,15 @@ public class PhotoManager {
      * @return A File pointing to the file
      * @throws IOException
      */
-    private static File getOutputMediaFile() throws IOException {
+    public static File getOutputMediaFile() throws IOException {
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             throw new IOException("Media storage not mounted");
         }
 
         final String timeStamp =
                 new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-        return new File(getMediaStorageDir(), JPEG_FILE_PREFIX + timeStamp + JPEG_FILE_SUFFIX);
+        return File.createTempFile(JPEG_FILE_PREFIX + timeStamp, JPEG_FILE_SUFFIX,
+                getMediaStorageDir());
     }
 
     /**
@@ -325,16 +322,17 @@ public class PhotoManager {
      * @throws IOException
      */
     public static File getMediaStorageDir() throws IOException {
-        final File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                + CAMERA_DIR + ALBUM_DIR);
+        final File mediaStorageDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        final File albumDir = new File(mediaStorageDir, ALBUM_DIR);
 
-        if(!mediaStorageDir.exists()) {
-            if(!mediaStorageDir.mkdirs()) {
+        if(!albumDir.exists()) {
+            if(!albumDir.mkdirs()) {
                 throw new IOException("Failure creating directories");
             }
         }
 
-        return mediaStorageDir;
+        return albumDir;
     }
 
     /**

@@ -59,7 +59,7 @@ public class EntryUtils {
             }
         }
 
-        PhotoManager.deleteThumb(context, id);
+        PhotoUtils.deleteThumb(context, id);
     }
 
     /**

@@ -16,7 +16,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.ultramegasoft.flavordex2.util.BitmapCache;
-import com.ultramegasoft.flavordex2.util.PhotoManager;
+import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -110,7 +110,7 @@ public class PhotoFragment extends Fragment {
         @Override
         protected Bitmap doInBackground(String... args) {
             final String path = args[0];
-            final Bitmap bitmap = PhotoManager.loadBitmap(path, mMinWH);
+            final Bitmap bitmap = PhotoUtils.loadBitmap(path, mMinWH);
             sBitmapCache.put(path, bitmap);
             return bitmap;
         }
