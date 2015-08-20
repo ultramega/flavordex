@@ -9,7 +9,14 @@ import android.util.LruCache;
  * @author Steve Guidetti
  */
 public class BitmapCache {
+    /**
+     * The shared memory cache for the application
+     */
     private static LruCache<String, Bitmap> sCache;
+
+    /**
+     * The prefix for keys this cache instance
+     */
     private final String mPrefix;
 
     /**
