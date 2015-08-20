@@ -116,12 +116,9 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
 
         if(savedInstanceState != null) {
             mData = savedInstanceState.getParcelableArrayList(STATE_PHOTOS);
+            notifyDataChanged();
         } else {
             getLoaderManager().initLoader(0, null, this);
-        }
-
-        if(!mData.isEmpty()) {
-            notifyDataChanged();
         }
     }
 
