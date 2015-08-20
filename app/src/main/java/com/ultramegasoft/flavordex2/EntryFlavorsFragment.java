@@ -265,22 +265,22 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
      */
     private static class DataSaver extends AsyncTask<ArrayList<RadarHolder>, Void, Void> {
         /**
-         * The entry id to save the flavors to
-         */
-        private final long mEntryId;
-
-        /**
          * The context used to access the ContentManager
          */
         private final Context mContext;
+
+        /**
+         * The entry id to save the flavors to
+         */
+        private final long mEntryId;
 
         /**
          * @param context The context
          * @param entryId The entry to save flavors to
          */
         public DataSaver(Context context, long entryId) {
-            mEntryId = entryId;
             mContext = context;
+            mEntryId = entryId;
         }
 
         @Override
