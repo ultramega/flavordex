@@ -318,11 +318,10 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
         }
 
         final PhotoHolder photo = mData.get(position);
-
-        EntryUtils.deletePhoto(getActivity(), photo.id);
         mData.remove(position);
-
         notifyDataChanged();
+
+        new PhotoDeleter(getActivity()).execute(photo);
     }
 
     /**
@@ -442,6 +441,30 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
 
             uri = mContext.getContentResolver().insert(uri, values);
             photo.id = Long.valueOf(uri.getLastPathSegment());
+            return null;
+        }
+    }
+
+    /**
+     * Async task to delete a photo from the database.
+     */
+    private static class PhotoDeleter extends AsyncTask<PhotoHolder, Void, Void> {
+        /**
+         * The context used to access the ContentManager
+         */
+        private final Context mContext;
+
+        /**
+         * @param context The context
+         */
+        public PhotoDeleter(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(PhotoHolder... params) {
+            final PhotoHolder photo = params[0];
+            EntryUtils.deletePhoto(mContext, photo.id);
             return null;
         }
     }
