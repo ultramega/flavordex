@@ -6,8 +6,10 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -58,7 +60,28 @@ public class PhotoFragment extends Fragment {
             new ImageLoader(imageView, Math.min(size.x, size.y)).execute(path);
         }
 
+        registerForContextMenu(imageView);
+
         return imageView;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.photo_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menu_delete_photo:
+                final EntryPhotosFragment target = (EntryPhotosFragment)getParentFragment();
+                if(target != null) {
+                    target.confirmDeletePhoto();
+                }
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     /**

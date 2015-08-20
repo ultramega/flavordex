@@ -1,20 +1,24 @@
 package com.ultramegasoft.flavordex2;
 
+import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,8 +28,12 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
+import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.EntryUtils;
+import com.ultramegasoft.flavordex2.util.PhotoManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,6 +48,8 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
      * Keys for the saved state
      */
     private static final String STATE_PHOTOS = "photos";
+
+    private static final String ARG_PHOTO_POSITION = "photo_position";
 
     /**
      * Request codes for external activities
@@ -68,6 +78,7 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
      */
     private ViewPager mPager;
     private LinearLayout mNoDataLayout;
+    private ProgressBar mProgressBar;
 
     /**
      * The information about each photo
@@ -101,7 +112,7 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
             getLoaderManager().initLoader(0, null, this);
         }
 
-        if(mData.size() > 0) {
+        if(!mData.isEmpty()) {
             notifyDataChanged();
         }
     }
@@ -114,11 +125,21 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
 
         final View root = inflater.inflate(R.layout.fragment_entry_photos, container, false);
 
+        mProgressBar = (ProgressBar)root.findViewById(R.id.progress);
+
         mPager = (ViewPager)root.findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(2);
         mPager.setAdapter(new PagerAdapter());
 
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mPager = null;
+        mNoDataLayout = null;
+        mProgressBar = null;
     }
 
     @Override
@@ -158,24 +179,20 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        getActivity().getMenuInflater().inflate(R.menu.photo_menu, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.menu_delete_photo:
-                deletePhoto();
-                return true;
-        }
-        return super.onContextItemSelected(item);
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO: 8/19/2015 Handle results of external activities
+        if(resultCode == Activity.RESULT_OK) {
+            switch(requestCode) {
+                case REQUEST_CAPTURE_IMAGE:
+                    break;
+                case REQUEST_SELECT_IMAGE:
+                    break;
+                case REQUEST_DELETE_IMAGE:
+                    if(data != null) {
+                        deletePhoto(data.getIntExtra(ARG_PHOTO_POSITION, -1));
+                    }
+                    break;
+            }
+        }
     }
 
     /**
@@ -226,24 +243,87 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
     /**
      * Show a confirmation dialog to delete the shown image.
      */
-    private void deletePhoto() {
-        // TODO: 8/19/2015 Open delete confirmation dialog for the shown image
+    public void confirmDeletePhoto() {
+        if(mData.isEmpty()) {
+            return;
+        }
+
+        final int position = mPager.getCurrentItem();
+        final PhotoHolder photo = mData.get(position);
+
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(getActivity());
+        final int message;
+        if(prefs.getBoolean(FlavordexApp.PREF_RETAIN_PHOTOS, false) || photo.fromGallery) {
+            message = R.string.message_confirm_remove_photo;
+        } else {
+            message = R.string.message_confirm_delete_photo;
+        }
+
+        final Intent intent = new Intent();
+        intent.putExtra(ARG_PHOTO_POSITION, position);
+
+        ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_IMAGE,
+                getString(R.string.menu_delete_photo), getString(message), intent);
     }
 
     /**
-     * Called whenever the list of photos might have been changed. This notifies the pager's
-     * adapter
+     * Delete the photo at the specified position.
+     *
+     * @param position The position index of the photo
+     */
+    private void deletePhoto(int position) {
+        if(position < 0 || position >= mData.size()) {
+            return;
+        }
+
+        final PhotoHolder photo = mData.get(position);
+
+        EntryUtils.deletePhoto(getActivity(), photo.id);
+        mData.remove(position);
+        notifyDataChanged();
+
+        if(position == 0) {
+            updatePosterPhoto();
+        }
+    }
+
+    /**
+     * Update the main photo to use as this entry's thumbnail.
+     */
+    private void updatePosterPhoto() {
+        final ContentResolver cr = getActivity().getContentResolver();
+        if(!mData.isEmpty()) {
+            new Handler().post(new Runnable() {
+                public void run() {
+                    PhotoManager.generateThumb(getActivity(), mData.get(0).path, mEntryId);
+                }
+            });
+        } else {
+            PhotoManager.deleteThumb(getActivity(), mEntryId);
+        }
+        cr.notifyChange(Tables.Entries.CONTENT_URI, null);
+    }
+
+    /**
+     * Called whenever the list of photos might have been changed. This notifies the pager's adapter
      * and the action bar.
      */
     private void notifyDataChanged() {
         if(mPager != null) {
             mPager.getAdapter().notifyDataSetChanged();
-            if(mData.size() > 0) {
-                registerForContextMenu(mPager);
-            } else {
-                unregisterForContextMenu(mPager);
-            }
         }
+
+        if(!mData.isEmpty()) {
+            if(mNoDataLayout != null) {
+                mNoDataLayout.setVisibility(View.GONE);
+            }
+            mProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mProgressBar.setVisibility(View.INVISIBLE);
+            showNoDataLayout();
+        }
+
         ((AppCompatActivity)getActivity()).getSupportActionBar().invalidateOptionsMenu();
     }
 
@@ -268,8 +348,6 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
                     mData.add(new PhotoHolder(data.getLong(0), path, data.getInt(2) == 1));
                 }
             }
-        } else {
-            showNoDataLayout();
         }
 
         notifyDataChanged();
@@ -284,7 +362,7 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
     /**
      * Adapter for the ViewPager
      */
-    private class PagerAdapter extends FragmentPagerAdapter {
+    private class PagerAdapter extends FragmentStatePagerAdapter {
 
         public PagerAdapter() {
             super(getChildFragmentManager());
@@ -300,6 +378,11 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
         @Override
         public int getCount() {
             return mData.size();
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
         }
     }
 }
