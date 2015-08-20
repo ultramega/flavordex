@@ -75,16 +75,21 @@ public class EntryUtils {
         final ContentResolver cr = context.getContentResolver();
         final Uri uri = ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, photoId);
         final String[] projection = new String[] {
+                Tables.Photos.ENTRY,
                 Tables.Photos.PATH,
                 Tables.Photos.FROM_GALLERY
         };
         final Cursor cursor = cr.query(uri, projection, null, null, null);
         try {
             if(cursor.moveToFirst()) {
-                if(!retainPhotos && cursor.getInt(1) == 0) {
-                    new File(cursor.getString(0)).delete();
+                if(!retainPhotos && cursor.getInt(2) == 0) {
+                    new File(cursor.getString(1)).delete();
                 }
                 cr.delete(uri, null, null);
+
+                final long entryId = cursor.getLong(0);
+                PhotoUtils.generateThumb(context, entryId);
+                cr.notifyChange(ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId), null);
             }
         } finally {
             cursor.close();

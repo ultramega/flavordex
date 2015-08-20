@@ -1,7 +1,6 @@
 package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +11,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -323,28 +321,8 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
 
         EntryUtils.deletePhoto(getActivity(), photo.id);
         mData.remove(position);
+
         notifyDataChanged();
-
-        if(position == 0) {
-            updatePosterPhoto();
-        }
-    }
-
-    /**
-     * Update the main photo to use as this entry's thumbnail.
-     */
-    private void updatePosterPhoto() {
-        final ContentResolver cr = getActivity().getContentResolver();
-        if(!mData.isEmpty()) {
-            new Handler().post(new Runnable() {
-                public void run() {
-                    PhotoUtils.generateThumb(getActivity(), mData.get(0).path, mEntryId);
-                }
-            });
-        } else {
-            PhotoUtils.deleteThumb(getActivity(), mEntryId);
-        }
-        cr.notifyChange(Tables.Entries.CONTENT_URI, null);
     }
 
     /**
