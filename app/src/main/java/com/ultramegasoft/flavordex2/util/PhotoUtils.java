@@ -311,8 +311,7 @@ public class PhotoUtils {
 
         final String timeStamp =
                 new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-        return File.createTempFile(JPEG_FILE_PREFIX + timeStamp, JPEG_FILE_SUFFIX,
-                getMediaStorageDir());
+        return new File(getMediaStorageDir(), JPEG_FILE_PREFIX + timeStamp + JPEG_FILE_SUFFIX);
     }
 
     /**
