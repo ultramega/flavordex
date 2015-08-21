@@ -126,7 +126,8 @@ BEGIN
     DELETE FROM `entries_flavors` WHERE `entry` = OLD.`_id`;
     DELETE FROM `entries_extras` WHERE `entry` = OLD.`_id`;
     DELETE FROM `photos` WHERE `entry` = OLD.`_id`;
-    DELETE FROM `makers` WHERE NOT EXISTS (SELECT 1 FROM `entries` WHERE `maker` = OLD.`maker`);
+    DELETE FROM `makers` WHERE `_id` = OLD.`maker`
+     AND NOT EXISTS (SELECT 1 FROM `entries` WHERE `maker` = OLD.`maker`);
 END;
 --
 CREATE TRIGGER `update_entry` AFTER UPDATE OF `maker` ON `entries`
