@@ -14,6 +14,9 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RatingBar;
@@ -69,6 +72,7 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mEntryId = getArguments().getLong(EntryDetailFragment.ARG_ITEM_ID);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -94,6 +98,28 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
         mTxtNotes = (TextView)rootView.findViewById(R.id.entry_notes);
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.entry_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menu_edit_entry:
+                // TODO: 8/14/2015 Add editing
+                return true;
+            case R.id.menu_share:
+                // TODO: 8/14/2015 Add sharing
+                return true;
+            case R.id.menu_delete_entry:
+                // TODO: 8/14/2015 Add deleting
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**

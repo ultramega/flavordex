@@ -6,9 +6,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -72,8 +69,6 @@ public class EntryDetailFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
-
         final AppCompatActivity activity = (AppCompatActivity)getActivity();
 
         mActionBar = activity.getSupportActionBar();
@@ -121,28 +116,6 @@ public class EntryDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_entry_detail, container, false);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.entry_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.menu_edit_entry:
-                // TODO: 8/14/2015 Add editing
-                return true;
-            case R.id.menu_share:
-                // TODO: 8/14/2015 Add sharing
-                return true;
-            case R.id.menu_delete_entry:
-                // TODO: 8/14/2015 Add deleting
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     /**
