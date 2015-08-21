@@ -84,6 +84,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
         if(savedInstanceState != null) {
             mData = savedInstanceState.getParcelableArrayList(STATE_DATA);
             setEditMode(savedInstanceState.getBoolean(STATE_EDIT_MODE, false));
+            mRadarView.setVisibility(View.VISIBLE);
         } else {
             getLoaderManager().initLoader(0, null, this);
         }
@@ -253,6 +254,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
 
         mData = flavorValues;
         mRadarView.setData(flavorValues);
+        mRadarView.setVisibility(View.VISIBLE);
 
         getLoaderManager().destroyLoader(0);
     }
