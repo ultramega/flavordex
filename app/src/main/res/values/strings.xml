@@ -70,8 +70,7 @@
     <string name="message_no_data">No entries have been added.</string>
     <string name="message_no_data_filter">No entries found matching your filter.</string>
     <string name="message_confirm_delete">Are you sure you want to delete %s?</string>
-    <string name="message_confirm_delete_photo">The photo will be deleted.</string>
-    <string name="message_confirm_remove_photo">The photo will be removed.</string>
+    <string name="message_confirm_remove_photo">Are you sure you want to remove this photo? The file will not be deleted.</string>
     <string name="message_no_photos">No Photos</string>
     <string name="message_no_media">External storage not found</string>
     <string name="message_active_filters">Filtered by %s.</string>
@@ -83,8 +82,6 @@
     <string name="pref_cat_general">General Settings</string>
     <string name="pref_detect_location">Remember locations</string>
     <string name="pref_summary_detect_location">Autofill location name based on previous entries</string>
-    <string name="pref_retain_photos">Keep photos</string>
-    <string name="pref_summary_retain_photos">Keep photos of deleted entries</string>
 
     <string name="title_add">Add Entry</string>
     <string name="title_edit">Edit Entry</string>

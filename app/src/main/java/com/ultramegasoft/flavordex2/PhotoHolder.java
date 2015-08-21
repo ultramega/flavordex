@@ -32,31 +32,23 @@ public class PhotoHolder implements Parcelable {
     public String path;
 
     /**
-     * Whether the photo was added from the gallery
-     */
-    public boolean fromGallery;
-
-    /**
      * @param id          The database id for this photo
      * @param path        The path to the photo file
-     * @param fromGallery Whether the photo was added from the gallery
      */
-    public PhotoHolder(long id, String path, boolean fromGallery) {
+    public PhotoHolder(long id, String path) {
         this.id = id;
         this.path = path;
-        this.fromGallery = fromGallery;
     }
 
     /**
      * @param path        The path to the photo file
-     * @param fromGallery Whether the photo was added from the gallery
      */
-    public PhotoHolder(String path, boolean fromGallery) {
-        this(0, path, fromGallery);
+    public PhotoHolder(String path) {
+        this(0, path);
     }
 
     protected PhotoHolder(Parcel in) {
-        this(in.readLong(), in.readString(), in.readInt() == 1);
+        this(in.readLong(), in.readString());
     }
 
     @Override
@@ -68,6 +60,5 @@ public class PhotoHolder implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(path);
-        dest.writeInt(fromGallery ? 1 : 0);
     }
 }

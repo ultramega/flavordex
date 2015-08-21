@@ -1,12 +1,12 @@
-INSERT INTO `photos` VALUES (1,1,'/sdcard/DCIM/Flavordex/20121114_161713.jpg',1);
+INSERT INTO `photos` VALUES (1,1,'/sdcard/DCIM/Flavordex/20121114_161713.jpg');
 --
-INSERT INTO `photos` VALUES (2,2,'/sdcard/DCIM/Flavordex/photo.JPG',1);
+INSERT INTO `photos` VALUES (2,2,'/sdcard/DCIM/Flavordex/photo.JPG');
 --
-INSERT INTO `photos` VALUES (3,3,'/sdcard/DCIM/Flavordex/winephoto.JPG',1);
+INSERT INTO `photos` VALUES (3,3,'/sdcard/DCIM/Flavordex/winephoto.JPG');
 --
-INSERT INTO `photos` VALUES (4,4,'/sdcard/DCIM/Flavordex/IMG_1897.JPG',1);
+INSERT INTO `photos` VALUES (4,4,'/sdcard/DCIM/Flavordex/IMG_1897.JPG');
 --
-INSERT INTO `photos` VALUES (5,4,'/sdcard/DCIM/Flavordex/IMG_1896.JPG',1);
+INSERT INTO `photos` VALUES (5,4,'/sdcard/DCIM/Flavordex/IMG_1896.JPG');
 --
 INSERT INTO `makers` VALUES (1,3,'Jefferson''s','Canada');
 --

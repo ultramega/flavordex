@@ -104,8 +104,7 @@ CREATE TABLE `makers` (
 CREATE TABLE `photos` (
   `_id` INTEGER PRIMARY KEY,
   `entry` INTEGER,
-  `path` TEXT,
-  `from_gallery` INTEGER
+  `path` TEXT
 );
 --
 CREATE TABLE `types` (

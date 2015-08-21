@@ -4,14 +4,12 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.LoaderManager;
@@ -214,7 +212,7 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
      * @param uri The Uri to the image file
      */
     private void addPhoto(Uri uri) {
-        final PhotoHolder photo = new PhotoHolder(PhotoUtils.getPath(getActivity(), uri), true);
+        final PhotoHolder photo = new PhotoHolder(PhotoUtils.getPath(getActivity(), uri));
         mData.add(photo);
         notifyDataChanged();
         mPager.setCurrentItem(mData.size() - 1, true);
@@ -286,22 +284,13 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
         }
 
         final int position = mPager.getCurrentItem();
-        final PhotoHolder photo = mData.get(position);
-
-        final SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(getActivity());
-        final int message;
-        if(prefs.getBoolean(FlavordexApp.PREF_RETAIN_PHOTOS, false) || photo.fromGallery) {
-            message = R.string.message_confirm_remove_photo;
-        } else {
-            message = R.string.message_confirm_delete_photo;
-        }
 
         final Intent intent = new Intent();
         intent.putExtra(ARG_PHOTO_POSITION, position);
 
         ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_IMAGE,
-                getString(R.string.menu_delete_photo), getString(message), intent);
+                getString(R.string.menu_delete_photo),
+                getString(R.string.message_confirm_remove_photo), intent);
     }
 
     /**
@@ -349,8 +338,7 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
                 mEntryId + "/photos");
         final String[] projection = new String[] {
                 Tables.Photos._ID,
-                Tables.Photos.PATH,
-                Tables.Photos.FROM_GALLERY
+                Tables.Photos.PATH
         };
         return new CursorLoader(getActivity(), uri, projection, null, null,
                 Tables.Photos._ID + " ASC");
@@ -363,7 +351,7 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
             while(data.moveToNext()) {
                 final String path = data.getString(1);
                 if(new File(path).exists()) {
-                    mData.add(new PhotoHolder(data.getLong(0), path, data.getInt(2) == 1));
+                    mData.add(new PhotoHolder(data.getLong(0), path));
                 }
             }
         }
@@ -434,7 +422,6 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
 
             final ContentValues values = new ContentValues();
             values.put(Tables.Photos.PATH, photo.path);
-            values.put(Tables.Photos.FROM_GALLERY, photo.fromGallery);
 
             uri = mContext.getContentResolver().insert(uri, values);
             photo.id = Long.valueOf(uri.getLastPathSegment());

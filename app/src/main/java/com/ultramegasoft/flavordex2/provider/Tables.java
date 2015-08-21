@@ -169,7 +169,6 @@ public class Tables {
 
         public static final String ENTRY = "entry";
         public static final String PATH = "path";
-        public static final String FROM_GALLERY = "from_gallery";
 
         public static final String DATA_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".photo";
