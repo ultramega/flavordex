@@ -1,13 +1,13 @@
 package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
-import android.app.ListFragment;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,11 +24,6 @@ import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
  * @author Steve Guidetti
  */
 public class EntryListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    /**
-     * Request code for deleting an entry
-     */
-    private static final int REQUEST_DELETE_ENTRY = 100;
-
     /**
      * The fields to query from the database
      */
@@ -191,7 +186,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                 : ListView.CHOICE_MODE_NONE);
     }
 
-    private void setActivatedPosition(int position) {
+    public void setActivatedPosition(int position) {
         if(position == ListView.INVALID_POSITION) {
             getListView().setItemChecked(mActivatedPosition, false);
         } else {

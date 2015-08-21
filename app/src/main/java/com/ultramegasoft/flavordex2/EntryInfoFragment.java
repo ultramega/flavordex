@@ -1,12 +1,16 @@
 package com.ultramegasoft.flavordex2;
 
+import android.app.Activity;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -22,11 +26,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 
@@ -42,6 +48,11 @@ import java.util.Map;
  * @author Steve Guidetti
  */
 public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * Request code for deleting an entry
+     */
+    private static final int REQUEST_DELETE_ENTRY = 100;
+
     /**
      * Loader ids
      */
@@ -133,10 +144,36 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
                 // TODO: 8/14/2015 Add editing
                 return true;
             case R.id.menu_delete_entry:
-                // TODO: 8/14/2015 Add deleting
+                ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_ENTRY,
+                        getString(R.string.menu_delete_entry),
+                        getString(R.string.message_confirm_delete, mTxtTitle.getText().toString()));
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == Activity.RESULT_OK) {
+            switch(requestCode) {
+                case REQUEST_DELETE_ENTRY:
+                    new EntryDeleter(getActivity(), mEntryId).execute();
+                    final FragmentManager fm = getFragmentManager();
+                    final EntryListFragment listFragment = (EntryListFragment)fm
+                            .findFragmentById(R.id.entry_list);
+                    if(listFragment != null) {
+                        listFragment.setActivatedPosition(ListView.INVALID_POSITION);
+                        Fragment fragment = fm.findFragmentById(R.id.entry_detail_container);
+                        if(fragment != null) {
+                            setHasOptionsMenu(false);
+                            fm.beginTransaction().remove(fragment).commit();
+                        }
+                    } else {
+                        getActivity().finish();
+                    }
+                    break;
+            }
+        }
     }
 
     /**
@@ -341,5 +378,21 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    private static class EntryDeleter extends AsyncTask<Void, Void, Void> {
+        private final Context mContext;
+        private final long mEntryId;
+
+        public EntryDeleter(Context context, long entryId) {
+            mContext = context.getApplicationContext();
+            mEntryId = entryId;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            EntryUtils.delete(mContext, mEntryId);
+            return null;
+        }
     }
 }

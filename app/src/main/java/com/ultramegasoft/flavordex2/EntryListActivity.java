@@ -27,7 +27,7 @@ public class EntryListActivity extends AppCompatActivity implements EntryListFra
         if(findViewById(R.id.entry_detail_container) != null) {
             mTwoPane = true;
 
-            ((EntryListFragment)getFragmentManager().findFragmentById(R.id.entry_list))
+            ((EntryListFragment)getSupportFragmentManager().findFragmentById(R.id.entry_list))
                     .setActivateOnItemClick(true);
         }
     }
