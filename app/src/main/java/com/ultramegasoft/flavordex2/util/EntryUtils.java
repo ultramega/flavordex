@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
@@ -55,18 +56,23 @@ public class EntryUtils {
     }
 
     /**
-     * Launch a sharing intent.
+     * Get a sharing intent.
      *
      * @param context The context
      * @param title   The message title
      * @param rating  The rating to show
+     * @return A send action intent or null if the title is blank
      */
-    public static void share(Context context, String title, String rating) {
+    public static Intent getShareIntent(Context context, String title, float rating) {
+        if(TextUtils.isEmpty(title)) {
+            return null;
+        }
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, getShareSubject(context, title));
         intent.putExtra(Intent.EXTRA_TEXT, getShareBody(context, title, rating));
-        context.startActivity(Intent.createChooser(intent, context.getText(R.string.title_share)));
+
+        return intent;
     }
 
     /**
@@ -77,7 +83,7 @@ public class EntryUtils {
      * @param rating  The rating to show
      * @return The message body
      */
-    private static String getShareBody(Context context, String title, String rating) {
+    private static String getShareBody(Context context, String title, float rating) {
         final String app = context.getString(R.string.app_name).toLowerCase();
         return context.getString(R.string.share_body, title, app, rating);
     }

@@ -1,6 +1,7 @@
 package com.ultramegasoft.flavordex2;
 
 import android.content.ContentUris;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -9,6 +10,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -25,6 +28,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.EntryUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -107,13 +111,26 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        final MenuItem shareItem = menu.findItem(R.id.menu_share);
+        if(shareItem != null) {
+            final Intent shareIntent = EntryUtils.getShareIntent(getActivity(),
+                    mTxtTitle.getText().toString(), mRatingBar.getRating());
+            final ShareActionProvider actionProvider =
+                    (ShareActionProvider)MenuItemCompat.getActionProvider(shareItem);
+            if(actionProvider != null) {
+                actionProvider.setShareIntent(shareIntent);
+            }
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_edit_entry:
                 // TODO: 8/14/2015 Add editing
-                return true;
-            case R.id.menu_share:
-                // TODO: 8/14/2015 Add sharing
                 return true;
             case R.id.menu_delete_entry:
                 // TODO: 8/14/2015 Add deleting
@@ -174,6 +191,8 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
         setViewText(mTxtPrice, data.getString(data.getColumnIndex(Tables.Entries.PRICE)));
 
         mTxtNotes.setText(data.getString(data.getColumnIndex(Tables.Entries.NOTES)));
+
+        getActivity().invalidateOptionsMenu();
     }
 
     /**

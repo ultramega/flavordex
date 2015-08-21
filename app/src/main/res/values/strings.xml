@@ -99,5 +99,5 @@
     <string name="error_csv_parse">Unable to parse the .csv file\n\nMake sure the first row is column names, and contains a \'title\' field.</string>
 
     <string name="share_subject">I logged %s on Flavordex</string>
-    <string name="share_body">I logged %1$s in my %2$s with a %3$s rating.\n\nvia Flavordex</string>
+    <string name="share_body">I logged %1$s in my %2$s with a %3$.1f rating.\n\nvia Flavordex</string>
 </resources>
