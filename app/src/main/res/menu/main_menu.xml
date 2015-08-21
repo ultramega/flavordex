@@ -3,22 +3,22 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_add_entry"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@drawable/ic_note_add"
         android:title="@string/menu_add_entry"
         app:showAsAction="always|withText" />
     <item
         android:id="@+id/menu_filter"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/ic_search"
         android:title="@string/menu_filter"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_xport"
-        android:icon="@android:drawable/ic_menu_save"
+        android:icon="@drawable/ic_import_export"
         android:title="@string/menu_xport"
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_settings"
-        android:icon="@android:drawable/ic_menu_preferences"
+        android:icon="@drawable/ic_settings"
         android:title="@string/menu_settings"
         app:showAsAction="ifRoom" />
 </menu>

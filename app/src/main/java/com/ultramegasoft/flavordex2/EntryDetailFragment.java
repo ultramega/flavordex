@@ -81,21 +81,21 @@ public class EntryDetailFragment extends Fragment {
         args.putLong(ARG_ITEM_ID, mEntryId);
 
         tab = mActionBar.newTab()
-                .setIcon(android.R.drawable.ic_menu_info_details)
+                .setIcon(R.drawable.ic_description)
                 .setText(R.string.tab_info)
                 .setTabListener(new TabListener<>(activity, "info_" + mEntryId,
                         getEntryInfoClass(), args));
         mActionBar.addTab(tab);
 
         tab = mActionBar.newTab()
-                .setIcon(android.R.drawable.ic_menu_compass)
+                .setIcon(R.drawable.ic_radar)
                 .setText(R.string.tab_chart)
                 .setTabListener(new TabListener<>(activity, "flavors_" + mEntryId,
                         EntryFlavorsFragment.class, args));
         mActionBar.addTab(tab);
 
         tab = mActionBar.newTab()
-                .setIcon(android.R.drawable.ic_menu_camera)
+                .setIcon(R.drawable.ic_photo)
                 .setText(R.string.tab_photos)
                 .setTabListener(new TabListener<>(activity, "photos_" + mEntryId,
                         EntryPhotosFragment.class, args));

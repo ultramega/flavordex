@@ -21,7 +21,7 @@
             android:layout_weight="1"
             android:contentDescription="@string/button_back"
             android:nextFocusLeft="@id/button_turn_left"
-            android:src="@android:drawable/ic_media_previous" />
+            android:src="@drawable/ic_rotate_right" />
 
         <ImageButton
             android:id="@+id/button_turn_right"
@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:contentDescription="@string/button_forward"
             android:nextFocusRight="@id/button_turn_right"
-            android:src="@android:drawable/ic_media_next" />
+            android:src="@drawable/ic_rotate_left" />
     </LinearLayout>
 
     <SeekBar
