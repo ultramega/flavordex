@@ -281,7 +281,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
          * @param entryId The entry to save flavors to
          */
         public DataSaver(Context context, long entryId) {
-            mContext = context;
+            mContext = context.getApplicationContext();
             mEntryId = entryId;
         }
 

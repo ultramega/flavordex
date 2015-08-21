@@ -411,7 +411,7 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
          * @param entryId The entry id
          */
         public PhotoSaver(Context context, long entryId) {
-            mContext = context;
+            mContext = context.getApplicationContext();
             mEntryId = entryId;
         }
 
@@ -442,7 +442,7 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
          * @param context The context
          */
         public PhotoDeleter(Context context) {
-            mContext = context;
+            mContext = context.getApplicationContext();
         }
 
         @Override
