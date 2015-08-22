@@ -9,6 +9,23 @@
         android:orientation="vertical"
         android:padding="4dp">
 
+        <TextView
+            android:id="@+id/entry_title"
+            style="@style/Header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <RatingBar
+            android:id="@+id/entry_rating"
+            style="?android:attr/ratingBarStyleIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:numStars="5"
+            android:paddingBottom="4dp"
+            android:stepSize="0.5" />
+
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

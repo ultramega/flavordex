@@ -65,14 +65,10 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
     private long mEntryId;
 
     /**
-     * Views from the parent fragment
+     * All the views for displaying details
      */
     private TextView mTxtTitle;
     private RatingBar mRatingBar;
-
-    /**
-     * All the views for displaying details
-     */
     private TextView mTxtMaker;
     private TextView mTxtOrigin;
     private TextView mTxtLocation;
@@ -93,10 +89,6 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        mTxtTitle = (TextView)getActivity().findViewById(R.id.entry_title);
-        mRatingBar = (RatingBar)getActivity().findViewById(R.id.entry_rating);
-
         getLoaderManager().initLoader(LOADER_MAIN, null, this);
         getLoaderManager().initLoader(LOADER_EXTRAS, null, this);
     }
@@ -105,6 +97,8 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(getLayoutId(), container, false);
 
+        mTxtTitle = (TextView)rootView.findViewById(R.id.entry_title);
+        mRatingBar = (RatingBar)rootView.findViewById(R.id.entry_rating);
         mTxtMaker = (TextView)rootView.findViewById(R.id.entry_maker);
         mTxtOrigin = (TextView)rootView.findViewById(R.id.entry_origin);
         mTxtLocation = (TextView)rootView.findViewById(R.id.entry_location);
