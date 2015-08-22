@@ -37,12 +37,6 @@
     <string name="button_export">Export Selected</string>
     <string name="button_select">Select</string>
 
-    <string name="tab_info">Info</string>
-    <string name="tab_chart">Flavor Radar</string>
-    <string name="tab_photos">Photos</string>
-    <string name="tab_import">Import</string>
-    <string name="tab_export">Export</string>
-
     <string name="hint_entry_title">Name</string>
     <string name="hint_maker">Maker</string>
     <string name="hint_origin">Origin</string>

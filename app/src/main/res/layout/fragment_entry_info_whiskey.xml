@@ -7,7 +7,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="4dp">
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp">
 
         <TextView
             android:id="@+id/entry_title"
@@ -25,6 +27,10 @@
             android:numStars="5"
             android:paddingBottom="4dp"
             android:stepSize="0.5" />
+
+        <View
+            style="@style/Divider"
+            android:layout_marginTop="8dp" />
 
         <TableLayout
             android:layout_width="match_parent"
