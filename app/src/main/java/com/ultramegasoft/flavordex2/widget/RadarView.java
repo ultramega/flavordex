@@ -329,15 +329,6 @@ public class RadarView extends View {
     }
 
     /**
-     * Get the index of the currently selected data point.
-     *
-     * @return The array index of the selected data point
-     */
-    public int getSelected() {
-        return mSelected;
-    }
-
-    /**
      * Turn the chart counter-clockwise.
      */
     public void turnCCW() {
@@ -381,6 +372,27 @@ public class RadarView extends View {
         }
         mSelected = key;
         turn();
+    }
+
+    /**
+     * Get the index of the currently selected data point.
+     *
+     * @return The array index of the selected data point
+     */
+    public int getSelectedIndex() {
+        return mSelected;
+    }
+
+    /**
+     * Get the label for the currently selected data point.
+     *
+     * @return The name field of the selected data point
+     */
+    public String getSelectedName() {
+        if(!hasData()) {
+            return null;
+        }
+        return mData.get(mSelected).name;
     }
 
     /**
