@@ -88,11 +88,15 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
 
         if(savedInstanceState != null) {
             mData = savedInstanceState.getParcelableArrayList(STATE_DATA);
-            setEditMode(savedInstanceState.getBoolean(STATE_EDIT_MODE, false));
+            mEditMode = savedInstanceState.getBoolean(STATE_EDIT_MODE, false);
             mRadarView.setVisibility(View.VISIBLE);
-        } else {
+        } else if(mData == null) {
             getLoaderManager().initLoader(0, null, this);
+        } else {
+            mRadarView.setVisibility(View.VISIBLE);
         }
+
+        setEditMode(mEditMode, false);
     }
 
     @Override
@@ -103,7 +107,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
         mRadarView.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View v) {
                 if(!mRadarView.isEditable()) {
-                    setEditMode(true);
+                    setEditMode(true, true);
                     return true;
                 }
                 return false;
@@ -111,6 +115,14 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
         });
 
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mRadarView = null;
+        mEditWidget = null;
+        mEditSlider = null;
     }
 
     @Override
@@ -130,7 +142,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
     public boolean onOptionsItemSelected(MenuItem item) {
         final int id = item.getItemId();
         if(id == R.id.menu_edit_flavor) {
-            setEditMode(true);
+            setEditMode(true, true);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -140,8 +152,9 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
      * Enable or disable the radar view's edit mode and show or hide the editing layout.
      *
      * @param editMode Whether to enable edit mode
+     * @param animate  Whether to animate the edit interface sliding in
      */
-    private void setEditMode(boolean editMode) {
+    private void setEditMode(boolean editMode, boolean animate) {
         if(editMode) {
             final int scale = 100 / mRadarView.getMaxValue();
             if(mEditWidget == null) {
@@ -210,11 +223,15 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
 
             mEditSlider.setProgress(mRadarView.getSelectedValue() * scale);
             mEditWidget.setVisibility(View.VISIBLE);
-            mEditWidget.startAnimation(mInAnimation);
+            if(animate) {
+                mEditWidget.startAnimation(mInAnimation);
+            }
             mEditSlider.requestFocus();
         } else {
             if(mEditWidget != null) {
-                mEditWidget.startAnimation(mOutAnimation);
+                if(animate) {
+                    mEditWidget.startAnimation(mOutAnimation);
+                }
                 mEditWidget.setVisibility(View.INVISIBLE);
             }
         }
@@ -227,7 +244,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
      * Save the current flavor data to the database
      */
     private void saveData() {
-        setEditMode(false);
+        setEditMode(false, true);
         mData = mRadarView.getData();
         new DataSaver(getActivity().getApplicationContext(), mEntryId).execute(mData);
     }
@@ -236,7 +253,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
      * Reset the radar chart to the original data and disable edit mode.
      */
     private void cancelEdit() {
-        setEditMode(false);
+        setEditMode(false, true);
         mRadarView.setData(mData);
     }
 
