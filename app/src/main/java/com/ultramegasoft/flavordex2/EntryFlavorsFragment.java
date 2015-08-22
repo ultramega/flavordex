@@ -63,6 +63,11 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
     private ArrayList<RadarHolder> mData;
 
     /**
+     * Whether the radar chart is in edit mode
+     */
+    private boolean mEditMode;
+
+    /**
      * The database id for this entry
      */
     private long mEntryId;
@@ -111,7 +116,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(STATE_EDIT_MODE, mRadarView.isEditable());
+        outState.putBoolean(STATE_EDIT_MODE, mEditMode);
         outState.putParcelableArrayList(STATE_DATA, mData);
     }
 
@@ -215,6 +220,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
         }
 
         mRadarView.setEditable(editMode);
+        mEditMode = editMode;
     }
 
     /**
