@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -26,6 +27,9 @@ import java.util.Locale;
  * @author Steve Guidetti
  */
 public class EntryListAdapter extends CursorAdapter {
+    /**
+     * Background loader for thumbnails
+     */
     private static final BackgroundThumbLoader<Long> sThumbLoader =
             new BackgroundThumbLoader<Long>() {
                 @Override
@@ -34,13 +38,37 @@ public class EntryListAdapter extends CursorAdapter {
                 }
             };
 
+    /**
+     * Formatter for the date field
+     */
     private final SimpleDateFormat mDateFormat;
 
+    /**
+     * Map of item IDs to item types
+     */
     private final HashMap<Long, String> mItemTypes = new HashMap<>();
 
+    /**
+     * Map of item IDs to their position index in the list
+     */
+    private final HashMap<Long, Integer> mItemPositions = new HashMap<>();
+
+    /**
+     * @param context The context
+     */
     public EntryListAdapter(Context context) {
         super(context, null, true);
         mDateFormat = new SimpleDateFormat(context.getString(R.string.date_format), Locale.US);
+    }
+
+    @Override
+    public Cursor swapCursor(Cursor newCursor) {
+        mItemPositions.clear();
+        while(newCursor.moveToNext()) {
+            mItemPositions.put(newCursor.getLong(newCursor.getColumnIndex(Tables.Entries._ID)),
+                    newCursor.getPosition());
+        }
+        return super.swapCursor(newCursor);
     }
 
     @Override
@@ -83,5 +111,20 @@ public class EntryListAdapter extends CursorAdapter {
      */
     public String getItemType(long id) {
         return mItemTypes.get(id);
+    }
+
+    /**
+     * Get the position of an item based on ID.
+     *
+     * @param id The database id of the item
+     * @return The index of the item
+     */
+    public int getItemIndex(long id) {
+        final Integer index = mItemPositions.get(id);
+        if(index == null) {
+            return ListView.INVALID_POSITION;
+        } else {
+            return index;
+        }
     }
 }

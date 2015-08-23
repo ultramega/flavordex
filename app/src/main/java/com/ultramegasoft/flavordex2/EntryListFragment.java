@@ -44,7 +44,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     /**
      * Keys for the saved state
      */
-    private static final String STATE_ACTIVATED_POSITION = "activated_position";
+    private static final String STATE_SELECTED_ITEM = "selected_item";
     private static final String STATE_FILTER = "filter";
 
     /**
@@ -53,14 +53,19 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     private Callbacks mCallbacks = sDummyCallbacks;
 
     /**
-     * The current activated item position. Only used on tablets.
+     * The current activated item. Only used on tablets.
      */
-    private int mActivatedPosition = ListView.INVALID_POSITION;
+    private long mActivatedItem = -1;
 
     /**
      * The string to search for in the list query
      */
     private String mFilter;
+
+    /**
+     * The adapter for the list
+     */
+    private EntryListAdapter mAdapter;
 
     /**
      * A callback interface that all activities containing this fragment must implement. This
@@ -90,11 +95,6 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
@@ -103,7 +103,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
         setListShown(false);
 
-        setListAdapter(new EntryListAdapter(getActivity()));
+        mAdapter = new EntryListAdapter(getActivity());
+        setListAdapter(mAdapter);
 
         getLoaderManager().initLoader(0, null, this);
     }
@@ -113,8 +114,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         super.onViewCreated(view, savedInstanceState);
 
         if(savedInstanceState != null) {
-            mActivatedPosition = savedInstanceState.getInt(STATE_ACTIVATED_POSITION,
-                    mActivatedPosition);
+            mActivatedItem = savedInstanceState.getLong(STATE_SELECTED_ITEM, mActivatedItem);
             mFilter = savedInstanceState.getString(STATE_FILTER);
         }
 
@@ -141,16 +141,14 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
-        mActivatedPosition = position;
-        mCallbacks.onItemSelected(id, ((EntryListAdapter)getListAdapter()).getItemType(id));
+        mActivatedItem = id;
+        mCallbacks.onItemSelected(id, mAdapter.getItemType(id));
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(mActivatedPosition != ListView.INVALID_POSITION) {
-            outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
-        }
+        outState.putLong(STATE_SELECTED_ITEM, mActivatedItem);
         outState.putString(STATE_FILTER, mFilter);
     }
 
@@ -254,15 +252,17 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                 : ListView.CHOICE_MODE_NONE);
     }
 
+    /**
+     * Set the select list item.
+     *
+     * @param position The index of the item to activate
+     */
     public void setActivatedPosition(int position) {
         if(position == ListView.INVALID_POSITION) {
-            getListView().setItemChecked(mActivatedPosition, false);
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
         } else {
             getListView().setItemChecked(position, true);
         }
-
-        mActivatedPosition = position;
     }
 
     @Override
@@ -279,14 +279,16 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         updateEmptyText();
-        ((EntryListAdapter)getListAdapter()).changeCursor(data);
-        setActivatedPosition(mActivatedPosition);
+        final EntryListAdapter adapter = (EntryListAdapter)getListAdapter();
+        adapter.changeCursor(data);
+        setActivatedPosition(adapter.getItemIndex(mActivatedItem));
         setListShown(true);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         updateEmptyText();
-        ((EntryListAdapter)getListAdapter()).changeCursor(null);
+        setActivatedPosition(ListView.INVALID_POSITION);
+        mAdapter.changeCursor(null);
     }
 }
