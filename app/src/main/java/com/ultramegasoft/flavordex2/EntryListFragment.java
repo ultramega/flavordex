@@ -227,6 +227,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
      */
     private void setFilter(String filter) {
         mFilter = filter;
+        updateEmptyText();
         getLoaderManager().restartLoader(0, null, this);
     }
 
@@ -279,7 +280,6 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        updateEmptyText();
         final EntryListAdapter adapter = (EntryListAdapter)getListAdapter();
         adapter.changeCursor(data);
         setActivatedPosition(adapter.getItemIndex(mActivatedItem));
@@ -288,7 +288,6 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        updateEmptyText();
         setActivatedPosition(ListView.INVALID_POSITION);
         mAdapter.changeCursor(null);
     }

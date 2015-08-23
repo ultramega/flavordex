@@ -64,9 +64,11 @@ public class EntryListAdapter extends CursorAdapter {
     @Override
     public Cursor swapCursor(Cursor newCursor) {
         mItemPositions.clear();
-        while(newCursor.moveToNext()) {
-            mItemPositions.put(newCursor.getLong(newCursor.getColumnIndex(Tables.Entries._ID)),
-                    newCursor.getPosition());
+        if(newCursor != null) {
+            while(newCursor.moveToNext()) {
+                mItemPositions.put(newCursor.getLong(newCursor.getColumnIndex(Tables.Entries._ID)),
+                        newCursor.getPosition());
+            }
         }
         return super.swapCursor(newCursor);
     }
