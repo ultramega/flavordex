@@ -260,7 +260,7 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
             mCapturedPhoto = PhotoUtils.getOutputMediaUri();
             final Intent intent = PhotoUtils.getTakePhotoIntent(mCapturedPhoto);
             if(intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                startActivityForResult(intent, REQUEST_CAPTURE_IMAGE);
+                getParentFragment().startActivityForResult(intent, REQUEST_CAPTURE_IMAGE);
             }
         } catch(IOException e) {
             Toast.makeText(getActivity(), R.string.error_camera, Toast.LENGTH_LONG).show();
@@ -272,7 +272,7 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
      */
     private void addPhotoFromGallery() {
         final Intent intent = PhotoUtils.getSelectPhotoIntent();
-        startActivityForResult(intent, REQUEST_SELECT_IMAGE);
+        getParentFragment().startActivityForResult(intent, REQUEST_SELECT_IMAGE);
     }
 
     /**
