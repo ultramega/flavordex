@@ -10,7 +10,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -18,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
@@ -199,6 +199,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         }
 
         final SearchView searchView = (SearchView)searchItem.getActionView();
+        searchView.setQueryHint(getText(R.string.menu_filter));
 
         if(!TextUtils.isEmpty(mFilter)) {
             searchItem.expandActionView();
