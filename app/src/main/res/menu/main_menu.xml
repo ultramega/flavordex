@@ -2,15 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/menu_filter"
+        android:icon="@drawable/ic_search"
+        android:title="@string/menu_filter"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+    <item
         android:id="@+id/menu_add_entry"
         android:icon="@drawable/ic_note_add"
         android:title="@string/menu_add_entry"
         app:showAsAction="always|withText" />
-    <item
-        android:id="@+id/menu_filter"
-        android:icon="@drawable/ic_search"
-        android:title="@string/menu_filter"
-        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_xport"
         android:icon="@drawable/ic_import_export"

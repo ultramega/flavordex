@@ -2,6 +2,7 @@ package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ListFragment;
@@ -9,6 +10,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.text.Html;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,10 +42,10 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     };
 
     /**
-     * The serialization (saved instance state) Bundle key representing the activated item position.
-     * Only used on tablets.
+     * Keys for the saved state
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
+    private static final String STATE_FILTER = "filter";
 
     /**
      * The fragment's current callback object, which is notified of list item clicks.
@@ -52,6 +56,11 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
+
+    /**
+     * The string to search for in the list query
+     */
+    private String mFilter;
 
     /**
      * A callback interface that all activities containing this fragment must implement. This
@@ -103,9 +112,13 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if(savedInstanceState != null && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-            mActivatedPosition = savedInstanceState.getInt(STATE_ACTIVATED_POSITION);
+        if(savedInstanceState != null) {
+            mActivatedPosition = savedInstanceState.getInt(STATE_ACTIVATED_POSITION,
+                    mActivatedPosition);
+            mFilter = savedInstanceState.getString(STATE_FILTER);
         }
+
+        updateEmptyText();
     }
 
     @Override
@@ -138,19 +151,22 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         if(mActivatedPosition != ListView.INVALID_POSITION) {
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
         }
+        outState.putString(STATE_FILTER, mFilter);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.main_menu, menu);
+
+        setupSearch(menu.findItem(R.id.menu_filter));
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.menu_xport).setVisible(Environment.getExternalStorageState()
                 .equals(Environment.MEDIA_MOUNTED));
-        super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -158,9 +174,6 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         switch(item.getItemId()) {
             case R.id.menu_add_entry:
                 // TODO: 8/14/2015 Create activity for adding entries
-                return true;
-            case R.id.menu_filter:
-                // TODO: 8/14/2015 Add filtering
                 return true;
             case R.id.menu_xport:
                 if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -175,6 +188,60 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Set up the search bar.
+     *
+     * @param searchItem The search action item
+     */
+    private void setupSearch(MenuItem searchItem) {
+        if(searchItem == null) {
+            return;
+        }
+
+        final SearchView searchView = (SearchView)searchItem.getActionView();
+
+        if(!TextUtils.isEmpty(mFilter)) {
+            searchItem.expandActionView();
+            searchView.setQuery(mFilter, false);
+        }
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                setFilter(newText);
+                return false;
+            }
+        });
+    }
+
+    /**
+     * Set the list query filter.
+     *
+     * @param filter The query filter
+     */
+    private void setFilter(String filter) {
+        mFilter = filter;
+        getLoaderManager().restartLoader(0, null, this);
+    }
+
+    /**
+     * Set the text shown when the list is empty based on any filters that are set.
+     */
+    private void updateEmptyText() {
+        CharSequence emptyText;
+        if(TextUtils.isEmpty(mFilter)) {
+            emptyText = getText(R.string.message_no_data);
+        } else {
+            emptyText = Html.fromHtml(getString(R.string.message_no_data_filter, mFilter));
+        }
+        setEmptyText(emptyText);
     }
 
     /**
@@ -200,11 +267,18 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), Tables.Entries.CONTENT_URI, LIST_PROJECTION, null, null, null);
+        Uri uri;
+        if(TextUtils.isEmpty(mFilter)) {
+            uri = Tables.Entries.CONTENT_URI;
+        } else {
+            uri = Uri.withAppendedPath(Tables.Entries.CONTENT_FILTER_URI_BASE, mFilter);
+        }
+        return new CursorLoader(getActivity(), uri, LIST_PROJECTION, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        updateEmptyText();
         ((EntryListAdapter)getListAdapter()).changeCursor(data);
         setActivatedPosition(mActivatedPosition);
         setListShown(true);
@@ -212,6 +286,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        updateEmptyText();
         ((EntryListAdapter)getListAdapter()).changeCursor(null);
     }
 }

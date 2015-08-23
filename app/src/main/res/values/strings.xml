@@ -61,8 +61,8 @@
     <string name="label_date_max">Ending:</string>
     <string name="label_extras">Extras</string>
 
-    <string name="message_no_data">No entries have been added.</string>
-    <string name="message_no_data_filter">No entries found matching your filter.</string>
+    <string name="message_no_data">No entries found.</string>
+    <string name="message_no_data_filter">No entries found matching &lt;b>%s&lt;/b>.</string>
     <string name="message_confirm_delete">Are you sure you want to delete %s?</string>
     <string name="message_confirm_remove_photo">Are you sure you want to remove this photo? The file will not be deleted.</string>
     <string name="message_no_photos">No Photos</string>
