@@ -125,9 +125,8 @@ public class FlavordexProvider extends ContentProvider {
                 break;
             case ENTRIES_FILTER:
                 queryBuilder.setTables(Tables.Entries.VIEW_NAME);
-                queryBuilder.appendWhere(Tables.Entries.TITLE + " LIKE %");
-                queryBuilder.appendWhereEscapeString(uri.getLastPathSegment());
-                queryBuilder.appendWhere("%");
+                queryBuilder.appendWhere(Tables.Entries.TITLE + " LIKE ");
+                queryBuilder.appendWhereEscapeString("%" + uri.getLastPathSegment() + "%");
                 break;
             case TYPES:
                 queryBuilder.setTables(Tables.Types.TABLE_NAME);
@@ -181,9 +180,8 @@ public class FlavordexProvider extends ContentProvider {
                 break;
             case MAKERS_FILTER:
                 queryBuilder.setTables(Tables.Makers.TABLE_NAME);
-                queryBuilder.appendWhere(Tables.Makers.NAME + " LIKE %");
-                queryBuilder.appendWhereEscapeString(uri.getLastPathSegment());
-                queryBuilder.appendWhere("%");
+                queryBuilder.appendWhere(Tables.Makers.NAME + " LIKE ");
+                queryBuilder.appendWhereEscapeString("%" + uri.getLastPathSegment() + "%");
                 break;
             case LOCATIONS:
                 queryBuilder.setTables(Tables.Locations.TABLE_NAME);
