@@ -8,6 +8,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -189,6 +190,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     public void setActivatedPosition(int position) {
         if(position == ListView.INVALID_POSITION) {
             getListView().setItemChecked(mActivatedPosition, false);
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
         } else {
             getListView().setItemChecked(position, true);
         }

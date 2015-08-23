@@ -15,6 +15,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -76,6 +77,16 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
     private TextView mTxtPrice;
     private TextView mTxtNotes;
 
+    /**
+     * The entry title
+     */
+    private String mTitle;
+
+    /**
+     * The entry rating
+     */
+    private float mRating;
+
     public EntryInfoFragment() {
     }
 
@@ -121,8 +132,7 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
 
         final MenuItem shareItem = menu.findItem(R.id.menu_share);
         if(shareItem != null) {
-            final Intent shareIntent = EntryUtils.getShareIntent(getActivity(),
-                    mTxtTitle.getText().toString(), mRatingBar.getRating());
+            final Intent shareIntent = EntryUtils.getShareIntent(getActivity(), mTitle, mRating);
             final ShareActionProvider actionProvider =
                     (ShareActionProvider)MenuItemCompat.getActionProvider(shareItem);
             if(actionProvider != null) {
@@ -140,7 +150,7 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
             case R.id.menu_delete_entry:
                 ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_ENTRY,
                         getString(R.string.menu_delete_entry),
-                        getString(R.string.message_confirm_delete, mTxtTitle.getText().toString()));
+                        getString(R.string.message_confirm_delete, mTitle));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -185,8 +195,9 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
      * @param data The cursor set to the correct row
      */
     private void populateViews(Cursor data) {
-        mTxtTitle.setText(data.getString(data.getColumnIndex(Tables.Entries.TITLE)));
-        mRatingBar.setRating(data.getFloat(data.getColumnIndex(Tables.Entries.RATING)));
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mTitle);
+        mTxtTitle.setText(mTitle);
+        mRatingBar.setRating(mRating);
 
         final String maker = data.getString(data.getColumnIndex(Tables.Entries.MAKER));
         final String origin = data.getString(data.getColumnIndex(Tables.Entries.ORIGIN));
@@ -351,6 +362,8 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
         switch(id) {
             case LOADER_MAIN:
                 if(data.moveToFirst()) {
+                    mTitle = data.getString(data.getColumnIndex(Tables.Entries.TITLE));
+                    mRating = data.getFloat(data.getColumnIndex(Tables.Entries.RATING));
                     populateViews(data);
                 }
                 break;
