@@ -10,12 +10,16 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -110,6 +114,27 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View root = inflater.inflate(R.layout.fragment_entry_list, container, false);
+
+        final FrameLayout list = (FrameLayout)root.findViewById(R.id.list);
+        list.addView(super.onCreateView(inflater, container, savedInstanceState));
+
+        final Toolbar toolbar = (Toolbar)root.findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.list_menu);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return onOptionsItemSelected(item);
+            }
+        });
+
+        setupSearch(toolbar.getMenu().findItem(R.id.menu_filter));
+
+        return root;
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -156,8 +181,6 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.main_menu, menu);
-
-        setupSearch(menu.findItem(R.id.menu_filter));
     }
 
     @Override
