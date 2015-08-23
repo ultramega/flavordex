@@ -162,7 +162,7 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
             switch(requestCode) {
                 case REQUEST_DELETE_ENTRY:
                     new EntryDeleter(getActivity(), mEntryId).execute();
-                    final FragmentManager fm = getFragmentManager();
+                    final FragmentManager fm = getParentFragment().getFragmentManager();
                     final EntryListFragment listFragment = (EntryListFragment)fm
                             .findFragmentById(R.id.entry_list);
                     if(listFragment != null) {
