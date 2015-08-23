@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -83,6 +84,14 @@ public class EntryDetailFragment extends Fragment {
         tabHost.addTab(tab, EntryPhotosFragment.class, args);
 
         return tabHost;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        final Fragment fragment = getChildFragmentManager().findFragmentById(R.id.content);
+        if(fragment != null) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     /**
