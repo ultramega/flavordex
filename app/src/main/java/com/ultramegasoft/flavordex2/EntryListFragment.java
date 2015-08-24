@@ -1,6 +1,8 @@
 package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +26,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.ultramegasoft.flavordex2.dialog.EntryFilterDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
 
@@ -33,6 +36,20 @@ import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
  * @author Steve Guidetti
  */
 public class EntryListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * Request codes
+     */
+    private static final int REQUEST_SET_FILTERS = 100;
+
+    /**
+     * Keys for the saved state
+     */
+    private static final String STATE_SELECTED_ITEM = "selected_item";
+    private static final String STATE_SEARCH = "search";
+    private static final String STATE_FILTERS = "filters";
+    private static final String STATE_WHERE = "where";
+    private static final String STATE_WHERE_ARGS = "where_args";
+
     /**
      * The fields to query from the database
      */
@@ -44,12 +61,6 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             Tables.Entries.RATING,
             Tables.Entries.DATE
     };
-
-    /**
-     * Keys for the saved state
-     */
-    private static final String STATE_SELECTED_ITEM = "selected_item";
-    private static final String STATE_FILTER = "filter";
 
     /**
      * The fragment's current callback object, which is notified of list item clicks.
@@ -64,7 +75,22 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     /**
      * The string to search for in the list query
      */
-    private String mFilter;
+    private String mSearchQuery;
+
+    /**
+     * Map of filters to populate the filter dialog
+     */
+    private ContentValues mFilters;
+
+    /**
+     * The where string to use in the database query
+     */
+    private String mWhere;
+
+    /**
+     * The arguments for the where clause
+     */
+    private String[] mWhereArgs;
 
     /**
      * The adapter for the list
@@ -129,7 +155,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             }
         });
 
-        setupSearch(toolbar.getMenu().findItem(R.id.menu_filter));
+        setupSearch(toolbar.getMenu().findItem(R.id.menu_search));
 
         return root;
     }
@@ -140,7 +166,10 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
         if(savedInstanceState != null) {
             mActivatedItem = savedInstanceState.getLong(STATE_SELECTED_ITEM, mActivatedItem);
-            mFilter = savedInstanceState.getString(STATE_FILTER);
+            mSearchQuery = savedInstanceState.getString(STATE_SEARCH);
+            mFilters = savedInstanceState.getParcelable(STATE_FILTERS);
+            mWhere = savedInstanceState.getString(STATE_WHERE);
+            mWhereArgs = savedInstanceState.getStringArray(STATE_WHERE_ARGS);
         }
 
         updateEmptyText();
@@ -174,7 +203,10 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(STATE_SELECTED_ITEM, mActivatedItem);
-        outState.putString(STATE_FILTER, mFilter);
+        outState.putString(STATE_SEARCH, mSearchQuery);
+        outState.putParcelable(STATE_FILTERS, mFilters);
+        outState.putString(STATE_WHERE, mWhere);
+        outState.putStringArray(STATE_WHERE_ARGS, mWhereArgs);
     }
 
     @Override
@@ -193,6 +225,10 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.menu_filter:
+                EntryFilterDialog.showDialog(getFragmentManager(), this, REQUEST_SET_FILTERS,
+                        mFilters);
+                return true;
             case R.id.menu_add_entry:
                 // TODO: 8/14/2015 Create activity for adding entries
                 return true;
@@ -211,6 +247,17 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == Activity.RESULT_OK) {
+            switch(requestCode) {
+                case REQUEST_SET_FILTERS:
+                    setFilters(data);
+                    break;
+            }
+        }
+    }
+
     /**
      * Set up the search bar.
      *
@@ -224,9 +271,9 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         final SearchView searchView = (SearchView)searchItem.getActionView();
         searchView.setQueryHint(getText(R.string.menu_filter));
 
-        if(!TextUtils.isEmpty(mFilter)) {
+        if(!TextUtils.isEmpty(mSearchQuery)) {
             searchItem.expandActionView();
-            searchView.setQuery(mFilter, false);
+            searchView.setQuery(mSearchQuery, false);
         }
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -237,19 +284,38 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                setFilter(newText);
+                setSearchQuery(newText);
                 return false;
             }
         });
     }
 
     /**
-     * Set the list query filter.
+     * Set the list query searchQuery.
      *
-     * @param filter The query filter
+     * @param searchQuery The query searchQuery
      */
-    private void setFilter(String filter) {
-        mFilter = filter;
+    private void setSearchQuery(String searchQuery) {
+        mSearchQuery = searchQuery;
+        updateEmptyText();
+        getLoaderManager().restartLoader(0, null, this);
+    }
+
+    /**
+     * Set the filter parameters from the result from the filter dialog.
+     *
+     * @param filterData The intent returned by EntryFilterDialog
+     */
+    private void setFilters(Intent filterData) {
+        if(filterData == null) {
+            mFilters = null;
+            mWhere = null;
+            mWhereArgs = null;
+        } else {
+            mFilters = filterData.getParcelableExtra(EntryFilterDialog.ARG_FILTER_VALUES);
+            mWhere = filterData.getStringExtra(EntryFilterDialog.EXTRA_SQL_WHERE);
+            mWhereArgs = filterData.getStringArrayExtra(EntryFilterDialog.EXTRA_SQL_ARGS);
+        }
         updateEmptyText();
         getLoaderManager().restartLoader(0, null, this);
     }
@@ -259,10 +325,10 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
      */
     private void updateEmptyText() {
         CharSequence emptyText;
-        if(TextUtils.isEmpty(mFilter)) {
+        if(TextUtils.isEmpty(mSearchQuery)) {
             emptyText = getText(R.string.message_no_data);
         } else {
-            emptyText = Html.fromHtml(getString(R.string.message_no_data_filter, mFilter));
+            emptyText = Html.fromHtml(getString(R.string.message_no_data_filter, mSearchQuery));
         }
         setEmptyText(emptyText);
     }
@@ -293,12 +359,12 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri uri;
-        if(TextUtils.isEmpty(mFilter)) {
+        if(TextUtils.isEmpty(mSearchQuery)) {
             uri = Tables.Entries.CONTENT_URI;
         } else {
-            uri = Uri.withAppendedPath(Tables.Entries.CONTENT_FILTER_URI_BASE, mFilter);
+            uri = Uri.withAppendedPath(Tables.Entries.CONTENT_FILTER_URI_BASE, mSearchQuery);
         }
-        return new CursorLoader(getActivity(), uri, LIST_PROJECTION, null, null, null);
+        return new CursorLoader(getActivity(), uri, LIST_PROJECTION, mWhere, mWhereArgs, null);
     }
 
     @Override

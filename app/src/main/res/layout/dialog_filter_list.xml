@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="4dp">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_type" />
+
+                <Spinner
+                    android:id="@+id/entry_type"
+                    android:hint="@string/hint_entry_type" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_maker" />
+
+                <EditText
+                    android:id="@+id/maker"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/hint_maker" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_origin" />
+
+                <EditText
+                    android:id="@+id/origin"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/hint_origin" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_location" />
+
+                <EditText
+                    android:id="@+id/location"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/hint_location_filter" />
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            style="@style/SubHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_date" />
+
+        <View style="@style/Divider" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_date_min" />
+
+                <Button android:id="@+id/button_date_min" />
+
+                <Button
+                    android:id="@+id/button_date_min_clear"
+                    android:text="@string/button_clear_date" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_date_max" />
+
+                <Button android:id="@+id/button_date_max" />
+
+                <Button
+                    android:id="@+id/button_date_max_clear"
+                    android:text="@string/button_clear_date" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+</ScrollView>

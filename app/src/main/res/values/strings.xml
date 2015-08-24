@@ -13,6 +13,7 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_share">Share Entry</string>
     <string name="menu_filter">Filter</string>
+    <string name="menu_search">Search</string>
     <string name="menu_xport">Import/Export</string>
 
     <string name="button_add">Add Entry</string>
@@ -38,6 +39,7 @@
     <string name="button_select">Select</string>
 
     <string name="hint_entry_title">Name</string>
+    <string name="hint_entry_type">Type</string>
     <string name="hint_maker">Maker</string>
     <string name="hint_origin">Origin</string>
     <string name="hint_location">Where are you?</string>
@@ -48,6 +50,7 @@
     <string name="hint_file_name">File Name</string>
 
     <string name="label_name">Name: </string>
+    <string name="label_type">Type: </string>
     <string name="label_maker">Maker: </string>
     <string name="label_origin">Origin: </string>
     <string name="label_location">Tasted: </string>
