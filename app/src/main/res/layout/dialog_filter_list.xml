@@ -23,7 +23,7 @@
 
                 <Spinner
                     android:id="@+id/entry_type"
-                    android:hint="@string/hint_entry_type" />
+                    android:prompt="@string/hint_entry_type" />
             </TableRow>
 
             <TableRow>

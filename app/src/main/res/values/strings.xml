@@ -3,6 +3,12 @@
     <string name="app_name" translatable="false">FlavorDex</string>
     <string name="date_format" translatable="false">MMM dd, yyyy</string>
 
+    <string name="type_any">Any Type</string>
+    <string name="type_beer">Beer</string>
+    <string name="type_wine">Wine</string>
+    <string name="type_whiskey">Whiskey</string>
+    <string name="type_coffee">Coffee</string>
+
     <string name="menu_add_entry">Add Entry</string>
     <string name="menu_edit_entry">Edit Entry</string>
     <string name="menu_delete_entry">Delete Entry</string>

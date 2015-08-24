@@ -7,14 +7,19 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -22,6 +27,7 @@ import android.widget.Spinner;
 
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.EntryTypeAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,7 +40,7 @@ import java.util.Locale;
  *
  * @author Steve Guidetti
  */
-public class EntryFilterDialog extends DialogFragment {
+public class EntryFilterDialog extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Tag to identify the fragment
      */
@@ -45,6 +51,11 @@ public class EntryFilterDialog extends DialogFragment {
      */
     private static final int REQUEST_SET_DATE_MIN = 100;
     private static final int REQUEST_SET_DATE_MAX = 200;
+
+    /**
+     * Loader ids
+     */
+    private static final int LOADER_TYPES = 0;
 
     /**
      * Arguments for the fragment
@@ -64,6 +75,7 @@ public class EntryFilterDialog extends DialogFragment {
      */
     public static final String STATE_DATE_MIN = "date_min";
     public static final String STATE_DATE_MAX = "date_max";
+    public static final String STATE_TYPE = "type";
 
     /**
      * Views from the layout
@@ -74,6 +86,11 @@ public class EntryFilterDialog extends DialogFragment {
     private EditText mTxtLocation;
     private Button mBtnDateMin;
     private Button mBtnDateMax;
+
+    /**
+     * The currently selected type id
+     */
+    private long mTypeId;
 
     /**
      * Minimum and maximum timestamps
@@ -111,6 +128,11 @@ public class EntryFilterDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mDateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.US);
+
+        if(savedInstanceState != null) {
+            mTypeId = savedInstanceState.getLong(STATE_TYPE, 0);
+        }
+
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.title_filter)
                 .setIcon(R.drawable.ic_filter_list)
@@ -148,6 +170,7 @@ public class EntryFilterDialog extends DialogFragment {
 
         setupEventHandlers(root);
         populateFields();
+        getLoaderManager().initLoader(LOADER_TYPES, null, this);
 
         if(savedInstanceState != null) {
             if(savedInstanceState.containsKey(STATE_DATE_MIN)) {
@@ -177,6 +200,7 @@ public class EntryFilterDialog extends DialogFragment {
         if(mDateMax != null) {
             outState.putLong(STATE_DATE_MAX, mDateMax);
         }
+        outState.putLong(STATE_TYPE, mTypeId);
     }
 
     /**
@@ -185,6 +209,18 @@ public class EntryFilterDialog extends DialogFragment {
      * @param root The layout
      */
     private void setupEventHandlers(View root) {
+        mSpinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mTypeId = id;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                mTypeId = 0;
+            }
+        });
+
         mBtnDateMin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 DateDialog.showDialog(getFragmentManager(), EntryFilterDialog.this,
@@ -222,8 +258,8 @@ public class EntryFilterDialog extends DialogFragment {
         if(args != null) {
             final ContentValues filters = args.getParcelable(ARG_FILTER_VALUES);
             if(filters != null) {
-                if(filters.containsKey(Tables.Entries.TYPE_ID)) {
-                    mSpinnerType.setSelection(filters.getAsInteger(Tables.Entries.TYPE_ID));
+                if(mTypeId == 0 && filters.containsKey(Tables.Entries.TYPE_ID)) {
+                    mTypeId = filters.getAsInteger(Tables.Entries.TYPE_ID);
                 }
                 mTxtMaker.setText(filters.getAsString(Tables.Entries.MAKER));
                 mTxtOrigin.setText(filters.getAsString(Tables.Entries.ORIGIN));
@@ -283,9 +319,9 @@ public class EntryFilterDialog extends DialogFragment {
         final StringBuilder fieldsList = new StringBuilder();
 
         if(mSpinnerType.getSelectedItemPosition() > 0) {
-            filterValues.put(Tables.Entries.TYPE_ID, mSpinnerType.getSelectedItemPosition());
+            filterValues.put(Tables.Entries.TYPE_ID, mSpinnerType.getSelectedItemId());
             where.append(Tables.Entries.TYPE_ID).append(" = ")
-                    .append(mSpinnerType.getSelectedItemPosition()).append(" AND ");
+                    .append(mSpinnerType.getSelectedItemId()).append(" AND ");
             fieldsList.append(getString(R.string.hint_entry_type)).append(", ");
         }
 
@@ -335,6 +371,22 @@ public class EntryFilterDialog extends DialogFragment {
         data.putExtra(EXTRA_SQL_WHERE, where.toString());
         data.putExtra(EXTRA_SQL_ARGS, argList.toArray(new String[argList.size()]));
         data.putExtra(EXTRA_FIELDS_LIST, fieldsList.toString());
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getActivity(), Tables.Types.CONTENT_URI, null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        final EntryTypeAdapter adapter = new EntryTypeAdapter(getActivity(), data);
+        mSpinnerType.setAdapter(adapter);
+        mSpinnerType.setSelection(adapter.getItemIndex(mTypeId));
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
     }
 
     /**
