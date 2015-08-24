@@ -38,6 +38,7 @@
     <string name="button_delete_photo">Remove photo</string>
     <string name="button_skip">Skip</string>
     <string name="button_clear_filter">Remove filters</string>
+    <string name="button_edit_filter">Edit filters</string>
     <string name="button_clear_date">X</string>
     <string name="button_select_file">Select File</string>
     <string name="button_import">Import Selected</string>
@@ -96,6 +97,8 @@
     <string name="title_filter">Filter Entries</string>
     <string name="title_error">Error</string>
     <string name="title_select_file">Select File</string>
+    <string name="title_all_entries">All Entries</string>
+    <string name="title_type_entries">%s Entries</string>
 
     <string name="error_camera">Error: Unable to launch camera</string>
     <string name="error_invalid_file">invalid file name</string>

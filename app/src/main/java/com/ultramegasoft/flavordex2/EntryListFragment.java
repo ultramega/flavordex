@@ -47,6 +47,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     private static final String STATE_SELECTED_ITEM = "selected_item";
     private static final String STATE_SEARCH = "search";
     private static final String STATE_FILTERS = "filters";
+    private static final String STATE_FILTER_TEXT = "filter_text";
     private static final String STATE_WHERE = "where";
     private static final String STATE_WHERE_ARGS = "where_args";
 
@@ -68,6 +69,16 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     private Callbacks mCallbacks = sDummyCallbacks;
 
     /**
+     * The main list toolbar
+     */
+    private Toolbar mToolbar;
+
+    /**
+     * The toolbar for displaying filter settings
+     */
+    private Toolbar mFilterToolbar;
+
+    /**
      * The current activated item. Only used on tablets.
      */
     private long mActivatedItem = -1;
@@ -81,6 +92,11 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
      * Map of filters to populate the filter dialog
      */
     private ContentValues mFilters;
+
+    /**
+     * The list of filter parameters to show the user
+     */
+    private String mFilterText;
 
     /**
      * The where string to use in the database query
@@ -146,16 +162,30 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         final FrameLayout list = (FrameLayout)root.findViewById(R.id.list);
         list.addView(super.onCreateView(inflater, container, savedInstanceState));
 
-        final Toolbar toolbar = (Toolbar)root.findViewById(R.id.toolbar);
-        toolbar.inflateMenu(R.menu.list_menu);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        mToolbar = (Toolbar)root.findViewById(R.id.toolbar);
+        mToolbar.inflateMenu(R.menu.list_menu);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 return onOptionsItemSelected(item);
             }
         });
 
-        setupSearch(toolbar.getMenu().findItem(R.id.menu_search));
+        setupSearch(mToolbar.getMenu().findItem(R.id.menu_search));
+
+        mFilterToolbar = (Toolbar)root.findViewById(R.id.toolbar2);
+        mFilterToolbar.inflateMenu(R.menu.filters_menu);
+        mFilterToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch(item.getItemId()) {
+                    case R.id.menu_clear:
+                        setFilters(null);
+                        return true;
+                }
+                return false;
+            }
+        });
 
         return root;
     }
@@ -168,10 +198,12 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             mActivatedItem = savedInstanceState.getLong(STATE_SELECTED_ITEM, mActivatedItem);
             mSearchQuery = savedInstanceState.getString(STATE_SEARCH);
             mFilters = savedInstanceState.getParcelable(STATE_FILTERS);
+            mFilterText = savedInstanceState.getString(STATE_FILTER_TEXT);
             mWhere = savedInstanceState.getString(STATE_WHERE);
             mWhereArgs = savedInstanceState.getStringArray(STATE_WHERE_ARGS);
         }
 
+        updateFilterToolbar();
         updateEmptyText();
     }
 
@@ -205,6 +237,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         outState.putLong(STATE_SELECTED_ITEM, mActivatedItem);
         outState.putString(STATE_SEARCH, mSearchQuery);
         outState.putParcelable(STATE_FILTERS, mFilters);
+        outState.putString(STATE_FILTER_TEXT, mFilterText);
         outState.putString(STATE_WHERE, mWhere);
         outState.putStringArray(STATE_WHERE_ARGS, mWhereArgs);
     }
@@ -309,13 +342,16 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     private void setFilters(Intent filterData) {
         if(filterData == null) {
             mFilters = null;
+            mFilterText = null;
             mWhere = null;
             mWhereArgs = null;
         } else {
             mFilters = filterData.getParcelableExtra(EntryFilterDialog.EXTRA_FILTER_VALUES);
+            mFilterText = filterData.getStringExtra(EntryFilterDialog.EXTRA_FIELDS_LIST);
             mWhere = filterData.getStringExtra(EntryFilterDialog.EXTRA_SQL_WHERE);
             mWhereArgs = filterData.getStringArrayExtra(EntryFilterDialog.EXTRA_SQL_ARGS);
         }
+        updateFilterToolbar();
         updateEmptyText();
         getLoaderManager().restartLoader(0, null, this);
     }
@@ -331,6 +367,24 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             emptyText = Html.fromHtml(getString(R.string.message_no_data_filter, mSearchQuery));
         }
         setEmptyText(emptyText);
+    }
+
+    /**
+     * Update the state of the filter toolbar
+     */
+    private void updateFilterToolbar() {
+        if(mFilters == null || mFilters.size() == 0) {
+            mToolbar.setTitle(R.string.title_all_entries);
+            mFilterToolbar.setVisibility(View.GONE);
+        } else {
+            if(mFilters.containsKey(Tables.Entries.TYPE)) {
+                mToolbar.setTitle(getString(R.string.title_type_entries, mFilters.get(Tables.Entries.TYPE)));
+            } else {
+                mToolbar.setTitle(R.string.title_all_entries);
+            }
+            mFilterToolbar.setTitle(getString(R.string.message_active_filters, mFilterText));
+            mFilterToolbar.setVisibility(View.VISIBLE);
+        }
     }
 
     /**

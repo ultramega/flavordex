@@ -93,7 +93,7 @@ public class EntryTypeAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return mTypes.get(position);
+        return mTypes.get(position).name;
     }
 
     @Override

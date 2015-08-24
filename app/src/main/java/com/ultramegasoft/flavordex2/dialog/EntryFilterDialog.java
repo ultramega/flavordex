@@ -320,6 +320,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
 
         if(mSpinnerType.getSelectedItemPosition() > 0) {
             filterValues.put(Tables.Entries.TYPE_ID, mSpinnerType.getSelectedItemId());
+            filterValues.put(Tables.Entries.TYPE, mSpinnerType.getSelectedItem().toString());
             where.append(Tables.Entries.TYPE_ID).append(" = ")
                     .append(mSpinnerType.getSelectedItemId()).append(" AND ");
             fieldsList.append(getString(R.string.hint_entry_type)).append(", ");
