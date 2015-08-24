@@ -312,7 +312,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             mWhere = null;
             mWhereArgs = null;
         } else {
-            mFilters = filterData.getParcelableExtra(EntryFilterDialog.ARG_FILTER_VALUES);
+            mFilters = filterData.getParcelableExtra(EntryFilterDialog.EXTRA_FILTER_VALUES);
             mWhere = filterData.getStringExtra(EntryFilterDialog.EXTRA_SQL_WHERE);
             mWhereArgs = filterData.getStringArrayExtra(EntryFilterDialog.EXTRA_SQL_ARGS);
         }

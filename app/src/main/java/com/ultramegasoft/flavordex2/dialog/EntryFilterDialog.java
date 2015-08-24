@@ -54,6 +54,7 @@ public class EntryFilterDialog extends DialogFragment {
     /**
      * Keys for the result data intent
      */
+    public static final String EXTRA_FILTER_VALUES = "filter_values";
     public static final String EXTRA_SQL_WHERE = "where";
     public static final String EXTRA_SQL_ARGS = "args";
     public static final String EXTRA_FIELDS_LIST = "fields_list";
@@ -134,7 +135,8 @@ public class EntryFilterDialog extends DialogFragment {
      * @return The layout
      */
     private View getLayout(Bundle savedInstanceState) {
-        final View root = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_filter_list, null);
+        final LayoutInflater inflater = LayoutInflater.from(getActivity());
+        final View root = inflater.inflate(R.layout.dialog_filter_list, null);
 
         mSpinnerType = (Spinner)root.findViewById(R.id.entry_type);
         mTxtMaker = (EditText)root.findViewById(R.id.maker);
@@ -284,7 +286,7 @@ public class EntryFilterDialog extends DialogFragment {
             filterValues.put(Tables.Entries.TYPE_ID, mSpinnerType.getSelectedItemPosition());
             where.append(Tables.Entries.TYPE_ID).append(" = ")
                     .append(mSpinnerType.getSelectedItemPosition()).append(" AND ");
-            fieldsList.append(getString(R.string.hint_entry_title)).append(", ");
+            fieldsList.append(getString(R.string.hint_entry_type)).append(", ");
         }
 
         if(!TextUtils.isEmpty(mTxtMaker.getText())) {
@@ -329,9 +331,9 @@ public class EntryFilterDialog extends DialogFragment {
             fieldsList.delete(fieldsList.length() - 2, fieldsList.length());
         }
 
-        data.putExtra(ARG_FILTER_VALUES, filterValues);
+        data.putExtra(EXTRA_FILTER_VALUES, filterValues);
         data.putExtra(EXTRA_SQL_WHERE, where.toString());
-        data.putExtra(EXTRA_SQL_ARGS, argList.toArray(new String[0]));
+        data.putExtra(EXTRA_SQL_ARGS, argList.toArray(new String[argList.size()]));
         data.putExtra(EXTRA_FIELDS_LIST, fieldsList.toString());
     }
 
