@@ -163,9 +163,10 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
 
         final boolean showAdd = mMediaMounted;
         menu.findItem(R.id.menu_add_photo).setEnabled(showAdd).setVisible(showAdd);
+        menu.findItem(R.id.menu_select_photo).setEnabled(showAdd);
 
         final boolean showTake = showAdd && mHasCamera;
-        menu.findItem(R.id.menu_take_photo).setEnabled(showTake).setVisible(showTake);
+        menu.findItem(R.id.menu_take_photo).setEnabled(showTake);
     }
 
     @Override
@@ -174,7 +175,7 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
             case R.id.menu_take_photo:
                 takePhoto();
                 return true;
-            case R.id.menu_add_photo:
+            case R.id.menu_select_photo:
                 addPhotoFromGallery();
                 return true;
         }
