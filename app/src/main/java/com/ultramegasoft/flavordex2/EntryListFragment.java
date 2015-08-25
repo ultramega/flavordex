@@ -3,10 +3,12 @@ package com.ultramegasoft.flavordex2;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -50,8 +52,6 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     private static final String STATE_FILTER_TEXT = "filter_text";
     private static final String STATE_WHERE = "where";
     private static final String STATE_WHERE_ARGS = "where_args";
-    private static final String STATE_SORT_FIELD = "sort_field";
-    private static final String STATE_SORT_REVERSED = "sort_reversed";
 
     /**
      * The fields to query from the database
@@ -162,9 +162,12 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             mFilterText = savedInstanceState.getString(STATE_FILTER_TEXT);
             mWhere = savedInstanceState.getString(STATE_WHERE);
             mWhereArgs = savedInstanceState.getStringArray(STATE_WHERE_ARGS);
-            mSortField = savedInstanceState.getString(STATE_SORT_FIELD, mSortField);
-            mSortReversed = savedInstanceState.getBoolean(STATE_SORT_REVERSED, mSortReversed);
         }
+
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(getActivity());
+        mSortField = prefs.getString(FlavordexApp.PREF_LIST_SORT_FIELD, mSortField);
+        mSortReversed = prefs.getBoolean(FlavordexApp.PREF_LIST_SORT_REVERSED, mSortReversed);
     }
 
     @Override
@@ -268,8 +271,6 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         outState.putString(STATE_FILTER_TEXT, mFilterText);
         outState.putString(STATE_WHERE, mWhere);
         outState.putStringArray(STATE_WHERE_ARGS, mWhereArgs);
-        outState.putString(STATE_SORT_FIELD, mSortField);
-        outState.putBoolean(STATE_SORT_REVERSED, mSortReversed);
     }
 
     @Override
@@ -410,6 +411,12 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         }
         mSortField = field;
         getLoaderManager().restartLoader(0, null, this);
+
+        final SharedPreferences.Editor editor = PreferenceManager
+                .getDefaultSharedPreferences(getActivity()).edit();
+        editor.putString(FlavordexApp.PREF_LIST_SORT_FIELD, mSortField);
+        editor.putBoolean(FlavordexApp.PREF_LIST_SORT_REVERSED, mSortReversed);
+        editor.apply();
     }
 
     /**
