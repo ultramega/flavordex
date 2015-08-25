@@ -20,6 +20,10 @@
     <string name="menu_share">Share Entry</string>
     <string name="menu_filter">Filter</string>
     <string name="menu_search">Search</string>
+    <string name="menu_sort">Sort</string>
+    <string name="menu_sort_name">Name</string>
+    <string name="menu_sort_date">Date</string>
+    <string name="menu_sort_rating">Rating</string>
     <string name="menu_xport">Import/Export</string>
 
     <string name="button_add">Add Entry</string>
@@ -27,9 +31,6 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_back">Back</string>
     <string name="button_forward">Forward</string>
-    <string name="button_name">Name</string>
-    <string name="button_date">Date</string>
-    <string name="button_rating">Rating</string>
     <string name="button_prev">Back</string>
     <string name="button_next">Next</string>
     <string name="button_finish">Finish</string>
@@ -95,6 +96,7 @@
     <string name="title_add_notes">Entry Notes</string>
     <string name="title_share">Share via</string>
     <string name="title_filter">Filter Entries</string>
+    <string name="title_sort">Sort by…</string>
     <string name="title_error">Error</string>
     <string name="title_select_file">Select File</string>
     <string name="title_all_entries">All Entries</string>

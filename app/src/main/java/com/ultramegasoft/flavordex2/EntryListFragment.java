@@ -50,6 +50,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     private static final String STATE_FILTER_TEXT = "filter_text";
     private static final String STATE_WHERE = "where";
     private static final String STATE_WHERE_ARGS = "where_args";
+    private static final String STATE_SORT_FIELD = "sort_field";
+    private static final String STATE_SORT_REVERSED = "sort_reversed";
 
     /**
      * The fields to query from the database
@@ -109,6 +111,16 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     private String[] mWhereArgs;
 
     /**
+     * The database column to sort by
+     */
+    private String mSortField = Tables.Entries.TITLE;
+
+    /**
+     * Whether to sort entries in reverse order
+     */
+    private boolean mSortReversed = false;
+
+    /**
      * The adapter for the list
      */
     private EntryListAdapter mAdapter;
@@ -138,6 +150,21 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     };
 
     public EntryListFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState != null) {
+            mActivatedItem = savedInstanceState.getLong(STATE_SELECTED_ITEM, mActivatedItem);
+            mSearchQuery = savedInstanceState.getString(STATE_SEARCH);
+            mFilters = savedInstanceState.getParcelable(STATE_FILTERS);
+            mFilterText = savedInstanceState.getString(STATE_FILTER_TEXT);
+            mWhere = savedInstanceState.getString(STATE_WHERE);
+            mWhereArgs = savedInstanceState.getStringArray(STATE_WHERE_ARGS);
+            mSortField = savedInstanceState.getString(STATE_SORT_FIELD, mSortField);
+            mSortReversed = savedInstanceState.getBoolean(STATE_SORT_REVERSED, mSortReversed);
+        }
     }
 
     @Override
@@ -171,7 +198,17 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             }
         });
 
-        setupSearch(mToolbar.getMenu().findItem(R.id.menu_search));
+        final Menu menu = mToolbar.getMenu();
+        setupSearch(menu.findItem(R.id.menu_search));
+        if(mSortField.equals(Tables.Entries.TITLE)) {
+            menu.findItem(R.id.menu_sort_name).setChecked(true);
+        }
+        if(mSortField.equals(Tables.Entries.DATE)) {
+            menu.findItem(R.id.menu_sort_date).setChecked(true);
+        }
+        if(mSortField.equals(Tables.Entries.RATING)) {
+            menu.findItem(R.id.menu_sort_rating).setChecked(true);
+        }
 
         mFilterToolbar = (Toolbar)root.findViewById(R.id.toolbar2);
         mFilterToolbar.inflateMenu(R.menu.filters_menu);
@@ -193,15 +230,6 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        if(savedInstanceState != null) {
-            mActivatedItem = savedInstanceState.getLong(STATE_SELECTED_ITEM, mActivatedItem);
-            mSearchQuery = savedInstanceState.getString(STATE_SEARCH);
-            mFilters = savedInstanceState.getParcelable(STATE_FILTERS);
-            mFilterText = savedInstanceState.getString(STATE_FILTER_TEXT);
-            mWhere = savedInstanceState.getString(STATE_WHERE);
-            mWhereArgs = savedInstanceState.getStringArray(STATE_WHERE_ARGS);
-        }
 
         updateFilterToolbar();
         updateEmptyText();
@@ -240,6 +268,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         outState.putString(STATE_FILTER_TEXT, mFilterText);
         outState.putString(STATE_WHERE, mWhere);
         outState.putStringArray(STATE_WHERE_ARGS, mWhereArgs);
+        outState.putString(STATE_SORT_FIELD, mSortField);
+        outState.putBoolean(STATE_SORT_REVERSED, mSortReversed);
     }
 
     @Override
@@ -261,6 +291,18 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             case R.id.menu_filter:
                 EntryFilterDialog.showDialog(getFragmentManager(), this, REQUEST_SET_FILTERS,
                         mFilters);
+                return true;
+            case R.id.menu_sort_name:
+                item.setChecked(true);
+                setSort(Tables.Entries.TITLE);
+                return true;
+            case R.id.menu_sort_date:
+                item.setChecked(true);
+                setSort(Tables.Entries.DATE);
+                return true;
+            case R.id.menu_sort_rating:
+                item.setChecked(true);
+                setSort(Tables.Entries.RATING);
                 return true;
             case R.id.menu_add_entry:
                 // TODO: 8/14/2015 Create activity for adding entries
@@ -357,6 +399,20 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     }
 
     /**
+     * Set the field to sort the list by. If the field is the same as the current field, the order
+     * is reversed.
+     *
+     * @param field The name of the database column to sort by
+     */
+    private void setSort(String field) {
+        if(mSortField.equals(field)) {
+            mSortReversed = !mSortReversed;
+        }
+        mSortField = field;
+        getLoaderManager().restartLoader(0, null, this);
+    }
+
+    /**
      * Set the text shown when the list is empty based on any filters that are set.
      */
     private void updateEmptyText() {
@@ -418,7 +474,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         } else {
             uri = Uri.withAppendedPath(Tables.Entries.CONTENT_FILTER_URI_BASE, mSearchQuery);
         }
-        return new CursorLoader(getActivity(), uri, LIST_PROJECTION, mWhere, mWhereArgs, null);
+        final String sort = mSortField + (mSortReversed ? " DESC" : " ASC");
+        return new CursorLoader(getActivity(), uri, LIST_PROJECTION, mWhere, mWhereArgs, sort);
     }
 
     @Override

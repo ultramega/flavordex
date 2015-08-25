@@ -9,11 +9,35 @@
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_search"
         android:title="@string/menu_search"
-        app:showAsAction="ifRoom"
-        app:actionViewClass="android.widget.SearchView" />
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_filter"
         android:icon="@drawable/ic_filter_list"
         android:title="@string/menu_filter"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_sort"
+        android:icon="@drawable/ic_sort"
+        android:title="@string/menu_sort"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:enabled="false"
+                android:title="@string/title_sort" />
+            <group
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/menu_sort_name"
+                    android:title="@string/menu_sort_name" />
+                <item
+                    android:id="@+id/menu_sort_date"
+                    android:title="@string/menu_sort_date" />
+                <item
+                    android:id="@+id/menu_sort_rating"
+                    android:title="@string/menu_sort_rating" />
+
+            </group>
+        </menu>
+    </item>
 </menu>
