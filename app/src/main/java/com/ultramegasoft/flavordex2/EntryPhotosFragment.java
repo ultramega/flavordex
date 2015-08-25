@@ -155,6 +155,7 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.photos_menu, menu);
+        inflater.inflate(R.menu.photo_menu, menu);
     }
 
     @Override
@@ -177,6 +178,9 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
                 return true;
             case R.id.menu_select_photo:
                 addPhotoFromGallery();
+                return true;
+            case R.id.menu_remove_photo:
+                confirmDeletePhoto();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -290,7 +294,7 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
         intent.putExtra(ARG_PHOTO_POSITION, position);
 
         ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_IMAGE,
-                getString(R.string.menu_delete_photo),
+                getString(R.string.menu_remove_photo),
                 getString(R.string.message_confirm_remove_photo), intent);
     }
 

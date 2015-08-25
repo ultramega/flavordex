@@ -12,7 +12,7 @@
     <string name="menu_add_entry">Add Entry</string>
     <string name="menu_edit_entry">Edit Entry</string>
     <string name="menu_delete_entry">Delete Entry</string>
-    <string name="menu_delete_photo">Remove Photo</string>
+    <string name="menu_remove_photo">Remove Photo</string>
     <string name="menu_add_photo">Add Photo</string>
     <string name="menu_select_photo">Select Photo</string>
     <string name="menu_take_photo">Take Photo</string>

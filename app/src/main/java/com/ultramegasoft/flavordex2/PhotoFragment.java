@@ -6,7 +6,6 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.ContextMenu;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -14,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 
 import com.ultramegasoft.flavordex2.util.BitmapCache;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
@@ -25,7 +25,7 @@ import java.lang.ref.WeakReference;
  *
  * @author Steve Guidetti
  */
-public class PhotoFragment extends Fragment {
+public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
     /**
      * Argument for the path to the image file
      */
@@ -60,28 +60,40 @@ public class PhotoFragment extends Fragment {
             new ImageLoader(imageView, Math.min(size.x, size.y)).execute(path);
         }
 
-        registerForContextMenu(imageView);
+        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showMenu(v);
+                return true;
+            }
+        });
 
         return imageView;
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        getActivity().getMenuInflater().inflate(R.menu.photo_menu, menu);
+    /**
+     * Show the popup menu for the photo.
+     *
+     * @param v The view to attach the menu to
+     */
+    private void showMenu(View v) {
+        final PopupMenu popupMenu = new PopupMenu(getActivity(), v);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.inflate(R.menu.photo_menu);
+        popupMenu.show();
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onMenuItemClick(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.menu_delete_photo:
+            case R.id.menu_remove_photo:
                 final EntryPhotosFragment target = (EntryPhotosFragment)getParentFragment();
                 if(target != null) {
                     target.confirmDeletePhoto();
                 }
                 return true;
         }
-        return super.onContextItemSelected(item);
+        return false;
     }
 
     /**
