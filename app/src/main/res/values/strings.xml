@@ -3,7 +3,7 @@
     <string name="app_name" translatable="false">FlavorDex</string>
     <string name="date_format" translatable="false">MMM dd, yyyy</string>
 
-    <string name="type_any">Any Type</string>
+    <string name="type_any">Any Category</string>
     <string name="type_beer">Beer</string>
     <string name="type_wine">Wine</string>
     <string name="type_whiskey">Whiskey</string>
@@ -48,7 +48,7 @@
     <string name="button_select">Select</string>
 
     <string name="hint_entry_title">Name</string>
-    <string name="hint_entry_type">Type</string>
+    <string name="hint_entry_type">Category</string>
     <string name="hint_maker">Maker</string>
     <string name="hint_origin">Origin</string>
     <string name="hint_location">Where are you?</string>
@@ -59,7 +59,7 @@
     <string name="hint_file_name">File Name</string>
 
     <string name="label_name">Name: </string>
-    <string name="label_type">Type: </string>
+    <string name="label_type">Category: </string>
     <string name="label_maker">Maker: </string>
     <string name="label_origin">Origin: </string>
     <string name="label_location">Tasted: </string>
@@ -95,7 +95,7 @@
     <string name="title_add_photos">Add Photos</string>
     <string name="title_add_flavor">Rate Flavors</string>
     <string name="title_add_notes">Entry Notes</string>
-    <string name="title_share">Share via</string>
+    <string name="title_create_type">Create Category</string>
     <string name="title_filter">Filter Entries</string>
     <string name="title_sort">Sort by…</string>
     <string name="title_error">Error</string>
