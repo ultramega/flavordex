@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.EntryInfoFragment;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.provider.Tables;
 
 import java.util.LinkedHashMap;
 
@@ -44,9 +45,9 @@ public class WhiskeyInfoFragment extends EntryInfoFragment {
 
     @Override
     protected void populateExtras(LinkedHashMap<String, String> data) {
-        setViewText(mTxtType, data.get("_style"));
+        setViewText(mTxtType, data.get(Tables.Extras.Whiskey.STYLE));
 
-        mTxtAge.setText(data.get("_stats_age"));
-        mTxtABV.setText(data.get("_stats_abv"));
+        mTxtAge.setText(data.get(Tables.Extras.Whiskey.STATS_AGE));
+        mTxtABV.setText(data.get(Tables.Extras.Whiskey.STATS_ABV));
     }
 }

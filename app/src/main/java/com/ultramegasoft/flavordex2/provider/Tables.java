@@ -106,6 +106,40 @@ public class Tables {
 
         private Extras() {
         }
+
+        public static class Beer {
+            public static final String STYLE = "_style";
+            public static final String SERVING = "_serving";
+            public static final String STATS_IBU = "_stats_ibu";
+            public static final String STATS_ABV = "_stats_abv";
+            public static final String STATS_OG = "_stats_og";
+            public static final String STATS_FG = "_stats_fg";
+        }
+
+        public static class Wine {
+            public static final String VARIETAL = "_varietal";
+            public static final String STATS_VINTAGE = "_stats_vintage";
+            public static final String STATS_ABV = "_stats_abv";
+        }
+
+        public static class Whiskey {
+            public static final String STYLE = "_style";
+            public static final String STATS_AGE = "_stats_age";
+            public static final String STATS_ABV = "_stats_abv";
+        }
+
+        public static class Coffee {
+            public static final String ROASTER = "_roaster";
+            public static final String ROAST_DATE = "_roast_date";
+            public static final String GRIND = "_grind";
+            public static final String BREW_METHOD = "_brew_method";
+            public static final String STATS_DOSE = "_stats_dose";
+            public static final String STATS_MASS = "_stats_mass";
+            public static final String STATS_TEMP = "_stats_temp";
+            public static final String STATS_EXTIME = "_stats_extime";
+            public static final String STATS_TDS = "_stats_tds";
+            public static final String STATS_YIELD = "_stats_yield";
+        }
     }
 
     /**

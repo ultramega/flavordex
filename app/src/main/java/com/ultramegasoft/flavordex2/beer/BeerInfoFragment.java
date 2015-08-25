@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.EntryInfoFragment;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.provider.Tables;
 
 import java.util.LinkedHashMap;
 
@@ -52,9 +53,9 @@ public class BeerInfoFragment extends EntryInfoFragment {
 
     @Override
     protected void populateExtras(LinkedHashMap<String, String> data) {
-        setViewText(mTxtStyle, data.get("_style"));
+        setViewText(mTxtStyle, data.get(Tables.Extras.Beer.STYLE));
 
-        final int servingType = stringToInt(data.get("_serving"));
+        final int servingType = stringToInt(data.get(Tables.Extras.Beer.SERVING));
         if(servingType > 0) {
             final Resources res = getResources();
             final String[] servingTypes = res.getStringArray(R.array.beer_serving_types);
@@ -63,9 +64,9 @@ public class BeerInfoFragment extends EntryInfoFragment {
             mTxtServingType.setText(R.string.hint_empty);
         }
 
-        mTxtIBU.setText(data.get("_stats_ibu"));
-        mTxtABV.setText(data.get("_stats_abv"));
-        mTxtOG.setText(data.get("_stats_og"));
-        mTxtFG.setText(data.get("_stats_fg"));
+        mTxtIBU.setText(data.get(Tables.Extras.Beer.STATS_IBU));
+        mTxtABV.setText(data.get(Tables.Extras.Beer.STATS_ABV));
+        mTxtOG.setText(data.get(Tables.Extras.Beer.STATS_OG));
+        mTxtFG.setText(data.get(Tables.Extras.Beer.STATS_FG));
     }
 }

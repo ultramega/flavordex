@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.EntryInfoFragment;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.provider.Tables;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -69,11 +70,11 @@ public class CoffeeInfoFragment extends EntryInfoFragment {
 
     @Override
     protected void populateExtras(LinkedHashMap<String, String> data) {
-        setViewText(mTxtRoaster, data.get("_roaster"));
-        setViewText(mTxtRoastDate, data.get("_roast_date"));
-        setViewText(mTxtGrind, data.get("_grind"));
+        setViewText(mTxtRoaster, data.get(Tables.Extras.Coffee.ROASTER));
+        setViewText(mTxtRoastDate, data.get(Tables.Extras.Coffee.ROAST_DATE));
+        setViewText(mTxtGrind, data.get(Tables.Extras.Coffee.GRIND));
 
-        final int brewMethod = stringToInt(data.get("_brew_method"));
+        final int brewMethod = stringToInt(data.get(Tables.Extras.Coffee.BREW_METHOD));
         if(brewMethod > 0) {
             final Resources res = getResources();
             final String[] servingTypes = res.getStringArray(R.array.coffee_brew_methods);
@@ -83,11 +84,11 @@ public class CoffeeInfoFragment extends EntryInfoFragment {
             mTxtBrewMethod.setText(R.string.hint_empty);
         }
 
-        setTextWithUnit(mTxtDose, data.get("_stats_dose"), "g");
-        setTextWithUnit(mTxtMass, data.get("_stats_mass"), "g");
+        setTextWithUnit(mTxtDose, data.get(Tables.Extras.Coffee.STATS_DOSE), "g");
+        setTextWithUnit(mTxtMass, data.get(Tables.Extras.Coffee.STATS_MASS), "g");
 
-        final float dose = stringToFloat(data.get("_stats_dose"));
-        final float mass = stringToFloat(data.get("_stats_mass"));
+        final float dose = stringToFloat(data.get(Tables.Extras.Coffee.STATS_DOSE));
+        final float mass = stringToFloat(data.get(Tables.Extras.Coffee.STATS_MASS));
         if(dose > 0 && mass > 0) {
             if(brewMethod == 4) {
                 mTxtRatio.setText(String.format(Locale.US, "%.1f%%", dose / mass * 100));
@@ -98,9 +99,9 @@ public class CoffeeInfoFragment extends EntryInfoFragment {
             mTxtRatio.setText(null);
         }
 
-        setTextWithUnit(mTxtTemp, data.get("_stats_temp"), "°C");
+        setTextWithUnit(mTxtTemp, data.get(Tables.Extras.Coffee.STATS_TEMP), "°C");
 
-        final int extTime = stringToInt(data.get("_stats_extime"));
+        final int extTime = stringToInt(data.get(Tables.Extras.Coffee.STATS_EXTIME));
         if(extTime > 0) {
             final int extTimeM = extTime / 60;
             final int extTimeS = extTime % 60;
@@ -109,8 +110,8 @@ public class CoffeeInfoFragment extends EntryInfoFragment {
             mTxtExtTime.setText(null);
         }
 
-        setTextWithUnit(mTxtTDS, data.get("_stats_tds"), "%");
-        setTextWithUnit(mTxtYield, data.get("_stats_yield"), "%");
+        setTextWithUnit(mTxtTDS, data.get(Tables.Extras.Coffee.STATS_TDS), "%");
+        setTextWithUnit(mTxtYield, data.get(Tables.Extras.Coffee.STATS_YIELD), "%");
     }
 
     private void setIsEspresso(boolean isEspresso) {

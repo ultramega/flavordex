@@ -1,14 +1,14 @@
 package com.ultramegasoft.flavordex2.provider;
 
+import android.content.ContentValues;
 import android.content.Context;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 
 import java.io.InputStream;
-import java.util.Locale;
 import java.util.Scanner;
 
 /**
@@ -27,6 +27,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public static final int DATABASE_VERSION = 1;
 
+    /**
+     * The context
+     */
     private final Context mContext;
 
     public DatabaseHelper(Context context) {
@@ -42,29 +45,114 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL(scanner.next());
         }
 
-        final int[] types = {
-                R.array.beer_flavor_names,
-                R.array.wine_flavor_names,
-                R.array.whiskey_flavor_names,
-                R.array.coffee_flavor_names
-        };
-        for(int i = 0; i < types.length; i++) {
-            final String[] flavors = mContext.getResources().getStringArray(types[i]);
-            for(String flavor : flavors) {
-                final String query = String.format(
-                        Locale.US,
-                        "INSERT INTO flavors (`type`, `name`) VALUES (%d, %s);",
-                        i + 1, DatabaseUtils.sqlEscapeString(flavor)
-                );
-                db.execSQL(query);
-            }
-        }
+        insertBeerPreset(db);
+        insertWinePreset(db);
+        insertWhiskeyPreset(db);
+        insertCoffeePreset(db);
 
         addDummyData(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    }
+
+    /**
+     * Insert a preset entry type.
+     *
+     * @param db        The database
+     * @param name      The internal name of the type
+     * @param extras    List of internal names of the extra fields
+     * @param flavorRes String-array resource id for the list of flavors
+     */
+    private void insertPreset(SQLiteDatabase db, String name, String[] extras, int flavorRes) {
+        ContentValues values = new ContentValues();
+
+        values.put(Tables.Types.NAME, name);
+        values.put(Tables.Types.PRESET, 1);
+        final long id = db.insert(Tables.Types.TABLE_NAME, null, values);
+
+        values.clear();
+        values.put(Tables.Extras.TYPE, id);
+        values.put(Tables.Extras.PRESET, 1);
+        for(String extra : extras) {
+            values.put(Tables.Extras.NAME, extra);
+            db.insert(Tables.Extras.TABLE_NAME, null, values);
+        }
+
+        values.clear();
+        final String[] flavors = mContext.getResources().getStringArray(flavorRes);
+        values.put(Tables.Flavors.TYPE, id);
+        for(String flavor : flavors) {
+            values.put(Tables.Flavors.NAME, flavor);
+            db.insert(Tables.Flavors.TABLE_NAME, null, values);
+        }
+    }
+
+    /**
+     * Insert beer type preset.
+     *
+     * @param db The database
+     */
+    private void insertBeerPreset(SQLiteDatabase db) {
+        final String[] extras = new String[] {
+                Tables.Extras.Beer.STYLE,
+                Tables.Extras.Beer.SERVING,
+                Tables.Extras.Beer.STATS_IBU,
+                Tables.Extras.Beer.STATS_ABV,
+                Tables.Extras.Beer.STATS_OG,
+                Tables.Extras.Beer.STATS_FG
+        };
+        insertPreset(db, FlavordexApp.TYPE_BEER, extras, R.array.beer_flavor_names);
+    }
+
+    /**
+     * Insert wine type preset.
+     *
+     * @param db The database
+     */
+    private void insertWinePreset(SQLiteDatabase db) {
+        final String[] extras = new String[] {
+                Tables.Extras.Wine.VARIETAL,
+                Tables.Extras.Wine.STATS_VINTAGE,
+                Tables.Extras.Wine.STATS_ABV
+        };
+        insertPreset(db, FlavordexApp.TYPE_WINE, extras, R.array.wine_flavor_names);
+    }
+
+    /**
+     * Insert whiskey type preset.
+     *
+     * @param db The database
+     */
+    private void insertWhiskeyPreset(SQLiteDatabase db) {
+        final String[] extras = new String[] {
+                Tables.Extras.Whiskey.STYLE,
+                Tables.Extras.Whiskey.STATS_AGE,
+                Tables.Extras.Whiskey.STATS_ABV
+        };
+        insertPreset(db, FlavordexApp.TYPE_WHISKEY, extras, R.array.whiskey_flavor_names);
+    }
+
+    /**
+     * Insert coffee type preset.
+     *
+     * @param db The database
+     */
+    private void insertCoffeePreset(SQLiteDatabase db) {
+        final String[] extras = new String[] {
+                Tables.Extras.Coffee.ROASTER,
+                Tables.Extras.Coffee.ROAST_DATE,
+                Tables.Extras.Coffee.GRIND,
+                Tables.Extras.Coffee.BREW_METHOD,
+                Tables.Extras.Coffee.STATS_DOSE,
+                Tables.Extras.Coffee.STATS_MASS,
+                Tables.Extras.Coffee.STATS_TEMP,
+                Tables.Extras.Coffee.STATS_EXTIME,
+                Tables.Extras.Coffee.STATS_TDS,
+                Tables.Extras.Coffee.STATS_YIELD
+        };
+        insertPreset(db, FlavordexApp.TYPE_COFFEE, extras, R.array.coffee_flavor_names);
     }
 
     /**

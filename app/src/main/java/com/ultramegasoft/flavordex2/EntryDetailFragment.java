@@ -34,14 +34,6 @@ public class EntryDetailFragment extends Fragment {
     public static final String ARG_ITEM_TYPE = "item_type";
 
     /**
-     * Special item types that have their own interface
-     */
-    private static final String TYPE_BEER = "_beer";
-    private static final String TYPE_WINE = "_wine";
-    private static final String TYPE_WHISKEY = "_whiskey";
-    private static final String TYPE_COFFEE = "_coffee";
-
-    /**
      * The database id for this entry
      */
     private long mEntryId;
@@ -102,16 +94,16 @@ public class EntryDetailFragment extends Fragment {
     private Class<? extends EntryInfoFragment> getEntryInfoClass() {
         final String type = getArguments().getString(ARG_ITEM_TYPE);
 
-        if(TYPE_BEER.equals(type)) {
+        if(FlavordexApp.TYPE_BEER.equals(type)) {
             return BeerInfoFragment.class;
         }
-        if(TYPE_WINE.equals(type)) {
+        if(FlavordexApp.TYPE_WINE.equals(type)) {
             return WineInfoFragment.class;
         }
-        if(TYPE_WHISKEY.equals(type)) {
+        if(FlavordexApp.TYPE_WHISKEY.equals(type)) {
             return WhiskeyInfoFragment.class;
         }
-        if(TYPE_COFFEE.equals(type)) {
+        if(FlavordexApp.TYPE_COFFEE.equals(type)) {
             return CoffeeInfoFragment.class;
         }
 

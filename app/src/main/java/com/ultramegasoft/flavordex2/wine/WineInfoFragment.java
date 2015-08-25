@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.EntryInfoFragment;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.provider.Tables;
 
 import java.util.LinkedHashMap;
 
@@ -44,9 +45,9 @@ public class WineInfoFragment extends EntryInfoFragment {
 
     @Override
     protected void populateExtras(LinkedHashMap<String, String> data) {
-        setViewText(mTxtVarietal, data.get("_varietal"));
+        setViewText(mTxtVarietal, data.get(Tables.Extras.Wine.VARIETAL));
 
-        mTxtVintage.setText(data.get("_stats_vintage"));
-        mTxtABV.setText(data.get("_stats_abv"));
+        mTxtVintage.setText(data.get(Tables.Extras.Wine.STATS_VINTAGE));
+        mTxtABV.setText(data.get(Tables.Extras.Wine.STATS_ABV));
     }
 }

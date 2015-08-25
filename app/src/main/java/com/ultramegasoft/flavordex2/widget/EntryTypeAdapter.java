@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 
@@ -43,10 +44,10 @@ public class EntryTypeAdapter extends BaseAdapter {
      */
     public EntryTypeAdapter(Context context, Cursor cursor) {
         mContext = context;
-        mPresets.put("_beer", context.getString(R.string.type_beer));
-        mPresets.put("_wine", context.getString(R.string.type_wine));
-        mPresets.put("_whiskey", context.getString(R.string.type_whiskey));
-        mPresets.put("_coffee", context.getString(R.string.type_coffee));
+        mPresets.put(FlavordexApp.TYPE_BEER, context.getString(R.string.type_beer));
+        mPresets.put(FlavordexApp.TYPE_WINE, context.getString(R.string.type_wine));
+        mPresets.put(FlavordexApp.TYPE_WHISKEY, context.getString(R.string.type_whiskey));
+        mPresets.put(FlavordexApp.TYPE_COFFEE, context.getString(R.string.type_coffee));
         swapCursor(cursor);
     }
 

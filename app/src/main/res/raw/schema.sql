@@ -34,50 +34,6 @@ CREATE TABLE `extras` (
   `deleted` INTEGER DEFAULT 0
 );
 --
-INSERT INTO `extras` VALUES (1,1,'_style',1,0);
---
-INSERT INTO `extras` VALUES (2,1,'_serving',1,0);
---
-INSERT INTO `extras` VALUES (3,1,'_stats_ibu',1,0);
---
-INSERT INTO `extras` VALUES (4,1,'_stats_abv',1,0);
---
-INSERT INTO `extras` VALUES (5,1,'_stats_og',1,0);
---
-INSERT INTO `extras` VALUES (6,1,'_stats_fg',1,0);
---
-INSERT INTO `extras` VALUES (7,2,'_varietal',1,0);
---
-INSERT INTO `extras` VALUES (8,2,'_stats_vintage',1,0);
---
-INSERT INTO `extras` VALUES (9,2,'_stats_abv',1,0);
---
-INSERT INTO `extras` VALUES (10,3,'_style',1,0);
---
-INSERT INTO `extras` VALUES (11,3,'_stats_age',1,0);
---
-INSERT INTO `extras` VALUES (12,3,'_stats_abv',1,0);
---
-INSERT INTO `extras` VALUES (13,4,'_roaster',1,0);
---
-INSERT INTO `extras` VALUES (14,4,'_roast_date',1,0);
---
-INSERT INTO `extras` VALUES (15,4,'_grind',1,0);
---
-INSERT INTO `extras` VALUES (16,4,'_brew_method',1,0);
---
-INSERT INTO `extras` VALUES (17,4,'_stats_dose',1,0);
---
-INSERT INTO `extras` VALUES (18,4,'_stats_mass',1,0);
---
-INSERT INTO `extras` VALUES (19,4,'_stats_temp',1,0);
---
-INSERT INTO `extras` VALUES (20,4,'_stats_extime',1,0);
---
-INSERT INTO `extras` VALUES (21,4,'_stats_tds',1,0);
---
-INSERT INTO `extras` VALUES (22,4,'_stats_yield',1,0);
---
 CREATE TABLE `flavors` (
   `_id` INTEGER PRIMARY KEY,
   `type` INTEGER,
@@ -112,14 +68,6 @@ CREATE TABLE `types` (
   `name`  TEXT COLLATE NOCASE,
   `preset` INTEGER DEFAULT 0
 );
---
-INSERT INTO `types` VALUES (1,'_beer',1);
---
-INSERT INTO `types` VALUES (2,'_wine',1);
---
-INSERT INTO `types` VALUES (3,'_whiskey',1);
---
-INSERT INTO `types` VALUES (4,'_coffee',1);
 --
 CREATE TRIGGER `delete_entry` AFTER DELETE ON `entries`
 BEGIN
