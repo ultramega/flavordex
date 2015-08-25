@@ -460,7 +460,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
      */
     public void setActivatedPosition(int position) {
         if(position == ListView.INVALID_POSITION) {
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(null);
         } else {
             getListView().setItemChecked(position, true);
         }

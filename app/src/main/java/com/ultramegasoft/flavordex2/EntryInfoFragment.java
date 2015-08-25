@@ -195,7 +195,7 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
      * @param data The cursor set to the correct row
      */
     private void populateViews(Cursor data) {
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mTitle);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(mTitle);
         mTxtTitle.setText(mTitle);
         mRatingBar.setRating(mRating);
 
