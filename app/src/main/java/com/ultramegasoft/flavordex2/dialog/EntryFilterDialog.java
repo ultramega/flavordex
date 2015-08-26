@@ -381,7 +381,9 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        final EntryTypeAdapter adapter = new EntryTypeAdapter(getActivity(), data);
+        final EntryTypeAdapter adapter = new EntryTypeAdapter(getActivity(), data,
+                android.R.layout.simple_dropdown_item_1line, android.R.id.text1);
+        adapter.setHeader(R.string.type_any);
         mSpinnerType.setAdapter(adapter);
         mSpinnerType.setSelection(adapter.getItemIndex(mTypeId));
     }
