@@ -39,16 +39,6 @@ public class EntryTypeAdapter extends BaseAdapter {
     private final int mTextViewId;
 
     /**
-     * Object to show as the first item in the list
-     */
-    private Type mHeader;
-
-    /**
-     * Object to show as the last item in the list
-     */
-    private Type mFooter;
-
-    /**
      * Map of preset types to their display names
      */
     private final HashMap<String, String> mPresets = new HashMap<>();
@@ -78,66 +68,44 @@ public class EntryTypeAdapter extends BaseAdapter {
     }
 
     /**
-     * Set the first item to display in the list.
-     *
-     * @param resId The string resource id for the text to display
-     */
-    public void setHeader(int resId) {
-        setHeader(mContext.getString(resId));
-    }
-
-    /**
-     * Set the first item to display in the list.
-     *
-     * @param header The text to display or null to remove the header
-     */
-    public void setHeader(String header) {
-        updateHeader(new Type(0, header));
-        notifyDataSetChanged();
-    }
-
-    /**
-     * Set the last item to display in the list.
-     *
-     * @param resId The string resource id for the text to display
-     */
-    public void setFooter(int resId) {
-        setFooter(mContext.getString(resId));
-    }
-
-    /**
-     * Set the last item to display in the list.
-     *
-     * @param footer The text to display or null to remove the footer
-     */
-    public void setFooter(String footer) {
-        updateFooter(new Type(0, footer));
-        notifyDataSetChanged();
-    }
-
-    /**
      * Set the cursor backing this adapter.
      *
      * @param newCursor The new cursor
      */
-    public void swapCursor(Cursor newCursor) {
+    public final void swapCursor(Cursor newCursor) {
         mTypes.clear();
 
         if(newCursor != null) {
-            newCursor.moveToPosition(-1);
-            while(newCursor.moveToNext()) {
-                final long id = newCursor.getLong(newCursor.getColumnIndex(Tables.Types._ID));
-                final String name = getRealName(newCursor.getString(newCursor
-                        .getColumnIndex(Tables.Types.NAME)));
-                mTypes.add(new Type(id, name));
-            }
-            Collections.sort(mTypes);
+            readCursor(newCursor, mTypes);
         }
 
-        updateHeader(mHeader);
-        updateFooter(mFooter);
-
         notifyDataSetChanged();
+    }
+
+    /**
+     * Read the new cursor into the array and sort by name.
+     *
+     * @param cursor The cursor
+     * @param types  The array to add data to
+     */
+    protected void readCursor(Cursor cursor, ArrayList<Type> types) {
+        cursor.moveToPosition(-1);
+        while(cursor.moveToNext()) {
+            types.add(readCursorRow(cursor));
+        }
+        Collections.sort(types);
+    }
+
+    /**
+     * Read the current row into a Type object
+     *
+     * @param cursor The cursor
+     * @return A Type read from the database row
+     */
+    protected Type readCursorRow(Cursor cursor) {
+        final long id = cursor.getLong(cursor.getColumnIndex(Tables.Types._ID));
+        final String name = getRealName(cursor.getString(cursor.getColumnIndex(Tables.Types.NAME)));
+        return new Type(id, name);
     }
 
     /**
@@ -147,42 +115,12 @@ public class EntryTypeAdapter extends BaseAdapter {
      * @param name The name from the database
      * @return The display name
      */
-    private String getRealName(String name) {
+    protected final String getRealName(String name) {
         final String realName = mPresets.get(name);
         if(realName != null) {
             return realName;
         }
         return name;
-    }
-
-    /**
-     * Add, remove, or modify the header item.
-     *
-     * @param header The item to show as the first item in the list or null to remove
-     */
-    private void updateHeader(Type header) {
-        if(mHeader != null) {
-            mTypes.remove(mHeader);
-        }
-        if(header != null) {
-            mTypes.add(0, header);
-        }
-        mHeader = header;
-    }
-
-    /**
-     * Add, remove, or modify the footer item.
-     *
-     * @param footer The item to show as the last item in the list or null to remove
-     */
-    private void updateFooter(Type footer) {
-        if(mFooter != null) {
-            mTypes.remove(mFooter);
-        }
-        if(footer != null) {
-            mTypes.add(footer);
-        }
-        mFooter = footer;
     }
 
     @Override
@@ -230,7 +168,7 @@ public class EntryTypeAdapter extends BaseAdapter {
     /**
      * Holder for data about a type which can be compared by name.
      */
-    private static class Type implements Comparable<Type> {
+    public static class Type implements Comparable<Type> {
         /**
          * The database id
          */
