@@ -28,6 +28,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".EntryListActivity" />
         </activity>
+        <activity
+            android:name=".EditTypeActivity"
+            android:label="@string/title_create_type" />
 
         <provider
             android:name=".provider.FlavordexProvider"
