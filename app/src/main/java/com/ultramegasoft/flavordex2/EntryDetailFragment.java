@@ -44,9 +44,7 @@ public class EntryDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments().containsKey(ARG_ITEM_ID)) {
             mEntryId = getArguments().getLong(ARG_ITEM_ID);
-        }
     }
 
     @Override
