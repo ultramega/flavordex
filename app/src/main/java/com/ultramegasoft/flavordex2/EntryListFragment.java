@@ -42,6 +42,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
      * Request codes
      */
     private static final int REQUEST_SET_FILTERS = 100;
+    private static final int REQUEST_ADD_ENTRY = 200;
 
     /**
      * Keys for the saved state
@@ -306,7 +307,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                 setSort(Tables.Entries.RATING);
                 return true;
             case R.id.menu_add_entry:
-                // TODO: 8/14/2015 Create activity for adding entries
+                startActivityForResult(new Intent(getActivity(), AddEntryActivity.class),
+                        REQUEST_ADD_ENTRY);
                 return true;
             case R.id.menu_xport:
                 if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -329,6 +331,13 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             switch(requestCode) {
                 case REQUEST_SET_FILTERS:
                     setFilters(data);
+                    break;
+                case REQUEST_ADD_ENTRY:
+                    final long entryId = data.getLongExtra(AddEntryActivity.EXTRA_ENTRY_ID, 0);
+                    if(entryId > 0) {
+                        setActivatedPosition(mAdapter.getItemIndex(entryId));
+                        mCallbacks.onItemSelected(entryId, mAdapter.getItemType(entryId));
+                    }
                     break;
             }
         }

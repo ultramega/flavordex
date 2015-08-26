@@ -2,14 +2,18 @@ package com.ultramegasoft.flavordex2;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 /**
+ * Activity for editing or creating an entry type.
+ *
  * @author Steve Guidetti
  */
 public class EditTypeActivity extends AppCompatActivity {
+    /**
+     * Intent extra for the type id
+     */
     public static final String EXTRA_TYPE_ID = "type_id";
 
     @Override
@@ -35,7 +39,7 @@ public class EditTypeActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == android.R.id.home) {
-            NavUtils.navigateUpTo(this, new Intent(this, EntryListActivity.class));
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

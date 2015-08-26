@@ -29,6 +29,10 @@
                 android:value=".EntryListActivity" />
         </activity>
         <activity
+            android:name=".AddEntryActivity"
+            android:label="@string/title_add"
+            android:parentActivityName=".EntryListActivity" />
+        <activity
             android:name=".EditTypeActivity"
             android:label="@string/title_create_type" />
 

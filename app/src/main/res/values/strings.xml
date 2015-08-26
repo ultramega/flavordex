@@ -90,12 +90,14 @@
     <string name="pref_summary_detect_location">Autofill location name based on previous entries</string>
 
     <string name="title_add">Add Entry</string>
+    <string name="title_add_type_entry">Add %s Entry</string>
     <string name="title_edit">Edit Entry</string>
     <string name="title_add_entry">Entry Details</string>
     <string name="title_add_photos">Add Photos</string>
     <string name="title_add_flavor">Rate Flavors</string>
     <string name="title_add_notes">Entry Notes</string>
     <string name="title_create_type">Create Category</string>
+    <string name="title_select_type">Select Category</string>
     <string name="title_filter">Filter Entries</string>
     <string name="title_sort">Sort by…</string>
     <string name="title_error">Error</string>
