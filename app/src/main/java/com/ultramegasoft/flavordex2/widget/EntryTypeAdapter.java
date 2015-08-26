@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
@@ -150,7 +151,7 @@ public class EntryTypeAdapter extends BaseAdapter {
                 return i;
             }
         }
-        return -1;
+        return ListView.INVALID_POSITION;
     }
 
     @Override
