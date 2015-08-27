@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="4dp">
+
+        <EditText
+            android:id="@+id/entry_title"
+            style="@style/TextInput.Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_entry_title" />
+
+        <TextView
+            style="@style/SubHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_details" />
+
+        <View style="@style/Divider" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_maker" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/entry_maker"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/hint_maker"
+                    android:imeOptions="actionNext" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_origin" />
+
+                <EditText
+                    android:id="@+id/entry_origin"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/hint_origin" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_location" />
+
+                <EditText
+                    android:id="@+id/entry_location"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/hint_location" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_price" />
+
+                <EditText
+                    android:id="@+id/entry_price"
+                    style="@style/TextInput"
+                    android:hint="@string/hint_price" />
+            </TableRow>
+        </TableLayout>
+
+        <TableLayout
+            android:id="@+id/entry_extras"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/SubHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_extras" />
+
+        </TableLayout>
+
+        <TextView
+            style="@style/SubHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_rating" />
+
+        <View style="@style/Divider" />
+
+        <RatingBar
+            android:id="@+id/entry_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:numStars="5"
+            android:stepSize="0.5" />
+
+        <TextView
+            style="@style/SubHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_notes" />
+
+        <View style="@style/Divider" />
+
+        <EditText
+            android:id="@+id/entry_notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_notes"
+            android:minLines="4" />
+
+        <View style="@style/Divider" />
+    </LinearLayout>
+</ScrollView>

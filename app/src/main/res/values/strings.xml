@@ -65,6 +65,7 @@
     <string name="label_location">Tasted: </string>
     <string name="label_price">Price: </string>
     <string name="label_rating">Rating</string>
+    <string name="label_details">Details</string>
     <string name="label_notes">Notes</string>
     <string name="label_radar">Flavor Radar</string>
     <string name="label_photo">Photo</string>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="4dp">
+
+        <EditText
+            android:id="@+id/entry_title"
+            style="@style/TextInput.Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/beer_hint_entry_title" />
+
+        <TextView
+            style="@style/SubHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_details" />
+
+        <View style="@style/Divider" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/beer_label_style" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/entry_style"
+                    style="@style/TextInput.Name"
+                    android:completionThreshold="1"
+                    android:hint="@string/beer_hint_style"
+                    android:imeOptions="actionNext" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/beer_label_maker" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/entry_maker"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/beer_hint_maker"
+                    android:imeOptions="actionNext" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_origin" />
+
+                <EditText
+                    android:id="@+id/entry_origin"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/hint_origin" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_price" />
+
+                <EditText
+                    android:id="@+id/entry_price"
+                    style="@style/TextInput"
+                    android:hint="@string/hint_price" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/beer_label_served" />
+
+                <Spinner
+                    android:id="@+id/entry_serving_type"
+                    android:entries="@array/beer_serving_types"
+                    android:prompt="@string/beer_hint_serving" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_location" />
+
+                <EditText
+                    android:id="@+id/entry_location"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/hint_location" />
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            style="@style/SubHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/beer_label_stats" />
+
+        <View style="@style/Divider" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1,3">
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/beer_label_ibu" />
+
+                <EditText
+                    android:id="@+id/entry_stats_ibu"
+                    style="@style/TextInput.Stats"
+                    android:hint="@string/beer_hint_ibu"
+                    android:nextFocusDown="@+id/entry_stats_abv"
+                    android:nextFocusForward="@+id/entry_stats_abv" />
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/beer_label_og" />
+
+                <EditText
+                    android:id="@+id/entry_stats_og"
+                    style="@style/TextInput.Stats"
+                    android:hint="@string/beer_hint_og"
+                    android:nextFocusDown="@+id/entry_stats_fg"
+                    android:nextFocusForward="@+id/entry_stats_fg" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/beer_label_abv" />
+
+                <EditText
+                    android:id="@+id/entry_stats_abv"
+                    style="@style/TextInput.Stats"
+                    android:hint="@string/beer_hint_abv"
+                    android:nextFocusDown="@+id/entry_stats_og"
+                    android:nextFocusForward="@+id/entry_stats_og" />
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/beer_label_fg" />
+
+                <EditText
+                    android:id="@+id/entry_stats_fg"
+                    style="@style/TextInput.Stats"
+                    android:hint="@string/beer_hint_fg" />
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            style="@style/SubHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_rating" />
+
+        <View style="@style/Divider" />
+
+        <RatingBar
+            android:id="@+id/entry_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:numStars="5"
+            android:stepSize="0.5" />
+
+        <TextView
+            style="@style/SubHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_notes" />
+
+        <View style="@style/Divider" />
+
+        <EditText
+            android:id="@+id/entry_notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_notes"
+            android:minLines="4" />
+
+        <View style="@style/Divider" />
+    </LinearLayout>
+</ScrollView>
