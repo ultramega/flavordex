@@ -48,7 +48,7 @@
 
                 <TextView
                     style="@style/TableText.Label"
-                    android:text="@string/label_maker" />
+                    android:text="@string/wine_label_maker" />
 
                 <AutoCompleteTextView
                     android:id="@+id/entry_maker"
