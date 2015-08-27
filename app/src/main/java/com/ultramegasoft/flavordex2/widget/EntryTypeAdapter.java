@@ -11,12 +11,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
-import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 /**
  * Adapter for listing entry types in a Spinner.
@@ -40,11 +38,6 @@ public class EntryTypeAdapter extends BaseAdapter {
     private final int mTextViewId;
 
     /**
-     * Map of preset types to their display names
-     */
-    private final HashMap<String, String> mPresets = new HashMap<>();
-
-    /**
      * List of types sorted by display name
      */
     private final ArrayList<Type> mTypes = new ArrayList<>();
@@ -59,11 +52,6 @@ public class EntryTypeAdapter extends BaseAdapter {
         mContext = context;
         mLayoutId = layoutResId;
         mTextViewId = textViewId;
-
-        mPresets.put(FlavordexApp.TYPE_BEER, context.getString(R.string.type_beer));
-        mPresets.put(FlavordexApp.TYPE_WINE, context.getString(R.string.type_wine));
-        mPresets.put(FlavordexApp.TYPE_WHISKEY, context.getString(R.string.type_whiskey));
-        mPresets.put(FlavordexApp.TYPE_COFFEE, context.getString(R.string.type_coffee));
 
         swapCursor(cursor);
     }
@@ -117,11 +105,7 @@ public class EntryTypeAdapter extends BaseAdapter {
      * @return The display name
      */
     protected final String getRealName(String name) {
-        final String realName = mPresets.get(name);
-        if(realName != null) {
-            return realName;
-        }
-        return name;
+        return FlavordexApp.getRealTypeName(mContext, name);
     }
 
     @Override
