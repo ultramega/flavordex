@@ -1,3 +1,5 @@
+INSERT INTO `types` VALUES (5,'Sample',0);
+--
 INSERT INTO `photos` VALUES (1,1,'/sdcard/DCIM/Flavordex/20121114_161713.jpg');
 --
 INSERT INTO `photos` VALUES (2,2,'/sdcard/DCIM/Flavordex/photo.JPG');
@@ -15,6 +17,20 @@ INSERT INTO `makers` VALUES (2,1,'Russian River Brewing Company','Santa Rosa, CA
 INSERT INTO `makers` VALUES (3,2,'Four Vines','Graton, Sonoma County, California');
 --
 INSERT INTO `makers` VALUES (4,4,'','Southern Oromia region, Sidamo');
+--
+INSERT INTO `makers` VALUES (5,5,'Stevo','California');
+--
+INSERT INTO `flavors` VALUES (60,5,'Flavor',0);
+--
+INSERT INTO `flavors` VALUES (61,5,'Fruit',0);
+--
+INSERT INTO `flavors` VALUES (62,5,'Sweet',0);
+--
+INSERT INTO `flavors` VALUES (63,5,'Earth',0);
+--
+INSERT INTO `flavors` VALUES (64,5,'Bitter',0);
+--
+INSERT INTO `flavors` VALUES (65,5,'Linger',0);
 --
 INSERT INTO `entries_flavors` VALUES (1,1,31,3);
 --
@@ -134,6 +150,22 @@ INSERT INTO `entries_flavors` VALUES (58,4,58,1);
 --
 INSERT INTO `entries_flavors` VALUES (59,4,59,3);
 --
+INSERT INTO `entries_flavors` VALUES (60,5,60,3);
+--
+INSERT INTO `entries_flavors` VALUES (61,5,61,2);
+--
+INSERT INTO `entries_flavors` VALUES (62,5,62,4);
+--
+INSERT INTO `entries_flavors` VALUES (63,5,63,5);
+--
+INSERT INTO `entries_flavors` VALUES (64,5,64,3);
+--
+INSERT INTO `entries_flavors` VALUES (65,5,65,4);
+--
+INSERT INTO `extras` VALUES (23,5,'Sample Extra',0,0);
+--
+INSERT INTO `extras` VALUES (24,5,'Extra 2',0,0);
+--
 INSERT INTO `entries_extras` VALUES (1,1,10,'Straight Rye');
 --
 INSERT INTO `entries_extras` VALUES (2,1,11,'10 yrs');
@@ -178,6 +210,10 @@ INSERT INTO `entries_extras` VALUES (21,4,21,'');
 --
 INSERT INTO `entries_extras` VALUES (22,4,22,'');
 --
+INSERT INTO `entries_extras` VALUES (23,5,23,'A Value');
+--
+INSERT INTO `entries_extras` VALUES (24,5,24,'8');
+--
 INSERT INTO `entries` VALUES (1,3,'Jefferson’s Straight Rye Whiskey',1,'Home',1354137274000,'$36/bottle',4.0,'Quick burst of fruit followed by mellow rye spice & dryness, has a grassy linger. There is a certain funk to it that’s VERY subtle, and almost grappa like - very faint and not unpleasant. Makes an above average old fashioned and Manhattan and good neat but not my preferred rye for a session but definitely a dynamic tasting. Chewy linger w/ the grass and leather.');
 --
 INSERT INTO `entries` VALUES (2,1,'Pliney The Elder',2,'Bottleworks',1372219156000,'$5',4.5,'Profoundly balanced given the alcohol content, hops, and light body. All the characteristics of an imperial but the sum is greater than the parts.');
@@ -185,3 +221,5 @@ INSERT INTO `entries` VALUES (2,1,'Pliney The Elder',2,'Bottleworks',13722191560
 INSERT INTO `entries` VALUES (3,2,'2009 Old Vine Cuvee',3,'',1337526402000,'$9',3.5,'Rich & mineral heavy but with a brightness & heat bursting through to prevent it from lingering metallic, instead leaving behind rich, concentrated cherry and pleasant warmth.');
 --
 INSERT INTO `entries` VALUES (4,4,'Ethiopia Gedeo',4,'Herkimer',1337526009000,'$2',4.0,'Strong smell and taste of blueberry, balnced, medum body doesn''t overexpose the dark berry flavor - easy. I like turtles.');
+--
+INSERT INTO `entries` VALUES (5,5,'Sample Entry',5,'Nowhere',1440701993000,'$6',3.0,'This is just a sample...');
