@@ -1,6 +1,7 @@
 package com.ultramegasoft.flavordex2.wine;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ public class WineInfoFragment extends EntryInfoFragment {
     private TextView mTxtVintage;
     private TextView mTxtABV;
 
+    @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
