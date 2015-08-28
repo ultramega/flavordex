@@ -12,6 +12,9 @@ import android.widget.TableRow;
 
 import com.ultramegasoft.flavordex2.AddEntryInfoFragment;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.provider.Tables;
+
+import java.util.HashMap;
 
 /**
  * Fragment for adding details for a new coffee entry.
@@ -78,6 +81,37 @@ public class AddCoffeeInfoFragment extends AddEntryInfoFragment {
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_add_info_coffee;
+    }
+
+    @Override
+    protected void addExtraRow(String name) {
+    }
+
+    @Override
+    protected void readExtras(HashMap<String, String> values) {
+        final int brewMethod = mSpnBrewMethod.getSelectedItemPosition();
+
+        values.put(Tables.Extras.Coffee.ROASTER, mTxtRoaster.getText().toString());
+        values.put(Tables.Extras.Coffee.ROAST_DATE, mTxtRoastDate.getText().toString());
+        values.put(Tables.Extras.Coffee.GRIND, mTxtGrind.getText().toString());
+        values.put(Tables.Extras.Coffee.BREW_METHOD, brewMethod + "");
+
+        values.put(Tables.Extras.Coffee.STATS_DOSE, mTxtDose.getText().toString());
+
+        if(brewMethod == 4) {
+            values.put(Tables.Extras.Coffee.STATS_MASS, mTxtEspMass.getText().toString());
+        } else {
+            values.put(Tables.Extras.Coffee.STATS_MASS, mTxtWaterMass.getText().toString());
+        }
+
+        values.put(Tables.Extras.Coffee.STATS_TEMP, mTxtTemp.getText().toString());
+
+        final int extTimeM = Integer.valueOf(mTxtExtTimeM.getText().toString());
+        final int extTimeS = Integer.valueOf(mTxtExtTimeS.getText().toString());
+        values.put(Tables.Extras.Coffee.STATS_EXTIME, (extTimeM * 60 + extTimeS) + "");
+
+        values.put(Tables.Extras.Coffee.STATS_TDS, mTxtTDS.getText().toString());
+        values.put(Tables.Extras.Coffee.STATS_YIELD, mTxtYield.getText().toString());
     }
 
     /**

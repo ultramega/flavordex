@@ -11,7 +11,10 @@ import android.widget.Spinner;
 
 import com.ultramegasoft.flavordex2.AddEntryInfoFragment;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.SpecialArrayAdapter;
+
+import java.util.HashMap;
 
 /**
  * Fragment for adding details for a new beer entry.
@@ -51,5 +54,19 @@ public class AddBeerInfoFragment extends AddEntryInfoFragment {
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_add_info_beer;
+    }
+
+    @Override
+    protected void addExtraRow(String name) {
+    }
+
+    @Override
+    protected void readExtras(HashMap<String, String> values) {
+        values.put(Tables.Extras.Beer.STYLE, mTxtStyle.getText().toString());
+        values.put(Tables.Extras.Beer.SERVING, mSpnServing.getSelectedItemPosition() + "");
+        values.put(Tables.Extras.Beer.STATS_IBU, mTxtIBU.getText().toString());
+        values.put(Tables.Extras.Beer.STATS_ABV, mTxtABV.getText().toString());
+        values.put(Tables.Extras.Beer.STATS_OG, mTxtOG.getText().toString());
+        values.put(Tables.Extras.Beer.STATS_FG, mTxtFG.getText().toString());
     }
 }

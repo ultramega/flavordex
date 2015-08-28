@@ -12,6 +12,9 @@ import android.widget.EditText;
 
 import com.ultramegasoft.flavordex2.AddEntryInfoFragment;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.provider.Tables;
+
+import java.util.HashMap;
 
 /**
  * Fragment for adding details for a new whiskey entry.
@@ -47,5 +50,16 @@ public class AddWhiskeyInfoFragment extends AddEntryInfoFragment {
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_add_info_whiskey;
+    }
+
+    @Override
+    protected void addExtraRow(String name) {
+    }
+
+    @Override
+    protected void readExtras(HashMap<String, String> values) {
+        values.put(Tables.Extras.Whiskey.STYLE, mTxtType.getText().toString());
+        values.put(Tables.Extras.Whiskey.STATS_AGE, mTxtAge.getText().toString());
+        values.put(Tables.Extras.Whiskey.STATS_ABV, mTxtABV.getText().toString());
     }
 }

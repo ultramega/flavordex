@@ -156,7 +156,13 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
 
         @Override
         public Fragment getItem(int position) {
-            return Fragment.instantiate(getActivity(), mFragments[position]);
+            final Fragment fragment = Fragment.instantiate(getActivity(), mFragments[position]);
+
+            final Bundle args = new Bundle();
+            args.putLong(ARG_TYPE_ID, mTypeId);
+            fragment.setArguments(args);
+
+            return fragment;
         }
 
         @Override

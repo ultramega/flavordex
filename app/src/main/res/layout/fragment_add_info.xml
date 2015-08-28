@@ -26,6 +26,7 @@
         <View style="@style/Divider" />
 
         <TableLayout
+            android:id="@+id/entry_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:stretchColumns="1">
@@ -78,21 +79,6 @@
                     style="@style/TextInput"
                     android:hint="@string/hint_price" />
             </TableRow>
-        </TableLayout>
-
-        <TableLayout
-            android:id="@+id/entry_extras"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="1"
-            android:visibility="gone">
-
-            <TextView
-                style="@style/SubHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/label_extras" />
-
         </TableLayout>
 
         <TextView
