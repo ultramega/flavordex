@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -62,8 +62,8 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onResume() {
+        super.onResume();
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -125,7 +125,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     /**
      * Adapter for the ViewPager
      */
-    private class PagerAdapter extends FragmentStatePagerAdapter {
+    private class PagerAdapter extends FragmentPagerAdapter {
         /**
          * The list of fragments
          */
@@ -156,13 +156,10 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
 
         @Override
         public Fragment getItem(int position) {
-            final Fragment fragment = Fragment.instantiate(getActivity(), mFragments[position]);
-
             final Bundle args = new Bundle();
             args.putLong(ARG_TYPE_ID, mTypeId);
-            fragment.setArguments(args);
 
-            return fragment;
+            return Fragment.instantiate(getActivity(), mFragments[position], args);
         }
 
         @Override
