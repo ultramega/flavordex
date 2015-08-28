@@ -1,10 +1,15 @@
 package com.ultramegasoft.flavordex2;
 
+import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -15,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.ultramegasoft.flavordex2.beer.AddBeerInfoFragment;
 import com.ultramegasoft.flavordex2.coffee.AddCoffeeInfoFragment;
@@ -57,8 +63,18 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mPager = (ViewPager)inflater.inflate(R.layout.fragment_add_entry, container, false);
-        return mPager;
+        final View root = inflater.inflate(R.layout.fragment_add_entry, container, false);
+        mPager = (ViewPager)root.findViewById(R.id.pager);
+
+        final Button saveButton = (Button)root.findViewById(R.id.button_save);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveEntry();
+            }
+        });
+
+        return root;
     }
 
     @Override
@@ -99,6 +115,41 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         }
 
         return AddEntryInfoFragment.class;
+    }
+
+    /**
+     * Insert the new entry into the database.
+     */
+    private void saveEntry() {
+        final FragmentManager fm = getChildFragmentManager();
+        boolean isValid = false;
+        ContentValues entryInfo = null;
+        ContentValues[] entryExtras = null;
+        ContentValues[] entryFlavors = null;
+        ContentValues[] entryPhotos = null;
+        for(Fragment fragment : fm.getFragments()) {
+            if(fragment instanceof AddEntryInfoFragment) {
+                isValid = ((AddEntryInfoFragment)fragment).isValid();
+                if(!isValid) {
+                    break;
+                }
+                entryInfo = ((AddEntryInfoFragment)fragment).getData();
+                entryExtras = ((AddEntryInfoFragment)fragment).getExtras();
+                continue;
+            }
+            if(fragment instanceof AddEntryFlavorsFragment) {
+                entryFlavors = ((AddEntryFlavorsFragment)fragment).getData();
+                continue;
+            }
+            if(fragment instanceof AddEntryPhotosFragment) {
+                entryPhotos = ((AddEntryPhotosFragment)fragment).getData();
+            }
+        }
+
+        if(isValid && entryInfo != null) {
+            new DataSaver(getActivity(), entryInfo, entryExtras, entryFlavors, entryPhotos)
+                    .execute();
+        }
     }
 
     @Override
@@ -165,6 +216,72 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         @Override
         public int getCount() {
             return mFragments.length;
+        }
+    }
+
+    /**
+     * Task for saving a new entry into the database in the background.
+     */
+    private static class DataSaver extends AsyncTask<Void, Void, Long> {
+        /**
+         * The ContentResolver to use for inserting data
+         */
+        private final ContentResolver mResolver;
+
+        /**
+         * Values for the entries table row
+         */
+        private final ContentValues mEntryInfo;
+
+        /**
+         * Values for the entries_extras table rows
+         */
+        private final ContentValues[] mEntryExtras;
+
+        /**
+         * Values for the entries_flavors table rows
+         */
+        private final ContentValues[] mEntryFlavors;
+
+        /**
+         * Values for the photos table rows
+         */
+        private final ContentValues[] mEntryPhotos;
+
+        /**
+         * @param context      The context
+         * @param entryInfo    Values for the entries table row
+         * @param entryExtras  Values for the entries_extras table rows
+         * @param entryFlavors Values for the entries_flavors table rows
+         * @param entryPhotos  Values for the photos table rows
+         */
+        public DataSaver(Context context, ContentValues entryInfo, ContentValues[] entryExtras,
+                         ContentValues[] entryFlavors, ContentValues[] entryPhotos) {
+            mResolver = context.getContentResolver();
+            mEntryInfo = entryInfo;
+            mEntryExtras = entryExtras;
+            mEntryFlavors = entryFlavors;
+            mEntryPhotos = entryPhotos;
+        }
+
+        @Override
+        protected Long doInBackground(Void... params) {
+            final Uri entryUri = mResolver.insert(Tables.Entries.CONTENT_URI, mEntryInfo);
+            if(mEntryExtras != null) {
+                mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "/extras"), mEntryExtras);
+            }
+            if(mEntryFlavors != null) {
+                mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "/flavor"), mEntryFlavors);
+            }
+            if(mEntryPhotos != null) {
+                mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "/photos"), mEntryPhotos);
+            }
+
+            return Long.valueOf(entryUri.getLastPathSegment());
+        }
+
+        @Override
+        protected void onPostExecute(Long entryId) {
         }
     }
 }

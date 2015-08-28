@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2;
 
+import android.content.ContentValues;
 import android.support.v4.app.Fragment;
 
 /**
@@ -10,5 +11,9 @@ import android.support.v4.app.Fragment;
 public class AddEntryPhotosFragment extends Fragment {
 
     public AddEntryPhotosFragment() {
+    }
+
+    public ContentValues[] getData() {
+        return new ContentValues[0];
     }
 }

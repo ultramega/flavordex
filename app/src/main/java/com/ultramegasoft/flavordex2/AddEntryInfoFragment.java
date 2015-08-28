@@ -171,13 +171,24 @@ public class AddEntryInfoFragment extends Fragment implements LoaderManager.Load
     }
 
     /**
+     * Test if the required fields are properly filled out.
+     *
+     * @return Whether the form is valid
+     */
+    public boolean isValid() {
+        return !TextUtils.isEmpty(mTxtTitle.getText().toString());
+    }
+
+    /**
      * Read the primary fields into a ContentValues object ready to be inserted into the entries
      * database table.
      *
      * @return ContentValues containing the data for the entries table
      */
-    protected ContentValues readViews() {
+    public ContentValues getData() {
         final ContentValues values = new ContentValues();
+
+        values.put(Tables.Entries.TYPE, mTypeId);
 
         values.put(Tables.Entries.TITLE, mTxtTitle.getText().toString());
         values.put(Tables.Entries.MAKER, mTxtMaker.getText().toString());
@@ -208,7 +219,7 @@ public class AddEntryInfoFragment extends Fragment implements LoaderManager.Load
      *
      * @return Array of ContentValues containing data for the entries_extras table
      */
-    private ContentValues[] getExtras() {
+    public ContentValues[] getExtras() {
         final HashMap<String, String> fieldValues = new HashMap<>();
         readExtras(fieldValues);
 
