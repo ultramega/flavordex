@@ -335,8 +335,9 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                 case REQUEST_ADD_ENTRY:
                     final long entryId = data.getLongExtra(AddEntryActivity.EXTRA_ENTRY_ID, 0);
                     if(entryId > 0) {
-                        setActivatedPosition(mAdapter.getItemIndex(entryId));
-                        mCallbacks.onItemSelected(entryId, mAdapter.getItemType(entryId));
+                        mActivatedItem = entryId;
+                        mCallbacks.onItemSelected(entryId,
+                                data.getStringExtra(AddEntryActivity.EXTRA_ENTRY_TYPE));
                     }
                     break;
             }

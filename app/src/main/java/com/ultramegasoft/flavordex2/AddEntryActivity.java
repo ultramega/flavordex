@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -16,9 +17,10 @@ public class AddEntryActivity extends AppCompatActivity {
     public static final String EXTRA_TYPE_ID = "type_id";
 
     /**
-     * Intent extra for the resulting entry id to send to the calling activity
+     * Intent extras for the resulting entry to send to the calling activity
      */
     public static final String EXTRA_ENTRY_ID = "entry_id";
+    public static final String EXTRA_ENTRY_TYPE = "entry_type";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,5 +43,19 @@ public class AddEntryActivity extends AppCompatActivity {
                         .commit();
             }
         }
+    }
+
+    /**
+     * Send the id of the new entry to the calling activity.
+     *
+     * @param entryId The id of the newly created entry
+     */
+    public void publishResult(long entryId, String entryType) {
+        final Intent data = new Intent();
+        data.putExtra(EXTRA_ENTRY_ID, entryId);
+        data.putExtra(EXTRA_ENTRY_TYPE, entryType);
+
+        setResult(RESULT_OK, data);
+        finish();
     }
 }
