@@ -22,17 +22,19 @@ public class FlavordexProvider extends ContentProvider {
     private static final int ENTRIES_PHOTOS = 6;
     private static final int TYPES = 7;
     private static final int TYPES_ID = 8;
-    private static final int EXTRAS = 9;
-    private static final int EXTRAS_ID = 10;
-    private static final int FLAVORS = 11;
-    private static final int FLAVORS_ID = 12;
-    private static final int PHOTOS = 13;
-    private static final int PHOTOS_ID = 14;
-    private static final int MAKERS = 15;
-    private static final int MAKERS_ID = 16;
-    private static final int MAKERS_FILTER = 17;
-    private static final int LOCATIONS = 18;
-    private static final int LOCATIONS_ID = 19;
+    private static final int TYPES_EXTRAS = 9;
+    private static final int TYPES_FLAVOR = 10;
+    private static final int EXTRAS = 11;
+    private static final int EXTRAS_ID = 12;
+    private static final int FLAVORS = 13;
+    private static final int FLAVORS_ID = 14;
+    private static final int PHOTOS = 15;
+    private static final int PHOTOS_ID = 16;
+    private static final int MAKERS = 17;
+    private static final int MAKERS_ID = 18;
+    private static final int MAKERS_FILTER = 19;
+    private static final int LOCATIONS = 20;
+    private static final int LOCATIONS_ID = 21;
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -45,6 +47,8 @@ public class FlavordexProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "entries/#/photos", ENTRIES_PHOTOS);
         sUriMatcher.addURI(AUTHORITY, "types", TYPES);
         sUriMatcher.addURI(AUTHORITY, "types/#", TYPES_ID);
+        sUriMatcher.addURI(AUTHORITY, "types/#/extras", TYPES_EXTRAS);
+        sUriMatcher.addURI(AUTHORITY, "types/#/flavor", TYPES_FLAVOR);
         sUriMatcher.addURI(AUTHORITY, "extras", EXTRAS);
         sUriMatcher.addURI(AUTHORITY, "extras/#", EXTRAS_ID);
         sUriMatcher.addURI(AUTHORITY, "flavors", FLAVORS);
@@ -83,11 +87,13 @@ public class FlavordexProvider extends ContentProvider {
                 return Tables.Types.DATA_TYPE_ITEM;
             case EXTRAS:
             case ENTRIES_EXTRAS:
+            case TYPES_EXTRAS:
                 return Tables.Extras.DATA_TYPE;
             case EXTRAS_ID:
                 return Tables.Extras.DATA_TYPE_ITEM;
             case FLAVORS:
             case ENTRIES_FLAVOR:
+            case TYPES_FLAVOR:
                 return Tables.Flavors.DATA_TYPE;
             case FLAVORS_ID:
                 return Tables.Flavors.DATA_TYPE_ITEM;
@@ -142,6 +148,10 @@ public class FlavordexProvider extends ContentProvider {
                 queryBuilder.setTables(Tables.Extras.TABLE_NAME);
                 queryBuilder.appendWhere(Tables.Extras._ID + " = " + uri.getLastPathSegment());
                 break;
+            case TYPES_EXTRAS:
+                queryBuilder.setTables(Tables.Extras.TABLE_NAME);
+                queryBuilder.appendWhere(Tables.Extras.TYPE + " = " + uri.getPathSegments().get(1));
+                break;
             case ENTRIES_EXTRAS:
                 queryBuilder.setTables(Tables.EntriesExtras.VIEW_NAME);
                 queryBuilder.appendWhere(Tables.EntriesExtras.ENTRY + " = "
@@ -153,6 +163,11 @@ public class FlavordexProvider extends ContentProvider {
             case FLAVORS_ID:
                 queryBuilder.setTables(Tables.Flavors.TABLE_NAME);
                 queryBuilder.appendWhere(Tables.Flavors._ID + " = " + uri.getLastPathSegment());
+                break;
+            case TYPES_FLAVOR:
+                queryBuilder.setTables(Tables.Flavors.TABLE_NAME);
+                queryBuilder.appendWhere(Tables.Flavors.TYPE + " = "
+                        + uri.getPathSegments().get(1));
                 break;
             case ENTRIES_FLAVOR:
                 queryBuilder.setTables(Tables.EntriesFlavors.VIEW_NAME);
@@ -222,8 +237,17 @@ public class FlavordexProvider extends ContentProvider {
                 table = Tables.Extras.TABLE_NAME;
                 values.remove(Tables.Extras.PRESET);
                 break;
+            case TYPES_EXTRAS:
+                table = Tables.Extras.TABLE_NAME;
+                values.remove(Tables.Extras.PRESET);
+                values.put(Tables.Extras.TYPE, uri.getPathSegments().get(1));
+                break;
             case FLAVORS:
                 table = Tables.Flavors.TABLE_NAME;
+                break;
+            case TYPES_FLAVOR:
+                table = Tables.Flavors.TABLE_NAME;
+                values.put(Tables.Flavors.TYPE, uri.getPathSegments().get(1));
                 break;
             case ENTRIES_EXTRAS:
                 table = Tables.EntriesExtras.TABLE_NAME;
@@ -312,6 +336,13 @@ public class FlavordexProvider extends ContentProvider {
                 selection = appendWhere(selection,
                         Tables.Extras._ID + " = " + uri.getLastPathSegment());
                 break;
+            case TYPES_EXTRAS:
+                table = Tables.Extras.TABLE_NAME;
+                values.remove(Tables.Extras.PRESET);
+                selection = appendWhere(selection, Tables.Extras.PRESET + " = 0");
+                selection = appendWhere(selection,
+                        Tables.Extras.TYPE + " = " + uri.getPathSegments().get(1));
+                break;
             case ENTRIES_EXTRAS:
                 table = Tables.EntriesExtras.TABLE_NAME;
                 selection = appendWhere(selection,
@@ -324,6 +355,11 @@ public class FlavordexProvider extends ContentProvider {
                 table = Tables.Flavors.TABLE_NAME;
                 selection = appendWhere(selection,
                         Tables.Flavors._ID + " = " + uri.getLastPathSegment());
+                break;
+            case TYPES_FLAVOR:
+                table = Tables.Flavors.TABLE_NAME;
+                selection = appendWhere(selection,
+                        Tables.Flavors.TYPE + " = " + uri.getPathSegments().get(1));
                 break;
             case PHOTOS:
                 table = Tables.Photos.TABLE_NAME;
@@ -394,6 +430,12 @@ public class FlavordexProvider extends ContentProvider {
                 selection = appendWhere(selection,
                         Tables.Extras._ID + " = " + uri.getLastPathSegment());
                 break;
+            case TYPES_EXTRAS:
+                table = Tables.Extras.TABLE_NAME;
+                selection = appendWhere(selection, Tables.Extras.PRESET + " = 0");
+                selection = appendWhere(selection,
+                        Tables.Extras.TYPE + " = " + uri.getPathSegments().get(1));
+                break;
             case ENTRIES_EXTRAS:
                 table = Tables.EntriesExtras.TABLE_NAME;
                 selection = appendWhere(selection,
@@ -406,6 +448,11 @@ public class FlavordexProvider extends ContentProvider {
                 table = Tables.Flavors.TABLE_NAME;
                 selection = appendWhere(selection,
                         Tables.Flavors._ID + " = " + uri.getLastPathSegment());
+                break;
+            case TYPES_FLAVOR:
+                table = Tables.Flavors.TABLE_NAME;
+                selection = appendWhere(selection,
+                        Tables.Flavors.TYPE + " = " + uri.getPathSegments().get(1));
                 break;
             case PHOTOS:
                 table = Tables.Photos.TABLE_NAME;
