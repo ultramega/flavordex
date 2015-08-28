@@ -105,13 +105,29 @@ public class AddCoffeeInfoFragment extends AddEntryInfoFragment {
         }
 
         values.put(Tables.Extras.Coffee.STATS_TEMP, mTxtTemp.getText().toString());
-
-        final int extTimeM = Integer.valueOf(mTxtExtTimeM.getText().toString());
-        final int extTimeS = Integer.valueOf(mTxtExtTimeS.getText().toString());
-        values.put(Tables.Extras.Coffee.STATS_EXTIME, (extTimeM * 60 + extTimeS) + "");
-
+        values.put(Tables.Extras.Coffee.STATS_EXTIME, calculateExtTime() + "");
         values.put(Tables.Extras.Coffee.STATS_TDS, mTxtTDS.getText().toString());
         values.put(Tables.Extras.Coffee.STATS_YIELD, mTxtYield.getText().toString());
+    }
+
+    /**
+     * Calculate the extraction time in seconds from the minute and second fields.
+     *
+     * @return The extraction time in seconds
+     */
+    private int calculateExtTime() {
+        int extTimeM = 0;
+        int extTimeS = 0;
+        try {
+            extTimeM = Integer.parseInt(mTxtExtTimeM.getText().toString());
+        } catch(NumberFormatException ignored) {
+        }
+        try {
+            extTimeS = Integer.parseInt(mTxtExtTimeS.getText().toString());
+        } catch(NumberFormatException ignored) {
+        }
+
+        return extTimeM * 60 + extTimeS;
     }
 
     /**
