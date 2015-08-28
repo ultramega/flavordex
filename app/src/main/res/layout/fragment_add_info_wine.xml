@@ -65,7 +65,7 @@
                     android:text="@string/label_origin" />
 
                 <EditText
-                    android:id="@+id/entry_entry_origin"
+                    android:id="@+id/entry_origin"
                     style="@style/TextInput.Name"
                     android:hint="@string/hint_origin" />
             </TableRow>
