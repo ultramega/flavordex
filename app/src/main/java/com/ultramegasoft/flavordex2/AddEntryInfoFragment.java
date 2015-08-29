@@ -104,6 +104,12 @@ public class AddEntryInfoFragment extends Fragment implements LoaderManager.Load
         return root;
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mTxtTitle.requestFocus();
+    }
+
     /**
      * Get the id for the layout to use.
      *
