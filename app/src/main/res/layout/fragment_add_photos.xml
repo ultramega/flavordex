@@ -8,5 +8,5 @@
     android:gravity="center"
     android:horizontalSpacing="10dp"
     android:numColumns="auto_fit"
-    android:stretchMode="columnWidth"
+    android:stretchMode="none"
     android:verticalSpacing="10dp" />
