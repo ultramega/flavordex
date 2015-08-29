@@ -33,16 +33,45 @@ import java.util.Locale;
  * @author Steve Guidetti
  */
 public class PhotoUtils {
+    /**
+     * The tag to use for logging
+     */
     private static final String TAG = "PhotoUtils";
 
+    /**
+     * The name of the album to store photos taken with the camera
+     */
     private static final String ALBUM_DIR = "Flavordex";
+
+    /**
+     * The prefix for photo file names
+     */
     private static final String JPEG_FILE_PREFIX = "IMG_";
+
+    /**
+     * The extension to use for photo file names
+     */
     private static final String JPEG_FILE_SUFFIX = ".jpg";
+
+    /**
+     * The prefix for cached thumbnails
+     */
     private static final String THUMB_FILE_PREFIX = "thumb_";
 
+    /**
+     * The width and height of thumbnail bitmaps
+     */
     private static final int THUMB_SIZE = 40;
 
+    /**
+     * The shared memory cache for thumbnails
+     */
     private static final BitmapCache sThumbCache = new BitmapCache("thumbs");
+
+    /**
+     * The shared memory cache for full sized photos
+     */
+    private static final BitmapCache sPhotoCache = new BitmapCache("photos");
 
     /**
      * Get an intent to capture a photo.
@@ -74,6 +103,15 @@ public class PhotoUtils {
      */
     public static BitmapCache getThumbCache() {
         return sThumbCache;
+    }
+
+    /**
+     * Get the memory cache for storing full sized images.
+     *
+     * @return The photo cache
+     */
+    public static BitmapCache getPhotoCache() {
+        return sPhotoCache;
     }
 
     /**

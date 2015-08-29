@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.widget.ImageView;
 
-import com.ultramegasoft.flavordex2.util.BitmapCache;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
 import java.lang.ref.WeakReference;
@@ -25,11 +24,13 @@ public abstract class BackgroundThumbLoader<K> {
     private final int NUM_THREADS = 5;
 
     /**
-     * The memory cache for storing thumbnails
+     * Handler for communicating with the main thread
      */
-    private final BitmapCache mBitmapCache = PhotoUtils.getThumbCache();
-
     private final Handler mHandler = new Handler();
+
+    /**
+     * Thread pool to handle loading thumbnails
+     */
     private final ExecutorService mPool = Executors.newFixedThreadPool(NUM_THREADS);
 
     /**
@@ -39,7 +40,7 @@ public abstract class BackgroundThumbLoader<K> {
      * @param key       The key to reference the image in the cache
      */
     public void load(ImageView imageView, K key) {
-        final Bitmap bitmap = mBitmapCache.get(key);
+        final Bitmap bitmap = PhotoUtils.getThumbCache().get(key);
         if(bitmap != null) {
             imageView.setImageBitmap(bitmap);
         } else {
@@ -90,7 +91,7 @@ public abstract class BackgroundThumbLoader<K> {
                 if(drawable instanceof ThumbDrawable
                         && ((ThumbDrawable)drawable).key == mThumb.key) {
                     final Bitmap bitmap = getBitmap(mThumb);
-                    mBitmapCache.put(mThumb.key, bitmap);
+                    PhotoUtils.getThumbCache().put(mThumb.key, bitmap);
                     setBitmap(imageView, bitmap);
                 }
             }
