@@ -189,6 +189,7 @@ public class AddEntryInfoFragment extends Fragment implements LoaderManager.Load
         final ContentValues values = new ContentValues();
 
         values.put(Tables.Entries.TYPE, mTypeId);
+        values.put(Tables.Entries.DATE, System.currentTimeMillis());
 
         values.put(Tables.Entries.TITLE, mTxtTitle.getText().toString());
         values.put(Tables.Entries.MAKER, mTxtMaker.getText().toString());
