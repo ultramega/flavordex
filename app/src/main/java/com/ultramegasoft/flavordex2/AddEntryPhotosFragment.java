@@ -27,6 +27,7 @@ import com.ultramegasoft.flavordex2.widget.ImageLoader;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Fragment for adding photos to a new journal entry.
@@ -92,7 +93,6 @@ public class AddEntryPhotosFragment extends Fragment {
 
         if(savedInstanceState != null) {
             mData = savedInstanceState.getParcelableArrayList(STATE_PHOTOS);
-            mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -231,6 +231,16 @@ public class AddEntryPhotosFragment extends Fragment {
      * Custom adapter for loading images with remove buttons into the GridView.
      */
     private class ImageAdapter extends BaseAdapter {
+        /**
+         * List of reusable views
+         */
+        private final HashMap<String, View> mViews = new HashMap<>();
+
+        @Override
+        public void notifyDataSetChanged() {
+            mViews.clear();
+            super.notifyDataSetChanged();
+        }
 
         @Override
         public int getCount() {
@@ -254,8 +264,14 @@ public class AddEntryPhotosFragment extends Fragment {
                         .inflate(R.layout.photo_grid_item, parent, false);
             }
 
+            final String path = mData.get(position).path;
+
+            if(mViews.containsKey(path)) {
+                return mViews.get(path);
+            }
+
             final ImageView imageView = (ImageView)convertView.findViewById(R.id.image);
-            loadImage(imageView, mData.get(position));
+            loadImage(imageView, path);
 
             convertView.findViewById(R.id.button_remove_photo)
                     .setOnClickListener(new View.OnClickListener() {
@@ -265,21 +281,22 @@ public class AddEntryPhotosFragment extends Fragment {
                         }
                     });
 
+            mViews.put(path, convertView);
             return convertView;
         }
 
         /**
          * Load a bitmap in the background.
          *
-         * @param view  The ImageView to hold the bitmap
-         * @param photo The photo to load
+         * @param view The ImageView to hold the bitmap
+         * @param path The path to the photo to load
          */
-        private void loadImage(ImageView view, PhotoHolder photo) {
-            final Bitmap bitmap = mCache.get(photo.path);
+        private void loadImage(ImageView view, String path) {
+            final Bitmap bitmap = mCache.get(path);
             if(bitmap != null) {
                 view.setImageBitmap(bitmap);
             } else {
-                new ImageLoader(view, 200, 200, photo.path, mCache).execute();
+                new ImageLoader(view, 200, 200, path, mCache).execute();
             }
         }
     }
