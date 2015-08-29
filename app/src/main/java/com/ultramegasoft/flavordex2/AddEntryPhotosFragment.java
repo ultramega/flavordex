@@ -82,16 +82,10 @@ public class AddEntryPhotosFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMediaMounted = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
         if(!mMediaMounted) {
             return;
         }
+        setHasOptionsMenu(true);
 
         mHasCamera = getActivity().getPackageManager()
                 .hasSystemFeature(PackageManager.FEATURE_CAMERA);
@@ -128,12 +122,7 @@ public class AddEntryPhotosFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-
-        final boolean showAdd = mMediaMounted;
-        menu.findItem(R.id.menu_select_photo).setEnabled(showAdd);
-
-        final boolean showTake = showAdd && mHasCamera;
-        menu.findItem(R.id.menu_take_photo).setEnabled(showTake);
+        menu.findItem(R.id.menu_take_photo).setEnabled(mHasCamera);
     }
 
     @Override
