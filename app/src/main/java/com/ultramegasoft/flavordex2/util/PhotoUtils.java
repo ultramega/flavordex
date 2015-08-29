@@ -101,50 +101,28 @@ public class PhotoUtils {
     }
 
     /**
-     * Calculate the final sample size for an image being loaded.
+     * Calculate the sample size for an image being loaded.
      *
      * @param options   Options object containing the original dimensions
-     * @param minLength The minimum width or height
-     * @param maxSize   The maximum number of pixels allowed
+     * @param reqWidth  The requested width of the decoded bitmap
+     * @param reqHeight The requested height of the decoded bitmap
      * @return The final sample size
      */
-    private static int computeSampleSize(Options options, int minLength, int maxSize) {
-        final int initialSize = computeInitialSampleSize(options, minLength, maxSize);
+    private static int calculateInSampleSize(Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
 
-        int roundedSize;
-        if(initialSize <= 8) {
-            roundedSize = 1;
-            while(roundedSize <= initialSize) {
-                roundedSize <<= 1;
+        if(height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            while((halfHeight / inSampleSize) > reqHeight
+                    || (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
             }
-            roundedSize >>= 1;
-        } else {
-            roundedSize = (initialSize - 7) / 8 * 8;
         }
 
-        return roundedSize;
-    }
-
-    /**
-     * Calculate the rough sample size for an image being loaded.
-     *
-     * @param options   Options object containing the original dimensions
-     * @param minLength The minimum width or height
-     * @param maxSize   The maximum number of pixels allowed
-     * @return The rough sample size
-     */
-    private static int computeInitialSampleSize(Options options, int minLength, int maxSize) {
-        final double w = options.outWidth;
-        final double h = options.outHeight;
-
-        int lowerBound = (int)Math.ceil(Math.sqrt(w * h / maxSize));
-        int upperBound = (int)Math.min(Math.floor(w / minLength), Math.floor(h / minLength));
-
-        if(upperBound < lowerBound) {
-            // return the larger one when there is no overlapping zone.
-            return lowerBound;
-        }
-        return upperBound;
+        return inSampleSize;
     }
 
     /**
@@ -187,22 +165,25 @@ public class PhotoUtils {
     /**
      * Load a bitmap from an image file.
      *
-     * @param path  Path to the image file
-     * @param minWH The minimum width or height in pixels
+     * @param path      Path to the image file
+     * @param reqWidth  The requested width of the decoded bitmap
+     * @param reqHeight The requested height of the decoded bitmap
      * @return A bitmap
      */
-    public static Bitmap loadBitmap(String path, int minWH) {
+    public static Bitmap loadBitmap(String path, int reqWidth, int reqHeight) {
         try {
             final Options opts = new BitmapFactory.Options();
             opts.inJustDecodeBounds = true;
             BitmapFactory.decodeFile(path, opts);
 
-            opts.inSampleSize = computeSampleSize(opts, minWH, 3 * 1024 * 1024);
+            opts.inSampleSize = calculateInSampleSize(opts, reqWidth, reqHeight);
             opts.inJustDecodeBounds = false;
-            opts.inDither = false;
 
             final Bitmap bitmap = BitmapFactory.decodeFile(path, opts);
-            return rotatePhoto(path, bitmap);
+            if("image/jpeg".equals(opts.outMimeType)) {
+                return rotatePhoto(path, bitmap);
+            }
+            return bitmap;
         } catch(OutOfMemoryError e) {
             Log.e(TAG, "Out of memory", e);
         }
@@ -244,7 +225,7 @@ public class PhotoUtils {
      * @param id      The id of the entry the image belongs to
      */
     public static void generateThumb(Context context, String path, long id) {
-        final Bitmap inputBitmap = loadBitmap(path, THUMB_SIZE);
+        final Bitmap inputBitmap = loadBitmap(path, THUMB_SIZE, THUMB_SIZE);
 
         if(inputBitmap != null) {
             try {

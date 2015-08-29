@@ -21,9 +21,14 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
     private final WeakReference<ImageView> mImageViewReference;
 
     /**
-     * The minimum width or height of the image
+     * The width of the container
      */
-    private final int mMinWH;
+    private final int mWidth;
+
+    /**
+     * The height of the container
+     */
+    private final int mHeight;
 
     /**
      * The path to the photo file to load from disk
@@ -37,29 +42,32 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
 
     /**
      * @param imageView The ImageView to hold the image
-     * @param minWH     The minimum width or height of the image
+     * @param width     The width of the container
+     * @param height    The height of the container
      * @param path      The path to the photo file to load from disk
      * @param cache     The cache to store loaded bitmaps
      */
-    public ImageLoader(ImageView imageView, int minWH, String path, BitmapCache cache) {
+    public ImageLoader(ImageView imageView, int width, int height, String path, BitmapCache cache) {
         mImageViewReference = new WeakReference<>(imageView);
-        mMinWH = minWH;
+        mWidth = width;
+        mHeight = height;
         mPath = path;
         mCache = cache;
     }
 
     /**
      * @param imageView The ImageView to hold the image
-     * @param minWH     The minimum width or height of the image
+     * @param width     The width of the container
+     * @param height    The height of the container
      * @param path      The path to the photo file to load from disk
      */
-    public ImageLoader(ImageView imageView, int minWH, String path) {
-        this(imageView, minWH, path, null);
+    public ImageLoader(ImageView imageView, int width, int height, String path) {
+        this(imageView, width, height, path, null);
     }
 
     @Override
     protected Bitmap doInBackground(Void... args) {
-        final Bitmap bitmap = PhotoUtils.loadBitmap(mPath, mMinWH);
+        final Bitmap bitmap = PhotoUtils.loadBitmap(mPath, mWidth, mHeight);
         if(mCache != null) {
             mCache.put(mPath, bitmap);
         }

@@ -1,15 +1,12 @@
 package com.ultramegasoft.flavordex2;
 
-import android.content.Context;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 
@@ -39,11 +36,18 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
         final ImageView imageView = new ImageView(getActivity());
         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
-        final Display display = ((WindowManager)getActivity()
-                .getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        final Point size = new Point();
-        display.getSize(size);
-        new ImageLoader(imageView, Math.min(size.x, size.y), path).execute();
+        imageView.getViewTreeObserver()
+                .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        final int width = imageView.getWidth();
+                        final int height = imageView.getHeight();
+                        if(width > 0) {
+                            new ImageLoader(imageView, width, height, path).execute();
+                            imageView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                        }
+                    }
+                });
 
         imageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

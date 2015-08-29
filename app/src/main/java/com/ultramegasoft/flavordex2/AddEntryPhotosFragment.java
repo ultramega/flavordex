@@ -290,7 +290,7 @@ public class AddEntryPhotosFragment extends Fragment {
             if(bitmap != null) {
                 view.setImageBitmap(bitmap);
             } else {
-                new ImageLoader(view, 200, photo.path, mCache).execute();
+                new ImageLoader(view, 200, 200, photo.path, mCache).execute();
             }
         }
     }
