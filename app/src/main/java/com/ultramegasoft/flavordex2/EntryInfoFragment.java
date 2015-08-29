@@ -336,6 +336,9 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
      * @return The float value or 0 if the string is not numeric
      */
     public static float stringToFloat(String string) {
+        if(string == null) {
+            return 0;
+        }
         try {
             return Float.valueOf(string);
         } catch(NumberFormatException e) {
