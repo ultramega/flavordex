@@ -29,14 +29,14 @@ public class FlavordexApp extends Application {
     /**
      * Map of preset type names to string resource ids
      */
-    private static final HashMap<String, Integer> sTypeNameMap = new HashMap<>();
-
-    static {
-        sTypeNameMap.put(TYPE_BEER, R.string.type_beer);
-        sTypeNameMap.put(TYPE_WINE, R.string.type_wine);
-        sTypeNameMap.put(TYPE_WHISKEY, R.string.type_whiskey);
-        sTypeNameMap.put(TYPE_COFFEE, R.string.type_coffee);
-    }
+    private static final HashMap<String, Integer> sTypeNameMap = new HashMap<String, Integer>() {
+        {
+            put(TYPE_BEER, R.string.type_beer);
+            put(TYPE_WINE, R.string.type_wine);
+            put(TYPE_WHISKEY, R.string.type_whiskey);
+            put(TYPE_COFFEE, R.string.type_coffee);
+        }
+    };
 
     /**
      * Get the real display name of an entry type from a raw database name value, translating
