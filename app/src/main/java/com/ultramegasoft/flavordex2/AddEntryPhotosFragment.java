@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.BitmapCache;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import com.ultramegasoft.flavordex2.widget.ImageLoader;
 
@@ -68,6 +69,11 @@ public class AddEntryPhotosFragment extends Fragment {
      * The adapter backing the GridView
      */
     private ImageAdapter mAdapter = new ImageAdapter();
+
+    /**
+     * Memory cache for bitmaps
+     */
+    private final BitmapCache mCache = new BitmapCache();
 
     public AddEntryPhotosFragment() {
     }
@@ -226,7 +232,9 @@ public class AddEntryPhotosFragment extends Fragment {
         if(position < 0 || position >= mData.size()) {
             return;
         }
-        mData.remove(position);
+        final PhotoHolder photo = mData.remove(position);
+        mCache.remove(photo.path);
+
         mAdapter.notifyDataSetChanged();
     }
 
@@ -278,11 +286,11 @@ public class AddEntryPhotosFragment extends Fragment {
          * @param photo The photo to load
          */
         private void loadImage(ImageView view, PhotoHolder photo) {
-            final Bitmap bitmap = PhotoUtils.getPhotoCache().get(photo.path);
+            final Bitmap bitmap = mCache.get(photo.path);
             if(bitmap != null) {
                 view.setImageBitmap(bitmap);
             } else {
-                new ImageLoader(view, 200).execute(photo.path);
+                new ImageLoader(view, 200, photo.path, mCache).execute();
             }
         }
     }

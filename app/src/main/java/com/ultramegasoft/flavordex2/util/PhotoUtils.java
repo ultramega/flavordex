@@ -66,12 +66,7 @@ public class PhotoUtils {
     /**
      * The shared memory cache for thumbnails
      */
-    private static final BitmapCache sThumbCache = new BitmapCache("thumbs");
-
-    /**
-     * The shared memory cache for full sized photos
-     */
-    private static final BitmapCache sPhotoCache = new BitmapCache("photos");
+    private static final BitmapCache sThumbCache = new BitmapCache();
 
     /**
      * Get an intent to capture a photo.
@@ -103,15 +98,6 @@ public class PhotoUtils {
      */
     public static BitmapCache getThumbCache() {
         return sThumbCache;
-    }
-
-    /**
-     * Get the memory cache for storing full sized images.
-     *
-     * @return The photo cache
-     */
-    public static BitmapCache getPhotoCache() {
-        return sPhotoCache;
     }
 
     /**

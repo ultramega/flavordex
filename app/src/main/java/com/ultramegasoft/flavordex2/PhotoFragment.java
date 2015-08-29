@@ -1,7 +1,6 @@
 package com.ultramegasoft.flavordex2;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,7 +13,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 
-import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import com.ultramegasoft.flavordex2.widget.ImageLoader;
 
 /**
@@ -41,16 +39,11 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
         final ImageView imageView = new ImageView(getActivity());
         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
-        final Bitmap bitmap = PhotoUtils.getPhotoCache().get(path);
-        if(bitmap != null) {
-            imageView.setImageBitmap(bitmap);
-        } else {
-            final Display display = ((WindowManager)getActivity()
-                    .getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-            final Point size = new Point();
-            display.getSize(size);
-            new ImageLoader(imageView, Math.min(size.x, size.y)).execute(path);
-        }
+        final Display display = ((WindowManager)getActivity()
+                .getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        final Point size = new Point();
+        display.getSize(size);
+        new ImageLoader(imageView, Math.min(size.x, size.y), path).execute();
 
         imageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

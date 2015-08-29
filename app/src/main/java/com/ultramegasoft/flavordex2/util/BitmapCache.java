@@ -10,37 +10,19 @@ import android.util.LruCache;
  */
 public class BitmapCache {
     /**
-     * The shared memory cache for the application
+     * The memory cache for storing data
      */
-    private static LruCache<String, Bitmap> sCache;
+    private final LruCache<Object, Bitmap> mCache;
 
-    /**
-     * The prefix for keys this cache instance
-     */
-    private final String mPrefix;
-
-    /**
-     * Create the shared memory cache for this application
-     */
-    private static void initCache() {
+    public BitmapCache() {
         final long maxMem = Runtime.getRuntime().maxMemory();
-        final int cacheSize = (int)maxMem / 4;
-        sCache = new LruCache<String, Bitmap>(cacheSize) {
+        final int cacheSize = (int)maxMem / 8;
+        mCache = new LruCache<Object, Bitmap>(cacheSize) {
             @Override
-            protected int sizeOf(String key, Bitmap value) {
-                return value.getRowBytes() * value.getHeight();
+            protected int sizeOf(Object key, Bitmap value) {
+                return value.getByteCount();
             }
         };
-    }
-
-    /**
-     * @param prefix A unique prefix for items in this instance
-     */
-    public BitmapCache(String prefix) {
-        if(sCache == null) {
-            initCache();
-        }
-        mPrefix = prefix;
     }
 
     /**
@@ -53,7 +35,7 @@ public class BitmapCache {
         if(key == null || bitmap == null) {
             return;
         }
-        sCache.put(getRealKey(key), bitmap);
+        mCache.put(key, bitmap);
     }
 
     /**
@@ -63,7 +45,7 @@ public class BitmapCache {
      * @return The bitmap
      */
     public Bitmap get(Object key) {
-        return sCache.get(getRealKey(key));
+        return mCache.get(key);
     }
 
     /**
@@ -72,16 +54,6 @@ public class BitmapCache {
      * @param key The key referencing the item
      */
     public void remove(Object key) {
-        sCache.remove(getRealKey(key));
-    }
-
-    /**
-     * Get the internal key for an item.
-     *
-     * @param key An item's key
-     * @return The key as a string with prefix attached
-     */
-    private String getRealKey(Object key) {
-        return mPrefix + "_" + key.toString();
+        mCache.remove(key);
     }
 }
