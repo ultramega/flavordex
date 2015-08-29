@@ -246,7 +246,7 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
      */
     protected void populateExtras(LinkedHashMap<String, String> data) {
         if(data.size() > 0) {
-            final TableLayout table = (TableLayout)getActivity().findViewById(R.id.entry_extras);
+            final TableLayout table = (TableLayout)getActivity().findViewById(R.id.entry_info);
 
             TableRow tableRow;
             TextView textView;
