@@ -41,6 +41,11 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     public static final String ARG_TYPE_ID = "type_id";
 
     /**
+     * Keys for the saved state
+     */
+    private static final String STATE_CURRENT_PAGE = "current_page";
+
+    /**
      * The type id from the arguments
      */
     private long mTypeId;
@@ -60,11 +65,20 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
      */
     private Button mBtnSave;
 
+    /**
+     * The currently displayed page in the pager
+     */
+    private int mCurrentPage;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTypeId = getArguments().getLong(ARG_TYPE_ID, 0);
         setHasOptionsMenu(true);
+
+        if(savedInstanceState != null) {
+            mCurrentPage = savedInstanceState.getInt(STATE_CURRENT_PAGE);
+        }
     }
 
     @Override
@@ -87,6 +101,18 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     public void onResume() {
         super.onResume();
         getLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mCurrentPage = mPager.getCurrentItem();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(STATE_CURRENT_PAGE, mCurrentPage);
     }
 
     @Override
@@ -181,7 +207,10 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if(data.moveToFirst()) {
             mTypeName = data.getString(data.getColumnIndex(Tables.Types.NAME));
+
             mPager.setAdapter(new PagerAdapter());
+            mPager.setCurrentItem(mCurrentPage);
+
             final String name = FlavordexApp.getRealTypeName(getActivity(), mTypeName);
             final String title = getString(R.string.title_add_type_entry, name);
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(title);
