@@ -44,6 +44,7 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
                         final int height = imageView.getHeight();
                         if(width > 0) {
                             new ImageLoader(imageView, width, height, path).execute();
+                            //noinspection deprecation
                             imageView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                         }
                     }
