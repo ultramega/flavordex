@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -98,6 +99,14 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        final Fragment fragment = getChildFragmentManager().findFragmentById(R.id.pager);
+        if(fragment != null) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     /**
