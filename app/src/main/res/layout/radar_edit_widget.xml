@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<merge
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#AA000000"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="4dp"
-    android:visibility="gone">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,61 +12,66 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/button_turn_left"
+            android:id="@+id/rew_button_back"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="@string/button_back"
-            android:nextFocusLeft="@id/button_turn_left"
+            android:nextFocusLeft="@id/rew_button_back"
             android:src="@drawable/ic_rotate_right" />
 
         <ImageButton
-            android:id="@+id/button_turn_right"
+            android:id="@+id/rew_button_forward"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="@string/button_forward"
-            android:nextFocusRight="@id/button_turn_right"
+            android:nextFocusRight="@id/rew_button_forward"
             android:src="@drawable/ic_rotate_left" />
     </LinearLayout>
 
     <TextView
-        android:id="@+id/flavor_name"
+        android:id="@+id/rew_current_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="#FFFFFFFF"
         android:textSize="32sp" />
 
     <SeekBar
-        android:id="@+id/slider"
+        android:id="@+id/rew_slider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:nextFocusLeft="@id/slider"
-        android:nextFocusRight="@id/slider"
+        android:nextFocusLeft="@id/rew_slider"
+        android:nextFocusRight="@id/rew_slider"
         android:paddingBottom="8dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp" />
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/rew_button_bar"
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/button_cancel"
+            android:id="@+id/rew_button_cancel"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:nextFocusLeft="@id/button_cancel"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:nextFocusLeft="@id/rew_button_cancel"
             android:text="@string/button_cancel" />
 
         <Button
-            android:id="@+id/button_save"
-            android:layout_width="0dp"
+            android:id="@+id/rew_button_save"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:nextFocusRight="@id/button_save"
-            android:text="@string/button_save" />
-    </LinearLayout>
-</LinearLayout>
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:nextFocusRight="@id/rew_button_save"
+            android:text="@string/button_save"
+            tools:ignore="RelativeOverlap" />
+    </RelativeLayout>
+</merge>

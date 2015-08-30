@@ -3,4 +3,9 @@
     <declare-styleable name="RadarView">
         <attr name="labels" format="reference" />
     </declare-styleable>
+    <declare-styleable name="RadarEditWidget">
+        <attr name="showButtonBar" format="boolean" />
+        <attr name="textColor" format="color" />
+        <attr name="textSize" format="dimension" />
+    </declare-styleable>
 </resources>

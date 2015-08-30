@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,10 +12,12 @@
         android:layout_centerHorizontal="true"
         android:visibility="invisible" />
 
-    <ViewStub
-        android:id="@+id/edit_flavors"
+    <com.ultramegasoft.flavordex2.widget.RadarEditWidget
+        android:id="@+id/edit_widget"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout="@layout/edit_flavors" />
+        android:background="#AA000000"
+        android:visibility="gone"
+        app:showButtonBar="true" />
 </RelativeLayout>

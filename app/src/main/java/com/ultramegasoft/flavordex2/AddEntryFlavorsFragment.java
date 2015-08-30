@@ -12,11 +12,9 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.RadarEditWidget;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 import com.ultramegasoft.flavordex2.widget.RadarView;
 
@@ -45,6 +43,7 @@ public class AddEntryFlavorsFragment extends Fragment implements LoaderManager.L
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_add_flavors, container, false);
         mRadarView = (RadarView)root.findViewById(R.id.radar);
+        ((RadarEditWidget)root.findViewById(R.id.edit_widget)).setTarget(mRadarView);
         return root;
     }
 
@@ -54,55 +53,8 @@ public class AddEntryFlavorsFragment extends Fragment implements LoaderManager.L
         if(savedInstanceState == null) {
             getLoaderManager().initLoader(0, null, this);
         } else {
-            setupEditWidget();
             mRadarView.setVisibility(View.VISIBLE);
         }
-    }
-
-    private void setupEditWidget() {
-        final int scale = 100 / mRadarView.getMaxValue();
-
-        final TextView name = (TextView)getActivity().findViewById(R.id.flavor_name);
-
-        final SeekBar slider = (SeekBar)getActivity().findViewById(R.id.slider);
-        slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(fromUser) {
-                    final int value = Math.round(progress / scale);
-                    mRadarView.setSelectedValue(value);
-                }
-            }
-
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-
-        slider.setKeyProgressIncrement(scale);
-
-        final ImageButton btnTurnLeft = (ImageButton)getActivity()
-                .findViewById(R.id.button_turn_left);
-        btnTurnLeft.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mRadarView.turnCW();
-                name.setText(mRadarView.getSelectedName());
-                slider.setProgress(mRadarView.getSelectedValue() * scale);
-            }
-        });
-
-        final ImageButton btnTurnRight = (ImageButton)getActivity()
-                .findViewById(R.id.button_turn_right);
-        btnTurnRight.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mRadarView.turnCCW();
-                name.setText(mRadarView.getSelectedName());
-                slider.setProgress(mRadarView.getSelectedValue() * scale);
-            }
-        });
-
-        name.setText(mRadarView.getSelectedName());
     }
 
     public ContentValues[] getData() {
@@ -141,7 +93,6 @@ public class AddEntryFlavorsFragment extends Fragment implements LoaderManager.L
 
         mRadarView.setData(holders);
         mRadarView.setEditable(true);
-        setupEditWidget();
         mRadarView.setVisibility(View.VISIBLE);
     }
 

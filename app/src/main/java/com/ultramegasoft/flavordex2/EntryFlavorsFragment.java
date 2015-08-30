@@ -1,6 +1,5 @@
 package com.ultramegasoft.flavordex2;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,16 +17,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.RadarEditWidget;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 import com.ultramegasoft.flavordex2.widget.RadarView;
 
@@ -49,9 +43,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
      * The views from the fragment's layout
      */
     private RadarView mRadarView;
-    private LinearLayout mEditWidget;
-    private TextView mTxtEditName;
-    private SeekBar mEditSlider;
+    private RadarEditWidget mEditWidget;
 
     /**
      * Animations for the editing layout
@@ -114,6 +106,20 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
             }
         });
 
+        mEditWidget = (RadarEditWidget)root.findViewById(R.id.edit_widget);
+        mEditWidget.setTarget(mRadarView);
+        mEditWidget.setOnButtonClickListener(new RadarEditWidget.OnButtonClickListener() {
+            @Override
+            public void onSave() {
+                saveData();
+            }
+
+            @Override
+            public void onCancel() {
+                cancelEdit();
+            }
+        });
+
         return root;
     }
 
@@ -128,7 +134,6 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
         super.onDestroyView();
         mRadarView = null;
         mEditWidget = null;
-        mEditSlider = null;
     }
 
     @Override
@@ -161,84 +166,16 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
      * @param animate  Whether to animate the edit interface sliding in
      */
     private void setEditMode(boolean editMode, boolean animate) {
+        if(animate && mInAnimation == null) {
+            mInAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.flavor_edit_in);
+            mOutAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.flavor_edit_out);
+        }
+
         if(editMode) {
-            final int scale = 100 / mRadarView.getMaxValue();
-            if(mEditWidget == null) {
-                final Activity activity = getActivity();
-                final LinearLayout root = (LinearLayout)
-                        ((ViewStub)activity.findViewById(R.id.edit_flavors)).inflate();
-
-                final TextView name = (TextView)root.findViewById(R.id.flavor_name);
-
-                final SeekBar slider = (SeekBar)root.findViewById(R.id.slider);
-                slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        if(fromUser) {
-                            final int value = Math.round(progress / scale);
-                            mRadarView.setSelectedValue(value);
-                        }
-                    }
-
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-                    }
-
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                    }
-                });
-
-                slider.setFocusable(true);
-                slider.setFocusableInTouchMode(true);
-                slider.setKeyProgressIncrement(scale);
-
-                final ImageButton btnTurnLeft = (ImageButton)root
-                        .findViewById(R.id.button_turn_left);
-                btnTurnLeft.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        mRadarView.turnCW();
-                        slider.setProgress(mRadarView.getSelectedValue() * scale);
-                        name.setText(mRadarView.getSelectedName());
-                    }
-                });
-
-                final ImageButton btnTurnRight = (ImageButton)root
-                        .findViewById(R.id.button_turn_right);
-                btnTurnRight.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        mRadarView.turnCCW();
-                        slider.setProgress(mRadarView.getSelectedValue() * scale);
-                        name.setText(mRadarView.getSelectedName());
-                    }
-                });
-
-                final Button btnSave = (Button)root.findViewById(R.id.button_save);
-                btnSave.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        saveData();
-                    }
-                });
-
-                final Button btnCancel = (Button)root.findViewById(R.id.button_cancel);
-                btnCancel.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        cancelEdit();
-                    }
-                });
-
-                mEditWidget = root;
-                mTxtEditName = name;
-                mEditSlider = slider;
-
-                mInAnimation = AnimationUtils.loadAnimation(activity, R.anim.flavor_edit_in);
-                mOutAnimation = AnimationUtils.loadAnimation(activity, R.anim.flavor_edit_out);
-            }
-
-            mTxtEditName.setText(mRadarView.getSelectedName());
-            mEditSlider.setProgress(mRadarView.getSelectedValue() * scale);
             mEditWidget.setVisibility(View.VISIBLE);
             if(animate) {
                 mEditWidget.startAnimation(mInAnimation);
             }
-            mEditSlider.requestFocus();
         } else {
             if(mEditWidget != null) {
                 if(animate) {

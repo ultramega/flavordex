@@ -11,58 +11,11 @@
         android:layout_centerHorizontal="true"
         android:visibility="invisible" />
 
-    <LinearLayout
+    <com.ultramegasoft.flavordex2.widget.RadarEditWidget
+        android:id="@+id/edit_widget"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#AA000000"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="4dp">
+        android:background="#AA000000" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/button_turn_left"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:contentDescription="@string/button_back"
-                android:nextFocusLeft="@id/button_turn_left"
-                android:src="@drawable/ic_rotate_right" />
-
-            <ImageButton
-                android:id="@+id/button_turn_right"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:contentDescription="@string/button_forward"
-                android:nextFocusRight="@id/button_turn_right"
-                android:src="@drawable/ic_rotate_left" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/flavor_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="#FFFFFFFF"
-            android:textSize="32sp" />
-
-        <SeekBar
-            android:id="@+id/slider"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:nextFocusLeft="@id/slider"
-            android:nextFocusRight="@id/slider"
-            android:paddingBottom="8dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:progress="50" />
-    </LinearLayout>
 </RelativeLayout>
