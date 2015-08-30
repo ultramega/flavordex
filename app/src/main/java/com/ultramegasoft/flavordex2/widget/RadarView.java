@@ -141,6 +141,54 @@ public class RadarView extends View {
      */
     private boolean mIsAnimating;
 
+    /**
+     * List of listeners added to this instance
+     */
+    private final ArrayList<RadarViewListener> mListeners = new ArrayList<>();
+
+    /**
+     * Interface for objects to listen for changes to RadarViews
+     */
+    public interface RadarViewListener {
+        /**
+         * Called when the data is changed.
+         *
+         * @param newData The new data
+         */
+        void onDataChanged(ArrayList<RadarHolder> newData);
+
+        /**
+         * Called when the selected item index is changed.
+         *
+         * @param index The index of the selected item
+         * @param id    The id of the selected item
+         * @param name  The name of the selected item
+         * @param value The value of the selected item
+         */
+        void onSelectedItemChanged(int index, long id, String name, int value);
+
+        /**
+         * Called when the value of the selected item is changed.
+         *
+         * @param newValue The new value of the selected item
+         */
+        void onSelectedValueChanged(int newValue);
+
+        /**
+         * Called when the maximum item value is changed.
+         *
+         * @param maxValue The new maximum value
+         */
+        void onMaxValueChanged(int maxValue);
+
+        /**
+         * Called when the editable status is changed.
+         *
+         * @param editable Whether the RadarView is editable
+         */
+        void onEditableChanged(boolean editable);
+    }
+
     public RadarView(Context context) {
         this(context, null, 0);
     }
@@ -221,6 +269,27 @@ public class RadarView extends View {
     }
 
     /**
+     * Add a RadarViewListener to this RadarView.
+     *
+     * @param listener A RadarViewListener
+     */
+    public void addRadarViewListener(RadarViewListener listener) {
+        if(listener == null) {
+            return;
+        }
+        mListeners.add(listener);
+    }
+
+    /**
+     * Remove a RadarViewListener from this RadarView.
+     *
+     * @param listener A RadarViewListener
+     */
+    public void removeRadarViewListener(RadarViewListener listener) {
+        mListeners.remove(listener);
+    }
+
+    /**
      * Get the maximum value any data point can have.
      *
      * @return The maximum value
@@ -235,7 +304,12 @@ public class RadarView extends View {
      * @param maxValue The maximum value
      */
     public void setMaxValue(int maxValue) {
+        if(mMaxValue == maxValue) {
+            return;
+        }
+
         mMaxValue = Math.max(0, maxValue);
+        onMaxValueChanged(maxValue);
         mCalculated = false;
         invalidate();
     }
@@ -282,6 +356,7 @@ public class RadarView extends View {
             mData = null;
         }
 
+        onDataChanged(data);
         mCalculated = false;
         invalidate();
     }
@@ -301,6 +376,10 @@ public class RadarView extends View {
      * @param editable True to enable edit mode
      */
     public void setEditable(boolean editable) {
+        if(mEditable == editable) {
+            return;
+        }
+
         if(editable && hasData()) {
             mFgPaint.setColor(COLOR_POLYGON_EDITABLE);
             mFgPaint.setStrokeWidth(4);
@@ -325,6 +404,7 @@ public class RadarView extends View {
             mEditable = false;
         }
 
+        onEditableChanged(editable);
         invalidate();
     }
 
@@ -340,6 +420,7 @@ public class RadarView extends View {
         } else {
             mSelected++;
         }
+        onSelectedItemChanged();
         turn();
     }
 
@@ -355,6 +436,7 @@ public class RadarView extends View {
         } else {
             mSelected--;
         }
+        onSelectedItemChanged();
         turn();
     }
 
@@ -371,6 +453,7 @@ public class RadarView extends View {
             return;
         }
         mSelected = key;
+        onSelectedItemChanged();
         turn();
     }
 
@@ -419,6 +502,7 @@ public class RadarView extends View {
         value = Math.max(0, value);
         value = Math.min(mMaxValue, value);
         mData.get(mSelected).value = value;
+        onSelectedValueChanged(value);
         invalidate();
     }
 
@@ -427,6 +511,60 @@ public class RadarView extends View {
      */
     private void turn() {
         mAnimationQueue.animateOffset(Math.PI / mData.size() * 2 * mSelected);
+    }
+
+    /**
+     * Notify all listeners that the data has changed.
+     *
+     * @param newData Te new data
+     */
+    private void onDataChanged(ArrayList<RadarHolder> newData) {
+        for(RadarViewListener listener : mListeners) {
+            listener.onDataChanged(newData);
+        }
+    }
+
+    /**
+     * Notify all listeners that the selected item index has changed.
+     */
+    private void onSelectedItemChanged() {
+        final RadarHolder item = mData.get(mSelected);
+        for(RadarViewListener listener : mListeners) {
+            listener.onSelectedItemChanged(mSelected, item.id, item.name, item.value);
+        }
+    }
+
+    /**
+     * Notify all listeners that the value of the selected item has changed.
+     *
+     * @param newValue The new value of the selected item
+     */
+    private void onSelectedValueChanged(int newValue) {
+        for(RadarViewListener listener : mListeners) {
+            listener.onSelectedValueChanged(newValue);
+        }
+    }
+
+    /**
+     * Notify all listeners that the maximum item value has changed.
+     *
+     * @param maxValue The new maximum value
+     */
+    private void onMaxValueChanged(int maxValue) {
+        for(RadarViewListener listener : mListeners) {
+            listener.onMaxValueChanged(maxValue);
+        }
+    }
+
+    /**
+     * Notify all listeners that the editable status has changed.
+     *
+     * @param editable The new editable status
+     */
+    private void onEditableChanged(boolean editable) {
+        for(RadarViewListener listener : mListeners) {
+            listener.onEditableChanged(editable);
+        }
     }
 
     @Override
