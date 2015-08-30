@@ -26,9 +26,15 @@ import java.util.ArrayList;
  * @author Steve Guidetti
  */
 public class AddEntryFlavorsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * The views from the layout
+     */
     private RadarView mRadarView;
 
-    private long mEntryId;
+    /**
+     * The type id for the entry being added
+     */
+    private long mTypeId;
 
     public AddEntryFlavorsFragment() {
     }
@@ -36,7 +42,7 @@ public class AddEntryFlavorsFragment extends Fragment implements LoaderManager.L
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mEntryId = getArguments().getLong(AddEntryFragment.ARG_TYPE_ID);
+        mTypeId = getArguments().getLong(AddEntryFragment.ARG_TYPE_ID);
     }
 
     @Override
@@ -57,6 +63,12 @@ public class AddEntryFlavorsFragment extends Fragment implements LoaderManager.L
         }
     }
 
+    /**
+     * Get the from the RadarView as an array of ContentValues objects ready to be bulk inserted
+     * into the entries_flavors database table.
+     *
+     * @return Array of ContentValues containing the data for the entries_flavors table
+     */
     public ContentValues[] getData() {
         final ArrayList<ContentValues> data = new ArrayList<>();
         final ArrayList<RadarHolder> radarHolders = mRadarView.getData();
@@ -75,7 +87,7 @@ public class AddEntryFlavorsFragment extends Fragment implements LoaderManager.L
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final Uri uri = ContentUris.withAppendedId(Tables.Types.CONTENT_ID_URI_BASE, mEntryId);
+        final Uri uri = ContentUris.withAppendedId(Tables.Types.CONTENT_ID_URI_BASE, mTypeId);
         return new CursorLoader(getActivity(), Uri.withAppendedPath(uri, "flavor"), null, null,
                 null, Tables.Flavors._ID + " ASC");
     }

@@ -139,10 +139,10 @@ public class AddEntryPhotosFragment extends Fragment {
     }
 
     /**
-     * Read the photo data into a ContentValues object ready to be inserted into the photos database
-     * table.
+     * Get the photos data as an array of ContentValues objects ready to be bulk inserted into the
+     * photos database table.
      *
-     * @return ContentValues containing the data for the photos table
+     * @return Array of ContentValues containing the data for the photos table
      */
     public ContentValues[] getData() {
         final ArrayList<ContentValues> values = new ArrayList<>(mData.size());
