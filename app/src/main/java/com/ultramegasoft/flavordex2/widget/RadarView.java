@@ -1,6 +1,8 @@
 package com.ultramegasoft.flavordex2.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -12,6 +14,8 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.ultramegasoft.flavordex2.R;
 
 import java.util.ArrayList;
 
@@ -33,48 +37,13 @@ public class RadarView extends View {
     private static final String STATE_EDITABLE = "editable";
 
     /**
-     * Static color values
+     * Default color values
      */
     private static final int COLOR_CIRCLE = 0xffcccccc;
     private static final int COLOR_SELECTED = 0xffefac1d;
     private static final int COLOR_LABEL = 0xffffffff;
     private static final int COLOR_POLYGON = 0xdd0066ff;
-    private static final int COLOR_POLYGON_EDITABLE = 0xddff66ff;
-
-    /**
-     * Static paints
-     */
-    private static final Paint sCirclePaint;
-    private static final Paint sOuterCirclePaint;
-    private static final Paint sLinePaint;
-    private static final Paint sSelectedLinePaint;
-    private static final Paint sLabelPaint;
-    private static final Paint sSelectedLabelPaint;
-
-    static {
-        sCirclePaint = new Paint();
-        sCirclePaint.setStyle(Paint.Style.STROKE);
-        sCirclePaint.setStrokeWidth(2);
-        sCirclePaint.setColor(COLOR_CIRCLE);
-        sCirclePaint.setAntiAlias(true);
-
-        sOuterCirclePaint = new Paint(sCirclePaint);
-        sOuterCirclePaint.setStrokeWidth(3);
-
-        sLinePaint = new Paint(sCirclePaint);
-        sLinePaint.setStrokeWidth(1);
-
-        sSelectedLinePaint = new Paint(sLinePaint);
-        sSelectedLinePaint.setColor(COLOR_SELECTED);
-        sSelectedLinePaint.setStrokeWidth(3);
-
-        sLabelPaint = new Paint();
-        sLabelPaint.setColor(COLOR_LABEL);
-        sLabelPaint.setAntiAlias(true);
-
-        sSelectedLabelPaint = new Paint(sLabelPaint);
-        sSelectedLabelPaint.setColor(COLOR_SELECTED);
-    }
+    private static final int COLOR_POLYGON_INTERACTIVE = 0xddff66ff;
 
     /**
      * The maximum value any data point can have
@@ -122,14 +91,49 @@ public class RadarView extends View {
     private boolean mInteractive;
 
     /**
-     * Paint used for drawing the polygon representing the data values
+     * Paint used for drawing the circles
      */
-    private Paint mFgPaint;
+    private final Paint mCirclePaint;
+
+    /**
+     * Paint used for drawing the outer circle
+     */
+    private final Paint mOuterCirclePaint;
 
     /**
      * Paint used for drawing the center point
      */
-    private Paint mCenterPaint;
+    private final Paint mCenterPaint;
+
+    /**
+     * Paint used for drawing the lines
+     */
+    private final Paint mLinePaint;
+
+    /**
+     * Paint used for drawing the line for the selected item
+     */
+    private final Paint mSelectedLinePaint;
+
+    /**
+     * Paint used for drawing the labels
+     */
+    private final Paint mLabelPaint;
+
+    /**
+     * Paint used for drawing the label for the selected item
+     */
+    private final Paint mSelectedLabelPaint;
+
+    /**
+     * Paint used for drawing the polygon representing the data values
+     */
+    private final Paint mPolygonPaint;
+
+    /**
+     * Paint used for drawing the polygon representing the data values while in interactive mode
+     */
+    private final Paint mPolygonInteractivePaint;
 
     /**
      * Used to animate the chart in edit mode
@@ -199,15 +203,52 @@ public class RadarView extends View {
 
     public RadarView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mFgPaint = new Paint(sLinePaint);
-        mFgPaint.setColor(COLOR_POLYGON);
-        mFgPaint.setStyle(Paint.Style.STROKE);
-        mFgPaint.setStrokeWidth(5);
-        mFgPaint.setStrokeJoin(Paint.Join.ROUND);
+
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RadarView);
+        final int labelColor = a.getColor(R.styleable.RadarView_labelColor, COLOR_LABEL);
+        final int circleColor = a.getColor(R.styleable.RadarView_circleColor, COLOR_CIRCLE);
+        final int selectedColor = a.getColor(R.styleable.RadarView_selectedColor, COLOR_SELECTED);
+        final int polygonColor = a.getColor(R.styleable.RadarView_polygonColor, COLOR_POLYGON);
+        final int polygonColorInteractive = a.getColor(
+                R.styleable.RadarView_polygonColorInteractive, COLOR_POLYGON_INTERACTIVE);
+        a.recycle();
+
+        mCirclePaint = new Paint();
+        mCirclePaint.setStyle(Paint.Style.STROKE);
+        mCirclePaint.setStrokeWidth(2);
+        mCirclePaint.setColor(circleColor);
+        mCirclePaint.setAntiAlias(true);
+
+        mOuterCirclePaint = new Paint(mCirclePaint);
+        mOuterCirclePaint.setStrokeWidth(3);
 
         mCenterPaint = new Paint();
-        mCenterPaint.setColor(COLOR_CIRCLE);
+        mCenterPaint.setColor(circleColor);
         mCenterPaint.setAntiAlias(true);
+
+        mLinePaint = new Paint(mCirclePaint);
+        mLinePaint.setStrokeWidth(1);
+
+        mSelectedLinePaint = new Paint(mLinePaint);
+        mSelectedLinePaint.setColor(selectedColor);
+        mSelectedLinePaint.setStrokeWidth(3);
+
+        mLabelPaint = new Paint();
+        mLabelPaint.setColor(labelColor);
+        mLabelPaint.setAntiAlias(true);
+
+        mSelectedLabelPaint = new Paint(mLabelPaint);
+        mSelectedLabelPaint.setColor(selectedColor);
+
+        mPolygonPaint = new Paint(mLinePaint);
+        mPolygonPaint.setColor(polygonColor);
+        mPolygonPaint.setStyle(Paint.Style.STROKE);
+        mPolygonPaint.setStrokeWidth(5);
+        mPolygonPaint.setStrokeJoin(Paint.Join.ROUND);
+
+        mPolygonInteractivePaint = new Paint(mPolygonPaint);
+        mPolygonInteractivePaint.setStrokeWidth(4);
+        mPolygonInteractivePaint.setColor(polygonColorInteractive);
     }
 
     /**
@@ -215,19 +256,19 @@ public class RadarView extends View {
      */
     private void calculatePoints() {
         mCenter = getWidth() / 2;
-        sLabelPaint.setTextSize(mCenter / 12);
-        sSelectedLabelPaint.setTextSize(mCenter / 8);
+        mLabelPaint.setTextSize(mCenter / 12);
+        mSelectedLabelPaint.setTextSize(mCenter / 8);
 
         // calculate padding based on widest label
         final Rect bounds = new Rect();
 
-        sLabelPaint.getTextBounds("A", 0, 1, bounds);
+        mLabelPaint.getTextBounds("A", 0, 1, bounds);
         int vPadding = bounds.bottom - bounds.top;
         int hPadding = vPadding;
 
         if(mData != null) {
             for(RadarHolder item : mData) {
-                sLabelPaint.getTextBounds(item.name, 0, item.name.length(), bounds);
+                mLabelPaint.getTextBounds(item.name, 0, item.name.length(), bounds);
                 int width = bounds.right - bounds.left;
                 if(width > hPadding) {
                     hPadding = width;
@@ -287,6 +328,103 @@ public class RadarView extends View {
      */
     public void removeRadarViewListener(RadarViewListener listener) {
         mListeners.remove(listener);
+    }
+
+    /**
+     * Set the color used for the labels.
+     *
+     * @param color The color hex value
+     */
+    public void setLabelColor(int color) {
+        mLabelPaint.setColor(color);
+    }
+
+    /**
+     * Set the color used for the labels.
+     *
+     * @return The color hex value
+     */
+    public int getLabelColor() {
+        return mLabelPaint.getColor();
+    }
+
+    /**
+     * Set the color used for the circles.
+     *
+     * @param color The color hex value
+     */
+    public void setCircleColor(int color) {
+        mCirclePaint.setColor(color);
+        mOuterCirclePaint.setColor(color);
+        mCenterPaint.setColor(mInteractive ? mSelectedLinePaint.getColor() : color);
+        mLinePaint.setColor(color);
+    }
+
+    /**
+     * Get the color used for the circles.
+     *
+     * @return The color hex value
+     */
+    public int getCircleColor() {
+        return mCirclePaint.getColor();
+    }
+
+    /**
+     * Set the color used for the selected item.
+     *
+     * @param color The color hex value
+     */
+    public void setSelectedColor(int color) {
+        mSelectedLabelPaint.setColor(color);
+        mSelectedLinePaint.setColor(color);
+        if(mInteractive) {
+            mCenterPaint.setColor(color);
+        }
+    }
+
+    /**
+     * Get the color used for the selected item.
+     *
+     * @return The color hex value
+     */
+    public int getSelectedColor() {
+        return mSelectedLabelPaint.getColor();
+    }
+
+    /**
+     * Set the color used for the polygon.
+     *
+     * @param color The color hex value
+     */
+    public void setPolygonColor(int color) {
+        mPolygonPaint.setColor(color);
+    }
+
+    /**
+     * Get the color used for the polygon.
+     *
+     * @return The color hex value
+     */
+    public int getPolygonColor() {
+        return mPolygonPaint.getColor();
+    }
+
+    /**
+     * Set the color used for the polygon while in interactive mode.
+     *
+     * @param color The color hex value
+     */
+    public void setPolygonInteractiveColor(int color) {
+        mPolygonInteractivePaint.setColor(color);
+    }
+
+    /**
+     * Get the color used for the polygon while in interactive mode.
+     *
+     * @return The color hex value
+     */
+    public int getPolygonInteractiveColor() {
+        return mPolygonInteractivePaint.getColor();
     }
 
     /**
@@ -381,10 +519,7 @@ public class RadarView extends View {
         }
 
         if(interactive && hasData()) {
-            mFgPaint.setColor(COLOR_POLYGON_EDITABLE);
-            mFgPaint.setStrokeWidth(4);
-
-            mCenterPaint.setColor(COLOR_SELECTED);
+            mCenterPaint.setColor(mSelectedLinePaint.getColor());
 
             if(mAnimationQueue == null) {
                 mAnimationQueue = new AnimationQueue();
@@ -392,10 +527,7 @@ public class RadarView extends View {
 
             mInteractive = true;
         } else {
-            mFgPaint.setColor(COLOR_POLYGON);
-            mFgPaint.setStrokeWidth(5);
-
-            mCenterPaint.setColor(COLOR_CIRCLE);
+            mCenterPaint.setColor(mCirclePaint.getColor());
 
             if(hasData()) {
                 turnTo(0);
@@ -575,6 +707,7 @@ public class RadarView extends View {
     }
 
     @Override
+    @SuppressLint("DrawAllocation")
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
@@ -584,9 +717,9 @@ public class RadarView extends View {
 
         // draw circles
         for(int i = 1; i < mMaxValue; i++) {
-            canvas.drawCircle(mCenter, mCenter, mScale * i, sCirclePaint);
+            canvas.drawCircle(mCenter, mCenter, mScale * i, mCirclePaint);
         }
-        canvas.drawCircle(mCenter, mCenter, mScale * mMaxValue, sOuterCirclePaint);
+        canvas.drawCircle(mCenter, mCenter, mScale * mMaxValue, mOuterCirclePaint);
 
         if(!hasData()) {
             return;
@@ -606,11 +739,11 @@ public class RadarView extends View {
             final Paint linePaint;
             final Paint labelPaint;
             if(mInteractive && mSelected == i) {
-                linePaint = sSelectedLinePaint;
-                labelPaint = sSelectedLabelPaint;
+                linePaint = mSelectedLinePaint;
+                labelPaint = mSelectedLabelPaint;
             } else {
-                linePaint = sLinePaint;
-                labelPaint = sLabelPaint;
+                linePaint = mLinePaint;
+                labelPaint = mLabelPaint;
             }
 
             // draw spoke
@@ -646,13 +779,13 @@ public class RadarView extends View {
         polygon.close();
 
         final ShapeDrawable polyShape = new ShapeDrawable(new PathShape(polygon, 200, 200));
-        polyShape.getPaint().set(mFgPaint);
+        polyShape.getPaint().set(mInteractive ? mPolygonInteractivePaint : mPolygonPaint);
         polyShape.setBounds(0, 0, 200, 200);
         polyShape.draw(canvas);
 
         if(mInteractive) {
             final float[] selected = mPoints[mSelected][getSelectedValue()];
-            canvas.drawCircle(selected[0], selected[1], 8, sSelectedLinePaint);
+            canvas.drawCircle(selected[0], selected[1], 8, mSelectedLinePaint);
         }
 
         canvas.drawCircle(mCenter, mCenter, 6, mCenterPaint);

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RadarView">
-        <attr name="labels" format="reference" />
+        <attr name="labelColor" format="color" />
+        <attr name="circleColor" format="color" />
+        <attr name="selectedColor" format="color" />
+        <attr name="polygonColor" format="color" />
+        <attr name="polygonColorInteractive" format="color" />
     </declare-styleable>
     <declare-styleable name="RadarEditWidget">
         <attr name="showButtonBar" format="boolean" />
