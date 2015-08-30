@@ -194,7 +194,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
         list.addView(super.onCreateView(inflater, container, savedInstanceState));
 
         mToolbar = (Toolbar)root.findViewById(R.id.toolbar);
-        mToolbar.inflateMenu(R.menu.list_menu);
+        mToolbar.inflateMenu(R.menu.entry_list_menu);
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {

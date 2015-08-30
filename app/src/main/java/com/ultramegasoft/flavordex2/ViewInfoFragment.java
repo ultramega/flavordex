@@ -49,7 +49,7 @@ import java.util.Map;
  *
  * @author Steve Guidetti
  */
-public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Request code for deleting an entry
      */
@@ -88,13 +88,13 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
      */
     private float mRating;
 
-    public EntryInfoFragment() {
+    public ViewInfoFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mEntryId = getArguments().getLong(EntryDetailFragment.ARG_ITEM_ID);
+        mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ITEM_ID);
         setHasOptionsMenu(true);
     }
 
@@ -125,7 +125,7 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.entry_menu, menu);
+        inflater.inflate(R.menu.view_entry_menu, menu);
     }
 
     @Override
@@ -188,7 +188,7 @@ public class EntryInfoFragment extends Fragment implements LoaderManager.LoaderC
      * @return An id from R.layout
      */
     protected int getLayoutId() {
-        return R.layout.fragment_entry_info;
+        return R.layout.fragment_view_info;
     }
 
     /**

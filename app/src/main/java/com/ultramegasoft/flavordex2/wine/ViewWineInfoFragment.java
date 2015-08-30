@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2.whiskey;
+package com.ultramegasoft.flavordex2.wine;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,24 +7,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.ultramegasoft.flavordex2.EntryInfoFragment;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.ViewInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
 
 import java.util.LinkedHashMap;
 
 /**
- * Whiskey specific entry view fragment.
+ * Wine specific entry view fragment.
  *
  * @author Steve Guidetti
  */
-public class WhiskeyInfoFragment extends EntryInfoFragment {
+public class ViewWineInfoFragment extends ViewInfoFragment {
     /**
-     * Views to hold details specific to whiskey
+     * Views to hold details specific to wine
      */
-    private TextView mTxtType;
+    private TextView mTxtVarietal;
 
-    private TextView mTxtAge;
+    private TextView mTxtVintage;
     private TextView mTxtABV;
 
     @NonNull
@@ -32,9 +32,9 @@ public class WhiskeyInfoFragment extends EntryInfoFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
-        mTxtType = (TextView)root.findViewById(R.id.entry_type);
+        mTxtVarietal = (TextView)root.findViewById(R.id.entry_varietal);
 
-        mTxtAge = (TextView)root.findViewById(R.id.entry_stats_age);
+        mTxtVintage = (TextView)root.findViewById(R.id.entry_stats_vintage);
         mTxtABV = (TextView)root.findViewById(R.id.entry_stats_abv);
 
         return root;
@@ -42,14 +42,14 @@ public class WhiskeyInfoFragment extends EntryInfoFragment {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_entry_info_whiskey;
+        return R.layout.fragment_view_info_wine;
     }
 
     @Override
     protected void populateExtras(LinkedHashMap<String, String> data) {
-        setViewText(mTxtType, data.get(Tables.Extras.Whiskey.STYLE));
+        setViewText(mTxtVarietal, data.get(Tables.Extras.Wine.VARIETAL));
 
-        mTxtAge.setText(data.get(Tables.Extras.Whiskey.STATS_AGE));
-        mTxtABV.setText(data.get(Tables.Extras.Whiskey.STATS_ABV));
+        mTxtVintage.setText(data.get(Tables.Extras.Wine.STATS_VINTAGE));
+        mTxtABV.setText(data.get(Tables.Extras.Wine.STATS_ABV));
     }
 }

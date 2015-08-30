@@ -8,8 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.ultramegasoft.flavordex2.EntryInfoFragment;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.ViewInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
 
 import java.util.LinkedHashMap;
@@ -19,7 +19,7 @@ import java.util.LinkedHashMap;
  *
  * @author Steve Guidetti
  */
-public class BeerInfoFragment extends EntryInfoFragment {
+public class ViewBeerInfoFragment extends ViewInfoFragment {
     /**
      * Views to hold details specific to beer
      */
@@ -50,7 +50,7 @@ public class BeerInfoFragment extends EntryInfoFragment {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_entry_info_beer;
+        return R.layout.fragment_view_info_beer;
     }
 
     @Override

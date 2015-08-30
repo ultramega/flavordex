@@ -34,7 +34,7 @@ import java.util.HashMap;
  *
  * @author Steve Guidetti
  */
-public class AddEntryPhotosFragment extends Fragment {
+public class AddPhotosFragment extends Fragment {
     /**
      * Keys for the saved state
      */
@@ -76,7 +76,7 @@ public class AddEntryPhotosFragment extends Fragment {
      */
     private final BitmapCache mCache = new BitmapCache();
 
-    public AddEntryPhotosFragment() {
+    public AddPhotosFragment() {
     }
 
     @Override

@@ -25,7 +25,7 @@ import java.util.ArrayList;
  *
  * @author Steve Guidetti
  */
-public class AddEntryFlavorsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class AddFlavorsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * The views from the layout
      */
@@ -36,7 +36,7 @@ public class AddEntryFlavorsFragment extends Fragment implements LoaderManager.L
      */
     private long mTypeId;
 
-    public AddEntryFlavorsFragment() {
+    public AddFlavorsFragment() {
     }
 
     @Override

@@ -43,7 +43,7 @@ import java.util.ArrayList;
  *
  * @author Steve Guidetti
  */
-public class EntryPhotosFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ViewPhotosFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Keys for the saved state
      */
@@ -90,13 +90,13 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
      */
     private ArrayList<PhotoHolder> mData = new ArrayList<>();
 
-    public EntryPhotosFragment() {
+    public ViewPhotosFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mEntryId = getArguments().getLong(EntryDetailFragment.ARG_ITEM_ID);
+        mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ITEM_ID);
         mMediaMounted = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
         setHasOptionsMenu(true);
     }
@@ -154,7 +154,7 @@ public class EntryPhotosFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.photos_menu, menu);
+        inflater.inflate(R.menu.view_photos_menu, menu);
         inflater.inflate(R.menu.photo_menu, menu);
     }
 

@@ -11,10 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TabHost;
 
-import com.ultramegasoft.flavordex2.beer.BeerInfoFragment;
-import com.ultramegasoft.flavordex2.coffee.CoffeeInfoFragment;
-import com.ultramegasoft.flavordex2.whiskey.WhiskeyInfoFragment;
-import com.ultramegasoft.flavordex2.wine.WineInfoFragment;
+import com.ultramegasoft.flavordex2.beer.ViewBeerInfoFragment;
+import com.ultramegasoft.flavordex2.coffee.ViewCoffeeInfoFragment;
+import com.ultramegasoft.flavordex2.whiskey.ViewWhiskeyInfoFragment;
+import com.ultramegasoft.flavordex2.wine.ViewWineInfoFragment;
 
 /**
  * This fragment contains all the details of a journal entry. This is a container for multiple
@@ -22,7 +22,7 @@ import com.ultramegasoft.flavordex2.wine.WineInfoFragment;
  *
  * @author Steve Guidetti
  */
-public class EntryDetailFragment extends Fragment {
+public class ViewEntryFragment extends Fragment {
     /**
      * The fragment argument representing the item ID that this fragment represents
      */
@@ -38,7 +38,7 @@ public class EntryDetailFragment extends Fragment {
      */
     private long mEntryId;
 
-    public EntryDetailFragment() {
+    public ViewEntryFragment() {
     }
 
     @Override
@@ -51,7 +51,7 @@ public class EntryDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final FragmentTabHost tabHost =
-                (FragmentTabHost)inflater.inflate(R.layout.fragment_entry_detail, container, false);
+                (FragmentTabHost)inflater.inflate(R.layout.fragment_view_entry, container, false);
         tabHost.setup(getActivity(), getChildFragmentManager(), R.id.content);
 
         final Resources res = getResources();
@@ -67,11 +67,11 @@ public class EntryDetailFragment extends Fragment {
 
         icon = res.getDrawable(R.drawable.ic_radar);
         tab = tabHost.newTabSpec("flavors_" + mEntryId).setIndicator(null, icon);
-        tabHost.addTab(tab, EntryFlavorsFragment.class, args);
+        tabHost.addTab(tab, ViewFlavorsFragment.class, args);
 
         icon = res.getDrawable(R.drawable.ic_photo);
         tab = tabHost.newTabSpec("photos_" + mEntryId).setIndicator(null, icon);
-        tabHost.addTab(tab, EntryPhotosFragment.class, args);
+        tabHost.addTab(tab, ViewPhotosFragment.class, args);
 
         return tabHost;
     }
@@ -89,22 +89,22 @@ public class EntryDetailFragment extends Fragment {
      *
      * @return The Fragment class
      */
-    private Class<? extends EntryInfoFragment> getEntryInfoClass() {
+    private Class<? extends ViewInfoFragment> getEntryInfoClass() {
         final String type = getArguments().getString(ARG_ITEM_TYPE);
 
         if(FlavordexApp.TYPE_BEER.equals(type)) {
-            return BeerInfoFragment.class;
+            return ViewBeerInfoFragment.class;
         }
         if(FlavordexApp.TYPE_WINE.equals(type)) {
-            return WineInfoFragment.class;
+            return ViewWineInfoFragment.class;
         }
         if(FlavordexApp.TYPE_WHISKEY.equals(type)) {
-            return WhiskeyInfoFragment.class;
+            return ViewWhiskeyInfoFragment.class;
         }
         if(FlavordexApp.TYPE_COFFEE.equals(type)) {
-            return CoffeeInfoFragment.class;
+            return ViewCoffeeInfoFragment.class;
         }
 
-        return EntryInfoFragment.class;
+        return ViewInfoFragment.class;
     }
 }

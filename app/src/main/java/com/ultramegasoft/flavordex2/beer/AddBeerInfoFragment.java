@@ -9,7 +9,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.ultramegasoft.flavordex2.AddEntryInfoFragment;
+import com.ultramegasoft.flavordex2.AddInfoFragment;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.SpecialArrayAdapter;
@@ -21,7 +21,7 @@ import java.util.HashMap;
  *
  * @author Steve Guidetti
  */
-public class AddBeerInfoFragment extends AddEntryInfoFragment {
+public class AddBeerInfoFragment extends AddInfoFragment {
     private AutoCompleteTextView mTxtStyle;
     private Spinner mSpnServing;
     private EditText mTxtIBU;

@@ -32,7 +32,7 @@ import java.util.ArrayList;
  *
  * @author Steve Guidetti
  */
-public class EntryFlavorsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ViewFlavorsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Keys for the saved state of this fragment
      */
@@ -66,13 +66,13 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
      */
     private long mEntryId;
 
-    public EntryFlavorsFragment() {
+    public ViewFlavorsFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mEntryId = getArguments().getLong(EntryDetailFragment.ARG_ITEM_ID);
+        mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ITEM_ID);
         setHasOptionsMenu(true);
     }
 
@@ -93,7 +93,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View root = inflater.inflate(R.layout.fragment_entry_flavors, container, false);
+        final View root = inflater.inflate(R.layout.fragment_view_flavors, container, false);
 
         mRadarView = (RadarView)root.findViewById(R.id.radar);
         mRadarView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -146,7 +146,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.flavor_menu, menu);
+        inflater.inflate(R.menu.view_flavor_menu, menu);
     }
 
     @Override

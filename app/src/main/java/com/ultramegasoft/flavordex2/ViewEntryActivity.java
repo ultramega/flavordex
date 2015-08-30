@@ -11,7 +11,7 @@ import android.view.MenuItem;
  *
  * @author Steve Guidetti
  */
-public class EntryDetailActivity extends AppCompatActivity {
+public class ViewEntryActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,12 +23,12 @@ public class EntryDetailActivity extends AppCompatActivity {
         if(savedInstanceState == null) {
             final Intent intent = getIntent();
             final Bundle arguments = new Bundle();
-            arguments.putLong(EntryDetailFragment.ARG_ITEM_ID,
-                    intent.getLongExtra(EntryDetailFragment.ARG_ITEM_ID, 0));
-            arguments.putString(EntryDetailFragment.ARG_ITEM_TYPE,
-                    intent.getStringExtra(EntryDetailFragment.ARG_ITEM_TYPE));
+            arguments.putLong(ViewEntryFragment.ARG_ITEM_ID,
+                    intent.getLongExtra(ViewEntryFragment.ARG_ITEM_ID, 0));
+            arguments.putString(ViewEntryFragment.ARG_ITEM_TYPE,
+                    intent.getStringExtra(ViewEntryFragment.ARG_ITEM_TYPE));
 
-            final EntryDetailFragment fragment = new EntryDetailFragment();
+            final ViewEntryFragment fragment = new ViewEntryFragment();
             fragment.setArguments(arguments);
 
             getSupportFragmentManager().beginTransaction()

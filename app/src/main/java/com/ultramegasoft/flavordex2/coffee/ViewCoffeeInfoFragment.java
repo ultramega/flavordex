@@ -9,8 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.ultramegasoft.flavordex2.EntryInfoFragment;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.ViewInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
 
 import java.util.LinkedHashMap;
@@ -21,7 +21,7 @@ import java.util.Locale;
  *
  * @author Steve Guidetti
  */
-public class CoffeeInfoFragment extends EntryInfoFragment {
+public class ViewCoffeeInfoFragment extends ViewInfoFragment {
     /**
      * Views to hold details specific to coffee
      */
@@ -67,7 +67,7 @@ public class CoffeeInfoFragment extends EntryInfoFragment {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_entry_info_coffee;
+        return R.layout.fragment_view_info_coffee;
     }
 
     @Override

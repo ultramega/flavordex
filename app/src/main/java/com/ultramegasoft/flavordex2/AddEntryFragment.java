@@ -140,7 +140,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
      *
      * @return The Fragment class
      */
-    private Class<? extends AddEntryInfoFragment> getEntryInfoClass() {
+    private Class<? extends AddInfoFragment> getEntryInfoClass() {
         if(FlavordexApp.TYPE_BEER.equals(mTypeName)) {
             return AddBeerInfoFragment.class;
         }
@@ -154,7 +154,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             return AddCoffeeInfoFragment.class;
         }
 
-        return AddEntryInfoFragment.class;
+        return AddInfoFragment.class;
     }
 
     /**
@@ -171,21 +171,21 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         ContentValues[] entryFlavors = null;
         ContentValues[] entryPhotos = null;
         for(Fragment fragment : fm.getFragments()) {
-            if(fragment instanceof AddEntryInfoFragment) {
-                isValid = ((AddEntryInfoFragment)fragment).isValid();
+            if(fragment instanceof AddInfoFragment) {
+                isValid = ((AddInfoFragment)fragment).isValid();
                 if(!isValid) {
                     break;
                 }
-                entryInfo = ((AddEntryInfoFragment)fragment).getData();
-                entryExtras = ((AddEntryInfoFragment)fragment).getExtras();
+                entryInfo = ((AddInfoFragment)fragment).getData();
+                entryExtras = ((AddInfoFragment)fragment).getExtras();
                 continue;
             }
-            if(fragment instanceof AddEntryFlavorsFragment) {
-                entryFlavors = ((AddEntryFlavorsFragment)fragment).getData();
+            if(fragment instanceof AddFlavorsFragment) {
+                entryFlavors = ((AddFlavorsFragment)fragment).getData();
                 continue;
             }
-            if(fragment instanceof AddEntryPhotosFragment) {
-                entryPhotos = ((AddEntryPhotosFragment)fragment).getData();
+            if(fragment instanceof AddPhotosFragment) {
+                entryPhotos = ((AddPhotosFragment)fragment).getData();
             }
         }
 
@@ -229,9 +229,9 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
          * The list of fragments
          */
         private String[] mFragments = new String[] {
-                AddEntryInfoFragment.class.getName(),
-                AddEntryFlavorsFragment.class.getName(),
-                AddEntryPhotosFragment.class.getName()
+                AddInfoFragment.class.getName(),
+                AddFlavorsFragment.class.getName(),
+                AddPhotosFragment.class.getName()
         };
 
         /**

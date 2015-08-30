@@ -77,7 +77,7 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
     public boolean onMenuItemClick(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_remove_photo:
-                final EntryPhotosFragment target = (EntryPhotosFragment)getParentFragment();
+                final ViewPhotosFragment target = (ViewPhotosFragment)getParentFragment();
                 if(target != null) {
                     target.confirmDeletePhoto();
                 }

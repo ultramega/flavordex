@@ -36,19 +36,19 @@ public class EntryListActivity extends AppCompatActivity implements EntryListFra
     public void onItemSelected(long id, String type) {
         if(mTwoPane) {
             final Bundle arguments = new Bundle();
-            arguments.putLong(EntryDetailFragment.ARG_ITEM_ID, id);
-            arguments.putString(EntryDetailFragment.ARG_ITEM_TYPE, type);
+            arguments.putLong(ViewEntryFragment.ARG_ITEM_ID, id);
+            arguments.putString(ViewEntryFragment.ARG_ITEM_TYPE, type);
 
-            final EntryDetailFragment fragment = new EntryDetailFragment();
+            final ViewEntryFragment fragment = new ViewEntryFragment();
             fragment.setArguments(arguments);
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.entry_detail_container, fragment).commit();
 
         } else {
-            final Intent detailIntent = new Intent(this, EntryDetailActivity.class);
-            detailIntent.putExtra(EntryDetailFragment.ARG_ITEM_ID, id);
-            detailIntent.putExtra(EntryDetailFragment.ARG_ITEM_TYPE, type);
+            final Intent detailIntent = new Intent(this, ViewEntryActivity.class);
+            detailIntent.putExtra(ViewEntryFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtra(ViewEntryFragment.ARG_ITEM_TYPE, type);
             startActivity(detailIntent);
         }
     }

@@ -37,7 +37,7 @@ import java.util.Map;
  *
  * @author Steve Guidetti
  */
-public class AddEntryInfoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int LOADER_EXTRAS = 0;
 
     /**
@@ -71,7 +71,7 @@ public class AddEntryInfoFragment extends Fragment implements LoaderManager.Load
      */
     private ArrayList<EditText> mExtraFields = new ArrayList<>();
 
-    public AddEntryInfoFragment() {
+    public AddInfoFragment() {
     }
 
     @Override
