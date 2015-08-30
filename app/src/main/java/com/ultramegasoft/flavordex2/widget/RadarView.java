@@ -547,13 +547,7 @@ public class RadarView extends View {
         if(!mInteractive || mIsAnimating) {
             return;
         }
-        if(mSelected == mData.size() - 1) {
-            mSelected = 0;
-        } else {
-            mSelected++;
-        }
-        onSelectedItemChanged();
-        turn();
+        turnTo((mSelected == mData.size() - 1) ? 0 : mSelected + 1);
     }
 
     /**
@@ -563,13 +557,7 @@ public class RadarView extends View {
         if(!mInteractive || mIsAnimating) {
             return;
         }
-        if(mSelected == 0) {
-            mSelected = mData.size() - 1;
-        } else {
-            mSelected--;
-        }
-        onSelectedItemChanged();
-        turn();
+        turnTo((mSelected == 0) ? mData.size() - 1 : mSelected - 1);
     }
 
     /**
