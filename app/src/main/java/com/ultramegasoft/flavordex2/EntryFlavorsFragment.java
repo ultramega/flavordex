@@ -98,7 +98,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
         mRadarView = (RadarView)root.findViewById(R.id.radar);
         mRadarView.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View v) {
-                if(!mRadarView.isEditable()) {
+                if(!mRadarView.isInteractive()) {
                     setEditMode(true, true);
                     return true;
                 }
@@ -185,7 +185,7 @@ public class EntryFlavorsFragment extends Fragment implements LoaderManager.Load
             }
         }
 
-        mRadarView.setEditable(editMode);
+        mRadarView.setInteractive(editMode);
         mEditMode = editMode;
     }
 

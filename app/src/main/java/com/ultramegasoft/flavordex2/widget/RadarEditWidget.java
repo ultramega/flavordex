@@ -157,7 +157,7 @@ public class RadarEditWidget extends LinearLayout {
 
             mSeekBar.setKeyProgressIncrement(scale);
             mSeekBar.setProgress(mRadarView.getSelectedValue() * scale);
-            mSeekBar.setEnabled(mRadarView.isEditable());
+            mSeekBar.setEnabled(mRadarView.isInteractive());
         } else {
             mSeekBar.setOnSeekBarChangeListener(null);
         }
@@ -195,8 +195,8 @@ public class RadarEditWidget extends LinearLayout {
             }
 
             @Override
-            public void onEditableChanged(boolean editable) {
-                mSeekBar.setEnabled(editable);
+            public void onInteractiveModeChanged(boolean interactive) {
+                mSeekBar.setEnabled(interactive);
             }
         };
     }

@@ -117,9 +117,9 @@ public class RadarView extends View {
     private double mOffset;
 
     /**
-     * Whether the chart is in edit mode
+     * Whether the chart is in interactive mode
      */
-    private boolean mEditable;
+    private boolean mInteractive;
 
     /**
      * Paint used for drawing the polygon representing the data values
@@ -182,11 +182,11 @@ public class RadarView extends View {
         void onMaxValueChanged(int maxValue);
 
         /**
-         * Called when the editable status is changed.
+         * Called when the interactive status is changed.
          *
-         * @param editable Whether the RadarView is editable
+         * @param interactive Whether the RadarView is interactive
          */
-        void onEditableChanged(boolean editable);
+        void onInteractiveModeChanged(boolean interactive);
     }
 
     public RadarView(Context context) {
@@ -362,25 +362,25 @@ public class RadarView extends View {
     }
 
     /**
-     * Is the chart in edit mode?
+     * Is the chart in interactive mode?
      *
-     * @return Whether the chart is in edit mode
+     * @return Whether the chart is interactive
      */
-    public boolean isEditable() {
-        return mEditable;
+    public boolean isInteractive() {
+        return mInteractive;
     }
 
     /**
-     * Enable or disable edit mode. The chart must have data to enable edit mode.
+     * Enable or disable interactive mode. The chart must have data to enable interactive mode.
      *
-     * @param editable True to enable edit mode
+     * @param interactive Whether to enable interactive mode
      */
-    public void setEditable(boolean editable) {
-        if(mEditable == editable) {
+    public void setInteractive(boolean interactive) {
+        if(mInteractive == interactive) {
             return;
         }
 
-        if(editable && hasData()) {
+        if(interactive && hasData()) {
             mFgPaint.setColor(COLOR_POLYGON_EDITABLE);
             mFgPaint.setStrokeWidth(4);
 
@@ -390,7 +390,7 @@ public class RadarView extends View {
                 mAnimationQueue = new AnimationQueue();
             }
 
-            mEditable = true;
+            mInteractive = true;
         } else {
             mFgPaint.setColor(COLOR_POLYGON);
             mFgPaint.setStrokeWidth(5);
@@ -401,10 +401,10 @@ public class RadarView extends View {
                 turnTo(0);
             }
 
-            mEditable = false;
+            mInteractive = false;
         }
 
-        onEditableChanged(editable);
+        onInteractiveModeChanged(interactive);
         invalidate();
     }
 
@@ -412,7 +412,7 @@ public class RadarView extends View {
      * Turn the chart counter-clockwise.
      */
     public void turnCCW() {
-        if(!mEditable || mIsAnimating) {
+        if(!mInteractive || mIsAnimating) {
             return;
         }
         if(mSelected == mData.size() - 1) {
@@ -428,7 +428,7 @@ public class RadarView extends View {
      * Turn the chart clockwise.
      */
     public void turnCW() {
-        if(!mEditable || mIsAnimating) {
+        if(!mInteractive || mIsAnimating) {
             return;
         }
         if(mSelected == 0) {
@@ -446,7 +446,7 @@ public class RadarView extends View {
      * @param key The data point to turn to
      */
     public void turnTo(int key) {
-        if(!mEditable || mIsAnimating) {
+        if(!mInteractive || mIsAnimating) {
             return;
         }
         if(key < 0 || key >= mData.size()) {
@@ -557,13 +557,13 @@ public class RadarView extends View {
     }
 
     /**
-     * Notify all listeners that the editable status has changed.
+     * Notify all listeners that the interactive mode status has changed.
      *
-     * @param editable The new editable status
+     * @param interactive Whether the RadarView is interactive
      */
-    private void onEditableChanged(boolean editable) {
+    private void onInteractiveModeChanged(boolean interactive) {
         for(RadarViewListener listener : mListeners) {
-            listener.onEditableChanged(editable);
+            listener.onInteractiveModeChanged(interactive);
         }
     }
 
@@ -605,7 +605,7 @@ public class RadarView extends View {
             // set colors
             final Paint linePaint;
             final Paint labelPaint;
-            if(mEditable && mSelected == i) {
+            if(mInteractive && mSelected == i) {
                 linePaint = sSelectedLinePaint;
                 labelPaint = sSelectedLabelPaint;
             } else {
@@ -630,7 +630,7 @@ public class RadarView extends View {
                 labelPaint.setTextAlign(Paint.Align.RIGHT);
             }
 
-            if(mEditable && mSelected == i) {
+            if(mInteractive && mSelected == i) {
                 y -= mScale / 2;
             }
 
@@ -650,7 +650,7 @@ public class RadarView extends View {
         polyShape.setBounds(0, 0, 200, 200);
         polyShape.draw(canvas);
 
-        if(mEditable) {
+        if(mInteractive) {
             final float[] selected = mPoints[mSelected][getSelectedValue()];
             canvas.drawCircle(selected[0], selected[1], 8, sSelectedLinePaint);
         }
@@ -667,7 +667,7 @@ public class RadarView extends View {
         bundle.putParcelableArrayList(STATE_DATA, mData);
         bundle.putInt(STATE_SELECTED, mSelected);
         bundle.putDouble(STATE_OFFSET, mOffset);
-        bundle.putBoolean(STATE_EDITABLE, mEditable);
+        bundle.putBoolean(STATE_EDITABLE, mInteractive);
 
         return bundle;
     }
@@ -681,8 +681,8 @@ public class RadarView extends View {
             mData = bundle.getParcelableArrayList(STATE_DATA);
             mSelected = bundle.getInt(STATE_SELECTED, 0);
             mOffset = bundle.getDouble(STATE_OFFSET, 0.0);
-            if(mEditable = bundle.getBoolean(STATE_EDITABLE, false)) {
-                setEditable(true);
+            if(mInteractive = bundle.getBoolean(STATE_EDITABLE, false)) {
+                setInteractive(true);
             }
 
             super.onRestoreInstanceState(bundle.getParcelable(STATE_SUPER_STATE));

@@ -92,7 +92,7 @@ public class AddEntryFlavorsFragment extends Fragment implements LoaderManager.L
         }
 
         mRadarView.setData(holders);
-        mRadarView.setEditable(true);
+        mRadarView.setInteractive(true);
         mRadarView.setVisibility(View.VISIBLE);
     }
 
