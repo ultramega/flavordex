@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.LoaderManager;
@@ -27,15 +25,12 @@ import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
-import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -43,19 +38,16 @@ import java.util.ArrayList;
  *
  * @author Steve Guidetti
  */
-public class ViewPhotosFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ViewPhotosFragment extends AbsPhotosFragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
-     * Keys for the saved state
+     * Argument for the photo removal confirmation dialog
      */
-    private static final String STATE_PHOTOS = "photos";
-
     private static final String ARG_PHOTO_POSITION = "photo_position";
 
     /**
      * Request codes for external activities
      */
-    private static final int REQUEST_CAPTURE_IMAGE = 100;
-    private static final int REQUEST_SELECT_IMAGE = 200;
     private static final int REQUEST_DELETE_IMAGE = 300;
 
     /**
@@ -64,31 +56,11 @@ public class ViewPhotosFragment extends Fragment implements LoaderManager.Loader
     private long mEntryId;
 
     /**
-     * Whether the external storage is mounted
-     */
-    private boolean mMediaMounted;
-
-    /**
-     * Whether the device has a camera
-     */
-    private boolean mHasCamera;
-
-    /**
      * Views for this fragment
      */
     private ViewPager mPager;
     private LinearLayout mNoDataLayout;
     private ProgressBar mProgressBar;
-
-    /**
-     * Uri to the image currently being captured
-     */
-    private Uri mCapturedPhoto;
-
-    /**
-     * The information about each photo
-     */
-    private ArrayList<PhotoHolder> mData = new ArrayList<>();
 
     public ViewPhotosFragment() {
     }
@@ -97,32 +69,11 @@ public class ViewPhotosFragment extends Fragment implements LoaderManager.Loader
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ITEM_ID);
-        mMediaMounted = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if(!mMediaMounted) {
-            return;
-        }
-
-        mHasCamera = getActivity().getPackageManager()
-                .hasSystemFeature(PackageManager.FEATURE_CAMERA);
-
-        if(savedInstanceState != null) {
-            mData = savedInstanceState.getParcelableArrayList(STATE_PHOTOS);
-            notifyDataChanged();
-        } else {
-            getLoaderManager().initLoader(0, null, this);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(!mMediaMounted) {
+        if(!isMediaMounted()) {
             return inflater.inflate(R.layout.no_media, container, false);
         }
 
@@ -138,17 +89,24 @@ public class ViewPhotosFragment extends Fragment implements LoaderManager.Loader
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(!isMediaMounted()) {
+            return;
+        }
+        if(savedInstanceState == null) {
+            getLoaderManager().initLoader(0, null, this);
+        } else {
+            notifyDataChanged();
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         mPager = null;
         mNoDataLayout = null;
         mProgressBar = null;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(STATE_PHOTOS, mData);
     }
 
     @Override
@@ -162,23 +120,17 @@ public class ViewPhotosFragment extends Fragment implements LoaderManager.Loader
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        final boolean showAdd = mMediaMounted;
+        final boolean showAdd = isMediaMounted();
         menu.findItem(R.id.menu_add_photo).setEnabled(showAdd).setVisible(showAdd);
         menu.findItem(R.id.menu_select_photo).setEnabled(showAdd);
 
-        final boolean showTake = showAdd && mHasCamera;
+        final boolean showTake = showAdd && hasCamera();
         menu.findItem(R.id.menu_take_photo).setEnabled(showTake);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.menu_take_photo:
-                takePhoto();
-                return true;
-            case R.id.menu_select_photo:
-                addPhotoFromGallery();
-                return true;
             case R.id.menu_remove_photo:
                 confirmDeletePhoto();
                 return true;
@@ -188,41 +140,31 @@ public class ViewPhotosFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
-                case REQUEST_CAPTURE_IMAGE:
-                    final Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                    scanIntent.setData(mCapturedPhoto);
-                    getActivity().sendBroadcast(scanIntent);
-
-                    addPhoto(mCapturedPhoto);
-                    break;
-                case REQUEST_SELECT_IMAGE:
-                    if(data != null) {
-                        addPhoto(data.getData());
-                    }
-                    break;
                 case REQUEST_DELETE_IMAGE:
                     if(data != null) {
-                        deletePhoto(data.getIntExtra(ARG_PHOTO_POSITION, -1));
+                        removePhoto(data.getIntExtra(ARG_PHOTO_POSITION, -1));
                     }
                     break;
             }
         }
     }
 
-    /**
-     * Add a photo to this entry.
-     *
-     * @param uri The Uri to the image file
-     */
-    private void addPhoto(Uri uri) {
-        final PhotoHolder photo = new PhotoHolder(PhotoUtils.getPath(getActivity(), uri));
-        mData.add(photo);
+    @Override
+    protected void onPhotoAdded(PhotoHolder photo) {
         notifyDataChanged();
-        mPager.setCurrentItem(mData.size() - 1, true);
+        mPager.setCurrentItem(getPhotos().size() - 1, true);
 
         new PhotoSaver(getActivity(), mEntryId).execute(photo);
+
+    }
+
+    @Override
+    protected void onPhotoRemoved(PhotoHolder photo) {
+        notifyDataChanged();
+        new PhotoDeleter(getActivity()).execute(photo);
     }
 
     /**
@@ -235,7 +177,7 @@ public class ViewPhotosFragment extends Fragment implements LoaderManager.Loader
                     .inflate();
 
             final Button btnTakePhoto = (Button)mNoDataLayout.findViewById(R.id.button_take_photo);
-            if(mHasCamera) {
+            if(hasCamera()) {
                 btnTakePhoto.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         takePhoto();
@@ -258,33 +200,10 @@ public class ViewPhotosFragment extends Fragment implements LoaderManager.Loader
     }
 
     /**
-     * Launch an image capturing intent.
-     */
-    private void takePhoto() {
-        try {
-            mCapturedPhoto = PhotoUtils.getOutputMediaUri();
-            final Intent intent = PhotoUtils.getTakePhotoIntent(mCapturedPhoto);
-            if(intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                getParentFragment().startActivityForResult(intent, REQUEST_CAPTURE_IMAGE);
-            }
-        } catch(IOException e) {
-            Toast.makeText(getActivity(), R.string.error_camera, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    /**
-     * Launch an image selection intent.
-     */
-    private void addPhotoFromGallery() {
-        final Intent intent = PhotoUtils.getSelectPhotoIntent();
-        getParentFragment().startActivityForResult(intent, REQUEST_SELECT_IMAGE);
-    }
-
-    /**
      * Show a confirmation dialog to delete the shown image.
      */
     public void confirmDeletePhoto() {
-        if(mData.isEmpty()) {
+        if(getPhotos().isEmpty()) {
             return;
         }
 
@@ -299,23 +218,6 @@ public class ViewPhotosFragment extends Fragment implements LoaderManager.Loader
     }
 
     /**
-     * Delete the photo at the specified position.
-     *
-     * @param position The position index of the photo
-     */
-    private void deletePhoto(int position) {
-        if(position < 0 || position >= mData.size()) {
-            return;
-        }
-
-        final PhotoHolder photo = mData.get(position);
-        mData.remove(position);
-        notifyDataChanged();
-
-        new PhotoDeleter(getActivity()).execute(photo);
-    }
-
-    /**
      * Called whenever the list of photos might have been changed. This notifies the pager's adapter
      * and the action bar.
      */
@@ -324,7 +226,7 @@ public class ViewPhotosFragment extends Fragment implements LoaderManager.Loader
             mPager.getAdapter().notifyDataSetChanged();
         }
 
-        if(!mData.isEmpty()) {
+        if(!getPhotos().isEmpty()) {
             if(mNoDataLayout != null) {
                 mNoDataLayout.setVisibility(View.GONE);
             }
@@ -351,12 +253,13 @@ public class ViewPhotosFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mData.clear();
+        final ArrayList<PhotoHolder> photos = getPhotos();
+        photos.clear();
         if(data.getCount() > 0) {
             while(data.moveToNext()) {
                 final String path = data.getString(1);
                 if(new File(path).exists()) {
-                    mData.add(new PhotoHolder(data.getLong(0), path));
+                    photos.add(new PhotoHolder(data.getLong(0), path));
                 }
             }
         }
@@ -374,9 +277,14 @@ public class ViewPhotosFragment extends Fragment implements LoaderManager.Loader
      * Adapter for the ViewPager
      */
     private class PagerAdapter extends FragmentStatePagerAdapter {
+        /**
+         * The data backing the adapter
+         */
+        private final ArrayList<PhotoHolder> mData;
 
         public PagerAdapter() {
             super(getChildFragmentManager());
+            mData = getPhotos();
         }
 
         @Override
