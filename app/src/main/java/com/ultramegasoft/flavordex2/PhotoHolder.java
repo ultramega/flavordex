@@ -32,8 +32,8 @@ public class PhotoHolder implements Parcelable {
     public String path;
 
     /**
-     * @param id          The database id for this photo
-     * @param path        The path to the photo file
+     * @param id   The database id for this photo
+     * @param path The path to the photo file
      */
     public PhotoHolder(long id, String path) {
         this.id = id;
@@ -41,7 +41,7 @@ public class PhotoHolder implements Parcelable {
     }
 
     /**
-     * @param path        The path to the photo file
+     * @param path The path to the photo file
      */
     public PhotoHolder(String path) {
         this(0, path);
