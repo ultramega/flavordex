@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:baselineAligned="false"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp">
+
+        <TextView
+            android:id="@android:id/text1"
+            style="?android:attr/dropDownItemStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textSize="19sp" />
+
+        <TextView
+            android:id="@android:id/text2"
+            style="?android:attr/dropDownItemStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@android:id/text1"
+            android:layout_alignStart="@android:id/text1"
+            android:layout_below="@android:id/text1"
+            android:singleLine="true"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

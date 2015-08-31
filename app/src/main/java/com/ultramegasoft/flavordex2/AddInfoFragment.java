@@ -19,9 +19,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.FilterQueryProvider;
 import android.widget.RatingBar;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -38,6 +41,9 @@ import java.util.Map;
  * @author Steve Guidetti
  */
 public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * Loader ids
+     */
     private static final int LOADER_EXTRAS = 0;
 
     /**
@@ -101,6 +107,8 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
 
         mInfoTable = (TableLayout)root.findViewById(R.id.entry_info);
 
+        setupMakersAutoComplete();
+
         return root;
     }
 
@@ -117,6 +125,51 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
      */
     protected int getLayoutId() {
         return R.layout.fragment_add_info;
+    }
+
+    /**
+     * Set up the autocomplete for the maker field.
+     */
+    private void setupMakersAutoComplete() {
+        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
+                R.layout.simple_dropdown_item_2line, null,
+                new String[] {Tables.Makers.NAME, Tables.Makers.LOCATION},
+                new int[] {android.R.id.text1, android.R.id.text2}, 0);
+
+        adapter.setFilterQueryProvider(new FilterQueryProvider() {
+            @Override
+            public Cursor runQuery(CharSequence constraint) {
+                final String where = Tables.Makers.TYPE + " = " + mTypeId;
+                final String order = Tables.Makers.NAME + " ASC";
+                final Uri uri;
+                if(TextUtils.isEmpty(constraint)) {
+                    uri = Tables.Makers.CONTENT_URI;
+                } else {
+                    uri = Uri.withAppendedPath(Tables.Makers.CONTENT_FILTER_URI_BASE,
+                            constraint.toString());
+                }
+                return getActivity().getContentResolver().query(uri, null, where, null, order);
+            }
+        });
+
+        mTxtMaker.setAdapter(adapter);
+
+        // fill in maker and origin fields with a suggestion
+        mTxtMaker.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final Cursor cursor = (Cursor)parent.getItemAtPosition(position);
+                cursor.moveToPosition(position);
+
+                final String name = cursor.getString(cursor.getColumnIndex(Tables.Makers.NAME));
+                final String origin =
+                        cursor.getString(cursor.getColumnIndex(Tables.Makers.LOCATION));
+                mTxtMaker.setText(name);
+                mTxtOrigin.setText(origin);
+
+                // skip origin field
+                mTxtOrigin.focusSearch(View.FOCUS_DOWN).requestFocus();
+            }
+        });
     }
 
     /**
@@ -266,6 +319,5 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
     }
 }
