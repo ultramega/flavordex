@@ -46,6 +46,16 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(!mRadarView.hasData()) {
+            getLoaderManager().initLoader(0, null, this);
+        } else {
+            mRadarView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_add_flavors, container, false);
         mRadarView = (RadarView)root.findViewById(R.id.radar);
@@ -53,19 +63,9 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
         return root;
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if(savedInstanceState == null) {
-            getLoaderManager().initLoader(0, null, this);
-        } else {
-            mRadarView.setVisibility(View.VISIBLE);
-        }
-    }
-
     /**
-     * Get the from the RadarView as an array of ContentValues objects ready to be bulk inserted
-     * into the entries_flavors database table.
+     * Get the data from the RadarView as an array of ContentValues objects ready to be bulk
+     * inserted into the entries_flavors database table.
      *
      * @return Array of ContentValues containing the data for the entries_flavors table
      */
@@ -106,10 +106,11 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
         mRadarView.setData(holders);
         mRadarView.setInteractive(true);
         mRadarView.setVisibility(View.VISIBLE);
+
+        getLoaderManager().destroyLoader(0);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
     }
 }
