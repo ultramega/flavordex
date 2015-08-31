@@ -802,9 +802,7 @@ public class RadarView extends View {
             mData = bundle.getParcelableArrayList(STATE_DATA);
             mSelected = bundle.getInt(STATE_SELECTED, 0);
             mOffset = bundle.getDouble(STATE_OFFSET, 0.0);
-            if(mInteractive = bundle.getBoolean(STATE_EDITABLE, false)) {
-                setInteractive(true);
-            }
+            setInteractive(bundle.getBoolean(STATE_EDITABLE, false));
 
             super.onRestoreInstanceState(bundle.getParcelable(STATE_SUPER_STATE));
         } else {
