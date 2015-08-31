@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="rew_padding">4dp</dimen>
+    <dimen name="photo_grid_size">150dp</dimen>
 </resources>
