@@ -164,7 +164,22 @@ public abstract class AbsPhotosFragment extends Fragment {
      * @param uri The Uri to the image file
      */
     private void addPhoto(Uri uri) {
-        final PhotoHolder photo = new PhotoHolder(PhotoUtils.getPath(getActivity(), uri));
+        if(uri == null) {
+            return;
+        }
+
+        final String path = PhotoUtils.getPath(getActivity(), uri);
+        if(path == null) {
+            return;
+        }
+
+        for(PhotoHolder photo : mPhotos) {
+            if(path.equals(photo.path)) {
+                return;
+            }
+        }
+
+        final PhotoHolder photo = new PhotoHolder(path);
         mPhotos.add(photo);
         onPhotoAdded(photo);
     }
@@ -185,6 +200,7 @@ public abstract class AbsPhotosFragment extends Fragment {
         if(position < 0 || position >= mPhotos.size()) {
             return;
         }
+
         final PhotoHolder photo = mPhotos.remove(position);
         if(photo != null) {
             onPhotoRemoved(photo);
