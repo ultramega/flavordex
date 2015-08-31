@@ -10,15 +10,15 @@ INSERT INTO `photos` VALUES (4,4,'/sdcard/DCIM/Flavordex/IMG_1897.JPG');
 --
 INSERT INTO `photos` VALUES (5,4,'/sdcard/DCIM/Flavordex/IMG_1896.JPG');
 --
-INSERT INTO `makers` VALUES (1,3,'Jefferson''s','Canada');
+INSERT INTO `makers` VALUES (1,'Jefferson''s','Canada');
 --
-INSERT INTO `makers` VALUES (2,1,'Russian River Brewing Company','Santa Rosa, CA');
+INSERT INTO `makers` VALUES (2,'Russian River Brewing Company','Santa Rosa, CA');
 --
-INSERT INTO `makers` VALUES (3,2,'Four Vines','Graton, Sonoma County, California');
+INSERT INTO `makers` VALUES (3,'Four Vines','Graton, Sonoma County, California');
 --
-INSERT INTO `makers` VALUES (4,4,'','Southern Oromia region, Sidamo');
+INSERT INTO `makers` VALUES (4,'','Southern Oromia region, Sidamo');
 --
-INSERT INTO `makers` VALUES (5,5,'Stevo','California');
+INSERT INTO `makers` VALUES (5,'Stevo','California');
 --
 INSERT INTO `flavors` VALUES (60,5,'Flavor',0);
 --

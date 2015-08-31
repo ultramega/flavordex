@@ -51,10 +51,9 @@ CREATE TABLE `locations` (
 --
 CREATE TABLE `makers` (
   `_id` INTEGER PRIMARY KEY,
-  `type` INTEGER,
   `name` TEXT COLLATE NOCASE,
   `location`  TEXT COLLATE NOCASE,
-  UNIQUE(`type`, `name`, `location`) ON CONFLICT IGNORE
+  UNIQUE(`name`, `location`) ON CONFLICT IGNORE
 );
 --
 CREATE TABLE `photos` (

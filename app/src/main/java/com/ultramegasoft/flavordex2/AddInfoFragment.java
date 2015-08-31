@@ -139,7 +139,6 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
         adapter.setFilterQueryProvider(new FilterQueryProvider() {
             @Override
             public Cursor runQuery(CharSequence constraint) {
-                final String where = Tables.Makers.TYPE + " = " + mTypeId;
                 final String order = Tables.Makers.NAME + " ASC";
                 final Uri uri;
                 if(TextUtils.isEmpty(constraint)) {
@@ -148,7 +147,7 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
                     uri = Uri.withAppendedPath(Tables.Makers.CONTENT_FILTER_URI_BASE,
                             constraint.toString());
                 }
-                return getActivity().getContentResolver().query(uri, null, where, null, order);
+                return getActivity().getContentResolver().query(uri, null, null, null, order);
             }
         });
 
