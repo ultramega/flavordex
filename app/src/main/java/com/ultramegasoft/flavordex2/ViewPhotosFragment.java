@@ -18,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -113,7 +112,6 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.view_photos_menu, menu);
-        inflater.inflate(R.menu.photo_menu, menu);
     }
 
     @Override
@@ -126,16 +124,6 @@ public class ViewPhotosFragment extends AbsPhotosFragment
 
         final boolean showTake = showAdd && hasCamera();
         menu.findItem(R.id.menu_take_photo).setEnabled(showTake);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.menu_remove_photo:
-                confirmDeletePhoto();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -3,6 +3,8 @@ package com.ultramegasoft.flavordex2;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,12 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
     public static final String ARG_PATH = "path";
 
     public PhotoFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -71,6 +79,17 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
         popupMenu.setOnMenuItemClickListener(this);
         popupMenu.inflate(R.menu.photo_menu);
         popupMenu.show();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.photo_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return onMenuItemClick(item) || super.onOptionsItemSelected(item);
     }
 
     @Override
