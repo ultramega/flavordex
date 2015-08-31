@@ -69,7 +69,7 @@ public class AddPhotosFragment extends Fragment {
     /**
      * The adapter backing the GridView
      */
-    private ImageAdapter mAdapter = new ImageAdapter();
+    private ImageAdapter mAdapter;
 
     /**
      * Memory cache for bitmaps
@@ -94,6 +94,8 @@ public class AddPhotosFragment extends Fragment {
         if(savedInstanceState != null) {
             mData = savedInstanceState.getParcelableArrayList(STATE_PHOTOS);
         }
+
+        mAdapter = new ImageAdapter();
     }
 
     @Override
@@ -236,6 +238,15 @@ public class AddPhotosFragment extends Fragment {
          */
         private final HashMap<String, View> mViews = new HashMap<>();
 
+        /**
+         * The size of the cell containing the image
+         */
+        private final int mFrameSize;
+
+        public ImageAdapter() {
+            mFrameSize = getResources().getDimensionPixelSize(R.dimen.photo_grid_size);
+        }
+
         @Override
         public void notifyDataSetChanged() {
             mViews.clear();
@@ -296,7 +307,7 @@ public class AddPhotosFragment extends Fragment {
             if(bitmap != null) {
                 view.setImageBitmap(bitmap);
             } else {
-                new ImageLoader(view, 200, 200, path, mCache).execute();
+                new ImageLoader(view, mFrameSize, mFrameSize, path, mCache).execute();
             }
         }
     }
