@@ -3,7 +3,7 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_remove_photo"
-        android:icon="@drawable/ic_remove_circle"
+        android:icon="@drawable/ic_remove"
         android:title="@string/menu_remove_photo"
         app:showAsAction="ifRoom" />
 </menu>
