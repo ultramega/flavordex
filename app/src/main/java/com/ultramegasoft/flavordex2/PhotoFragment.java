@@ -41,8 +41,8 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
             return null;
         }
 
-        final ImageView imageView = new ImageView(getActivity());
-        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        final View root = inflater.inflate(R.layout.fragment_photo, container, false);
+        final ImageView imageView = (ImageView)root.findViewById(R.id.image);
 
         imageView.getViewTreeObserver()
                 .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -61,12 +61,12 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
         imageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                showMenu(v);
+                showMenu(root.findViewById(R.id.anchor));
                 return true;
             }
         });
 
-        return imageView;
+        return root;
     }
 
     /**
