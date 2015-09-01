@@ -319,7 +319,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                 }
                 return true;
             case R.id.menu_settings:
-                // TODO: 8/14/2015 Add preferences
+                startActivity(new Intent(getActivity(), SettingsActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);
