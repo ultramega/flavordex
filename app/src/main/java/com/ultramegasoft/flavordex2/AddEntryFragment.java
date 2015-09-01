@@ -6,6 +6,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -168,7 +170,6 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         boolean isValid = false;
         ContentValues entryInfo = null;
         ContentValues[] entryExtras = null;
-        ContentValues entryLocation = null;
         ContentValues[] entryFlavors = null;
         ContentValues[] entryPhotos = null;
         for(Fragment fragment : fm.getFragments()) {
@@ -179,7 +180,6 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
                 }
                 entryInfo = ((AddInfoFragment)fragment).getData();
                 entryExtras = ((AddInfoFragment)fragment).getExtras();
-                entryLocation = ((AddInfoFragment)fragment).getLocation();
                 continue;
             }
             if(fragment instanceof AddFlavorsFragment) {
@@ -193,7 +193,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
 
         if(isValid && entryInfo != null) {
             DataSaverFragment.init(getFragmentManager(), mTypeId, mTypeName, entryInfo, entryExtras,
-                    entryLocation, entryFlavors, entryPhotos);
+                    entryFlavors, entryPhotos);
         } else {
             mBtnSave.setEnabled(true);
         }
@@ -282,7 +282,6 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         public static final String ARG_ENTRY_TYPE = "entry_type";
         public static final String ARG_ENTRY_INFO = "entry_info";
         public static final String ARG_ENTRY_EXTRAS = "entry_extras";
-        public static final String ARG_ENTRY_LOCATION = "entry_location";
         public static final String ARG_ENTRY_FLAVORS = "entry_flavors";
         public static final String ARG_ENTRY_PHOTOS = "entry_photos";
 
@@ -307,11 +306,6 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         private ContentValues[] mEntryExtras;
 
         /**
-         * Values for the locations table row
-         */
-        private ContentValues mEntryLocation;
-
-        /**
          * Values for the entries_flavors table rows
          */
         private ContentValues[] mEntryFlavors;
@@ -330,25 +324,22 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         /**
          * Start a new instance of this fragment.
          *
-         * @param fm            The FragmentManager to use
-         * @param typeId        The type id of the entry
-         * @param entryType     The name of the type of entry
-         * @param entryInfo     Values for the entries table row
-         * @param entryExtras   Values for the entries_extras table rows
-         * @param entryLocation Values for the locations table
-         * @param entryFlavors  Values for the entries_flavors table rows
-         * @param entryPhotos   Values for the photos table rows
+         * @param fm           The FragmentManager to use
+         * @param typeId       The type id of the entry
+         * @param entryType    The name of the type of entry
+         * @param entryInfo    Values for the entries table row
+         * @param entryExtras  Values for the entries_extras table rows
+         * @param entryFlavors Values for the entries_flavors table rows
+         * @param entryPhotos  Values for the photos table rows
          */
         public static void init(FragmentManager fm, long typeId, String entryType,
                                 ContentValues entryInfo, ContentValues[] entryExtras,
-                                ContentValues entryLocation, ContentValues[] entryFlavors,
-                                ContentValues[] entryPhotos) {
+                                ContentValues[] entryFlavors, ContentValues[] entryPhotos) {
             final Bundle args = new Bundle();
             args.putLong(ARG_TYPE_ID, typeId);
             args.putString(ARG_ENTRY_TYPE, entryType);
             args.putParcelable(ARG_ENTRY_INFO, entryInfo);
             args.putParcelableArray(ARG_ENTRY_EXTRAS, entryExtras);
-            args.putParcelable(ARG_ENTRY_LOCATION, entryLocation);
             args.putParcelableArray(ARG_ENTRY_FLAVORS, entryFlavors);
             args.putParcelableArray(ARG_ENTRY_PHOTOS, entryPhotos);
 
@@ -371,7 +362,6 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             mEntryType = args.getString(ARG_ENTRY_TYPE);
             mEntryInfo = args.getParcelable(ARG_ENTRY_INFO);
             mEntryExtras = (ContentValues[])args.getParcelableArray(ARG_ENTRY_EXTRAS);
-            mEntryLocation = args.getParcelable(ARG_ENTRY_LOCATION);
             mEntryFlavors = (ContentValues[])args.getParcelableArray(ARG_ENTRY_FLAVORS);
             mEntryPhotos = (ContentValues[])args.getParcelableArray(ARG_ENTRY_PHOTOS);
 
@@ -422,9 +412,6 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
                 if(mEntryExtras != null) {
                     mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "/extras"), mEntryExtras);
                 }
-                if(mEntryLocation != null) {
-                    mResolver.insert(Tables.Locations.CONTENT_URI, mEntryLocation);
-                }
                 if(mEntryFlavors != null) {
                     mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "/flavor"), mEntryFlavors);
                 } else {
@@ -434,6 +421,8 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
                     mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "/photos"), mEntryPhotos);
                 }
 
+                checkLocation(mEntryInfo.getAsString(Tables.Entries.LOCATION));
+
                 return Long.valueOf(entryUri.getLastPathSegment());
             }
 
@@ -442,6 +431,34 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
                 onComplete(entryId);
             }
 
+            /**
+             * Check for a new location and insert it into the database.
+             *
+             * @param newLocationName The name of the location supplied by the user
+             */
+            private void checkLocation(String newLocationName) {
+                if(TextUtils.isEmpty(newLocationName)) {
+                    return;
+                }
+                final FlavordexApp app = (FlavordexApp)getActivity().getApplication();
+                final Location location = app.getLocation();
+                final String locationName = app.getLocationName();
+                if(location != null && !TextUtils.isEmpty(locationName)
+                        && !newLocationName.equals(locationName)) {
+                    final ContentValues values = new ContentValues();
+                    values.put(Tables.Locations.NAME, newLocationName);
+                    values.put(Tables.Locations.LATITUDE, location.getLatitude());
+                    values.put(Tables.Locations.LONGITUDE, location.getLongitude());
+
+                    mResolver.insert(Tables.Locations.CONTENT_URI, values);
+                }
+            }
+
+            /**
+             * Insert the default flavors with 0 values in case the user did not supply data.
+             *
+             * @param entryUri The uri of the newly inserted entry
+             */
             private void insertDefaultFlavors(Uri entryUri) {
                 final Uri uri = ContentUris.withAppendedId(Tables.Types.CONTENT_ID_URI_BASE, mTypeId);
                 final Cursor cursor = mResolver.query(Uri.withAppendedPath(uri, "flavor"), null,
