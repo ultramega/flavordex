@@ -2,10 +2,17 @@ package com.ultramegasoft.flavordex2;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -45,6 +52,13 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
      * Loader ids
      */
     private static final int LOADER_EXTRAS = 0;
+    private static final int LOADER_LOCATIONS = 1;
+
+    /**
+     * Keys for the saved state
+     */
+    private static final String STATE_LOCATION = "location";
+    private static final String STATE_LOCATION_NAME = "location_name";
 
     /**
      * The views for the form fields
@@ -77,6 +91,31 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
      */
     private ArrayList<EditText> mExtraFields = new ArrayList<>();
 
+    /**
+     * The current location
+     */
+    private Location mLocation;
+
+    /**
+     * The name of the current location
+     */
+    private String mLocationName;
+
+    /**
+     * The LocationManager service
+     */
+    private LocationManager mLocationManager;
+
+    /**
+     * The listener for location updates
+     */
+    private LocationListener mLocationListener;
+
+    /**
+     * Handler for the location detection timeout
+     */
+    private final Handler mHandler = new Handler();
+
     public AddInfoFragment() {
     }
 
@@ -84,12 +123,25 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTypeId = getArguments().getLong(AddEntryFragment.ARG_TYPE_ID);
+
+        if(savedInstanceState != null) {
+            mLocation = savedInstanceState.getParcelable(STATE_LOCATION);
+            mLocationName = savedInstanceState.getString(STATE_LOCATION_NAME);
+        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(LOADER_EXTRAS, null, this);
+
+        if(mLocation == null) {
+            final SharedPreferences prefs =
+                    PreferenceManager.getDefaultSharedPreferences(getActivity());
+            if(prefs.getBoolean(FlavordexApp.PREF_DETECT_LOCATION, false)) {
+                setupLocationListener();
+            }
+        }
     }
 
     @NonNull
@@ -116,6 +168,22 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mTxtTitle.requestFocus();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(STATE_LOCATION, mLocation);
+        outState.putString(STATE_LOCATION_NAME, mLocationName);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
+        if(mLocationManager != null && mLocationListener != null) {
+            mLocationManager.removeUpdates(mLocationListener);
+        }
     }
 
     /**
@@ -169,6 +237,102 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
                 mTxtOrigin.focusSearch(View.FOCUS_DOWN).requestFocus();
             }
         });
+    }
+
+    /**
+     * Set up location detection.
+     */
+    private void setupLocationListener() {
+        final LocationManager lm = (LocationManager)getActivity()
+                .getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager = lm;
+
+        if(!lm.getProviders(true).contains(LocationManager.NETWORK_PROVIDER)) {
+            return;
+        }
+
+        final Runnable locationTimeout = new Runnable() {
+            public void run() {
+                lm.removeUpdates(mLocationListener);
+                setLocation(lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
+            }
+        };
+
+        mLocationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                mHandler.removeCallbacks(locationTimeout);
+                lm.removeUpdates(this);
+                setLocation(location);
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            public void onProviderEnabled(String provider) {
+            }
+
+            public void onProviderDisabled(String provider) {
+            }
+        };
+
+        lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
+        mHandler.postDelayed(locationTimeout, 5000);
+    }
+
+    /**
+     * Set the current location.
+     *
+     * @param location A location received from the location listener
+     */
+    private void setLocation(Location location) {
+        if(location == null) {
+            return;
+        }
+        mLocation = location;
+        getLoaderManager().initLoader(LOADER_LOCATIONS, null, this);
+    }
+
+    /**
+     * Find the name of the nearest location from the database.
+     *
+     * @param cursor Cursor from the locations table
+     */
+    private void findNearestLocation(Cursor cursor) {
+        if(mLocation == null) {
+            return;
+        }
+        final double lat = mLocation.getLatitude();
+        final double lon = mLocation.getLongitude();
+
+        String closestName = null;
+        float closestDistance = Float.MAX_VALUE;
+        final float[] distance = new float[1];
+        while(cursor.moveToNext()) {
+            Location.distanceBetween(
+                    lat, lon,
+                    cursor.getDouble(cursor.getColumnIndex(Tables.Locations.LATITUDE)),
+                    cursor.getDouble(cursor.getColumnIndex(Tables.Locations.LONGITUDE)),
+                    distance);
+
+            if(distance[0] < closestDistance) {
+                closestDistance = distance[0];
+                closestName = cursor.getString(cursor.getColumnIndex(Tables.Locations.NAME));
+            }
+        }
+
+        setLocationName(closestName);
+    }
+
+    /**
+     * Set the name of the current location from the database.
+     *
+     * @param locationName The name of the current location
+     */
+    public void setLocationName(String locationName) {
+        mLocationName = locationName;
+        if(mTxtLocation != null && TextUtils.isEmpty(mTxtLocation.getText())) {
+            mTxtLocation.setText(mLocationName);
+        }
     }
 
     /**
@@ -295,6 +459,27 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
         return values.toArray(new ContentValues[values.size()]);
     }
 
+    /**
+     * Read the detected location into a ContentValues object ready to be inserted into the
+     * locations database table.
+     *
+     * @return ContentValues containing the data for the locations table
+     */
+    public ContentValues getLocation() {
+        if(mLocation != null) {
+            final String location = mTxtLocation.getText().toString();
+            if(!TextUtils.isEmpty(location) && !location.equals(mLocationName)) {
+                final ContentValues values = new ContentValues();
+                values.put(Tables.Locations.NAME, location);
+                values.put(Tables.Locations.LATITUDE, mLocation.getLatitude());
+                values.put(Tables.Locations.LONGITUDE, mLocation.getLongitude());
+
+                return values;
+            }
+        }
+        return null;
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch(id) {
@@ -303,6 +488,9 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
                         mTypeId);
                 return new CursorLoader(getActivity(), Uri.withAppendedPath(uri, "/extras"), null,
                         null, null, Tables.Extras._ID + " ASC");
+            case LOADER_LOCATIONS:
+                return new CursorLoader(getActivity(), Tables.Locations.CONTENT_URI, null, null,
+                        null, null);
         }
         return null;
     }
@@ -313,7 +501,12 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
             case LOADER_EXTRAS:
                 loadExtras(data);
                 break;
+            case LOADER_LOCATIONS:
+                findNearestLocation(data);
+                break;
         }
+
+        getLoaderManager().destroyLoader(loader.getId());
     }
 
     @Override
