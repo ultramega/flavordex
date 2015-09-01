@@ -192,7 +192,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         }
 
         if(isValid && entryInfo != null) {
-            DataSaverFragment.init(getFragmentManager(), mTypeName, entryInfo, entryExtras,
+            DataSaverFragment.init(getFragmentManager(), mTypeId, mTypeName, entryInfo, entryExtras,
                     entryLocation, entryFlavors, entryPhotos);
         } else {
             mBtnSave.setEnabled(true);
@@ -278,12 +278,18 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         /**
          * Keys for the fragment arguments
          */
+        public static final String ARG_TYPE_ID = "type_id";
         public static final String ARG_ENTRY_TYPE = "entry_type";
         public static final String ARG_ENTRY_INFO = "entry_info";
         public static final String ARG_ENTRY_EXTRAS = "entry_extras";
         public static final String ARG_ENTRY_LOCATION = "entry_location";
         public static final String ARG_ENTRY_FLAVORS = "entry_flavors";
         public static final String ARG_ENTRY_PHOTOS = "entry_photos";
+
+        /**
+         * The type id of the entry
+         */
+        private long mTypeId;
 
         /**
          * The name of the type of entry
@@ -325,6 +331,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
          * Start a new instance of this fragment.
          *
          * @param fm            The FragmentManager to use
+         * @param typeId        The type id of the entry
          * @param entryType     The name of the type of entry
          * @param entryInfo     Values for the entries table row
          * @param entryExtras   Values for the entries_extras table rows
@@ -332,10 +339,12 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
          * @param entryFlavors  Values for the entries_flavors table rows
          * @param entryPhotos   Values for the photos table rows
          */
-        public static void init(FragmentManager fm, String entryType, ContentValues entryInfo,
-                                ContentValues[] entryExtras, ContentValues entryLocation,
-                                ContentValues[] entryFlavors, ContentValues[] entryPhotos) {
+        public static void init(FragmentManager fm, long typeId, String entryType,
+                                ContentValues entryInfo, ContentValues[] entryExtras,
+                                ContentValues entryLocation, ContentValues[] entryFlavors,
+                                ContentValues[] entryPhotos) {
             final Bundle args = new Bundle();
+            args.putLong(ARG_TYPE_ID, typeId);
             args.putString(ARG_ENTRY_TYPE, entryType);
             args.putParcelable(ARG_ENTRY_INFO, entryInfo);
             args.putParcelableArray(ARG_ENTRY_EXTRAS, entryExtras);
@@ -358,6 +367,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             setRetainInstance(true);
 
             final Bundle args = getArguments();
+            mTypeId = args.getLong(ARG_TYPE_ID);
             mEntryType = args.getString(ARG_ENTRY_TYPE);
             mEntryInfo = args.getParcelable(ARG_ENTRY_INFO);
             mEntryExtras = (ContentValues[])args.getParcelableArray(ARG_ENTRY_EXTRAS);
@@ -417,6 +427,8 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
                 }
                 if(mEntryFlavors != null) {
                     mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "/flavor"), mEntryFlavors);
+                } else {
+                    insertDefaultFlavors(entryUri);
                 }
                 if(mEntryPhotos != null) {
                     mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "/photos"), mEntryPhotos);
@@ -428,6 +440,23 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             @Override
             protected void onPostExecute(Long entryId) {
                 onComplete(entryId);
+            }
+
+            private void insertDefaultFlavors(Uri entryUri) {
+                final Uri uri = ContentUris.withAppendedId(Tables.Types.CONTENT_ID_URI_BASE, mTypeId);
+                final Cursor cursor = mResolver.query(Uri.withAppendedPath(uri, "flavor"), null,
+                        null, null, Tables.Flavors._ID + " ASC");
+                try {
+                    final ContentValues flavor = new ContentValues();
+                    flavor.put(Tables.EntriesFlavors.VALUE, 0);
+                    while(cursor.moveToNext()) {
+                        flavor.put(Tables.EntriesFlavors.FLAVOR,
+                                cursor.getLong(cursor.getColumnIndex(Tables.Flavors._ID)));
+                        mResolver.insert(Uri.withAppendedPath(entryUri, "flavor"), flavor);
+                    }
+                } finally {
+                    cursor.close();
+                }
             }
         }
     }

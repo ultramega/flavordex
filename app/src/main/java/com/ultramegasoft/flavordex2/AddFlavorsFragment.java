@@ -70,6 +70,9 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
      * @return Array of ContentValues containing the data for the entries_flavors table
      */
     public ContentValues[] getData() {
+        if(mRadarView == null || !mRadarView.hasData()) {
+            return null;
+        }
         final ArrayList<ContentValues> data = new ArrayList<>();
         final ArrayList<RadarHolder> radarHolders = mRadarView.getData();
 
@@ -100,7 +103,7 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
         while(data.moveToNext()) {
             id = data.getLong(data.getColumnIndex(Tables.Flavors._ID));
             name = data.getString(data.getColumnIndex(Tables.Flavors.NAME));
-            holders.add(new RadarHolder(id, name, 3));
+            holders.add(new RadarHolder(id, name, 0));
         }
 
         mRadarView.setData(holders);
