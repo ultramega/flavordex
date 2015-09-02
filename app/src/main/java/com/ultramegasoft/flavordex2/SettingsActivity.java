@@ -9,6 +9,8 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.MenuItem;
 
 /**
+ * Activity for changing user preferences.
+ *
  * @author Steve Guidetti
  */
 public class SettingsActivity extends AppCompatActivity {
@@ -34,6 +36,9 @@ public class SettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * The fragment handling the preferences interface.
+     */
     public static class SettingsFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
