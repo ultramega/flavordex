@@ -163,13 +163,16 @@ public class FlavordexApp extends Application implements
             return;
         }
 
-        if(enabled) {
-            setLocation(lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
-            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60 * 60 * 1000, 0,
-                    mLocationListener);
-        } else {
-            setLocation(null);
-            lm.removeUpdates(mLocationListener);
+        try {
+            if(enabled) {
+                setLocation(lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
+                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60 * 60 * 1000, 0,
+                        mLocationListener);
+            } else {
+                setLocation(null);
+                lm.removeUpdates(mLocationListener);
+            }
+        } catch(SecurityException ignored) {
         }
     }
 
