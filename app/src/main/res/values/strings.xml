@@ -26,6 +26,8 @@
     <string name="menu_sort_date">Date</string>
     <string name="menu_sort_rating">Rating</string>
     <string name="menu_xport">Import/Export</string>
+    <string name="menu_save_type">Save Category</string>
+    <string name="menu_delete_type">Delete Category</string>
 
     <string name="button_add">Add Entry</string>
     <string name="button_save">Save</string>
@@ -46,9 +48,15 @@
     <string name="button_import">Import Selected</string>
     <string name="button_export">Export Selected</string>
     <string name="button_select">Select</string>
+    <string name="button_add_extra">Add Field</string>
+    <string name="button_add_flavor">Add Flavor</string>
+    <string name="button_remove_extra">Remove Field</string>
+    <string name="button_remove_flavor">Remove Flavor</string>
+    <string name="button_undo">Undo</string>
 
     <string name="hint_entry_title">Name</string>
     <string name="hint_entry_type">Category</string>
+    <string name="hint_type_name">Category Name</string>
     <string name="hint_maker">Maker</string>
     <string name="hint_origin">Origin</string>
     <string name="hint_location">Where are you?</string>
@@ -57,6 +65,8 @@
     <string name="hint_empty" translatable="false">\?</string>
     <string name="hint_location_filter">Tasting Location</string>
     <string name="hint_file_name">File Name</string>
+    <string name="hint_extra_name">Field Name</string>
+    <string name="hint_flavor_name">Flavor Name</string>
 
     <string name="label_name">Name: </string>
     <string name="label_type">Category: </string>
@@ -97,6 +107,7 @@
     <string name="title_add_flavor">Rate Flavors</string>
     <string name="title_add_notes">Entry Notes</string>
     <string name="title_create_type">Create Category</string>
+    <string name="title_edit_type">Edit Category</string>
     <string name="title_select_type">Select Category</string>
     <string name="title_filter">Filter Entries</string>
     <string name="title_sort">Sort by…</string>
@@ -104,10 +115,13 @@
     <string name="title_select_file">Select File</string>
     <string name="title_all_entries">All Entries</string>
     <string name="title_type_entries">%s Entries</string>
+    <string name="title_type_fields">Category Fields</string>
+    <string name="title_type_flavors">Category Flavors</string>
 
     <string name="error_camera">Error: Unable to launch camera</string>
     <string name="error_invalid_file">invalid file name</string>
     <string name="error_csv_parse">Unable to parse the .csv file\n\nMake sure the first row is column names, and contains a \'title\' field.</string>
+    <string name="error_required">required</string>
 
     <string name="share_subject">I logged %s on Flavordex</string>
     <string name="share_body">I logged %1$s in my %2$s with a %3$.1f rating.\n\nvia Flavordex</string>
