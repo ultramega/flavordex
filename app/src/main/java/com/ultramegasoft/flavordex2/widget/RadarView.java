@@ -262,9 +262,9 @@ public class RadarView extends View {
         // calculate padding based on widest label
         final Rect bounds = new Rect();
 
-        mLabelPaint.getTextBounds("A", 0, 1, bounds);
+        mLabelPaint.getTextBounds("00000", 0, 5, bounds);
         int vPadding = bounds.bottom - bounds.top;
-        int hPadding = vPadding;
+        int hPadding = bounds.right - bounds.left;
 
         if(mData != null) {
             for(RadarHolder item : mData) {
@@ -276,7 +276,7 @@ public class RadarView extends View {
             }
         }
 
-        final int radius = mCenter - hPadding;
+        final int radius = mCenter - Math.max(vPadding, hPadding);
         mScale = radius / mMaxValue;
 
         if(mData != null) {
@@ -707,8 +707,6 @@ public class RadarView extends View {
     @Override
     @SuppressLint("DrawAllocation")
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
         if(!mCalculated) {
             calculatePoints();
         }
@@ -720,6 +718,7 @@ public class RadarView extends View {
         canvas.drawCircle(mCenter, mCenter, mScale * mMaxValue, mOuterCirclePaint);
 
         if(!hasData()) {
+            canvas.drawCircle(mCenter, mCenter, 6, mCenterPaint);
             return;
         }
 
