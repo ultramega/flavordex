@@ -689,8 +689,18 @@ public class RadarView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        final int realSize = Math.min(MeasureSpec.getSize(widthMeasureSpec),
-                MeasureSpec.getSize(heightMeasureSpec));
+        final int width, height;
+        if(MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.UNSPECIFIED) {
+            width = Integer.MAX_VALUE;
+        } else {
+            width = MeasureSpec.getSize(widthMeasureSpec);
+        }
+        if(MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.UNSPECIFIED) {
+            height = Integer.MAX_VALUE;
+        } else {
+            height = MeasureSpec.getSize(heightMeasureSpec);
+        }
+        final int realSize = Math.min(width, height);
         setMeasuredDimension(realSize, realSize);
     }
 
