@@ -16,6 +16,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -253,7 +254,7 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
             }
         };
 
-        addTableRow(mTableExtras, field.name, R.string.hint_extra_name,
+        addTableRow(mTableExtras, field.name, 20, R.string.hint_extra_name,
                 R.string.button_remove_extra, field.delete, listener);
     }
 
@@ -313,7 +314,7 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
             }
         };
 
-        addTableRow(mTableFlavors, field.name, R.string.hint_flavor_name,
+        addTableRow(mTableFlavors, field.name, 12, R.string.hint_flavor_name,
                 R.string.button_remove_flavor, field.delete, listener);
     }
 
@@ -324,13 +325,14 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
      *
      * @param tableLayout The TableLayout to add a row to
      * @param text        The text to fill the text field
+     * @param maxLength   The maximum allowed length of the text field
      * @param hint        The hint for the EditText
      * @param deleteHint  The contentDescription for the delete button
      * @param deleted     The initial deleted status of the field
      * @param listener    The event listener for the field
      */
     @SuppressLint("InflateParams")
-    private void addTableRow(final TableLayout tableLayout, String text, int hint,
+    private void addTableRow(final TableLayout tableLayout, String text, int maxLength, int hint,
                              final int deleteHint, final boolean deleted,
                              final TypeFieldListener listener) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -338,6 +340,7 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
 
         final EditText editText = (EditText)root.findViewById(R.id.field_name);
         editText.setSaveEnabled(false);
+        editText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
         editText.setHint(hint);
         editText.setText(text);
         editText.addTextChangedListener(new TextWatcher() {

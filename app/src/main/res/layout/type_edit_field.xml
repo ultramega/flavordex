@@ -8,8 +8,7 @@
         android:id="@+id/field_name"
         style="@style/TextInput.Name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:maxLength="30" />
+        android:layout_height="match_parent" />
 
     <ImageButton
         android:id="@+id/button_delete"
