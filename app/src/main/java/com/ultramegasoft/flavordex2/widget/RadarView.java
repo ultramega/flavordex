@@ -412,6 +412,7 @@ public class RadarView extends View {
      */
     public void setLabelColor(int color) {
         mLabelPaint.setColor(color);
+        invalidate();
     }
 
     /**
@@ -433,6 +434,7 @@ public class RadarView extends View {
         mOuterCirclePaint.setColor(color);
         mCenterPaint.setColor(mInteractive ? mSelectedLinePaint.getColor() : color);
         mLinePaint.setColor(color);
+        invalidate();
     }
 
     /**
@@ -455,6 +457,7 @@ public class RadarView extends View {
         if(mInteractive) {
             mCenterPaint.setColor(color);
         }
+        invalidate();
     }
 
     /**
@@ -473,6 +476,7 @@ public class RadarView extends View {
      */
     public void setPolygonColor(int color) {
         mPolygonPaint.setColor(color);
+        invalidate();
     }
 
     /**
@@ -491,6 +495,7 @@ public class RadarView extends View {
      */
     public void setPolygonInteractiveColor(int color) {
         mPolygonInteractivePaint.setColor(color);
+        invalidate();
     }
 
     /**
