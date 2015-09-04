@@ -11,12 +11,15 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.ultramegasoft.flavordex2.dialog.DeleteTypeDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryTypeAdapter;
 
@@ -26,7 +29,15 @@ import com.ultramegasoft.flavordex2.widget.EntryTypeAdapter;
  * @author Steve Guidetti
  */
 public class TypeListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * Request coded for external activities
+     */
     private static final int REQUEST_ADD_TYPE = 100;
+
+    /**
+     * The adapter backing the list
+     */
+    private EntryTypeAdapter mAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +52,7 @@ public class TypeListFragment extends ListFragment implements LoaderManager.Load
         actionBar.setTitle(R.string.title_add);
         actionBar.setSubtitle(R.string.title_select_type);
         setListShown(false);
+        registerForContextMenu(getListView());
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -67,6 +79,35 @@ public class TypeListFragment extends ListFragment implements LoaderManager.Load
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.type_context_menu, menu);
+
+        final AdapterView.AdapterContextMenuInfo info =
+                (AdapterView.AdapterContextMenuInfo)menuInfo;
+        if(mAdapter.getItem(info.position).preset) {
+            menu.findItem(R.id.menu_delete).setEnabled(false).setVisible(false);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        final AdapterView.AdapterContextMenuInfo info =
+                (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        switch(item.getItemId()) {
+            case R.id.menu_edit:
+                final Intent intent = new Intent(getContext(), EditTypeActivity.class);
+                intent.putExtra(EditTypeActivity.EXTRA_TYPE_ID, info.id);
+                startActivity(intent);
+                return true;
+            case R.id.menu_delete:
+                DeleteTypeDialog.showDialog(getFragmentManager(), null, 0, info.id);
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     @Override
@@ -100,8 +141,9 @@ public class TypeListFragment extends ListFragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        setListAdapter(new EntryTypeAdapter(getActivity(), data,
-                android.R.layout.simple_list_item_1, android.R.id.text1));
+        mAdapter = new EntryTypeAdapter(getActivity(), data, android.R.layout.simple_list_item_1,
+                android.R.id.text1);
+        setListAdapter(mAdapter);
         setListShown(true);
     }
 

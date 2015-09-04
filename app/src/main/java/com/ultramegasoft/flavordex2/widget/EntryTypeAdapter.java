@@ -94,7 +94,8 @@ public class EntryTypeAdapter extends BaseAdapter {
     protected Type readCursorRow(Cursor cursor) {
         final long id = cursor.getLong(cursor.getColumnIndex(Tables.Types._ID));
         final String name = getRealName(cursor.getString(cursor.getColumnIndex(Tables.Types.NAME)));
-        return new Type(id, name);
+        final boolean preset = cursor.getInt(cursor.getColumnIndex(Tables.Types.PRESET)) == 1;
+        return new Type(id, name, preset);
     }
 
     /**
@@ -114,8 +115,8 @@ public class EntryTypeAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
-        return mTypes.get(position).name;
+    public Type getItem(int position) {
+        return mTypes.get(position);
     }
 
     @Override
@@ -165,12 +166,19 @@ public class EntryTypeAdapter extends BaseAdapter {
         public String name;
 
         /**
-         * @param id   The database id
-         * @param name The name of the type
+         * Whether this is a preset type
          */
-        public Type(long id, String name) {
+        public boolean preset;
+
+        /**
+         * @param id     The database id
+         * @param name   The name of the type
+         * @param preset Whether this is a preset type
+         */
+        public Type(long id, String name, boolean preset) {
             this.id = id;
             this.name = name;
+            this.preset = preset;
         }
 
         @Override

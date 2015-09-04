@@ -27,6 +27,7 @@
     <string name="menu_sort_rating">Rating</string>
     <string name="menu_xport">Import/Export</string>
     <string name="menu_save_type">Save Category</string>
+    <string name="menu_edit_type">Edit Category</string>
     <string name="menu_delete_type">Delete Category</string>
 
     <string name="button_add">Add Entry</string>
