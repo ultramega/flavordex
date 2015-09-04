@@ -7,12 +7,15 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.PathShape;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 
 import com.ultramegasoft.flavordex2.R;
@@ -56,9 +59,19 @@ public class RadarView extends View {
     private ArrayList<RadarHolder> mData;
 
     /**
-     * The offset of the center point from the edges in pixels
+     * The horizontal offset of the center point from the left edge in pixels
      */
-    private int mCenter;
+    private int mCenterX;
+
+    /**
+     * The vertical offset of the center point from the top edge in pixels
+     */
+    private int mCenterY;
+
+    /**
+     * The gravity flags for the view
+     */
+    private int mGravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
 
     /**
      * The distance between values in pixels
@@ -205,6 +218,7 @@ public class RadarView extends View {
         super(context, attrs, defStyle);
 
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RadarView);
+        setGravity(a.getInt(R.styleable.RadarView_gravity, mGravity));
         final int labelColor = a.getColor(R.styleable.RadarView_labelColor, COLOR_LABEL);
         final int circleColor = a.getColor(R.styleable.RadarView_circleColor, COLOR_CIRCLE);
         final int selectedColor = a.getColor(R.styleable.RadarView_selectedColor, COLOR_SELECTED);
@@ -239,6 +253,7 @@ public class RadarView extends View {
 
         mSelectedLabelPaint = new Paint(mLabelPaint);
         mSelectedLabelPaint.setColor(selectedColor);
+        mSelectedLabelPaint.setTypeface(Typeface.DEFAULT_BOLD);
 
         mPolygonPaint = new Paint(mLinePaint);
         mPolygonPaint.setColor(polygonColor);
@@ -255,9 +270,10 @@ public class RadarView extends View {
      * Calculate and cache all the intersection points and label positions
      */
     private void calculatePoints() {
-        mCenter = getWidth() / 2;
-        mLabelPaint.setTextSize(mCenter / 12);
-        mSelectedLabelPaint.setTextSize(mCenter / 8);
+        mCenterX = getWidth() / 2;
+        mCenterY = getHeight() / 2;
+        mLabelPaint.setTextSize(mCenterX / 12);
+        mSelectedLabelPaint.setTextSize(mCenterX / 10);
 
         // calculate padding based on widest label
         final Rect bounds = new Rect();
@@ -276,8 +292,11 @@ public class RadarView extends View {
             }
         }
 
-        final int radius = mCenter - Math.max(vPadding, hPadding);
+        final int radius = mCenterX - Math.max(vPadding, hPadding) - vPadding;
         mScale = radius / mMaxValue;
+
+        mCenterX = getCenterX(radius + hPadding);
+        mCenterY = getCenterY(radius + vPadding * 3);
 
         if(mData != null) {
             final int n = mData.size();
@@ -294,19 +313,52 @@ public class RadarView extends View {
                 // intersection points
                 for(int j = 0; j <= mMaxValue; j++) {
                     final int r = mScale * j;
-                    final float x = (float)(mCenter + r * cos);
-                    final float y = (float)(mCenter - r * sin);
+                    final float x = (float)(mCenterX + r * cos);
+                    final float y = (float)(mCenterY - r * sin);
                     mPoints[i][j] = new float[] {x, y};
                 }
 
                 // label positions
-                mPoints[i][mMaxValue + 1][0] = (float)(mCenter + (radius + mScale / 3) * cos);
+                mPoints[i][mMaxValue + 1][0] = (float)(mCenterX + (radius + mScale / 3) * cos);
                 mPoints[i][mMaxValue + 1][1] =
-                        (float)(mCenter - (radius + mScale) * sin) + vPadding / 2;
+                        (float)(mCenterY - (radius + mScale) * sin) + vPadding / 2;
             }
         }
 
         mCalculated = true;
+    }
+
+    /**
+     * Get the horizontal center point of the view based on the actual size and gravity flags.
+     *
+     * @param radius The actual radius of the chart
+     * @return The horizontal center point
+     */
+    @SuppressLint("RtlHardcoded")
+    private int getCenterX(int radius) {
+        switch(mGravity & Gravity.HORIZONTAL_GRAVITY_MASK) {
+            case Gravity.LEFT:
+                return radius;
+            case Gravity.RIGHT:
+                return getWidth() - radius;
+        }
+        return mCenterX;
+    }
+
+    /**
+     * Get the vertical center point of the view based on the actual size and gravity flags.
+     *
+     * @param radius The actual radius of the chart
+     * @return The vertical center point
+     */
+    private int getCenterY(int radius) {
+        switch(mGravity & Gravity.VERTICAL_GRAVITY_MASK) {
+            case Gravity.TOP:
+                return radius;
+            case Gravity.BOTTOM:
+                return getHeight() - radius;
+        }
+        return mCenterY;
     }
 
     /**
@@ -328,6 +380,29 @@ public class RadarView extends View {
      */
     public void removeRadarViewListener(RadarViewListener listener) {
         mListeners.remove(listener);
+    }
+
+    /**
+     * Set the gravity flags for the view.
+     *
+     * @param gravity One or more Gravity constants
+     */
+    public void setGravity(int gravity) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            gravity = Gravity.getAbsoluteGravity(gravity, getLayoutDirection());
+        }
+        mGravity = gravity;
+        mCalculated = false;
+        invalidate();
+    }
+
+    /**
+     * Get the current gravity flags.
+     *
+     * @return The current gravity flags
+     */
+    public int getGravity() {
+        return mGravity;
     }
 
     /**
@@ -713,12 +788,12 @@ public class RadarView extends View {
 
         // draw circles
         for(int i = 1; i < mMaxValue; i++) {
-            canvas.drawCircle(mCenter, mCenter, mScale * i, mCirclePaint);
+            canvas.drawCircle(mCenterX, mCenterY, mScale * i, mCirclePaint);
         }
-        canvas.drawCircle(mCenter, mCenter, mScale * mMaxValue, mOuterCirclePaint);
+        canvas.drawCircle(mCenterX, mCenterY, mScale * mMaxValue, mOuterCirclePaint);
 
         if(!hasData()) {
-            canvas.drawCircle(mCenter, mCenter, 6, mCenterPaint);
+            canvas.drawCircle(mCenterX, mCenterY, 6, mCenterPaint);
             return;
         }
 
@@ -746,22 +821,18 @@ public class RadarView extends View {
             // draw spoke
             x = mPoints[i][mMaxValue][0];
             y = mPoints[i][mMaxValue][1];
-            canvas.drawLine(mCenter, mCenter, x, y, linePaint);
+            canvas.drawLine(mCenterX, mCenterY, x, y, linePaint);
 
             // draw label
             x = mPoints[i][mMaxValue + 1][0];
             y = mPoints[i][mMaxValue + 1][1];
 
-            if(Math.abs(x - mCenter) < mScale) {
+            if(Math.abs(x - mCenterX) < mScale) {
                 labelPaint.setTextAlign(Paint.Align.CENTER);
-            } else if(x > mCenter) {
+            } else if(x > mCenterX) {
                 labelPaint.setTextAlign(Paint.Align.LEFT);
             } else {
                 labelPaint.setTextAlign(Paint.Align.RIGHT);
-            }
-
-            if(mInteractive && mSelected == i) {
-                y -= mScale / 2;
             }
 
             canvas.drawText(item.name, 0, item.name.length(), x, y, labelPaint);
@@ -785,7 +856,7 @@ public class RadarView extends View {
             canvas.drawCircle(selected[0], selected[1], 8, mSelectedLinePaint);
         }
 
-        canvas.drawCircle(mCenter, mCenter, 6, mCenterPaint);
+        canvas.drawCircle(mCenterX, mCenterY, 6, mCenterPaint);
     }
 
     @Override
