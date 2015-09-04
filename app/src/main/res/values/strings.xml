@@ -94,6 +94,8 @@
     <string name="message_import_complete">Import complete.</string>
     <string name="message_export_complete">Export complete.</string>
     <string name="message_duplicates_unchecked">%d possible duplicates were unchecked.</string>
+    <string name="message_confirm_delete_type">Are you sure you want to delete the %s category?</string>
+    <string name="message_delete_type_entries">Delete &lt;b>%1$d %2$s&lt;/b> from this category.</string>
 
     <string name="pref_cat_general">General Settings</string>
     <string name="pref_detect_location">Remember locations</string>

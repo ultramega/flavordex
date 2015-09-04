@@ -1,9 +1,11 @@
 package com.ultramegasoft.flavordex2;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Paint;
 import android.net.Uri;
@@ -29,6 +31,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 
+import com.ultramegasoft.flavordex2.dialog.DeleteTypeDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 import com.ultramegasoft.flavordex2.widget.RadarView;
@@ -52,6 +55,11 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
     private static final int LOADER_TYPE = 0;
     private static final int LOADER_EXTRAS = 1;
     private static final int LOADER_FLAVOR = 2;
+
+    /**
+     * Request codes for external activities
+     */
+    private static final int REQUEST_DELETE_TYPE = 100;
 
     /**
      * Keys for the saved state
@@ -186,6 +194,7 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.type_edit_menu, menu);
+        menu.findItem(R.id.menu_delete).setVisible(mTypeId > 0);
     }
 
     @Override
@@ -195,10 +204,22 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
                 saveData();
                 return true;
             case R.id.menu_delete:
-                // TODO: 9/3/2015 Add delete function
+                confirmDeleteType();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK) {
+            switch(requestCode) {
+                case REQUEST_DELETE_TYPE:
+                    getActivity().finish();
+                    break;
+            }
+        }
     }
 
     /**
@@ -447,6 +468,15 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
                 .execute();
 
         getActivity().finish();
+    }
+
+    /**
+     * Open the delete confirmation dialog.
+     */
+    private void confirmDeleteType() {
+        if(mTypeId > 0) {
+            DeleteTypeDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_TYPE, mTypeId);
+        }
     }
 
     @Override
