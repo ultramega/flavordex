@@ -470,7 +470,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
      * @return Whether all the form fields are valid
      */
     private boolean validateForm() {
-        if(TextUtils.isEmpty(mTxtTitle.getText().toString())) {
+        if(mTxtTitle != null && TextUtils.isEmpty(mTxtTitle.getText().toString())) {
             mTxtTitle.setError(getString(R.string.error_required));
             mTxtTitle.requestFocus();
             return false;
@@ -620,7 +620,9 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
             final Uri uri;
             if(mCatId > 0) {
                 uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
-                mResolver.update(uri, mCatInfo, null, null);
+                if(mCatInfo.size() > 0) {
+                    mResolver.update(uri, mCatInfo, null, null);
+                }
             } else {
                 uri = mResolver.insert(Tables.Cats.CONTENT_URI, mCatInfo);
             }
