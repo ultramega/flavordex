@@ -10,12 +10,10 @@
         android:orientation="vertical"
         android:padding="4dp">
 
-        <EditText
-            android:id="@+id/cat_name"
-            style="@style/TextInput.Name"
+        <TextView
+            style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:gravity="center"
             android:hint="@string/cat_wine" />
 
@@ -30,60 +28,52 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <EditText
-            style="@style/TextInput"
+        <TextView
+            style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/wine_field_entry_title" />
 
-        <EditText
-            style="@style/TextInput"
+        <TextView
+            style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/wine_field_varietal" />
 
-        <EditText
-            style="@style/TextInput"
+        <TextView
+            style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/wine_field_maker" />
 
-        <EditText
-            style="@style/TextInput"
+        <TextView
+            style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/field_origin" />
 
-        <EditText
-            style="@style/TextInput"
+        <TextView
+            style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/field_price" />
 
-        <EditText
-            style="@style/TextInput"
+        <TextView
+            style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/field_location" />
 
-        <EditText
-            style="@style/TextInput"
+        <TextView
+            style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/wine_field_vintage" />
 
-        <EditText
-            style="@style/TextInput"
+        <TextView
+            style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/wine_field_abv" />
 
         <TableLayout

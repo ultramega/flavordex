@@ -29,39 +29,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <EditText
-            style="@style/TextInput"
+        <TextView
+            style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/field_entry_title" />
 
-        <EditText
-            style="@style/TextInput"
+        <TextView
+            style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/field_maker" />
 
-        <EditText
-            style="@style/TextInput"
+        <TextView
+            style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/field_origin" />
 
-        <EditText
-            style="@style/TextInput"
+        <TextView
+            style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/field_price" />
 
-        <EditText
-            style="@style/TextInput"
+        <TextView
+            style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:text="@string/field_location" />
 
         <TableLayout

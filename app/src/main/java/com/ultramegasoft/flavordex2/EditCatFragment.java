@@ -487,7 +487,9 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         }
 
         final ContentValues info = new ContentValues();
-        info.put(Tables.Cats.NAME, mTxtTitle.getText().toString());
+        if(mTxtTitle != null) {
+            info.put(Tables.Cats.NAME, mTxtTitle.getText().toString());
+        }
 
         new DataSaver(getContext().getContentResolver(), info, mExtraFields, mFlavorFields, mCatId)
                 .execute();
@@ -525,8 +527,10 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         switch(loader.getId()) {
             case LOADER_CAT:
                 if(data.moveToFirst()) {
-                    final String name = data.getString(data.getColumnIndex(Tables.Cats.NAME));
-                    mTxtTitle.setText(FlavordexApp.getRealCatName(getContext(), name));
+                    if(mTxtTitle != null) {
+                        final String name = data.getString(data.getColumnIndex(Tables.Cats.NAME));
+                        mTxtTitle.setText(FlavordexApp.getRealCatName(getContext(), name));
+                    }
                 }
                 break;
             case LOADER_EXTRAS:
