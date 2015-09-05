@@ -22,7 +22,7 @@
             style="@style/SubHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/title_cat_fields" />
+            android:text="@string/header_cat_fields" />
 
         <View
             style="@style/Divider"
@@ -34,35 +34,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="false"
-            android:text="@string/hint_entry_title" />
+            android:text="@string/field_entry_title" />
 
         <EditText
             style="@style/TextInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="false"
-            android:text="@string/hint_maker" />
+            android:text="@string/field_maker" />
 
         <EditText
             style="@style/TextInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="false"
-            android:text="@string/hint_origin" />
+            android:text="@string/field_origin" />
 
         <EditText
             style="@style/TextInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="false"
-            android:text="@string/hint_location" />
+            android:text="@string/field_location" />
 
         <EditText
             style="@style/TextInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="false"
-            android:text="@string/hint_price" />
+            android:text="@string/field_price" />
 
         <TableLayout
             android:id="@+id/cat_extras"
@@ -81,7 +81,7 @@
             style="@style/SubHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/title_cat_flavors" />
+            android:text="@string/header_cat_flavors" />
 
         <View
             style="@style/Divider"

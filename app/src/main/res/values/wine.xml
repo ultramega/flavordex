@@ -12,6 +12,12 @@
     <string name="wine_label_vintage">Vintage: </string>
     <string name="wine_label_abv">ABV: </string>
 
+    <string name="wine_field_entry_title">Wine Name</string>
+    <string name="wine_field_maker">Winery</string>
+    <string name="wine_field_varietal">Varietal</string>
+    <string name="wine_field_vintage">Year</string>
+    <string name="wine_field_abv">ABV</string>
+
     <string-array name="wine_varietals">
         <item>Albariño</item>
         <item>Aligoté</item>

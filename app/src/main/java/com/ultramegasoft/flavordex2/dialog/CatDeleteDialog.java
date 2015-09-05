@@ -101,9 +101,9 @@ public class CatDeleteDialog extends DialogFragment
         mCatId = getArguments().getLong(ARG_CAT_ID);
         return new AlertDialog.Builder(getContext())
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(R.string.menu_delete_cat)
+                .setTitle(R.string.title_delete_cat)
                 .setView(getLayout(savedInstanceState))
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         final Fragment target = getTargetFragment();
                         if(target != null) {
@@ -114,7 +114,7 @@ public class CatDeleteDialog extends DialogFragment
                         dismiss();
                     }
                 })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.cancel();
                     }

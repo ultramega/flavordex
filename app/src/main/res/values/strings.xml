@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name" translatable="false">FlavorDex</string>
     <string name="date_format" translatable="false">MMM dd, yyyy</string>
+    <string name="list_item_cat">%1$s (%2$d)</string>
 
     <string name="cat_any">Any Category</string>
     <string name="cat_beer">Beer</string>
@@ -9,42 +10,67 @@
     <string name="cat_whiskey">Whiskey</string>
     <string name="cat_coffee">Coffee</string>
 
-    <string name="menu_add_entry">Add Entry</string>
-    <string name="menu_edit_entry">Edit Entry</string>
-    <string name="menu_delete_entry">Delete Entry</string>
-    <string name="menu_remove_photo">Remove Photo</string>
-    <string name="menu_add_photo">Add Photo</string>
-    <string name="menu_select_photo">Select Photo</string>
-    <string name="menu_take_photo">Take Photo</string>
-    <string name="menu_edit_flavor">Edit Flavors</string>
+    <string name="title_error">Error</string>
+    <string name="title_add">Add Entry</string>
+    <string name="title_add_cat_entry">Add %s Entry</string>
+    <string name="title_edit">Edit Entry</string>
+    <string name="title_delete_entry">Delete Entry?</string>
+    <string name="title_add_entry">Entry Details</string>
+    <string name="title_add_photos">Add Photos</string>
+    <string name="title_remove_photo">Remove Photo?</string>
+    <string name="title_add_flavor">Rate Flavors</string>
+    <string name="title_select_cat">Select Category</string>
+    <string name="title_create_cat">Create Category</string>
+    <string name="title_edit_cat">Edit Category</string>
+    <string name="title_delete_cat">Delete Category?</string>
+    <string name="title_filter">Filter Entries</string>
+    <string name="title_sort">Sort by…</string>
+    <string name="title_select_file">Select File</string>
+    <string name="title_all_entries">All Entries</string>
+    <string name="title_cat_entries">%s Entries</string>
+
+    <string name="header_details">Details</string>
+    <string name="header_rating">Rating</string>
+    <string name="header_notes">Notes</string>
+    <string name="header_date">Entry Date</string>
+    <string name="header_cat_fields">Category Fields</string>
+    <string name="header_cat_flavors">Category Flavors</string>
+
     <string name="menu_settings">Settings</string>
-    <string name="menu_share">Share Entry</string>
     <string name="menu_filter">Filter</string>
     <string name="menu_search">Search</string>
     <string name="menu_sort">Sort</string>
     <string name="menu_sort_name">Name</string>
     <string name="menu_sort_date">Date</string>
     <string name="menu_sort_rating">Rating</string>
+    <string name="menu_add_entry">Add Entry</string>
+    <string name="menu_edit_entry">Edit Entry</string>
+    <string name="menu_delete_entry">Delete Entry</string>
+    <string name="menu_share_entry">Share Entry</string>
+    <string name="menu_add_photo">Add Photo</string>
+    <string name="menu_select_photo">Select Photo</string>
+    <string name="menu_take_photo">Take Photo</string>
+    <string name="menu_remove_photo">Remove Photo</string>
+    <string name="menu_edit_flavor">Edit Flavors</string>
     <string name="menu_xport">Import/Export</string>
     <string name="menu_save_cat">Save Category</string>
     <string name="menu_edit_cat">Edit Category</string>
     <string name="menu_delete_cat">Delete Category</string>
 
-    <string name="button_add">Add Entry</string>
-    <string name="button_save">Save</string>
+    <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
+    <string name="button_save">Save</string>
+    <string name="button_clear">Clear</string>
+    <string name="button_undo">Undo</string>
     <string name="button_back">Back</string>
     <string name="button_forward">Forward</string>
-    <string name="button_prev">Back</string>
+    <string name="button_prev">Previous</string>
     <string name="button_next">Next</string>
-    <string name="button_finish">Finish</string>
-    <string name="button_add_photo">From Gallery</string>
+    <string name="button_select_photo">From Gallery</string>
     <string name="button_take_photo">From Camera</string>
-    <string name="button_delete_photo">Remove photo</string>
-    <string name="button_skip">Skip</string>
-    <string name="button_clear_filter">Remove filters</string>
-    <string name="button_edit_filter">Edit filters</string>
-    <string name="button_clear_date">X</string>
+    <string name="button_remove_photo">Remove Photo</string>
+    <string name="button_clear_filter">Remove Filters</string>
+    <string name="button_edit_filter">Edit Filters</string>
     <string name="button_select_file">Select File</string>
     <string name="button_import">Import Selected</string>
     <string name="button_export">Export Selected</string>
@@ -53,43 +79,41 @@
     <string name="button_add_flavor">Add Flavor</string>
     <string name="button_remove_extra">Remove Field</string>
     <string name="button_remove_flavor">Remove Flavor</string>
-    <string name="button_undo">Undo</string>
 
-    <string name="hint_entry_title">Name</string>
-    <string name="hint_entry_cat">Category</string>
-    <string name="hint_cat_name">Category Name</string>
+    <string name="hint_empty" translatable="false">\?</string>
+    <string name="hint_entry_title">Entry Title</string>
+    <string name="hint_entry_cat">Entry Category</string>
     <string name="hint_maker">Maker</string>
     <string name="hint_origin">Origin</string>
     <string name="hint_location">Where are you?</string>
     <string name="hint_price">Price</string>
     <string name="hint_notes">Notes</string>
-    <string name="hint_empty" translatable="false">\?</string>
+    <string name="hint_cat_name">Category Name</string>
     <string name="hint_location_filter">Tasting Location</string>
     <string name="hint_file_name">File Name</string>
     <string name="hint_extra_name">Field Name</string>
     <string name="hint_flavor_name">Flavor Name</string>
 
-    <string name="label_name">Name: </string>
     <string name="label_cat">Category: </string>
     <string name="label_maker">Maker: </string>
     <string name="label_origin">Origin: </string>
     <string name="label_location">Tasted: </string>
     <string name="label_price">Price: </string>
-    <string name="label_rating">Rating</string>
-    <string name="label_details">Details</string>
-    <string name="label_notes">Notes</string>
-    <string name="label_radar">Flavor Radar</string>
-    <string name="label_photo">Photo</string>
-    <string name="label_date">Entry Date</string>
     <string name="label_date_min">Starting: </string>
-    <string name="label_date_max">Ending:</string>
+    <string name="label_date_max">Ending: </string>
+
+    <string name="field_entry_title">Entry Title</string>
+    <string name="field_maker">Maker</string>
+    <string name="field_origin">Origin</string>
+    <string name="field_location">Tasted</string>
+    <string name="field_price">Price</string>
 
     <string name="message_no_data">No entries found.</string>
     <string name="message_no_data_filter">No entries found matching &lt;b>%s&lt;/b>.</string>
     <string name="message_confirm_delete">Are you sure you want to delete %s?</string>
     <string name="message_confirm_remove_photo">Are you sure you want to remove this photo? The file will not be deleted.</string>
     <string name="message_no_photos">No Photos</string>
-    <string name="message_no_media">External storage not found</string>
+    <string name="message_no_media">External storage not available</string>
     <string name="message_active_filters">Filtered by %s.</string>
     <string name="message_select_import_file">Select a .csv file to import.</string>
     <string name="message_import_complete">Import complete.</string>
@@ -98,30 +122,9 @@
     <string name="message_confirm_delete_cat">Are you sure you want to delete the %s category?</string>
     <string name="message_delete_cat_entries">Delete &lt;b>%1$d %2$s&lt;/b> from this category.</string>
 
-    <string name="list_item_cat">%1$s (%2$d)</string>
-
     <string name="pref_cat_general">General Settings</string>
     <string name="pref_detect_location">Remember locations</string>
     <string name="pref_summary_detect_location">Autofill location name based on previous entries</string>
-
-    <string name="title_add">Add Entry</string>
-    <string name="title_add_cat_entry">Add %s Entry</string>
-    <string name="title_edit">Edit Entry</string>
-    <string name="title_add_entry">Entry Details</string>
-    <string name="title_add_photos">Add Photos</string>
-    <string name="title_add_flavor">Rate Flavors</string>
-    <string name="title_add_notes">Entry Notes</string>
-    <string name="title_create_cat">Create Category</string>
-    <string name="title_edit_cat">Edit Category</string>
-    <string name="title_select_cat">Select Category</string>
-    <string name="title_filter">Filter Entries</string>
-    <string name="title_sort">Sort by…</string>
-    <string name="title_error">Error</string>
-    <string name="title_select_file">Select File</string>
-    <string name="title_all_entries">All Entries</string>
-    <string name="title_cat_entries">%s Entries</string>
-    <string name="title_cat_fields">Category Fields</string>
-    <string name="title_cat_flavors">Category Flavors</string>
 
     <string name="error_camera">Error: Unable to launch camera</string>
     <string name="error_invalid_file">invalid file name</string>
@@ -130,4 +133,10 @@
 
     <string name="share_subject">I logged %s on Flavordex</string>
     <string name="share_body">I logged %1$s in my %2$s with a %3$.1f rating.\n\nvia Flavordex</string>
+
+    <string name="filter_entry_cat">Category</string>
+    <string name="filter_maker">Maker</string>
+    <string name="filter_origin">Origin</string>
+    <string name="filter_location">Location</string>
+    <string name="filter_date">Entry Date</string>
 </resources>

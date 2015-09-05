@@ -11,6 +11,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 
+import com.ultramegasoft.flavordex2.R;
+
 /**
  * Dialog to show confirmation messages.
  *
@@ -75,7 +77,7 @@ public class ConfirmationDialog extends DialogFragment {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(args.getString(ARG_TITLE))
                 .setMessage(args.getString(ARG_MESSAGE))
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         final Fragment target = getTargetFragment();
                         if(target != null) {
@@ -86,7 +88,7 @@ public class ConfirmationDialog extends DialogFragment {
                         dismiss();
                     }
                 })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.cancel();
                     }

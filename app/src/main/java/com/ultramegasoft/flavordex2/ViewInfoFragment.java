@@ -151,7 +151,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                 return true;
             case R.id.menu_delete_entry:
                 ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_ENTRY,
-                        getString(R.string.menu_delete_entry),
+                        getString(R.string.title_delete_entry),
                         getString(R.string.message_confirm_delete, mTitle));
                 return true;
         }

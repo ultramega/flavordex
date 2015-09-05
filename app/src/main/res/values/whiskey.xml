@@ -12,6 +12,12 @@
     <string name="whiskey_label_age">Age: </string>
     <string name="whiskey_label_abv">ABV: </string>
 
+    <string name="whiskey_field_entry_title">Whiskey Name</string>
+    <string name="whiskey_field_maker">Distiller</string>
+    <string name="whiskey_field_type">Type</string>
+    <string name="whiskey_field_age">Age</string>
+    <string name="whiskey_field_abv">ABV</string>
+
     <string-array name="whiskey_types">
         <item>American - Blend</item>
         <item>American - Single Malt</item>

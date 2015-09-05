@@ -35,6 +35,20 @@
     <string name="coffee_label_ebf">EBF: </string>
     <string name="coffee_label_cbr">CBR: </string>
 
+    <string name="coffee_field_entry_title">Coffee Name</string>
+    <string name="coffee_field_maker">Producer</string>
+    <string name="coffee_field_roaster">Roaster</string>
+    <string name="coffee_field_roast_date">Roast Date</string>
+    <string name="coffee_field_grind">Grind Setting</string>
+    <string name="coffee_field_brew_method">Brew Method</string>
+    <string name="coffee_field_dose">Dose (grams)</string>
+    <string name="coffee_field_esp_mass">Espresso Mass (grams)</string>
+    <string name="coffee_field_water_mass">Water Mass (grams)</string>
+    <string name="coffee_field_temp">Temperature (°C)</string>
+    <string name="coffee_field_ext_time">Extraction Time</string>
+    <string name="coffee_field_tds">TDS (%)</string>
+    <string name="coffee_field_yield">Extraction Yield (%)</string>
+
     <string-array name="coffee_brew_methods">
         <item>Unknown</item>
         <item>Press</item>

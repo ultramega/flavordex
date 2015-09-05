@@ -21,7 +21,7 @@
             style="@style/SubHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_details" />
+            android:text="@string/header_details" />
 
         <View style="@style/Divider" />
 
@@ -173,7 +173,7 @@
             style="@style/SubHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_rating" />
+            android:text="@string/header_rating" />
 
         <View style="@style/Divider" />
 
@@ -189,7 +189,7 @@
             style="@style/SubHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_notes" />
+            android:text="@string/header_notes" />
 
         <View style="@style/Divider" />
 

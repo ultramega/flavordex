@@ -202,7 +202,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         intent.putExtra(ARG_PHOTO_POSITION, position);
 
         ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_IMAGE,
-                getString(R.string.menu_remove_photo),
+                getString(R.string.title_remove_photo),
                 getString(R.string.message_confirm_remove_photo), intent);
     }
 

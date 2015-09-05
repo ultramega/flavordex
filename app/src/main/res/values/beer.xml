@@ -18,6 +18,15 @@
     <string name="beer_label_og">OG: </string>
     <string name="beer_label_fg">FG: </string>
 
+    <string name="beer_field_entry_title">Beer Name</string>
+    <string name="beer_field_maker">Brewer</string>
+    <string name="beer_field_style">Style</string>
+    <string name="beer_field_serving">Serving Type</string>
+    <string name="beer_field_ibu">IBU</string>
+    <string name="beer_field_abv">ABV</string>
+    <string name="beer_field_og">OG</string>
+    <string name="beer_field_fg">FG</string>
+
     <string-array name="beer_serving_types">
         <item>Unknown</item>
         <item>Draft</item>

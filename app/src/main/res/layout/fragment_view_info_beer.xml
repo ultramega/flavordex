@@ -186,7 +186,7 @@
             style="@style/SubHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_notes" />
+            android:text="@string/header_notes" />
 
         <View style="@style/Divider" />
 

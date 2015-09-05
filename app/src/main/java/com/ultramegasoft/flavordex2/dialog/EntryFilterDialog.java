@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import com.ultramegasoft.flavordex2.R;
@@ -137,12 +138,12 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
                 .setTitle(R.string.title_filter)
                 .setIcon(R.drawable.ic_filter_list)
                 .setView(getLayout(savedInstanceState))
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         performFilter();
                     }
                 })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                     }
@@ -234,14 +235,14 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
             }
         });
 
-        final Button btnClearDateMin = (Button)root.findViewById(R.id.button_date_min_clear);
+        final ImageButton btnClearDateMin = (ImageButton)root.findViewById(R.id.button_date_min_clear);
         btnClearDateMin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mDateMin = null;
                 mBtnDateMin.setText(null);
             }
         });
-        final Button btnClearDateMax = (Button)root.findViewById(R.id.button_date_max_clear);
+        final ImageButton btnClearDateMax = (ImageButton)root.findViewById(R.id.button_date_max_clear);
         btnClearDateMax.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mDateMax = null;
@@ -323,28 +324,28 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
             filterValues.put(Tables.Entries.CATEGORY, mSpinnerCat.getSelectedItem().toString());
             where.append(Tables.Entries.CAT_ID).append(" = ")
                     .append(mSpinnerCat.getSelectedItemId()).append(" AND ");
-            fieldsList.append(getString(R.string.hint_entry_cat)).append(", ");
+            fieldsList.append(getString(R.string.filter_entry_cat)).append(", ");
         }
 
         if(!TextUtils.isEmpty(mTxtMaker.getText())) {
             filterValues.put(Tables.Entries.MAKER, mTxtMaker.getText().toString());
             where.append(Tables.Entries.MAKER).append(" LIKE ? AND ");
             argList.add("%" + mTxtMaker.getText() + "%");
-            fieldsList.append(getString(R.string.hint_maker)).append(", ");
+            fieldsList.append(getString(R.string.filter_maker)).append(", ");
         }
 
         if(!TextUtils.isEmpty(mTxtOrigin.getText())) {
             filterValues.put(Tables.Entries.ORIGIN, mTxtOrigin.getText().toString());
             where.append(Tables.Entries.ORIGIN).append(" LIKE ? AND ");
             argList.add("%" + mTxtOrigin.getText() + "%");
-            fieldsList.append(getString(R.string.hint_origin)).append(", ");
+            fieldsList.append(getString(R.string.filter_origin)).append(", ");
         }
 
         if(!TextUtils.isEmpty(mTxtLocation.getText())) {
             filterValues.put(Tables.Entries.LOCATION, mTxtLocation.getText().toString());
             where.append(Tables.Entries.LOCATION).append(" LIKE ? AND ");
             argList.add("%" + mTxtLocation.getText() + "%");
-            fieldsList.append(getString(R.string.hint_location_filter)).append(", ");
+            fieldsList.append(getString(R.string.filter_location)).append(", ");
         }
 
         if(mDateMin != null || mDateMax != null) {
@@ -357,7 +358,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
                 where.append(Tables.Entries.DATE).append(" < ")
                         .append(mDateMax + (24 * 60 * 60 * 1000)).append(" AND ");
             }
-            fieldsList.append(getString(R.string.label_date)).append(", ");
+            fieldsList.append(getString(R.string.filter_date)).append(", ");
         }
 
         if(where.length() > 5) {

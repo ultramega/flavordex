@@ -84,7 +84,7 @@ public class EntryUtils {
      * @return The message body
      */
     private static String getShareBody(Context context, String title, float rating) {
-        final String app = context.getString(R.string.app_name).toLowerCase();
+        final String app = context.getString(R.string.app_name);
         return context.getString(R.string.share_body, title, app, rating);
     }
 
