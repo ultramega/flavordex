@@ -102,7 +102,7 @@ public class EntryListAdapter extends CursorAdapter {
             dateView.setText(null);
         }
 
-        mItemCats.put(id, cursor.getString(cursor.getColumnIndex(Tables.Entries.CATEGORY)));
+        mItemCats.put(id, cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT)));
     }
 
     /**

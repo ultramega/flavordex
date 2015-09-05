@@ -321,7 +321,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
 
         if(mSpinnerCat.getSelectedItemPosition() > 0) {
             filterValues.put(Tables.Entries.CAT_ID, mSpinnerCat.getSelectedItemId());
-            filterValues.put(Tables.Entries.CATEGORY, mSpinnerCat.getSelectedItem().toString());
+            filterValues.put(Tables.Entries.CAT, mSpinnerCat.getSelectedItem().toString());
             where.append(Tables.Entries.CAT_ID).append(" = ")
                     .append(mSpinnerCat.getSelectedItemId()).append(" AND ");
             fieldsList.append(getString(R.string.filter_entry_cat)).append(", ");

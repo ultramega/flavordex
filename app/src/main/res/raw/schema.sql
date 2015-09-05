@@ -129,7 +129,7 @@ END;
 CREATE VIEW `view_entry` AS SELECT
 a.`_id` AS `_id`,
 a.`cat` AS `cat_id`,
-b.`name` AS `category`,
+b.`name` AS `cat`,
 a.`title` AS `title`,
 a.`maker` AS `maker_id`,
 c.`name` AS `maker`,

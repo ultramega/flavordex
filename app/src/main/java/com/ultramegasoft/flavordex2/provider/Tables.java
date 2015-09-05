@@ -25,7 +25,7 @@ public class Tables {
 
         public static final String TITLE = "title";
         public static final String CAT_ID = "cat_id";
-        public static final String CATEGORY = "category";
+        public static final String CAT = "cat";
         public static final String MAKER_ID = "maker_id";
         public static final String MAKER = "maker";
         public static final String ORIGIN = "origin";

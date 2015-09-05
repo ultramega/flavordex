@@ -59,7 +59,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
      */
     private static final String[] LIST_PROJECTION = new String[] {
             Tables.Entries._ID,
-            Tables.Entries.CATEGORY,
+            Tables.Entries.CAT,
             Tables.Entries.TITLE,
             Tables.Entries.MAKER,
             Tables.Entries.RATING,
@@ -450,8 +450,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             mToolbar.setTitle(R.string.title_all_entries);
             mFilterToolbar.setVisibility(View.GONE);
         } else {
-            if(mFilters.containsKey(Tables.Entries.CATEGORY)) {
-                mToolbar.setTitle(getString(R.string.title_cat_entries, mFilters.get(Tables.Entries.CATEGORY)));
+            if(mFilters.containsKey(Tables.Entries.CAT)) {
+                mToolbar.setTitle(getString(R.string.title_cat_entries, mFilters.get(Tables.Entries.CAT)));
             } else {
                 mToolbar.setTitle(R.string.title_all_entries);
             }
