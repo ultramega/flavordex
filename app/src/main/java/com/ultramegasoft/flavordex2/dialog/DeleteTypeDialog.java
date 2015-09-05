@@ -52,11 +52,22 @@ public class DeleteTypeDialog extends DialogFragment
     private static final int LOADER_COUNT = 1;
 
     /**
+     * Keys for the saved state
+     */
+    private static final String STATE_SHOW_CHECK = "show_check";
+
+    /**
      * Views from the layout
      */
     private LinearLayout mCheckLayout;
     private TextView mTxtMessage;
     private TextView mTxtCheckEntries;
+    private CheckBox mCheckBox;
+
+    /**
+     * Whether to show the check layout
+     */
+    private boolean mShowCheckLayout = true;
 
     /**
      * The database id for the type
@@ -115,7 +126,13 @@ public class DeleteTypeDialog extends DialogFragment
     @Override
     public void onStart() {
         super.onStart();
-        setButtonEnabled(false);
+        setButtonEnabled(mCheckBox.isChecked() || !mShowCheckLayout);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(STATE_SHOW_CHECK, mShowCheckLayout);
     }
 
     /**
@@ -123,8 +140,18 @@ public class DeleteTypeDialog extends DialogFragment
      *
      * @param enabled Whether to enable the button
      */
-    final void setButtonEnabled(boolean enabled) {
+    private void setButtonEnabled(boolean enabled) {
         ((AlertDialog)getDialog()).getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(enabled);
+    }
+
+    /**
+     * Set the display of the check layout.
+     *
+     * @param showCheckLayout Whether to show the check layout
+     */
+    private void setShowCheckLayout(boolean showCheckLayout) {
+        mCheckLayout.setVisibility(showCheckLayout ? View.VISIBLE : View.GONE);
+        mShowCheckLayout = showCheckLayout;
     }
 
     /**
@@ -139,9 +166,10 @@ public class DeleteTypeDialog extends DialogFragment
 
         mCheckLayout = (LinearLayout)root.findViewById(R.id.check_entries);
         mTxtMessage = (TextView)root.findViewById(R.id.message);
+        mTxtMessage.setFreezesText(true);
 
-        final CheckBox checkBox = (CheckBox)root.findViewById(R.id.checkbox);
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mCheckBox = (CheckBox)root.findViewById(R.id.checkbox);
+        mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 setButtonEnabled(isChecked);
@@ -149,16 +177,19 @@ public class DeleteTypeDialog extends DialogFragment
         });
 
         mTxtCheckEntries = (TextView)root.findViewById(R.id.check_message);
+        mTxtCheckEntries.setFreezesText(true);
         mTxtCheckEntries.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkBox.toggle();
+                mCheckBox.toggle();
             }
         });
 
         if(savedInstanceState == null) {
             getLoaderManager().initLoader(LOADER_TYPE, null, this);
             getLoaderManager().initLoader(LOADER_COUNT, null, this);
+        } else {
+            setShowCheckLayout(savedInstanceState.getBoolean(STATE_SHOW_CHECK));
         }
 
         return root;
@@ -193,14 +224,13 @@ public class DeleteTypeDialog extends DialogFragment
                             getResources().getQuantityString(R.plurals.entries, count);
                     mTxtCheckEntries.setText(Html.fromHtml(
                             getString(R.string.message_delete_type_entries, count, entries)));
+                    setButtonEnabled(false);
                 } else {
-                    mCheckLayout.setVisibility(View.GONE);
+                    setShowCheckLayout(false);
                     setButtonEnabled(true);
                 }
                 break;
         }
-
-        getLoaderManager().destroyLoader(loader.getId());
     }
 
     @Override
