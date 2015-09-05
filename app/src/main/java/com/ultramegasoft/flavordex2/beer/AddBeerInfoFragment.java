@@ -57,11 +57,8 @@ public class AddBeerInfoFragment extends AddInfoFragment {
     }
 
     @Override
-    protected void addExtraRow(String name) {
-    }
-
-    @Override
     protected void readExtras(HashMap<String, String> values) {
+        super.readExtras(values);
         values.put(Tables.Extras.Beer.STYLE, mTxtStyle.getText().toString());
         values.put(Tables.Extras.Beer.SERVING, mSpnServing.getSelectedItemPosition() + "");
         values.put(Tables.Extras.Beer.STATS_IBU, mTxtIBU.getText().toString());

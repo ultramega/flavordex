@@ -84,11 +84,8 @@ public class AddCoffeeInfoFragment extends AddInfoFragment {
     }
 
     @Override
-    protected void addExtraRow(String name) {
-    }
-
-    @Override
     protected void readExtras(HashMap<String, String> values) {
+        super.readExtras(values);
         final int brewMethod = mSpnBrewMethod.getSelectedItemPosition();
 
         values.put(Tables.Extras.Coffee.ROASTER, mTxtRoaster.getText().toString());

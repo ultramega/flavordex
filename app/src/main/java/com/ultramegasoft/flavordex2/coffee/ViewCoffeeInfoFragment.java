@@ -72,6 +72,7 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
 
     @Override
     protected void populateExtras(LinkedHashMap<String, String> data) {
+        super.populateExtras(data);
         setViewText(mTxtRoaster, data.get(Tables.Extras.Coffee.ROASTER));
         setViewText(mTxtRoastDate, data.get(Tables.Extras.Coffee.ROAST_DATE));
         setViewText(mTxtGrind, data.get(Tables.Extras.Coffee.GRIND));

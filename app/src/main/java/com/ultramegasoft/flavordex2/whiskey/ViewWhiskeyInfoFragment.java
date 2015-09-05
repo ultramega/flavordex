@@ -47,6 +47,7 @@ public class ViewWhiskeyInfoFragment extends ViewInfoFragment {
 
     @Override
     protected void populateExtras(LinkedHashMap<String, String> data) {
+        super.populateExtras(data);
         setViewText(mTxtType, data.get(Tables.Extras.Whiskey.TYPE));
 
         mTxtAge.setText(data.get(Tables.Extras.Whiskey.STATS_AGE));

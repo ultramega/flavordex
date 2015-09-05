@@ -191,7 +191,9 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
             id = cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
             name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
             mExtraIds.put(name, id);
-            addExtraRow(name);
+            if(TextUtils.indexOf(name, '_') != 0) {
+                addExtraRow(name);
+            }
         }
     }
 
@@ -200,7 +202,7 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
      *
      * @param name The name of the field
      */
-    protected void addExtraRow(String name) {
+    private void addExtraRow(String name) {
         final TableRow tableRow = new TableRow(getActivity());
 
         final DisplayMetrics metrics = getResources().getDisplayMetrics();
@@ -244,10 +246,10 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
      *
      * @return ContentValues containing the data for the entries table
      */
-    public ContentValues getData() {
+    public final ContentValues getData() {
         final ContentValues values = new ContentValues();
 
-        values.put(Tables.Entries.CATEGORY, mCatId);
+        values.put(Tables.Entries.CAT, mCatId);
         values.put(Tables.Entries.DATE, System.currentTimeMillis());
 
         values.put(Tables.Entries.TITLE, mTxtTitle.getText().toString());
@@ -279,7 +281,7 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
      *
      * @return Array of ContentValues containing data for the entries_extras table
      */
-    public ContentValues[] getExtras() {
+    public final ContentValues[] getExtras() {
         final HashMap<String, String> fieldValues = new HashMap<>();
         readExtras(fieldValues);
 

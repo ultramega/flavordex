@@ -55,6 +55,7 @@ public class ViewBeerInfoFragment extends ViewInfoFragment {
 
     @Override
     protected void populateExtras(LinkedHashMap<String, String> data) {
+        super.populateExtras(data);
         setViewText(mTxtStyle, data.get(Tables.Extras.Beer.STYLE));
 
         final int servingType = stringToInt(data.get(Tables.Extras.Beer.SERVING));

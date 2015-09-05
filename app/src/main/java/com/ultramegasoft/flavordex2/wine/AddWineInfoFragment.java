@@ -52,11 +52,8 @@ public class AddWineInfoFragment extends AddInfoFragment {
     }
 
     @Override
-    protected void addExtraRow(String name) {
-    }
-
-    @Override
     protected void readExtras(HashMap<String, String> values) {
+        super.readExtras(values);
         values.put(Tables.Extras.Wine.VARIETAL, mTxtVarietal.getText().toString());
         values.put(Tables.Extras.Wine.STATS_VINTAGE, mTxtVintage.getText().toString());
         values.put(Tables.Extras.Wine.STATS_ABV, mTxtABV.getText().toString());

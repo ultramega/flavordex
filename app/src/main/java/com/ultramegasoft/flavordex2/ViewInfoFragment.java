@@ -255,6 +255,9 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
             final int padding = getPixelValue(TypedValue.COMPLEX_UNIT_DIP, 4);
 
             for(Map.Entry<String, String> entry : data.entrySet()) {
+                if(entry.getKey().startsWith("_")) {
+                    continue;
+                }
                 tableRow = new TableRow(getActivity());
 
                 textView = new TextView(getActivity());
