@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
+import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 
 import java.util.ArrayList;
@@ -95,7 +96,8 @@ public class EntryTypeAdapter extends BaseAdapter {
         final long id = cursor.getLong(cursor.getColumnIndex(Tables.Types._ID));
         final String name = getRealName(cursor.getString(cursor.getColumnIndex(Tables.Types.NAME)));
         final boolean preset = cursor.getInt(cursor.getColumnIndex(Tables.Types.PRESET)) == 1;
-        return new Type(id, name, preset);
+        final int numEntries = cursor.getInt(cursor.getColumnIndex(Tables.Types.NUM_ENTRIES));
+        return new Type(id, name, preset, numEntries);
     }
 
     /**
@@ -145,8 +147,11 @@ public class EntryTypeAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(mContext).inflate(mLayoutId, parent, false);
         }
 
+        final Type type = getItem(position);
+        final String text = mContext.getString(R.string.list_item_type, type.name, type.numEntries);
+
         final TextView textView = (TextView)convertView.findViewById(mTextViewId);
-        textView.setText(mTypes.get(position).name);
+        textView.setText(text);
 
         return convertView;
     }
@@ -171,14 +176,21 @@ public class EntryTypeAdapter extends BaseAdapter {
         public boolean preset;
 
         /**
-         * @param id     The database id
-         * @param name   The name of the type
-         * @param preset Whether this is a preset type
+         * The number of entries in this type
          */
-        public Type(long id, String name, boolean preset) {
+        public int numEntries;
+
+        /**
+         * @param id         The database id
+         * @param name       The name of the type
+         * @param preset     Whether this is a preset type
+         * @param numEntries The number of entries in this type
+         */
+        public Type(long id, String name, boolean preset, int numEntries) {
             this.id = id;
             this.name = name;
             this.preset = preset;
+            this.numEntries = numEntries;
         }
 
         @Override

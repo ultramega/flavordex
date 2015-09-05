@@ -405,7 +405,11 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
         @Override
         protected void readCursor(Cursor cursor, ArrayList<Type> types) {
             super.readCursor(cursor, types);
-            types.add(0, new Type(0, getString(R.string.type_any), false));
+            int count = 0;
+            for(Type type : types) {
+                count += type.numEntries;
+            }
+            types.add(0, new Type(0, getString(R.string.type_any), false, count));
         }
     }
 
