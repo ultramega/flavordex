@@ -15,6 +15,7 @@ public class EditCatActivity extends AppCompatActivity {
      * Intent extra for the category id
      */
     public static final String EXTRA_CAT_ID = "cat_id";
+    public static final String EXTRA_CAT_NAME = "cat_name";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,7 @@ public class EditCatActivity extends AppCompatActivity {
             final Intent intent = getIntent();
             final Bundle arguments = new Bundle();
             arguments.putLong(EditCatFragment.ARG_CAT_ID, intent.getLongExtra(EXTRA_CAT_ID, 0));
+            arguments.putString(EditCatFragment.ARG_CAT_NAME, intent.getStringExtra(EXTRA_CAT_NAME));
 
             final EditCatFragment fragment = new EditCatFragment();
             fragment.setArguments(arguments);

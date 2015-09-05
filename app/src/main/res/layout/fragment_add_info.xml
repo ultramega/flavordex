@@ -60,24 +60,24 @@
 
                 <TextView
                     style="@style/TableText.Label"
-                    android:text="@string/label_location" />
-
-                <EditText
-                    android:id="@+id/entry_location"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/hint_location" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
                     android:text="@string/label_price" />
 
                 <EditText
                     android:id="@+id/entry_price"
                     style="@style/TextInput"
                     android:hint="@string/hint_price" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_location" />
+
+                <EditText
+                    android:id="@+id/entry_location"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/hint_location" />
             </TableRow>
         </TableLayout>
 

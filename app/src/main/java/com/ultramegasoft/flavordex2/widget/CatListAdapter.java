@@ -76,7 +76,7 @@ public class CatListAdapter extends BaseAdapter {
      * Read the new cursor into the array and sort by name.
      *
      * @param cursor The cursor
-     * @param cats  The array to add data to
+     * @param cats   The array to add data to
      */
     protected void readCursor(Cursor cursor, ArrayList<Category> cats) {
         cursor.moveToPosition(-1);
@@ -94,21 +94,10 @@ public class CatListAdapter extends BaseAdapter {
      */
     protected Category readCursorRow(Cursor cursor) {
         final long id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
-        final String name = getRealName(cursor.getString(cursor.getColumnIndex(Tables.Cats.NAME)));
+        final String name = cursor.getString(cursor.getColumnIndex(Tables.Cats.NAME));
         final boolean preset = cursor.getInt(cursor.getColumnIndex(Tables.Cats.PRESET)) == 1;
         final int numEntries = cursor.getInt(cursor.getColumnIndex(Tables.Cats.NUM_ENTRIES));
-        return new Category(id, name, preset, numEntries);
-    }
-
-    /**
-     * Get the display name from a database name. Ths will translate the internal name of presets to
-     * their display name.
-     *
-     * @param name The name from the database
-     * @return The display name
-     */
-    protected final String getRealName(String name) {
-        return FlavordexApp.getRealCatName(mContext, name);
+        return new Category(mContext, id, name, preset, numEntries);
     }
 
     @Override
@@ -148,7 +137,7 @@ public class CatListAdapter extends BaseAdapter {
         }
 
         final Category cat = getItem(position);
-        final String text = mContext.getString(R.string.list_item_cat, cat.name, cat.numEntries);
+        final String text = mContext.getString(R.string.list_item_cat, cat.realName, cat.numEntries);
 
         final TextView textView = (TextView)convertView.findViewById(mTextViewId);
         textView.setText(text);
@@ -171,6 +160,11 @@ public class CatListAdapter extends BaseAdapter {
         public String name;
 
         /**
+         * The display name of the category
+         */
+        public String realName;
+
+        /**
          * Whether this is a preset category
          */
         public boolean preset;
@@ -181,21 +175,23 @@ public class CatListAdapter extends BaseAdapter {
         public int numEntries;
 
         /**
+         * @param context    The context
          * @param id         The database id
          * @param name       The name of the category
          * @param preset     Whether this is a preset category
          * @param numEntries The number of entries in this category
          */
-        public Category(long id, String name, boolean preset, int numEntries) {
+        public Category(Context context, long id, String name, boolean preset, int numEntries) {
             this.id = id;
             this.name = name;
+            this.realName = FlavordexApp.getRealCatName(context, name);
             this.preset = preset;
             this.numEntries = numEntries;
         }
 
         @Override
         public int compareTo(@NonNull Category another) {
-            return name.compareTo(another.name);
+            return realName.compareTo(another.realName);
         }
     }
 }

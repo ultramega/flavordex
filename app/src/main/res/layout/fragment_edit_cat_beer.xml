@@ -15,8 +15,9 @@
             style="@style/TextInput.Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
             android:gravity="center"
-            android:hint="@string/hint_cat_name" />
+            android:hint="@string/cat_beer" />
 
         <TextView
             style="@style/SubHeader"
@@ -34,14 +35,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="false"
-            android:text="@string/field_entry_title" />
+            android:text="@string/beer_field_entry_title" />
 
         <EditText
             style="@style/TextInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="false"
-            android:text="@string/field_maker" />
+            android:text="@string/beer_field_style" />
+
+        <EditText
+            style="@style/TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/beer_field_maker" />
 
         <EditText
             style="@style/TextInput"
@@ -62,7 +70,42 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="false"
+            android:text="@string/beer_field_serving" />
+
+        <EditText
+            style="@style/TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
             android:text="@string/field_location" />
+
+        <EditText
+            style="@style/TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/beer_field_abv" />
+
+        <EditText
+            style="@style/TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/beer_field_ibu" />
+
+        <EditText
+            style="@style/TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/beer_field_og" />
+
+        <EditText
+            style="@style/TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/beer_field_fg" />
 
         <TableLayout
             android:id="@+id/cat_extras"

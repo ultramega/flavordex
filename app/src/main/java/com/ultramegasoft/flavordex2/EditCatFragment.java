@@ -48,6 +48,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
      * Keys for the fragment arguments
      */
     public static final String ARG_CAT_ID = "cat_id";
+    public static final String ARG_CAT_NAME = "cat_name";
 
     /**
      * Loader ids
@@ -159,7 +160,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View root = inflater.inflate(R.layout.fragment_edit_cat, container, false);
+        final View root = inflater.inflate(getLayoutId(), container, false);
 
         mTxtTitle = (EditText)root.findViewById(R.id.cat_name);
         mTableExtras = (TableLayout)root.findViewById(R.id.cat_extras);
@@ -181,6 +182,30 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         });
 
         return root;
+    }
+
+    /**
+     * Get the id for the layout to use.
+     *
+     * @return An id from R.layout
+     */
+    private int getLayoutId() {
+        final String cat = getArguments().getString(ARG_CAT_NAME);
+
+        if(FlavordexApp.CAT_BEER.equals(cat)) {
+            return R.layout.fragment_edit_cat_beer;
+        }
+        if(FlavordexApp.CAT_WINE.equals(cat)) {
+            return R.layout.fragment_edit_cat_wine;
+        }
+        if(FlavordexApp.CAT_WHISKEY.equals(cat)) {
+            return R.layout.fragment_edit_cat_whiskey;
+        }
+        if(FlavordexApp.CAT_COFFEE.equals(cat)) {
+            return R.layout.fragment_edit_cat_coffee;
+        }
+
+        return R.layout.fragment_edit_cat;
     }
 
     @Override
@@ -555,10 +580,10 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         private final long mCatId;
 
         /**
-         * @param cr       The ContentResolver to use
+         * @param cr      The ContentResolver to use
          * @param catInfo The basic information for the cats table
-         * @param extras   The extra fields for the category
-         * @param flavors  The flavors for the category
+         * @param extras  The extra fields for the category
+         * @param flavors The flavors for the category
          * @param catId   The category database id, if updating
          */
         public DataSaver(ContentResolver cr, ContentValues catInfo, ArrayList<Field> extras,

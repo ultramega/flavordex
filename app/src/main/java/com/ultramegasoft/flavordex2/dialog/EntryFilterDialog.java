@@ -410,7 +410,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
             for(Category cat : cats) {
                 count += cat.numEntries;
             }
-            cats.add(0, new Category(0, getString(R.string.cat_any), false, count));
+            cats.add(0, new Category(getContext(), 0, getString(R.string.cat_any), false, count));
         }
     }
 

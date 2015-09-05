@@ -101,6 +101,7 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
             case R.id.menu_edit:
                 final Intent intent = new Intent(getContext(), EditCatActivity.class);
                 intent.putExtra(EditCatActivity.EXTRA_CAT_ID, info.id);
+                intent.putExtra(EditCatActivity.EXTRA_CAT_NAME, mAdapter.getItem(info.position).name);
                 startActivity(intent);
                 return true;
             case R.id.menu_delete:

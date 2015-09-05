@@ -42,8 +42,7 @@
     <string name="coffee_field_grind">Grind Setting</string>
     <string name="coffee_field_brew_method">Brew Method</string>
     <string name="coffee_field_dose">Dose (grams)</string>
-    <string name="coffee_field_esp_mass">Espresso Mass (grams)</string>
-    <string name="coffee_field_water_mass">Water Mass (grams)</string>
+    <string name="coffee_field_mass">Water/Espresso Mass (grams)</string>
     <string name="coffee_field_temp">Temperature (°C)</string>
     <string name="coffee_field_ext_time">Extraction Time</string>
     <string name="coffee_field_tds">TDS (%)</string>
