@@ -29,9 +29,9 @@ public class ViewEntryFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
 
     /**
-     * The fragment argument representing the type of item
+     * The fragment argument representing the category of item
      */
-    public static final String ARG_ITEM_TYPE = "item_type";
+    public static final String ARG_ITEM_CAT = "item_cat";
 
     /**
      * The database id for this entry
@@ -90,18 +90,18 @@ public class ViewEntryFragment extends Fragment {
      * @return The Fragment class
      */
     private Class<? extends ViewInfoFragment> getEntryInfoClass() {
-        final String type = getArguments().getString(ARG_ITEM_TYPE);
+        final String cat = getArguments().getString(ARG_ITEM_CAT);
 
-        if(FlavordexApp.TYPE_BEER.equals(type)) {
+        if(FlavordexApp.CAT_BEER.equals(cat)) {
             return ViewBeerInfoFragment.class;
         }
-        if(FlavordexApp.TYPE_WINE.equals(type)) {
+        if(FlavordexApp.CAT_WINE.equals(cat)) {
             return ViewWineInfoFragment.class;
         }
-        if(FlavordexApp.TYPE_WHISKEY.equals(type)) {
+        if(FlavordexApp.CAT_WHISKEY.equals(cat)) {
             return ViewWhiskeyInfoFragment.class;
         }
-        if(FlavordexApp.TYPE_COFFEE.equals(type)) {
+        if(FlavordexApp.CAT_COFFEE.equals(cat)) {
             return ViewCoffeeInfoFragment.class;
         }
 

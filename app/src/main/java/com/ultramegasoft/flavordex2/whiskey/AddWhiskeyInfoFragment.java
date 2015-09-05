@@ -58,7 +58,7 @@ public class AddWhiskeyInfoFragment extends AddInfoFragment {
 
     @Override
     protected void readExtras(HashMap<String, String> values) {
-        values.put(Tables.Extras.Whiskey.STYLE, mTxtType.getText().toString());
+        values.put(Tables.Extras.Whiskey.TYPE, mTxtType.getText().toString());
         values.put(Tables.Extras.Whiskey.STATS_AGE, mTxtAge.getText().toString());
         values.put(Tables.Extras.Whiskey.STATS_ABV, mTxtABV.getText().toString());
     }

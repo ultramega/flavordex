@@ -34,8 +34,8 @@
             android:label="@string/title_add"
             android:parentActivityName=".EntryListActivity" />
         <activity
-            android:name=".EditTypeActivity"
-            android:label="@string/title_create_type" />
+            android:name=".EditCatActivity"
+            android:label="@string/title_create_cat" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/app_name"

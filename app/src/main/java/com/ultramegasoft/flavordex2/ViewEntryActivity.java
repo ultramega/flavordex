@@ -25,8 +25,8 @@ public class ViewEntryActivity extends AppCompatActivity {
             final Bundle arguments = new Bundle();
             arguments.putLong(ViewEntryFragment.ARG_ITEM_ID,
                     intent.getLongExtra(ViewEntryFragment.ARG_ITEM_ID, 0));
-            arguments.putString(ViewEntryFragment.ARG_ITEM_TYPE,
-                    intent.getStringExtra(ViewEntryFragment.ARG_ITEM_TYPE));
+            arguments.putString(ViewEntryFragment.ARG_ITEM_CAT,
+                    intent.getStringExtra(ViewEntryFragment.ARG_ITEM_CAT));
 
             final ViewEntryFragment fragment = new ViewEntryFragment();
             fragment.setArguments(arguments);

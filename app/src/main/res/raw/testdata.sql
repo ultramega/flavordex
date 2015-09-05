@@ -1,4 +1,4 @@
-INSERT INTO `types` VALUES (5,'Sample',0);
+INSERT INTO `cats` VALUES (5,'Sample',0);
 --
 INSERT INTO `photos` VALUES (1,1,'/sdcard/DCIM/Flavordex/20121114_161713.jpg');
 --

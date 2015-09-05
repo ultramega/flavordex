@@ -19,25 +19,25 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.ultramegasoft.flavordex2.dialog.DeleteTypeDialog;
+import com.ultramegasoft.flavordex2.dialog.CatDeleteDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.widget.EntryTypeAdapter;
+import com.ultramegasoft.flavordex2.widget.CatListAdapter;
 
 /**
- * Fragment for showing a list of type selections when adding a new entry
+ * Fragment for showing a list of category selections when adding a new entry
  *
  * @author Steve Guidetti
  */
-public class TypeListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class CatListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Request coded for external activities
      */
-    private static final int REQUEST_ADD_TYPE = 100;
+    private static final int REQUEST_ADD_CAT = 100;
 
     /**
      * The adapter backing the list
      */
-    private EntryTypeAdapter mAdapter;
+    private CatListAdapter mAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,7 @@ public class TypeListFragment extends ListFragment implements LoaderManager.Load
         super.onViewCreated(view, savedInstanceState);
         final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         actionBar.setTitle(R.string.title_add);
-        actionBar.setSubtitle(R.string.title_select_type);
+        actionBar.setSubtitle(R.string.title_select_cat);
         setListShown(false);
         registerForContextMenu(getListView());
         getLoaderManager().initLoader(0, null, this);
@@ -58,13 +58,13 @@ public class TypeListFragment extends ListFragment implements LoaderManager.Load
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        selectType(id);
+        selectCat(id);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.type_select_menu, menu);
+        inflater.inflate(R.menu.cat_select_menu, menu);
     }
 
     @Override
@@ -73,9 +73,9 @@ public class TypeListFragment extends ListFragment implements LoaderManager.Load
             case android.R.id.home:
                 getActivity().finish();
                 return true;
-            case R.id.menu_add_type:
-                final Intent intent = new Intent(getActivity(), EditTypeActivity.class);
-                startActivityForResult(intent, REQUEST_ADD_TYPE);
+            case R.id.menu_add_cat:
+                final Intent intent = new Intent(getActivity(), EditCatActivity.class);
+                startActivityForResult(intent, REQUEST_ADD_CAT);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -84,7 +84,7 @@ public class TypeListFragment extends ListFragment implements LoaderManager.Load
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getActivity().getMenuInflater().inflate(R.menu.type_context_menu, menu);
+        getActivity().getMenuInflater().inflate(R.menu.cat_context_menu, menu);
 
         final AdapterView.AdapterContextMenuInfo info =
                 (AdapterView.AdapterContextMenuInfo)menuInfo;
@@ -99,12 +99,12 @@ public class TypeListFragment extends ListFragment implements LoaderManager.Load
                 (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         switch(item.getItemId()) {
             case R.id.menu_edit:
-                final Intent intent = new Intent(getContext(), EditTypeActivity.class);
-                intent.putExtra(EditTypeActivity.EXTRA_TYPE_ID, info.id);
+                final Intent intent = new Intent(getContext(), EditCatActivity.class);
+                intent.putExtra(EditCatActivity.EXTRA_CAT_ID, info.id);
                 startActivity(intent);
                 return true;
             case R.id.menu_delete:
-                DeleteTypeDialog.showDialog(getFragmentManager(), null, 0, info.id);
+                CatDeleteDialog.showDialog(getFragmentManager(), null, 0, info.id);
                 return true;
         }
         return super.onContextItemSelected(item);
@@ -113,22 +113,22 @@ public class TypeListFragment extends ListFragment implements LoaderManager.Load
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == Activity.RESULT_OK) {
-            final long typeId = data.getLongExtra(EditTypeActivity.EXTRA_TYPE_ID, 0);
-            if(typeId > 0) {
-                selectType(typeId);
+            final long catId = data.getLongExtra(EditCatActivity.EXTRA_CAT_ID, 0);
+            if(catId > 0) {
+                selectCat(catId);
             }
         }
     }
 
     /**
-     * Launch the entry creation fragment with the selected type.
+     * Launch the entry creation fragment with the selected category.
      *
-     * @param id The selected type id
+     * @param id The selected category id
      */
-    private void selectType(long id) {
+    private void selectCat(long id) {
         final Fragment fragment = new AddEntryFragment();
         final Bundle args = new Bundle();
-        args.putLong(AddEntryFragment.ARG_TYPE_ID, id);
+        args.putLong(AddEntryFragment.ARG_CAT_ID, id);
         fragment.setArguments(args);
         getFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
 
@@ -136,12 +136,12 @@ public class TypeListFragment extends ListFragment implements LoaderManager.Load
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), Tables.Types.CONTENT_URI, null, null, null, null);
+        return new CursorLoader(getActivity(), Tables.Cats.CONTENT_URI, null, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter = new EntryTypeAdapter(getActivity(), data, android.R.layout.simple_list_item_1,
+        mAdapter = new CatListAdapter(getActivity(), data, android.R.layout.simple_list_item_1,
                 android.R.id.text1);
         setListAdapter(mAdapter);
         setListShown(true);

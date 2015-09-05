@@ -11,18 +11,18 @@
         android:padding="4dp">
 
         <EditText
-            android:id="@+id/type_name"
+            android:id="@+id/cat_name"
             style="@style/TextInput.Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:hint="@string/hint_type_name" />
+            android:hint="@string/hint_cat_name" />
 
         <TextView
             style="@style/SubHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/title_type_fields" />
+            android:text="@string/title_cat_fields" />
 
         <View
             style="@style/Divider"
@@ -65,7 +65,7 @@
             android:text="@string/hint_price" />
 
         <TableLayout
-            android:id="@+id/type_extras"
+            android:id="@+id/cat_extras"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:stretchColumns="0" />
@@ -81,7 +81,7 @@
             style="@style/SubHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/title_type_flavors" />
+            android:text="@string/title_cat_flavors" />
 
         <View
             style="@style/Divider"
@@ -101,7 +101,7 @@
                 android:orientation="vertical">
 
                 <TableLayout
-                    android:id="@+id/type_flavor"
+                    android:id="@+id/cat_flavor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:stretchColumns="0" />

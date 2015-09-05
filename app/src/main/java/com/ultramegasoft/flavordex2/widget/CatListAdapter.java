@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * Adapter for listing entry types in a Spinner.
+ * Adapter for listing entry categories in a Spinner.
  *
  * @author Steve Guidetti
  */
-public class EntryTypeAdapter extends BaseAdapter {
+public class CatListAdapter extends BaseAdapter {
     /**
      * The context
      */
@@ -39,9 +39,9 @@ public class EntryTypeAdapter extends BaseAdapter {
     private final int mTextViewId;
 
     /**
-     * List of types sorted by display name
+     * List of categories sorted by display name
      */
-    private final ArrayList<Type> mTypes = new ArrayList<>();
+    private final ArrayList<Category> mCats = new ArrayList<>();
 
     /**
      * @param context     The context
@@ -49,7 +49,7 @@ public class EntryTypeAdapter extends BaseAdapter {
      * @param layoutResId The layout resource id to use for each list item
      * @param textViewId  The id for the TextView within the layout
      */
-    public EntryTypeAdapter(Context context, Cursor cursor, int layoutResId, int textViewId) {
+    public CatListAdapter(Context context, Cursor cursor, int layoutResId, int textViewId) {
         mContext = context;
         mLayoutId = layoutResId;
         mTextViewId = textViewId;
@@ -63,10 +63,10 @@ public class EntryTypeAdapter extends BaseAdapter {
      * @param newCursor The new cursor
      */
     public final void swapCursor(Cursor newCursor) {
-        mTypes.clear();
+        mCats.clear();
 
         if(newCursor != null) {
-            readCursor(newCursor, mTypes);
+            readCursor(newCursor, mCats);
         }
 
         notifyDataSetChanged();
@@ -76,28 +76,28 @@ public class EntryTypeAdapter extends BaseAdapter {
      * Read the new cursor into the array and sort by name.
      *
      * @param cursor The cursor
-     * @param types  The array to add data to
+     * @param cats  The array to add data to
      */
-    protected void readCursor(Cursor cursor, ArrayList<Type> types) {
+    protected void readCursor(Cursor cursor, ArrayList<Category> cats) {
         cursor.moveToPosition(-1);
         while(cursor.moveToNext()) {
-            types.add(readCursorRow(cursor));
+            cats.add(readCursorRow(cursor));
         }
-        Collections.sort(types);
+        Collections.sort(cats);
     }
 
     /**
-     * Read the current row into a Type object
+     * Read the current row into a Category object
      *
      * @param cursor The cursor
-     * @return A Type read from the database row
+     * @return A Category read from the database row
      */
-    protected Type readCursorRow(Cursor cursor) {
-        final long id = cursor.getLong(cursor.getColumnIndex(Tables.Types._ID));
-        final String name = getRealName(cursor.getString(cursor.getColumnIndex(Tables.Types.NAME)));
-        final boolean preset = cursor.getInt(cursor.getColumnIndex(Tables.Types.PRESET)) == 1;
-        final int numEntries = cursor.getInt(cursor.getColumnIndex(Tables.Types.NUM_ENTRIES));
-        return new Type(id, name, preset, numEntries);
+    protected Category readCursorRow(Cursor cursor) {
+        final long id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
+        final String name = getRealName(cursor.getString(cursor.getColumnIndex(Tables.Cats.NAME)));
+        final boolean preset = cursor.getInt(cursor.getColumnIndex(Tables.Cats.PRESET)) == 1;
+        final int numEntries = cursor.getInt(cursor.getColumnIndex(Tables.Cats.NUM_ENTRIES));
+        return new Category(id, name, preset, numEntries);
     }
 
     /**
@@ -108,22 +108,22 @@ public class EntryTypeAdapter extends BaseAdapter {
      * @return The display name
      */
     protected final String getRealName(String name) {
-        return FlavordexApp.getRealTypeName(mContext, name);
+        return FlavordexApp.getRealCatName(mContext, name);
     }
 
     @Override
     public int getCount() {
-        return mTypes.size();
+        return mCats.size();
     }
 
     @Override
-    public Type getItem(int position) {
-        return mTypes.get(position);
+    public Category getItem(int position) {
+        return mCats.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return mTypes.get(position).id;
+        return mCats.get(position).id;
     }
 
     /**
@@ -133,8 +133,8 @@ public class EntryTypeAdapter extends BaseAdapter {
      * @return The index of the item, or -1 if the item does not exist
      */
     public int getItemIndex(long id) {
-        for(int i = 0; i < mTypes.size(); i++) {
-            if(mTypes.get(i).id == id) {
+        for(int i = 0; i < mCats.size(); i++) {
+            if(mCats.get(i).id == id) {
                 return i;
             }
         }
@@ -147,8 +147,8 @@ public class EntryTypeAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(mContext).inflate(mLayoutId, parent, false);
         }
 
-        final Type type = getItem(position);
-        final String text = mContext.getString(R.string.list_item_type, type.name, type.numEntries);
+        final Category cat = getItem(position);
+        final String text = mContext.getString(R.string.list_item_cat, cat.name, cat.numEntries);
 
         final TextView textView = (TextView)convertView.findViewById(mTextViewId);
         textView.setText(text);
@@ -157,36 +157,36 @@ public class EntryTypeAdapter extends BaseAdapter {
     }
 
     /**
-     * Holder for data about a type which can be compared by name.
+     * Holder for data about a category which can be compared by name.
      */
-    public static class Type implements Comparable<Type> {
+    public static class Category implements Comparable<Category> {
         /**
          * The database id
          */
         public long id;
 
         /**
-         * The name of the type
+         * The name of the category
          */
         public String name;
 
         /**
-         * Whether this is a preset type
+         * Whether this is a preset category
          */
         public boolean preset;
 
         /**
-         * The number of entries in this type
+         * The number of entries in this category
          */
         public int numEntries;
 
         /**
          * @param id         The database id
-         * @param name       The name of the type
-         * @param preset     Whether this is a preset type
-         * @param numEntries The number of entries in this type
+         * @param name       The name of the category
+         * @param preset     Whether this is a preset category
+         * @param numEntries The number of entries in this category
          */
-        public Type(long id, String name, boolean preset, int numEntries) {
+        public Category(long id, String name, boolean preset, int numEntries) {
             this.id = id;
             this.name = name;
             this.preset = preset;
@@ -194,7 +194,7 @@ public class EntryTypeAdapter extends BaseAdapter {
         }
 
         @Override
-        public int compareTo(@NonNull Type another) {
+        public int compareTo(@NonNull Category another) {
             return name.compareTo(another.name);
         }
     }

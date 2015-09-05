@@ -27,7 +27,7 @@ import android.widget.Spinner;
 
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.widget.EntryTypeAdapter;
+import com.ultramegasoft.flavordex2.widget.CatListAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
     /**
      * Loader ids
      */
-    private static final int LOADER_TYPES = 0;
+    private static final int LOADER_CATS = 0;
 
     /**
      * Arguments for the fragment
@@ -75,12 +75,12 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
      */
     public static final String STATE_DATE_MIN = "date_min";
     public static final String STATE_DATE_MAX = "date_max";
-    public static final String STATE_TYPE = "type";
+    public static final String STATE_CAT = "cat";
 
     /**
      * Views from the layout
      */
-    private Spinner mSpinnerType;
+    private Spinner mSpinnerCat;
     private EditText mTxtMaker;
     private EditText mTxtOrigin;
     private EditText mTxtLocation;
@@ -88,9 +88,9 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
     private Button mBtnDateMax;
 
     /**
-     * The currently selected type id
+     * The currently selected category id
      */
-    private long mTypeId;
+    private long mCatId;
 
     /**
      * Minimum and maximum timestamps
@@ -130,7 +130,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
         mDateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.US);
 
         if(savedInstanceState != null) {
-            mTypeId = savedInstanceState.getLong(STATE_TYPE, 0);
+            mCatId = savedInstanceState.getLong(STATE_CAT, 0);
         }
 
         return new AlertDialog.Builder(getActivity())
@@ -160,7 +160,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
         final LayoutInflater inflater = LayoutInflater.from(getActivity());
         final View root = inflater.inflate(R.layout.dialog_filter_list, null);
 
-        mSpinnerType = (Spinner)root.findViewById(R.id.entry_type);
+        mSpinnerCat = (Spinner)root.findViewById(R.id.entry_cat);
         mTxtMaker = (EditText)root.findViewById(R.id.maker);
         mTxtOrigin = (EditText)root.findViewById(R.id.origin);
         mTxtLocation = (EditText)root.findViewById(R.id.location);
@@ -170,7 +170,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
 
         setupEventHandlers(root);
         populateFields();
-        getLoaderManager().initLoader(LOADER_TYPES, null, this);
+        getLoaderManager().initLoader(LOADER_CATS, null, this);
 
         if(savedInstanceState != null) {
             if(savedInstanceState.containsKey(STATE_DATE_MIN)) {
@@ -200,7 +200,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
         if(mDateMax != null) {
             outState.putLong(STATE_DATE_MAX, mDateMax);
         }
-        outState.putLong(STATE_TYPE, mTypeId);
+        outState.putLong(STATE_CAT, mCatId);
     }
 
     /**
@@ -209,15 +209,15 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
      * @param root The layout
      */
     private void setupEventHandlers(View root) {
-        mSpinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mSpinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mTypeId = id;
+                mCatId = id;
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                mTypeId = 0;
+                mCatId = 0;
             }
         });
 
@@ -258,8 +258,8 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
         if(args != null) {
             final ContentValues filters = args.getParcelable(ARG_FILTER_VALUES);
             if(filters != null) {
-                if(mTypeId == 0 && filters.containsKey(Tables.Entries.TYPE_ID)) {
-                    mTypeId = filters.getAsInteger(Tables.Entries.TYPE_ID);
+                if(mCatId == 0 && filters.containsKey(Tables.Entries.CAT_ID)) {
+                    mCatId = filters.getAsInteger(Tables.Entries.CAT_ID);
                 }
                 mTxtMaker.setText(filters.getAsString(Tables.Entries.MAKER));
                 mTxtOrigin.setText(filters.getAsString(Tables.Entries.ORIGIN));
@@ -318,12 +318,12 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
         final ArrayList<String> argList = new ArrayList<>();
         final StringBuilder fieldsList = new StringBuilder();
 
-        if(mSpinnerType.getSelectedItemPosition() > 0) {
-            filterValues.put(Tables.Entries.TYPE_ID, mSpinnerType.getSelectedItemId());
-            filterValues.put(Tables.Entries.TYPE, mSpinnerType.getSelectedItem().toString());
-            where.append(Tables.Entries.TYPE_ID).append(" = ")
-                    .append(mSpinnerType.getSelectedItemId()).append(" AND ");
-            fieldsList.append(getString(R.string.hint_entry_type)).append(", ");
+        if(mSpinnerCat.getSelectedItemPosition() > 0) {
+            filterValues.put(Tables.Entries.CAT_ID, mSpinnerCat.getSelectedItemId());
+            filterValues.put(Tables.Entries.CATEGORY, mSpinnerCat.getSelectedItem().toString());
+            where.append(Tables.Entries.CAT_ID).append(" = ")
+                    .append(mSpinnerCat.getSelectedItemId()).append(" AND ");
+            fieldsList.append(getString(R.string.hint_entry_cat)).append(", ");
         }
 
         if(!TextUtils.isEmpty(mTxtMaker.getText())) {
@@ -376,14 +376,14 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), Tables.Types.CONTENT_URI, null, null, null, null);
+        return new CursorLoader(getActivity(), Tables.Cats.CONTENT_URI, null, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        final EntryTypeAdapter adapter = new TypeSpinnerAdapter(data);
-        mSpinnerType.setAdapter(adapter);
-        mSpinnerType.setSelection(adapter.getItemIndex(mTypeId));
+        final CatListAdapter adapter = new CatSpinnerAdapter(data);
+        mSpinnerCat.setAdapter(adapter);
+        mSpinnerCat.setSelection(adapter.getItemIndex(mCatId));
     }
 
     @Override
@@ -391,25 +391,25 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
     }
 
     /**
-     * Adapter for the type spinner.
+     * Adapter for the category spinner.
      */
-    private class TypeSpinnerAdapter extends EntryTypeAdapter {
+    private class CatSpinnerAdapter extends CatListAdapter {
         /**
          * @param cursor The cursor
          */
-        public TypeSpinnerAdapter(Cursor cursor) {
+        public CatSpinnerAdapter(Cursor cursor) {
             super(getActivity(), cursor, android.R.layout.simple_dropdown_item_1line,
                     android.R.id.text1);
         }
 
         @Override
-        protected void readCursor(Cursor cursor, ArrayList<Type> types) {
-            super.readCursor(cursor, types);
+        protected void readCursor(Cursor cursor, ArrayList<Category> cats) {
+            super.readCursor(cursor, cats);
             int count = 0;
-            for(Type type : types) {
-                count += type.numEntries;
+            for(Category cat : cats) {
+                count += cat.numEntries;
             }
-            types.add(0, new Type(0, getString(R.string.type_any), false, count));
+            cats.add(0, new Category(0, getString(R.string.cat_any), false, count));
         }
     }
 

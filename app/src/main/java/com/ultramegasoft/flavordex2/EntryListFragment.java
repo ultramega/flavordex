@@ -59,7 +59,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
      */
     private static final String[] LIST_PROJECTION = new String[] {
             Tables.Entries._ID,
-            Tables.Entries.TYPE,
+            Tables.Entries.CATEGORY,
             Tables.Entries.TITLE,
             Tables.Entries.MAKER,
             Tables.Entries.RATING,
@@ -135,9 +135,9 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
          * Callback for when an item has been selected.
          *
          * @param id   The row id of the selected item
-         * @param type The type of item selected
+         * @param cat The category of item selected
          */
-        void onItemSelected(long id, String type);
+        void onItemSelected(long id, String cat);
     }
 
     /**
@@ -146,7 +146,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(long id, String type) {
+        public void onItemSelected(long id, String cat) {
         }
     };
 
@@ -260,7 +260,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
         mActivatedItem = id;
-        mCallbacks.onItemSelected(id, mAdapter.getItemType(id));
+        mCallbacks.onItemSelected(id, mAdapter.getItemCat(id));
     }
 
     @Override
@@ -337,7 +337,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
                     if(entryId > 0) {
                         mActivatedItem = entryId;
                         mCallbacks.onItemSelected(entryId,
-                                data.getStringExtra(AddEntryActivity.EXTRA_ENTRY_TYPE));
+                                data.getStringExtra(AddEntryActivity.EXTRA_ENTRY_CAT));
                     }
                     break;
             }
@@ -450,8 +450,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
             mToolbar.setTitle(R.string.title_all_entries);
             mFilterToolbar.setVisibility(View.GONE);
         } else {
-            if(mFilters.containsKey(Tables.Entries.TYPE)) {
-                mToolbar.setTitle(getString(R.string.title_type_entries, mFilters.get(Tables.Entries.TYPE)));
+            if(mFilters.containsKey(Tables.Entries.CATEGORY)) {
+                mToolbar.setTitle(getString(R.string.title_cat_entries, mFilters.get(Tables.Entries.CATEGORY)));
             } else {
                 mToolbar.setTitle(R.string.title_all_entries);
             }

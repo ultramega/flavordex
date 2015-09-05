@@ -1,6 +1,6 @@
 CREATE TABLE `entries` (
   `_id` INTEGER PRIMARY KEY,
-  `type` INTEGER,
+  `cat` INTEGER,
   `title` TEXT COLLATE NOCASE,
   `maker` INTEGER,
   `location` TEXT COLLATE NOCASE,
@@ -28,7 +28,7 @@ CREATE TABLE `entries_flavors` (
 --
 CREATE TABLE `extras` (
   `_id` INTEGER PRIMARY KEY,
-  `type` INTEGER,
+  `cat` INTEGER,
   `name` TEXT,
   `preset` INTEGER DEFAULT 0,
   `deleted` INTEGER DEFAULT 0
@@ -36,7 +36,7 @@ CREATE TABLE `extras` (
 --
 CREATE TABLE `flavors` (
   `_id` INTEGER PRIMARY KEY,
-  `type` INTEGER,
+  `cat` INTEGER,
   `name` TEXT,
   `deleted` INTEGER DEFAULT 0
 );
@@ -62,7 +62,7 @@ CREATE TABLE `photos` (
   `path` TEXT
 );
 --
-CREATE TABLE `types` (
+CREATE TABLE `cats` (
   `_id` INTEGER PRIMARY KEY,
   `name`  TEXT COLLATE NOCASE,
   `preset` INTEGER DEFAULT 0
@@ -83,11 +83,11 @@ BEGIN
      AND NOT EXISTS (SELECT 1 FROM `entries` WHERE `maker` = OLD.`maker`);
 END;
 --
-CREATE TRIGGER `delete_type` AFTER DELETE ON `types`
+CREATE TRIGGER `delete_cat` AFTER DELETE ON `cats`
 BEGIN
-    DELETE FROM `entries` WHERE `type` = OLD.`_id`;
-    DELETE FROM `extras` WHERE `type` = OLD.`_id`;
-    DELETE FROM `flavors` WHERE `type` = OLD.`_id`;
+    DELETE FROM `entries` WHERE `cat` = OLD.`_id`;
+    DELETE FROM `extras` WHERE `cat` = OLD.`_id`;
+    DELETE FROM `flavors` WHERE `cat` = OLD.`_id`;
 END;
 --
 CREATE TRIGGER `delete_entry_extra` AFTER DELETE ON `entries_extras`
@@ -128,8 +128,8 @@ END;
 --
 CREATE VIEW `view_entry` AS SELECT
 a.`_id` AS `_id`,
-a.`type` AS `type_id`,
-b.`name` AS `type`,
+a.`cat` AS `cat_id`,
+b.`name` AS `category`,
 a.`title` AS `title`,
 a.`maker` AS `maker_id`,
 c.`name` AS `maker`,
@@ -139,8 +139,8 @@ a.`date` AS `date`,
 a.`price` AS `price`,
 a.`rating` AS `rating`,
 a.`notes` AS `notes`
-FROM `entries` a LEFT JOIN `types` b LEFT JOIN `makers` c
-WHERE a.`type` = b.`_id` AND a.`maker` = c.`_id`;
+FROM `entries` a LEFT JOIN `cats` b LEFT JOIN `makers` c
+WHERE a.`cat` = b.`_id` AND a.`maker` = c.`_id`;
 --
 CREATE VIEW `view_entry_extra` AS SELECT
 a.`_id` AS `_id`,
@@ -161,7 +161,7 @@ a.`value` AS `value`
 FROM `entries_flavors` a LEFT JOIN `flavors` b
 WHERE a.`flavor` = b.`_id`;
 --
-CREATE VIEW `view_type` AS SELECT
+CREATE VIEW `view_cat` AS SELECT
 *,
-(SELECT COUNT() FROM `entries` WHERE `type` = `types`.`_id`) AS `num_entries`
-FROM `types`;
+(SELECT COUNT() FROM `entries` WHERE `cat` = `cats`.`_id`) AS `num_entries`
+FROM `cats`;

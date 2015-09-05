@@ -31,22 +31,22 @@ public class FlavordexApp extends Application implements
     public static final String PREF_LIST_SORT_REVERSED = "pref_list_sort_reversed";
 
     /**
-     * Entry type preset names
+     * Entry category preset names
      */
-    public static final String TYPE_BEER = "_beer";
-    public static final String TYPE_WINE = "_wine";
-    public static final String TYPE_WHISKEY = "_whiskey";
-    public static final String TYPE_COFFEE = "_coffee";
+    public static final String CAT_BEER = "_beer";
+    public static final String CAT_WINE = "_wine";
+    public static final String CAT_WHISKEY = "_whiskey";
+    public static final String CAT_COFFEE = "_coffee";
 
     /**
-     * Map of preset type names to string resource ids
+     * Map of preset category names to string resource ids
      */
-    private static final HashMap<String, Integer> sTypeNameMap = new HashMap<String, Integer>() {
+    private static final HashMap<String, Integer> sCatNameMap = new HashMap<String, Integer>() {
         {
-            put(TYPE_BEER, R.string.type_beer);
-            put(TYPE_WINE, R.string.type_wine);
-            put(TYPE_WHISKEY, R.string.type_whiskey);
-            put(TYPE_COFFEE, R.string.type_coffee);
+            put(CAT_BEER, R.string.cat_beer);
+            put(CAT_WINE, R.string.cat_wine);
+            put(CAT_WHISKEY, R.string.cat_whiskey);
+            put(CAT_COFFEE, R.string.cat_coffee);
         }
     };
 
@@ -105,16 +105,16 @@ public class FlavordexApp extends Application implements
     }
 
     /**
-     * Get the real display name of an entry type from a raw database name value, translating
+     * Get the real display name of an entry category from a raw database name value, translating
      * internal names as needed.
      *
      * @param context The context
      * @param name    The name from the database
      * @return The real display name
      */
-    public static String getRealTypeName(Context context, String name) {
-        if(sTypeNameMap.containsKey(name)) {
-            return context.getString(sTypeNameMap.get(name));
+    public static String getRealCatName(Context context, String name) {
+        if(sCatNameMap.containsKey(name)) {
+            return context.getString(sCatNameMap.get(name));
         }
         return name;
     }

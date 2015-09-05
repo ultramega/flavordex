@@ -33,11 +33,11 @@ public class EntryListActivity extends AppCompatActivity implements EntryListFra
     }
 
     @Override
-    public void onItemSelected(long id, String type) {
+    public void onItemSelected(long id, String cat) {
         if(mTwoPane) {
             final Bundle arguments = new Bundle();
             arguments.putLong(ViewEntryFragment.ARG_ITEM_ID, id);
-            arguments.putString(ViewEntryFragment.ARG_ITEM_TYPE, type);
+            arguments.putString(ViewEntryFragment.ARG_ITEM_CAT, cat);
 
             final ViewEntryFragment fragment = new ViewEntryFragment();
             fragment.setArguments(arguments);
@@ -48,7 +48,7 @@ public class EntryListActivity extends AppCompatActivity implements EntryListFra
         } else {
             final Intent detailIntent = new Intent(this, ViewEntryActivity.class);
             detailIntent.putExtra(ViewEntryFragment.ARG_ITEM_ID, id);
-            detailIntent.putExtra(ViewEntryFragment.ARG_ITEM_TYPE, type);
+            detailIntent.putExtra(ViewEntryFragment.ARG_ITEM_CAT, cat);
             startActivity(detailIntent);
         }
     }

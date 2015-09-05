@@ -6,15 +6,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 /**
- * Activity for editing or creating an entry type.
+ * Activity for editing or creating an entry category.
  *
  * @author Steve Guidetti
  */
-public class EditTypeActivity extends AppCompatActivity {
+public class EditCatActivity extends AppCompatActivity {
     /**
-     * Intent extra for the type id
+     * Intent extra for the category id
      */
-    public static final String EXTRA_TYPE_ID = "type_id";
+    public static final String EXTRA_CAT_ID = "cat_id";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -25,9 +25,9 @@ public class EditTypeActivity extends AppCompatActivity {
         if(savedInstanceState == null) {
             final Intent intent = getIntent();
             final Bundle arguments = new Bundle();
-            arguments.putLong(EditTypeFragment.ARG_TYPE_ID, intent.getLongExtra(EXTRA_TYPE_ID, 0));
+            arguments.putLong(EditCatFragment.ARG_CAT_ID, intent.getLongExtra(EXTRA_CAT_ID, 0));
 
-            final EditTypeFragment fragment = new EditTypeFragment();
+            final EditCatFragment fragment = new EditCatFragment();
             fragment.setArguments(arguments);
 
             getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment)

@@ -58,22 +58,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Insert a preset entry type.
+     * Insert a preset entry category.
      *
      * @param db        The database
-     * @param name      The internal name of the type
+     * @param name      The internal name of the category
      * @param extras    List of internal names of the extra fields
      * @param flavorRes String-array resource id for the list of flavors
      */
     private void insertPreset(SQLiteDatabase db, String name, String[] extras, int flavorRes) {
         ContentValues values = new ContentValues();
 
-        values.put(Tables.Types.NAME, name);
-        values.put(Tables.Types.PRESET, 1);
-        final long id = db.insert(Tables.Types.TABLE_NAME, null, values);
+        values.put(Tables.Cats.NAME, name);
+        values.put(Tables.Cats.PRESET, 1);
+        final long id = db.insert(Tables.Cats.TABLE_NAME, null, values);
 
         values.clear();
-        values.put(Tables.Extras.TYPE, id);
+        values.put(Tables.Extras.CAT, id);
         values.put(Tables.Extras.PRESET, 1);
         for(String extra : extras) {
             values.put(Tables.Extras.NAME, extra);
@@ -82,7 +82,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         values.clear();
         final String[] flavors = mContext.getResources().getStringArray(flavorRes);
-        values.put(Tables.Flavors.TYPE, id);
+        values.put(Tables.Flavors.CAT, id);
         for(String flavor : flavors) {
             values.put(Tables.Flavors.NAME, flavor);
             db.insert(Tables.Flavors.TABLE_NAME, null, values);
@@ -90,7 +90,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Insert beer type preset.
+     * Insert beer category preset.
      *
      * @param db The database
      */
@@ -103,11 +103,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Tables.Extras.Beer.STATS_OG,
                 Tables.Extras.Beer.STATS_FG
         };
-        insertPreset(db, FlavordexApp.TYPE_BEER, extras, R.array.beer_flavor_names);
+        insertPreset(db, FlavordexApp.CAT_BEER, extras, R.array.beer_flavor_names);
     }
 
     /**
-     * Insert wine type preset.
+     * Insert wine category preset.
      *
      * @param db The database
      */
@@ -117,25 +117,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Tables.Extras.Wine.STATS_VINTAGE,
                 Tables.Extras.Wine.STATS_ABV
         };
-        insertPreset(db, FlavordexApp.TYPE_WINE, extras, R.array.wine_flavor_names);
+        insertPreset(db, FlavordexApp.CAT_WINE, extras, R.array.wine_flavor_names);
     }
 
     /**
-     * Insert whiskey type preset.
+     * Insert whiskey category preset.
      *
      * @param db The database
      */
     private void insertWhiskeyPreset(SQLiteDatabase db) {
         final String[] extras = new String[] {
-                Tables.Extras.Whiskey.STYLE,
+                Tables.Extras.Whiskey.TYPE,
                 Tables.Extras.Whiskey.STATS_AGE,
                 Tables.Extras.Whiskey.STATS_ABV
         };
-        insertPreset(db, FlavordexApp.TYPE_WHISKEY, extras, R.array.whiskey_flavor_names);
+        insertPreset(db, FlavordexApp.CAT_WHISKEY, extras, R.array.whiskey_flavor_names);
     }
 
     /**
-     * Insert coffee type preset.
+     * Insert coffee category preset.
      *
      * @param db The database
      */
@@ -152,7 +152,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Tables.Extras.Coffee.STATS_TDS,
                 Tables.Extras.Coffee.STATS_YIELD
         };
-        insertPreset(db, FlavordexApp.TYPE_COFFEE, extras, R.array.coffee_flavor_names);
+        insertPreset(db, FlavordexApp.CAT_COFFEE, extras, R.array.coffee_flavor_names);
     }
 
     /**

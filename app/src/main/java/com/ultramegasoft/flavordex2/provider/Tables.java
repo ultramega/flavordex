@@ -24,8 +24,8 @@ public class Tables {
         public static final String VIEW_NAME = "view_entry";
 
         public static final String TITLE = "title";
-        public static final String TYPE_ID = "type_id";
-        public static final String TYPE = "type";
+        public static final String CAT_ID = "cat_id";
+        public static final String CATEGORY = "category";
         public static final String MAKER_ID = "maker_id";
         public static final String MAKER = "maker";
         public static final String ORIGIN = "origin";
@@ -91,7 +91,7 @@ public class Tables {
     public static class Extras implements BaseColumns {
         public static final String TABLE_NAME = "extras";
 
-        public static final String TYPE = "type";
+        public static final String CAT = "cat";
         public static final String NAME = "name";
         public static final String PRESET = "preset";
         public static final String DELETED = "deleted";
@@ -123,7 +123,7 @@ public class Tables {
         }
 
         public static class Whiskey {
-            public static final String STYLE = "_style";
+            public static final String TYPE = "_type";
             public static final String STATS_AGE = "_stats_age";
             public static final String STATS_ABV = "_stats_abv";
         }
@@ -150,7 +150,7 @@ public class Tables {
     public static class Flavors implements BaseColumns {
         public static final String TABLE_NAME = "flavors";
 
-        public static final String TYPE = "type";
+        public static final String CAT = "cat";
         public static final String NAME = "name";
         public static final String DELETED = "deleted";
 
@@ -186,7 +186,6 @@ public class Tables {
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
         public static final Uri CONTENT_FILTER_URI_BASE
                 = Uri.parse(URI_BASE + TABLE_NAME + "/filter/");
-
 
         private Makers() {
         }
@@ -240,28 +239,27 @@ public class Tables {
     }
 
     /**
-     * Data contract for the 'types' table.
+     * Data contract for the 'cats' table.
      *
      * @author Steve Guidetti
      */
-    public static class Types implements BaseColumns {
-        public static final String TABLE_NAME = "types";
-        public static final String VIEW_NAME = "view_type";
+    public static class Cats implements BaseColumns {
+        public static final String TABLE_NAME = "cats";
+        public static final String VIEW_NAME = "view_cat";
 
-        public static final String TYPE = "type";
         public static final String NAME = "name";
         public static final String PRESET = "preset";
         public static final String NUM_ENTRIES = "num_entries";
 
         public static final String DATA_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".type";
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".cat";
         public static final String DATA_TYPE_ITEM =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".type";
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".cat";
 
         public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
 
-        private Types() {
+        private Cats() {
         }
     }
 }

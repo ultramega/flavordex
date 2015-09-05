@@ -31,7 +31,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 
-import com.ultramegasoft.flavordex2.dialog.DeleteTypeDialog;
+import com.ultramegasoft.flavordex2.dialog.CatDeleteDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 import com.ultramegasoft.flavordex2.widget.RadarView;
@@ -39,27 +39,27 @@ import com.ultramegasoft.flavordex2.widget.RadarView;
 import java.util.ArrayList;
 
 /**
- * Fragment for editing or creating an entry type.
+ * Fragment for editing or creating an entry category.
  *
  * @author Steve Guidetti
  */
-public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class EditCatFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Keys for the fragment arguments
      */
-    public static final String ARG_TYPE_ID = "type_id";
+    public static final String ARG_CAT_ID = "cat_id";
 
     /**
      * Loader ids
      */
-    private static final int LOADER_TYPE = 0;
+    private static final int LOADER_CAT = 0;
     private static final int LOADER_EXTRAS = 1;
     private static final int LOADER_FLAVOR = 2;
 
     /**
      * Request codes for external activities
      */
-    private static final int REQUEST_DELETE_TYPE = 100;
+    private static final int REQUEST_DELETE_CAT = 100;
 
     /**
      * Keys for the saved state
@@ -86,14 +86,14 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
     private ArrayList<Field> mFlavorFields = new ArrayList<>();
 
     /**
-     * The type id from the arguments
+     * The category id from the arguments
      */
-    private long mTypeId;
+    private long mCatId;
 
     /**
      * Interface for field listeners.
      */
-    private interface TypeFieldListener {
+    private interface CatFieldListener {
         /**
          * Should the undo delete function be allowed?
          *
@@ -122,10 +122,10 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTypeId = getArguments().getLong(ARG_TYPE_ID);
+        mCatId = getArguments().getLong(ARG_CAT_ID);
         setHasOptionsMenu(true);
-        if(mTypeId > 0) {
-            getActivity().setTitle(getString(R.string.title_edit_type));
+        if(mCatId > 0) {
+            getActivity().setTitle(getString(R.string.title_edit_cat));
         }
     }
 
@@ -133,8 +133,8 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState == null) {
-            if(mTypeId > 0) {
-                getLoaderManager().initLoader(LOADER_TYPE, null, this);
+            if(mCatId > 0) {
+                getLoaderManager().initLoader(LOADER_CAT, null, this);
                 getLoaderManager().initLoader(LOADER_EXTRAS, null, this);
                 getLoaderManager().initLoader(LOADER_FLAVOR, null, this);
             } else {
@@ -159,11 +159,11 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View root = inflater.inflate(R.layout.fragment_edit_type, container, false);
+        final View root = inflater.inflate(R.layout.fragment_edit_cat, container, false);
 
-        mTxtTitle = (EditText)root.findViewById(R.id.type_name);
-        mTableExtras = (TableLayout)root.findViewById(R.id.type_extras);
-        mTableFlavors = (TableLayout)root.findViewById(R.id.type_flavor);
+        mTxtTitle = (EditText)root.findViewById(R.id.cat_name);
+        mTableExtras = (TableLayout)root.findViewById(R.id.cat_extras);
+        mTableFlavors = (TableLayout)root.findViewById(R.id.cat_flavor);
         mRadarView = (RadarView)root.findViewById(R.id.radar);
 
         root.findViewById(R.id.button_add_extra).setOnClickListener(new View.OnClickListener() {
@@ -193,8 +193,8 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.type_edit_menu, menu);
-        menu.findItem(R.id.menu_delete).setVisible(mTypeId > 0);
+        inflater.inflate(R.menu.cat_edit_menu, menu);
+        menu.findItem(R.id.menu_delete).setVisible(mCatId > 0);
     }
 
     @Override
@@ -204,7 +204,7 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
                 saveData();
                 return true;
             case R.id.menu_delete:
-                confirmDeleteType();
+                confirmDeleteCat();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -215,7 +215,7 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
-                case REQUEST_DELETE_TYPE:
+                case REQUEST_DELETE_CAT:
                     getActivity().finish();
                     break;
             }
@@ -249,7 +249,7 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
             return;
         }
 
-        final TypeFieldListener listener = new TypeFieldListener() {
+        final CatFieldListener listener = new CatFieldListener() {
             @Override
             public boolean allowUndo() {
                 return !field.isEmpty();
@@ -306,7 +306,7 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
             return;
         }
 
-        final TypeFieldListener listener = new TypeFieldListener() {
+        final CatFieldListener listener = new CatFieldListener() {
             @Override
             public boolean allowUndo() {
                 return !field.isEmpty();
@@ -355,9 +355,9 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
     @SuppressLint("InflateParams")
     private void addTableRow(final TableLayout tableLayout, String text, int maxLength, int hint,
                              final int deleteHint, final boolean deleted,
-                             final TypeFieldListener listener) {
+                             final CatFieldListener listener) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
-        final View root = inflater.inflate(R.layout.type_edit_field, null);
+        final View root = inflater.inflate(R.layout.cat_edit_field, null);
 
         final EditText editText = (EditText)root.findViewById(R.id.field_name);
         editText.setSaveEnabled(false);
@@ -454,7 +454,7 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     /**
-     * Save the type data and close the activity.
+     * Save the category data and close the activity.
      */
     private void saveData() {
         if(!validateForm()) {
@@ -462,9 +462,9 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
         }
 
         final ContentValues info = new ContentValues();
-        info.put(Tables.Types.NAME, mTxtTitle.getText().toString());
+        info.put(Tables.Cats.NAME, mTxtTitle.getText().toString());
 
-        new DataSaver(getContext().getContentResolver(), info, mExtraFields, mFlavorFields, mTypeId)
+        new DataSaver(getContext().getContentResolver(), info, mExtraFields, mFlavorFields, mCatId)
                 .execute();
 
         getActivity().finish();
@@ -473,17 +473,17 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
     /**
      * Open the delete confirmation dialog.
      */
-    private void confirmDeleteType() {
-        if(mTypeId > 0) {
-            DeleteTypeDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_TYPE, mTypeId);
+    private void confirmDeleteCat() {
+        if(mCatId > 0) {
+            CatDeleteDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_CAT, mCatId);
         }
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final Uri uri = ContentUris.withAppendedId(Tables.Types.CONTENT_ID_URI_BASE, mTypeId);
+        final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
         switch(id) {
-            case LOADER_TYPE:
+            case LOADER_CAT:
                 return new CursorLoader(getContext(), uri, null, null, null, null);
             case LOADER_EXTRAS:
                 return new CursorLoader(getContext(), Uri.withAppendedPath(uri, "extras"), null,
@@ -498,10 +498,10 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch(loader.getId()) {
-            case LOADER_TYPE:
+            case LOADER_CAT:
                 if(data.moveToFirst()) {
-                    final String name = data.getString(data.getColumnIndex(Tables.Types.NAME));
-                    mTxtTitle.setText(FlavordexApp.getRealTypeName(getContext(), name));
+                    final String name = data.getString(data.getColumnIndex(Tables.Cats.NAME));
+                    mTxtTitle.setText(FlavordexApp.getRealCatName(getContext(), name));
                 }
                 break;
             case LOADER_EXTRAS:
@@ -526,7 +526,7 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     /**
-     * Task for saving type data in the background.
+     * Task for saving category data in the background.
      */
     private static class DataSaver extends AsyncTask<Void, Void, Void> {
         /**
@@ -535,76 +535,76 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
         private final ContentResolver mResolver;
 
         /**
-         * The basic information for the types table
+         * The basic information for the cats table
          */
-        private final ContentValues mTypeInfo;
+        private final ContentValues mCatInfo;
 
         /**
-         * The extra fields for the type
+         * The extra fields for the category
          */
         private final ArrayList<Field> mExtras;
 
         /**
-         * The flavors for the type
+         * The flavors for the category
          */
         private final ArrayList<Field> mFlavors;
 
         /**
-         * The type database id, if updating
+         * The category database id, if updating
          */
-        private final long mTypeId;
+        private final long mCatId;
 
         /**
          * @param cr       The ContentResolver to use
-         * @param typeInfo The basic information for the types table
-         * @param extras   The extra fields for the type
-         * @param flavors  The flavors for the type
-         * @param typeId   The type database id, if updating
+         * @param catInfo The basic information for the cats table
+         * @param extras   The extra fields for the category
+         * @param flavors  The flavors for the category
+         * @param catId   The category database id, if updating
          */
-        public DataSaver(ContentResolver cr, ContentValues typeInfo, ArrayList<Field> extras,
-                         ArrayList<Field> flavors, long typeId) {
+        public DataSaver(ContentResolver cr, ContentValues catInfo, ArrayList<Field> extras,
+                         ArrayList<Field> flavors, long catId) {
             mResolver = cr;
-            mTypeInfo = typeInfo;
+            mCatInfo = catInfo;
             mExtras = extras;
             mFlavors = flavors;
-            mTypeId = typeId;
+            mCatId = catId;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            final Uri typeUri = insertType();
+            final Uri catUri = insertCat();
             if(mExtras != null) {
-                insertExtras(typeUri);
+                insertExtras(catUri);
             }
             if(mFlavors != null) {
-                insertFlavors(typeUri);
+                insertFlavors(catUri);
             }
             return null;
         }
 
         /**
-         * Insert or update the basic information about the type.
+         * Insert or update the basic information about the category.
          *
-         * @return The base uri for the type record
+         * @return The base uri for the category record
          */
-        private Uri insertType() {
+        private Uri insertCat() {
             final Uri uri;
-            if(mTypeId > 0) {
-                uri = ContentUris.withAppendedId(Tables.Types.CONTENT_ID_URI_BASE, mTypeId);
-                mResolver.update(uri, mTypeInfo, null, null);
+            if(mCatId > 0) {
+                uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
+                mResolver.update(uri, mCatInfo, null, null);
             } else {
-                uri = mResolver.insert(Tables.Types.CONTENT_URI, mTypeInfo);
+                uri = mResolver.insert(Tables.Cats.CONTENT_URI, mCatInfo);
             }
             return uri;
         }
 
         /**
-         * Insert, update, or delete the extra fields for the type.
+         * Insert, update, or delete the extra fields for the category.
          *
-         * @param typeUri The base uri for the type
+         * @param catUri The base uri for the category
          */
-        private void insertExtras(Uri typeUri) {
-            final Uri insertUri = Uri.withAppendedPath(typeUri, "extras");
+        private void insertExtras(Uri catUri) {
+            final Uri insertUri = Uri.withAppendedPath(catUri, "extras");
             Uri uri;
             final ContentValues values = new ContentValues();
             for(Field field : mExtras) {
@@ -624,12 +624,12 @@ public class EditTypeFragment extends Fragment implements LoaderManager.LoaderCa
         }
 
         /**
-         * Insert, update, or delete the flavors for the type.
+         * Insert, update, or delete the flavors for the category.
          *
-         * @param typeUri The base uri for the type
+         * @param catUri The base uri for the category
          */
-        private void insertFlavors(Uri typeUri) {
-            final Uri insertUri = Uri.withAppendedPath(typeUri, "flavor");
+        private void insertFlavors(Uri catUri) {
+            final Uri insertUri = Uri.withAppendedPath(catUri, "flavor");
             Uri uri;
             final ContentValues values = new ContentValues();
             for(Field field : mFlavors) {

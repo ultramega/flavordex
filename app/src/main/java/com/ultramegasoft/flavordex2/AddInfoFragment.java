@@ -63,9 +63,9 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     private TableLayout mInfoTable;
 
     /**
-     * The type id for the entry being added
+     * The category id for the entry being added
      */
-    private long mTypeId;
+    private long mCatId;
 
     /**
      * Map of extra field names to their database ids
@@ -83,7 +83,7 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTypeId = getArguments().getLong(AddEntryFragment.ARG_TYPE_ID);
+        mCatId = getArguments().getLong(AddEntryFragment.ARG_CAT_ID);
     }
 
     @Override
@@ -247,7 +247,7 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     public ContentValues getData() {
         final ContentValues values = new ContentValues();
 
-        values.put(Tables.Entries.TYPE, mTypeId);
+        values.put(Tables.Entries.CATEGORY, mCatId);
         values.put(Tables.Entries.DATE, System.currentTimeMillis());
 
         values.put(Tables.Entries.TITLE, mTxtTitle.getText().toString());
@@ -300,8 +300,8 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch(id) {
             case LOADER_EXTRAS:
-                final Uri uri = ContentUris.withAppendedId(Tables.Types.CONTENT_ID_URI_BASE,
-                        mTypeId);
+                final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE,
+                        mCatId);
                 return new CursorLoader(getActivity(), Uri.withAppendedPath(uri, "/extras"), null,
                         null, null, Tables.Extras._ID + " ASC");
         }

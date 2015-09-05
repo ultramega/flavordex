@@ -19,11 +19,11 @@
 
                 <TextView
                     style="@style/TableText.Label"
-                    android:text="@string/label_type" />
+                    android:text="@string/label_cat" />
 
                 <Spinner
-                    android:id="@+id/entry_type"
-                    android:prompt="@string/hint_entry_type" />
+                    android:id="@+id/entry_cat"
+                    android:prompt="@string/hint_entry_cat" />
             </TableRow>
 
             <TableRow>

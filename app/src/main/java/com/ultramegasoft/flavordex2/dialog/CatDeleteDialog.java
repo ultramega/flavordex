@@ -29,26 +29,26 @@ import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 
 /**
- * Dialog for confirming the deletion of a type. This also handles the deleting of the type.
+ * Dialog for confirming the deletion of a category. This also handles the deleting of the category.
  *
  * @author Steve Guidetti
  */
-public class DeleteTypeDialog extends DialogFragment
+public class CatDeleteDialog extends DialogFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Tag to identify the fragment
      */
-    private static final String TAG = "DeleteTypeDialog";
+    private static final String TAG = "CatDeleteDialog";
 
     /**
      * Arguments for the fragment
      */
-    public static final String ARG_TYPE_ID = "type_id";
+    public static final String ARG_CAT_ID = "cat_id";
 
     /**
      * Loader ids
      */
-    private static final int LOADER_TYPE = 0;
+    private static final int LOADER_CAT = 0;
 
     /**
      * Keys for the saved state
@@ -69,26 +69,26 @@ public class DeleteTypeDialog extends DialogFragment
     private boolean mShowCheckLayout = true;
 
     /**
-     * The database id for the type
+     * The database id for the category
      */
-    private long mTypeId;
+    private long mCatId;
 
     /**
-     * Show the confirmation dialog to delete a type.
+     * Show the confirmation dialog to delete a category.
      *
      * @param fm          The FragmentManager to use
      * @param target      The fragment to send the result to
      * @param requestCode The code to identify the request
-     * @param typeId      The database id for the type
+     * @param catId      The database id for the category
      */
     public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
-                                  long typeId) {
-        if(typeId > 0) {
-            final DialogFragment fragment = new DeleteTypeDialog();
+                                  long catId) {
+        if(catId > 0) {
+            final DialogFragment fragment = new CatDeleteDialog();
             fragment.setTargetFragment(target, requestCode);
 
             final Bundle args = new Bundle();
-            args.putLong(ARG_TYPE_ID, typeId);
+            args.putLong(ARG_CAT_ID, catId);
             fragment.setArguments(args);
 
             fragment.show(fm, TAG);
@@ -98,10 +98,10 @@ public class DeleteTypeDialog extends DialogFragment
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mTypeId = getArguments().getLong(ARG_TYPE_ID);
+        mCatId = getArguments().getLong(ARG_CAT_ID);
         return new AlertDialog.Builder(getContext())
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(R.string.menu_delete_type)
+                .setTitle(R.string.menu_delete_cat)
                 .setView(getLayout(savedInstanceState))
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -110,7 +110,7 @@ public class DeleteTypeDialog extends DialogFragment
                             target.onActivityResult(getTargetRequestCode(),
                                     Activity.RESULT_OK, null);
                         }
-                        new TypeDeleteTask(getContext().getContentResolver(), mTypeId).execute();
+                        new CatDeleteTask(getContext().getContentResolver(), mCatId).execute();
                         dismiss();
                     }
                 })
@@ -161,7 +161,7 @@ public class DeleteTypeDialog extends DialogFragment
      */
     private View getLayout(Bundle savedInstanceState) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
-        final View root = inflater.inflate(R.layout.dialog_delete_type, null);
+        final View root = inflater.inflate(R.layout.dialog_delete_cat, null);
 
         mCheckLayout = (LinearLayout)root.findViewById(R.id.check_entries);
         mTxtMessage = (TextView)root.findViewById(R.id.message);
@@ -185,7 +185,7 @@ public class DeleteTypeDialog extends DialogFragment
         });
 
         if(savedInstanceState == null) {
-            getLoaderManager().initLoader(LOADER_TYPE, null, this);
+            getLoaderManager().initLoader(LOADER_CAT, null, this);
         } else {
             setShowCheckLayout(savedInstanceState.getBoolean(STATE_SHOW_CHECK));
         }
@@ -196,8 +196,8 @@ public class DeleteTypeDialog extends DialogFragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch(id) {
-            case LOADER_TYPE:
-                final Uri uri = ContentUris.withAppendedId(Tables.Types.CONTENT_ID_URI_BASE, mTypeId);
+            case LOADER_CAT:
+                final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
                 return new CursorLoader(getContext(), uri, null, null, null, null);
         }
         return null;
@@ -206,17 +206,17 @@ public class DeleteTypeDialog extends DialogFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch(loader.getId()) {
-            case LOADER_TYPE:
+            case LOADER_CAT:
                 if(data.moveToFirst()) {
-                    final String name = data.getString(data.getColumnIndex(Tables.Types.NAME));
-                    final int count = data.getInt(data.getColumnIndex(Tables.Types.NUM_ENTRIES));
+                    final String name = data.getString(data.getColumnIndex(Tables.Cats.NAME));
+                    final int count = data.getInt(data.getColumnIndex(Tables.Cats.NUM_ENTRIES));
 
-                    mTxtMessage.setText(getString(R.string.message_confirm_delete_type, name));
+                    mTxtMessage.setText(getString(R.string.message_confirm_delete_cat, name));
                     if(count > 0) {
                         final String entries =
                                 getResources().getQuantityString(R.plurals.entries, count);
                         mTxtCheckEntries.setText(Html.fromHtml(
-                                getString(R.string.message_delete_type_entries, count, entries)));
+                                getString(R.string.message_delete_cat_entries, count, entries)));
                         setButtonEnabled(false);
                     } else {
                         setShowCheckLayout(false);
@@ -232,31 +232,31 @@ public class DeleteTypeDialog extends DialogFragment
     }
 
     /**
-     * Task for deleted the type in the background.
+     * Task for deleted the category in the background.
      */
-    private static class TypeDeleteTask extends AsyncTask<Void, Void, Void> {
+    private static class CatDeleteTask extends AsyncTask<Void, Void, Void> {
         /**
          * The ContentResolver to use
          */
         private final ContentResolver mResolver;
 
         /**
-         * The type database id
+         * The category database id
          */
-        private final long mTypeId;
+        private final long mCatId;
 
         /**
          * @param cr     The ContentResolver to use
-         * @param typeId The type database id
+         * @param catId The category database id
          */
-        public TypeDeleteTask(ContentResolver cr, long typeId) {
+        public CatDeleteTask(ContentResolver cr, long catId) {
             mResolver = cr;
-            mTypeId = typeId;
+            mCatId = catId;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            final Uri uri = ContentUris.withAppendedId(Tables.Types.CONTENT_ID_URI_BASE, mTypeId);
+            final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
             mResolver.delete(uri, null, null);
             mResolver.notifyChange(Tables.Entries.CONTENT_URI, null);
             return null;

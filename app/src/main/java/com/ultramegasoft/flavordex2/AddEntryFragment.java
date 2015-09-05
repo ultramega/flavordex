@@ -40,7 +40,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     /**
      * Keys for the fragment arguments
      */
-    public static final String ARG_TYPE_ID = "type_id";
+    public static final String ARG_CAT_ID = "cat_id";
 
     /**
      * Keys for the saved state
@@ -48,14 +48,14 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     private static final String STATE_CURRENT_PAGE = "current_page";
 
     /**
-     * The type id from the arguments
+     * The category id from the arguments
      */
-    private long mTypeId;
+    private long mCatId;
 
     /**
-     * The name of the entry type
+     * The name of the entry category
      */
-    private String mTypeName;
+    private String mCatName;
 
     /**
      * The ViewPager containing the fragments
@@ -75,7 +75,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTypeId = getArguments().getLong(ARG_TYPE_ID, 0);
+        mCatId = getArguments().getLong(ARG_CAT_ID, 0);
         setHasOptionsMenu(true);
 
         if(savedInstanceState != null) {
@@ -121,7 +121,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case android.R.id.home:
-                final Fragment fragment = new TypeListFragment();
+                final Fragment fragment = new CatListFragment();
                 getFragmentManager().beginTransaction().replace(android.R.id.content, fragment)
                         .commit();
                 return true;
@@ -143,16 +143,16 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
      * @return The Fragment class
      */
     private Class<? extends AddInfoFragment> getEntryInfoClass() {
-        if(FlavordexApp.TYPE_BEER.equals(mTypeName)) {
+        if(FlavordexApp.CAT_BEER.equals(mCatName)) {
             return AddBeerInfoFragment.class;
         }
-        if(FlavordexApp.TYPE_WINE.equals(mTypeName)) {
+        if(FlavordexApp.CAT_WINE.equals(mCatName)) {
             return AddWineInfoFragment.class;
         }
-        if(FlavordexApp.TYPE_WHISKEY.equals(mTypeName)) {
+        if(FlavordexApp.CAT_WHISKEY.equals(mCatName)) {
             return AddWhiskeyInfoFragment.class;
         }
-        if(FlavordexApp.TYPE_COFFEE.equals(mTypeName)) {
+        if(FlavordexApp.CAT_COFFEE.equals(mCatName)) {
             return AddCoffeeInfoFragment.class;
         }
 
@@ -192,7 +192,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         }
 
         if(isValid && entryInfo != null) {
-            DataSaverFragment.init(getFragmentManager(), mTypeId, mTypeName, entryInfo, entryExtras,
+            DataSaverFragment.init(getFragmentManager(), mCatId, mCatName, entryInfo, entryExtras,
                     entryFlavors, entryPhotos);
         } else {
             mBtnSave.setEnabled(true);
@@ -201,20 +201,20 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final Uri uri = ContentUris.withAppendedId(Tables.Types.CONTENT_ID_URI_BASE, mTypeId);
+        final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
         return new CursorLoader(getActivity(), uri, null, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if(data.moveToFirst()) {
-            mTypeName = data.getString(data.getColumnIndex(Tables.Types.NAME));
+            mCatName = data.getString(data.getColumnIndex(Tables.Cats.NAME));
 
             mPager.setAdapter(new PagerAdapter());
             mPager.setCurrentItem(mCurrentPage);
 
-            final String name = FlavordexApp.getRealTypeName(getActivity(), mTypeName);
-            final String title = getString(R.string.title_add_type_entry, name);
+            final String name = FlavordexApp.getRealCatName(getActivity(), mCatName);
+            final String title = getString(R.string.title_add_cat_entry, name);
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(title);
         }
     }
@@ -258,7 +258,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         @Override
         public Fragment getItem(int position) {
             final Bundle args = new Bundle();
-            args.putLong(ARG_TYPE_ID, mTypeId);
+            args.putLong(ARG_CAT_ID, mCatId);
 
             return Fragment.instantiate(getActivity(), mFragments[position], args);
         }
@@ -278,22 +278,22 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         /**
          * Keys for the fragment arguments
          */
-        public static final String ARG_TYPE_ID = "type_id";
-        public static final String ARG_ENTRY_TYPE = "entry_type";
+        public static final String ARG_CAT_ID = "cat_id";
+        public static final String ARG_ENTRY_CAT = "entry_cat";
         public static final String ARG_ENTRY_INFO = "entry_info";
         public static final String ARG_ENTRY_EXTRAS = "entry_extras";
         public static final String ARG_ENTRY_FLAVORS = "entry_flavors";
         public static final String ARG_ENTRY_PHOTOS = "entry_photos";
 
         /**
-         * The type id of the entry
+         * The category id of the entry
          */
-        private long mTypeId;
+        private long mCatId;
 
         /**
-         * The name of the type of entry
+         * The name of the category of entry
          */
-        private String mEntryType;
+        private String mEntryCat;
 
         /**
          * Values for the entries table row
@@ -325,19 +325,19 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
          * Start a new instance of this fragment.
          *
          * @param fm           The FragmentManager to use
-         * @param typeId       The type id of the entry
-         * @param entryType    The name of the type of entry
+         * @param catId       The category id of the entry
+         * @param entryCat    The name of the category of entry
          * @param entryInfo    Values for the entries table row
          * @param entryExtras  Values for the entries_extras table rows
          * @param entryFlavors Values for the entries_flavors table rows
          * @param entryPhotos  Values for the photos table rows
          */
-        public static void init(FragmentManager fm, long typeId, String entryType,
+        public static void init(FragmentManager fm, long catId, String entryCat,
                                 ContentValues entryInfo, ContentValues[] entryExtras,
                                 ContentValues[] entryFlavors, ContentValues[] entryPhotos) {
             final Bundle args = new Bundle();
-            args.putLong(ARG_TYPE_ID, typeId);
-            args.putString(ARG_ENTRY_TYPE, entryType);
+            args.putLong(ARG_CAT_ID, catId);
+            args.putString(ARG_ENTRY_CAT, entryCat);
             args.putParcelable(ARG_ENTRY_INFO, entryInfo);
             args.putParcelableArray(ARG_ENTRY_EXTRAS, entryExtras);
             args.putParcelableArray(ARG_ENTRY_FLAVORS, entryFlavors);
@@ -358,8 +358,8 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             setRetainInstance(true);
 
             final Bundle args = getArguments();
-            mTypeId = args.getLong(ARG_TYPE_ID);
-            mEntryType = args.getString(ARG_ENTRY_TYPE);
+            mCatId = args.getLong(ARG_CAT_ID);
+            mEntryCat = args.getString(ARG_ENTRY_CAT);
             mEntryInfo = args.getParcelable(ARG_ENTRY_INFO);
             mEntryExtras = (ContentValues[])args.getParcelableArray(ARG_ENTRY_EXTRAS);
             mEntryFlavors = (ContentValues[])args.getParcelableArray(ARG_ENTRY_FLAVORS);
@@ -386,7 +386,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             if(activity == null) {
                 mEntryId = entryId;
             } else {
-                activity.publishResult(entryId, mEntryType);
+                activity.publishResult(entryId, mEntryCat);
             }
         }
 
@@ -460,7 +460,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
              * @param entryUri The uri of the newly inserted entry
              */
             private void insertDefaultFlavors(Uri entryUri) {
-                final Uri uri = ContentUris.withAppendedId(Tables.Types.CONTENT_ID_URI_BASE, mTypeId);
+                final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
                 final Cursor cursor = mResolver.query(Uri.withAppendedPath(uri, "flavor"), null,
                         null, null, Tables.Flavors._ID + " ASC");
                 try {

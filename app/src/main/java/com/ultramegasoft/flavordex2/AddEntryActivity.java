@@ -12,33 +12,33 @@ import android.support.v7.app.AppCompatActivity;
  */
 public class AddEntryActivity extends AppCompatActivity {
     /**
-     * Intent extra for the type id parameter
+     * Intent extra for the category id parameter
      */
-    public static final String EXTRA_TYPE_ID = "type_id";
+    public static final String EXTRA_CAT_ID = "cat_id";
 
     /**
      * Intent extras for the resulting entry to send to the calling activity
      */
     public static final String EXTRA_ENTRY_ID = "entry_id";
-    public static final String EXTRA_ENTRY_TYPE = "entry_type";
+    public static final String EXTRA_ENTRY_CAT = "entry_cat";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final long typeId = getIntent().getLongExtra(EXTRA_TYPE_ID, 0);
+        final long catId = getIntent().getLongExtra(EXTRA_CAT_ID, 0);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if(savedInstanceState == null) {
-            if(typeId > 0) {
+            if(catId > 0) {
                 final Fragment fragment = new AddEntryFragment();
                 final Bundle args = new Bundle();
-                args.putLong(AddEntryFragment.ARG_TYPE_ID, typeId);
+                args.putLong(AddEntryFragment.ARG_CAT_ID, catId);
                 fragment.setArguments(args);
                 getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment)
                         .commit();
             } else {
-                final Fragment fragment = new TypeListFragment();
+                final Fragment fragment = new CatListFragment();
                 getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment)
                         .commit();
             }
@@ -50,10 +50,10 @@ public class AddEntryActivity extends AppCompatActivity {
      *
      * @param entryId The id of the newly created entry
      */
-    public void publishResult(long entryId, String entryType) {
+    public void publishResult(long entryId, String entryCat) {
         final Intent data = new Intent();
         data.putExtra(EXTRA_ENTRY_ID, entryId);
-        data.putExtra(EXTRA_ENTRY_TYPE, entryType);
+        data.putExtra(EXTRA_ENTRY_CAT, entryCat);
 
         setResult(RESULT_OK, data);
         finish();

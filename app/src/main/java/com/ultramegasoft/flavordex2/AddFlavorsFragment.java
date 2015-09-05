@@ -32,9 +32,9 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
     private RadarView mRadarView;
 
     /**
-     * The type id for the entry being added
+     * The category id for the entry being added
      */
-    private long mTypeId;
+    private long mCatId;
 
     public AddFlavorsFragment() {
     }
@@ -42,7 +42,7 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTypeId = getArguments().getLong(AddEntryFragment.ARG_TYPE_ID);
+        mCatId = getArguments().getLong(AddEntryFragment.ARG_CAT_ID);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final Uri uri = ContentUris.withAppendedId(Tables.Types.CONTENT_ID_URI_BASE, mTypeId);
+        final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
         return new CursorLoader(getActivity(), Uri.withAppendedPath(uri, "flavor"), null, null,
                 null, Tables.Flavors._ID + " ASC");
     }

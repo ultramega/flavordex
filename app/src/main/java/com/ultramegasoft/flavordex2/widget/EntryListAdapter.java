@@ -44,9 +44,9 @@ public class EntryListAdapter extends CursorAdapter {
     private final SimpleDateFormat mDateFormat;
 
     /**
-     * Map of item IDs to item types
+     * Map of item IDs to item categories
      */
-    private final HashMap<Long, String> mItemTypes = new HashMap<>();
+    private final HashMap<Long, String> mItemCats = new HashMap<>();
 
     /**
      * Map of item IDs to their position index in the list
@@ -102,17 +102,17 @@ public class EntryListAdapter extends CursorAdapter {
             dateView.setText(null);
         }
 
-        mItemTypes.put(id, cursor.getString(cursor.getColumnIndex(Tables.Entries.TYPE)));
+        mItemCats.put(id, cursor.getString(cursor.getColumnIndex(Tables.Entries.CATEGORY)));
     }
 
     /**
-     * Get the type of the item with the specified id.
+     * Get the category of the item with the specified id.
      *
      * @param id The row id
-     * @return The type name
+     * @return The category name
      */
-    public String getItemType(long id) {
-        return mItemTypes.get(id);
+    public String getItemCat(long id) {
+        return mItemCats.get(id);
     }
 
     /**
