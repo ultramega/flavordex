@@ -4,19 +4,14 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
-    <style name="Header" parent="android:TextAppearance.Large">
+    <style name="Header" parent="TextAppearance.AppCompat.Large">
         <item name="android:textStyle">bold</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:textIsSelectable">true</item>
     </style>
 
-    <style name="PageHeader" parent="android:TextAppearance.Medium">
-        <item name="android:padding">4dp</item>
-        <item name="android:textColor">#FF448CCB</item>
-    </style>
-
-    <style name="SubHeader" parent="android:TextAppearance.Medium">
+    <style name="SubHeader" parent="TextAppearance.AppCompat.Medium">
         <item name="android:paddingTop">4dp</item>
         <item name="android:gravity">center</item>
     </style>
@@ -74,6 +69,8 @@
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginTop">1dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
         <item name="android:background">@android:drawable/divider_horizontal_dark</item>
     </style>
 </resources>
