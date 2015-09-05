@@ -135,10 +135,10 @@ public class FlavordexProvider extends ContentProvider {
                 queryBuilder.appendWhereEscapeString("%" + uri.getLastPathSegment() + "%");
                 break;
             case TYPES:
-                queryBuilder.setTables(Tables.Types.TABLE_NAME);
+                queryBuilder.setTables(Tables.Types.VIEW_NAME);
                 break;
             case TYPES_ID:
-                queryBuilder.setTables(Tables.Types.TABLE_NAME);
+                queryBuilder.setTables(Tables.Types.VIEW_NAME);
                 queryBuilder.appendWhere(Tables.Types._ID + " = " + uri.getLastPathSegment());
                 break;
             case EXTRAS:

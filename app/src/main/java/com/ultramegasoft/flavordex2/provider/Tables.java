@@ -246,10 +246,12 @@ public class Tables {
      */
     public static class Types implements BaseColumns {
         public static final String TABLE_NAME = "types";
+        public static final String VIEW_NAME = "view_type";
 
         public static final String TYPE = "type";
         public static final String NAME = "name";
         public static final String PRESET = "preset";
+        public static final String NUM_ENTRIES = "num_entries";
 
         public static final String DATA_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".type";

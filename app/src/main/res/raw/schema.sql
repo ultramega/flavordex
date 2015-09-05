@@ -160,3 +160,8 @@ b.`name` AS `name`,
 a.`value` AS `value`
 FROM `entries_flavors` a LEFT JOIN `flavors` b
 WHERE a.`flavor` = b.`_id`;
+--
+CREATE VIEW `view_type` AS SELECT
+*,
+(SELECT COUNT() FROM `entries` WHERE `type` = `types`.`_id`) AS `num_entries`
+FROM `types`;

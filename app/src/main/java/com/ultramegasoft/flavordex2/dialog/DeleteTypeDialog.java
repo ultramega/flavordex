@@ -49,7 +49,6 @@ public class DeleteTypeDialog extends DialogFragment
      * Loader ids
      */
     private static final int LOADER_TYPE = 0;
-    private static final int LOADER_COUNT = 1;
 
     /**
      * Keys for the saved state
@@ -187,7 +186,6 @@ public class DeleteTypeDialog extends DialogFragment
 
         if(savedInstanceState == null) {
             getLoaderManager().initLoader(LOADER_TYPE, null, this);
-            getLoaderManager().initLoader(LOADER_COUNT, null, this);
         } else {
             setShowCheckLayout(savedInstanceState.getBoolean(STATE_SHOW_CHECK));
         }
@@ -201,9 +199,6 @@ public class DeleteTypeDialog extends DialogFragment
             case LOADER_TYPE:
                 final Uri uri = ContentUris.withAppendedId(Tables.Types.CONTENT_ID_URI_BASE, mTypeId);
                 return new CursorLoader(getContext(), uri, null, null, null, null);
-            case LOADER_COUNT:
-                final String where = Tables.Entries.TYPE_ID + " = " + mTypeId;
-                return new CursorLoader(getContext(), Tables.Entries.CONTENT_URI, null, where, null, null);
         }
         return null;
     }
@@ -214,20 +209,19 @@ public class DeleteTypeDialog extends DialogFragment
             case LOADER_TYPE:
                 if(data.moveToFirst()) {
                     final String name = data.getString(data.getColumnIndex(Tables.Types.NAME));
+                    final int count = data.getInt(data.getColumnIndex(Tables.Types.NUM_ENTRIES));
+
                     mTxtMessage.setText(getString(R.string.message_confirm_delete_type, name));
-                }
-                break;
-            case LOADER_COUNT:
-                final int count = data.getCount();
-                if(count > 0) {
-                    final String entries =
-                            getResources().getQuantityString(R.plurals.entries, count);
-                    mTxtCheckEntries.setText(Html.fromHtml(
-                            getString(R.string.message_delete_type_entries, count, entries)));
-                    setButtonEnabled(false);
-                } else {
-                    setShowCheckLayout(false);
-                    setButtonEnabled(true);
+                    if(count > 0) {
+                        final String entries =
+                                getResources().getQuantityString(R.plurals.entries, count);
+                        mTxtCheckEntries.setText(Html.fromHtml(
+                                getString(R.string.message_delete_type_entries, count, entries)));
+                        setButtonEnabled(false);
+                    } else {
+                        setShowCheckLayout(false);
+                        setButtonEnabled(true);
+                    }
                 }
                 break;
         }
