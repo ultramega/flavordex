@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
+import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
 import java.io.IOException;
 import java.util.ArrayList;

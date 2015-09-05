@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.BitmapCache;
 import com.ultramegasoft.flavordex2.widget.ImageLoader;
+import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
 import java.util.ArrayList;
 import java.util.HashMap;

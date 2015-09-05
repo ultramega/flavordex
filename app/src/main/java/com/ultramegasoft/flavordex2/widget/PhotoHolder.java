@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2;
+package com.ultramegasoft.flavordex2.widget;
 
 import android.os.Parcel;
 import android.os.Parcelable;

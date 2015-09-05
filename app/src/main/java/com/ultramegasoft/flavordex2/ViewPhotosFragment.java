@@ -28,6 +28,7 @@ import android.widget.ProgressBar;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
+import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
 import java.io.File;
 import java.util.ArrayList;
