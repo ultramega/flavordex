@@ -45,20 +45,20 @@ import java.util.ArrayList;
  */
 public class EditCatFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
-     * Keys for the fragment arguments
+     * Keys for the Fragment arguments
      */
     public static final String ARG_CAT_ID = "cat_id";
     public static final String ARG_CAT_NAME = "cat_name";
 
     /**
-     * Loader ids
+     * Loader IDs
      */
     private static final int LOADER_CAT = 0;
     private static final int LOADER_EXTRAS = 1;
     private static final int LOADER_FLAVOR = 2;
 
     /**
-     * Request codes for external activities
+     * Request codes for external Activities
      */
     private static final int REQUEST_DELETE_CAT = 100;
 
@@ -87,7 +87,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
     private ArrayList<Field> mFlavorFields = new ArrayList<>();
 
     /**
-     * The category id from the arguments
+     * The category ID from the arguments
      */
     private long mCatId;
 
@@ -185,9 +185,9 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     /**
-     * Get the id for the layout to use.
+     * Get the ID for the layout to use.
      *
-     * @return An id from R.layout
+     * @return An ID from R.layout
      */
     private int getLayoutId() {
         final String cat = getArguments().getString(ARG_CAT_NAME);
@@ -250,7 +250,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
     /**
      * Add an extra field.
      *
-     * @param id   The database id, if any
+     * @param id   The database ID, if any
      * @param name The name of the field
      */
     private void addExtra(long id, String name) {
@@ -264,7 +264,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     /**
-     * Add the views associated with an extra field to the layout.
+     * Add the Views associated with an extra field to the layout.
      *
      * @param i The array index of the extra field
      */
@@ -307,7 +307,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
     /**
      * Add a flavor to the radar chart.
      *
-     * @param id   The database id of the flavor, if any
+     * @param id   The database ID of the flavor, if any
      * @param name The name of the flavor
      */
     private void addFlavor(long id, String name) {
@@ -321,7 +321,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     /**
-     * Add the views associated with a flavor to the layout.
+     * Add the Views associated with a flavor to the layout.
      *
      * @param i The array index of the flavor
      */
@@ -366,14 +366,14 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
 
     /**
      * Add a row to the provided TableLayout. The row contains an EditText for the field name with a
-     * delete button. The delete button becomes an undo button if the provided listener allow undo.
+     * delete button. The delete button becomes an undo button if the provided listener allows undo.
      * If undo is not allowed, the delete button will remove the row.
      *
      * @param tableLayout The TableLayout to add a row to
      * @param text        The text to fill the text field
      * @param maxLength   The maximum allowed length of the text field
      * @param hint        The hint for the EditText
-     * @param deleteHint  The contentDescription for the delete button
+     * @param deleteHint  The contentDescription for the delete Button
      * @param deleted     The initial deleted status of the field
      * @param listener    The event listener for the field
      */
@@ -449,7 +449,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     /**
-     * Get the active flavor data for the radar chart.
+     * Get the active flavor data for the RadarView.
      *
      * @return List of RadarHolders for the RadarView
      */
@@ -479,7 +479,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     /**
-     * Save the category data and close the activity.
+     * Save the category data and close the Activity.
      */
     private void saveData() {
         if(!validateForm()) {
@@ -579,7 +579,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         private final ArrayList<Field> mFlavors;
 
         /**
-         * The category database id, if updating
+         * The category database ID, if updating
          */
         private final long mCatId;
 
@@ -588,7 +588,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
          * @param catInfo The basic information for the cats table
          * @param extras  The extra fields for the category
          * @param flavors The flavors for the category
-         * @param catId   The category database id, if updating
+         * @param catId   The category database ID, if updating
          */
         public DataSaver(ContentResolver cr, ContentValues catInfo, ArrayList<Field> extras,
                          ArrayList<Field> flavors, long catId) {
@@ -614,7 +614,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         /**
          * Insert or update the basic information about the category.
          *
-         * @return The base uri for the category record
+         * @return The base Uri for the category record
          */
         private Uri insertCat() {
             final Uri uri;
@@ -632,7 +632,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         /**
          * Insert, update, or delete the extra fields for the category.
          *
-         * @param catUri The base uri for the category
+         * @param catUri The base Uri for the category
          */
         private void insertExtras(Uri catUri) {
             final Uri insertUri = Uri.withAppendedPath(catUri, "extras");
@@ -657,7 +657,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         /**
          * Insert, update, or delete the flavors for the category.
          *
-         * @param catUri The base uri for the category
+         * @param catUri The base Uri for the category
          */
         private void insertFlavors(Uri catUri) {
             final Uri insertUri = Uri.withAppendedPath(catUri, "flavor");
@@ -697,7 +697,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         };
 
         /**
-         * The database id for this field
+         * The database ID for this field
          */
         public long id;
 
@@ -712,7 +712,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         public boolean delete;
 
         /**
-         * @param id   The database id for this field, or 0 if new
+         * @param id   The database ID for this field, or 0 if new
          * @param name The name of this field
          */
         public Field(long id, String name) {
@@ -731,7 +731,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         /**
          * Is this field empty?
          *
-         * @return True if the id is 0 and the name is blank
+         * @return True if the ID is 0 and the name is blank
          */
         public boolean isEmpty() {
             return id == 0 && TextUtils.isEmpty(name);

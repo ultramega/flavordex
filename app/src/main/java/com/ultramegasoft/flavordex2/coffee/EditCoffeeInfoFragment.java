@@ -20,13 +20,13 @@ import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import java.util.HashMap;
 
 /**
- * Fragment for adding details for a new coffee entry.
+ * Fragment for editing details for a new or existing coffee entry.
  *
  * @author Steve Guidetti
  */
 public class EditCoffeeInfoFragment extends EditInfoFragment {
     /**
-     * The views for the form fields
+     * The Views for the form fields
      */
     private EditText mTxtRoaster;
     private EditText mTxtRoastDate;

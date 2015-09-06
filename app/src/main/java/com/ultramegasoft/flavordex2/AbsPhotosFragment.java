@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Abstract class for shared photo fragment functionality.
+ * Abstract class for shared photo Fragment functionality.
  *
  * @author Steve Guidetti
  */
@@ -28,7 +28,7 @@ public abstract class AbsPhotosFragment extends Fragment {
     private static final String STATE_PHOTOS = "photos";
 
     /**
-     * Request codes for external activities
+     * Request codes for external Activities
      */
     private static final int REQUEST_CAPTURE_IMAGE = 100;
     private static final int REQUEST_SELECT_IMAGE = 200;
@@ -137,7 +137,7 @@ public abstract class AbsPhotosFragment extends Fragment {
     }
 
     /**
-     * Launch an image capturing intent.
+     * Launch an image capturing Intent.
      */
     public final void takePhoto() {
         try {
@@ -152,7 +152,7 @@ public abstract class AbsPhotosFragment extends Fragment {
     }
 
     /**
-     * Launch an image selection intent.
+     * Launch an image selection Intent.
      */
     public final void addPhotoFromGallery() {
         final Intent intent = PhotoUtils.getSelectPhotoIntent();

@@ -24,13 +24,13 @@ import com.ultramegasoft.flavordex2.wine.EditWineInfoFragment;
  */
 public class EditEntryActivity extends AppCompatActivity {
     /**
-     * Keys for the intent extras
+     * Keys for the Intent extras
      */
     public static final String EXTRA_ENTRY_ID = "entry_id";
     public static final String EXTRA_ENTRY_CAT = "entry_cat";
 
     /**
-     * The id for the entry being edited
+     * The ID for the entry being edited
      */
     private long mEntryId;
 
@@ -72,9 +72,9 @@ public class EditEntryActivity extends AppCompatActivity {
     }
 
     /**
-     * Get the fragment based on the entry category.
+     * Get the Fragment based on the entry category.
      *
-     * @return The fragment object
+     * @return The Fragment object
      */
     private EditInfoFragment getFragment() {
         final String cat = getIntent().getStringExtra(EXTRA_ENTRY_CAT);
@@ -119,7 +119,7 @@ public class EditEntryActivity extends AppCompatActivity {
         private final ContentResolver mResolver;
 
         /**
-         * The id for the entry to save to
+         * The ID for the entry to save to
          */
         private final long mEntryId;
 
@@ -135,7 +135,7 @@ public class EditEntryActivity extends AppCompatActivity {
 
         /**
          * @param cr          The ContentResolver to use
-         * @param entryId     The id for the entry to save to
+         * @param entryId     The ID for the entry to save to
          * @param entryInfo   Values for the entries table
          * @param entryExtras Values for the entries_extras table
          */

@@ -12,12 +12,12 @@ import android.support.v7.app.AppCompatActivity;
  */
 public class AddEntryActivity extends AppCompatActivity {
     /**
-     * Intent extra for the category id parameter
+     * Intent extra for the category ID parameter
      */
     public static final String EXTRA_CAT_ID = "cat_id";
 
     /**
-     * Intent extras for the resulting entry to send to the calling activity
+     * Intent extras for the resulting entry to send to the calling Activity
      */
     public static final String EXTRA_ENTRY_ID = "entry_id";
     public static final String EXTRA_ENTRY_CAT = "entry_cat";
@@ -46,9 +46,9 @@ public class AddEntryActivity extends AppCompatActivity {
     }
 
     /**
-     * Send the id of the new entry to the calling activity.
+     * Send the ID of the new entry to the calling Activity.
      *
-     * @param entryId The id of the newly created entry
+     * @param entryId The ID of the newly created entry
      */
     public void publishResult(long entryId, String entryCat) {
         final Intent data = new Intent();

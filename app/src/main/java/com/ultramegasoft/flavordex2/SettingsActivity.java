@@ -37,7 +37,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     /**
-     * The fragment handling the preferences interface.
+     * The Fragment handling the preferences interface.
      */
     public static class SettingsFragment extends PreferenceFragmentCompat {
         @Override

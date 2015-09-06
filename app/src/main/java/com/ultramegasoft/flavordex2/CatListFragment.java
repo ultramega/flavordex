@@ -24,18 +24,18 @@ import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.CatListAdapter;
 
 /**
- * Fragment for showing a list of category selections when adding a new entry
+ * Fragment for showing a list of category selections when adding a new entry.
  *
  * @author Steve Guidetti
  */
 public class CatListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
-     * Request coded for external activities
+     * Request coded for external Activities
      */
     private static final int REQUEST_ADD_CAT = 100;
 
     /**
-     * The adapter backing the list
+     * The Adapter backing the list
      */
     private CatListAdapter mAdapter;
 
@@ -122,9 +122,9 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     }
 
     /**
-     * Launch the entry creation fragment with the selected category.
+     * Launch the entry creation Fragment with the selected category.
      *
-     * @param id The selected category id
+     * @param id The selected category ID
      */
     private void selectCat(long id) {
         final Fragment fragment = new AddEntryFragment();

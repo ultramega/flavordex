@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.util.LruCache;
 
 /**
- * Memory cache for bitmaps.
+ * Memory cache for Bitmaps.
  *
  * @author Steve Guidetti
  */
@@ -26,10 +26,10 @@ public class BitmapCache {
     }
 
     /**
-     * Store a bitmap in the cache.
+     * Store a Bitmap in the cache.
      *
      * @param key    The key to reference the item
-     * @param bitmap The bitmap to store
+     * @param bitmap The Bitmap to store
      */
     public void put(Object key, Bitmap bitmap) {
         if(key == null || bitmap == null) {
@@ -39,17 +39,17 @@ public class BitmapCache {
     }
 
     /**
-     * Retrieve a bitmap from the cache.
+     * Retrieve a Bitmap from the cache.
      *
      * @param key The key referencing the item
-     * @return The bitmap
+     * @return The Bitmap
      */
     public Bitmap get(Object key) {
         return mCache.get(key);
     }
 
     /**
-     * Remove a bitmap from the cache.
+     * Remove a Bitmap from the cache.
      *
      * @param key The key referencing the item
      */

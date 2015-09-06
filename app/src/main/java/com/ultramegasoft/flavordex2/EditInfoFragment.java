@@ -45,12 +45,12 @@ import java.util.HashMap;
  */
 public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
-     * Keys for the fragment arguments
+     * Keys for the Fragment arguments
      */
     public static final String ARG_ENTRY_ID = "entry_id";
 
     /**
-     * Loader ids
+     * Loader IDs
      */
     private static final int LOADER_ENTRY = 0;
     private static final int LOADER_EXTRAS = 1;
@@ -61,7 +61,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
     private static final String STATE_EXTRAS = "extras";
 
     /**
-     * The views for the form fields
+     * The Views for the form fields
      */
     private EditText mTxtTitle;
     private AutoCompleteTextView mTxtMaker;
@@ -72,22 +72,22 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
     private EditText mTxtNotes;
 
     /**
-     * The table layout for the main info
+     * The TableLayout for the main info
      */
     private TableLayout mInfoTable;
 
     /**
-     * The category id for the entry being added
+     * The category ID for the entry being added
      */
     private long mCatId;
 
     /**
-     * The entry id to edit
+     * The entry ID to edit
      */
     private long mEntryId;
 
     /**
-     * Map of extra fields to their data
+     * Map of extra field names to their data
      */
     private HashMap<String, ExtraFieldHolder> mExtras = new HashMap<>();
 
@@ -149,9 +149,9 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     /**
-     * Get the id for the layout to use.
+     * Get the ID for the layout to use.
      *
-     * @return An id from R.layout
+     * @return An ID from R.layout
      */
     protected int getLayoutId() {
         return R.layout.fragment_add_info;
@@ -204,7 +204,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
     /**
      * Load the main details of the entry being edited.
      *
-     * @param cursor The cursor returned from the database query
+     * @param cursor The Cursor returned from the database query
      */
     private void loadEntry(Cursor cursor) {
         if(cursor == null) {
@@ -225,7 +225,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
     /**
      * Load the extra fields from the database.
      *
-     * @param cursor The cursor returned from the database query
+     * @param cursor The Cursor returned from the database query
      */
     private void loadExtras(Cursor cursor) {
         if(cursor == null) {
@@ -303,7 +303,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * Set up an EditText with an extra field.
      *
      * @param editText The EditText
-     * @param extra    The extra field to associate with the view
+     * @param extra    The extra field to associate with the View
      */
     protected static void initEditText(EditText editText, final ExtraFieldHolder extra) {
         editText.setText(extra.value);
@@ -328,7 +328,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * Set up a Spinner with an extra field.
      *
      * @param spinner The Spinner
-     * @param extra   The extra field to associate with the view
+     * @param extra   The extra field to associate with the View
      */
     protected static void initSpinner(Spinner spinner, final ExtraFieldHolder extra) {
         if(extra.value != null) {

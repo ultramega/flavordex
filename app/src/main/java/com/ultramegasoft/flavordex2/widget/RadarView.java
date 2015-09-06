@@ -23,14 +23,14 @@ import com.ultramegasoft.flavordex2.R;
 import java.util.ArrayList;
 
 /**
- * Custom view to render a simple radar graph with configurable values, labels, and scale. Also
+ * Custom View to render a simple radar graph with configurable values, labels, and scale. Also
  * supports editing method calls. Can be rotated with animation.
  *
  * @author Steve Guidetti
  */
 public class RadarView extends View {
     /**
-     * Keys for saving the state of the view
+     * Keys for saving the state of the View
      */
     private static final String STATE_SUPER_STATE = "super_state";
     private static final String STATE_MAX_VALUE = "max_value";
@@ -69,7 +69,7 @@ public class RadarView extends View {
     private int mCenterY;
 
     /**
-     * The gravity flags for the view
+     * The Gravity flags for the view
      */
     private int mGravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
 
@@ -149,12 +149,12 @@ public class RadarView extends View {
     private final Paint mPolygonInteractivePaint;
 
     /**
-     * Used to animate the chart in edit mode
+     * Used to animate the chart in interactive mode
      */
     private AnimationQueue mAnimationQueue;
 
     /**
-     * Whether the chart is currently moving
+     * Whether the chart is currently animating
      */
     private boolean mIsAnimating;
 
@@ -164,7 +164,7 @@ public class RadarView extends View {
     private final ArrayList<RadarViewListener> mListeners = new ArrayList<>();
 
     /**
-     * Interface for objects to listen for changes to RadarViews
+     * Interface for objects to listen for changes to RadarViews.
      */
     public interface RadarViewListener {
         /**
@@ -178,7 +178,7 @@ public class RadarView extends View {
          * Called when the selected item index is changed.
          *
          * @param index The index of the selected item
-         * @param id    The id of the selected item
+         * @param id    The ID of the selected item
          * @param name  The name of the selected item
          * @param value The value of the selected item
          */
@@ -267,7 +267,7 @@ public class RadarView extends View {
     }
 
     /**
-     * Calculate and cache all the intersection points and label positions
+     * Calculate and cache all the intersection points and label positions.
      */
     private void calculatePoints() {
         mCenterX = getWidth() / 2;
@@ -329,7 +329,7 @@ public class RadarView extends View {
     }
 
     /**
-     * Get the horizontal center point of the view based on the actual size and gravity flags.
+     * Get the horizontal center point of the View based on the actual size and Gravity flags.
      *
      * @param radius The actual radius of the chart
      * @return The horizontal center point
@@ -346,7 +346,7 @@ public class RadarView extends View {
     }
 
     /**
-     * Get the vertical center point of the view based on the actual size and gravity flags.
+     * Get the vertical center point of the View based on the actual size and Gravity flags.
      *
      * @param radius The actual radius of the chart
      * @return The vertical center point
@@ -383,7 +383,7 @@ public class RadarView extends View {
     }
 
     /**
-     * Set the gravity flags for the view.
+     * Set the Gravity flags for the view.
      *
      * @param gravity One or more Gravity constants
      */
@@ -397,9 +397,9 @@ public class RadarView extends View {
     }
 
     /**
-     * Get the current gravity flags.
+     * Get the current Gravity flags.
      *
-     * @return The current gravity flags
+     * @return The current Gravity flags
      */
     public int getGravity() {
         return mGravity;
@@ -903,26 +903,32 @@ public class RadarView extends View {
          * Time in milliseconds between frames
          */
         private static final int DELAY_MS = 33;
+
         /**
          * Provides a queue for animations
          */
         private final Handler mHandler = new Handler();
+
         /**
          * The time the current animation started
          */
         private long mStartTime;
+
         /**
          * The duration of the current animation
          */
         private double mDuration;
+
         /**
          * The offset before the current animation started
          */
         private double mOriginalValue;
+
         /**
          * The offset after the current animation ends
          */
         private double mTargetValue;
+
         /**
          * Runnable to handle animation
          */

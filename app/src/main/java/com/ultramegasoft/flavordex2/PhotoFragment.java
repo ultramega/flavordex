@@ -70,9 +70,9 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
     }
 
     /**
-     * Show the popup menu for the photo.
+     * Show the PopupMenu for the photo.
      *
-     * @param v The view to attach the menu to
+     * @param v The View to attach the menu to
      */
     private void showMenu(View v) {
         final PopupMenu popupMenu = new PopupMenu(getActivity(), v);
@@ -104,5 +104,4 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
         }
         return false;
     }
-
 }

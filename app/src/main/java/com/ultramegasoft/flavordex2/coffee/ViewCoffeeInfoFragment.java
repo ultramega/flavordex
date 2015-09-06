@@ -18,7 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 
 /**
- * Coffee specific entry view fragment.
+ * Coffee specific entry view Fragment.
  *
  * @author Steve Guidetti
  */
@@ -118,6 +118,12 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
         setTextWithUnit(mTxtYield, data.get(Tables.Extras.Coffee.STATS_YIELD).value, "%");
     }
 
+    /**
+     * Toggle display of the water mass and espresso mass based on whether this entry is an
+     * espresso.
+     *
+     * @param isEspresso Whether this is an espresso
+     */
     private void setIsEspresso(boolean isEspresso) {
         if(isEspresso) {
             mTxtLabelMass.setText(R.string.coffee_label_esp_mass);
@@ -128,6 +134,13 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
         }
     }
 
+    /**
+     * Set the text for a TextView with a unit of measurement appended.
+     *
+     * @param view The TextView
+     * @param text The main text
+     * @param unit The unit text
+     */
     private void setTextWithUnit(TextView view, String text, String unit) {
         if(!TextUtils.isEmpty(text)) {
             view.setText(text + unit);

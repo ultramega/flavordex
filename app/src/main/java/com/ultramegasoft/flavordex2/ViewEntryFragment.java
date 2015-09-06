@@ -17,24 +17,24 @@ import com.ultramegasoft.flavordex2.whiskey.ViewWhiskeyInfoFragment;
 import com.ultramegasoft.flavordex2.wine.ViewWineInfoFragment;
 
 /**
- * This fragment contains all the details of a journal entry. This is a container for multiple
- * fragment in a tabbed navigation layout.
+ * This Fragment contains all the details of a journal entry. This is a container for multiple
+ * Fragment in a tabbed navigation layout.
  *
  * @author Steve Guidetti
  */
 public class ViewEntryFragment extends Fragment {
     /**
-     * The fragment argument representing the item ID that this fragment represents
+     * The Fragment argument representing the item ID that this Fragment represents
      */
     public static final String ARG_ITEM_ID = "item_id";
 
     /**
-     * The fragment argument representing the category of item
+     * The Fragment argument representing the category of item
      */
     public static final String ARG_ITEM_CAT = "item_cat";
 
     /**
-     * The database id for this entry
+     * The database ID for this entry
      */
     private long mEntryId;
 
@@ -44,7 +44,7 @@ public class ViewEntryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-            mEntryId = getArguments().getLong(ARG_ITEM_ID);
+        mEntryId = getArguments().getLong(ARG_ITEM_ID);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class ViewEntryFragment extends Fragment {
     }
 
     /**
-     * Get the fragment class to use for displaying the main details of the entry.
+     * Get the Fragment class to use for displaying the main details of the entry.
      *
      * @return The Fragment class
      */

@@ -24,17 +24,17 @@ import java.util.Collections;
  */
 public class CatListAdapter extends BaseAdapter {
     /**
-     * The context
+     * The Context
      */
     private final Context mContext;
 
     /**
-     * The layout resource id to use for each list item
+     * The layout resource ID to use for each list item
      */
     private final int mLayoutId;
 
     /**
-     * The id for the TextView within the layout
+     * The ID for the TextView within the layout
      */
     private final int mTextViewId;
 
@@ -44,10 +44,10 @@ public class CatListAdapter extends BaseAdapter {
     private final ArrayList<Category> mCats = new ArrayList<>();
 
     /**
-     * @param context     The context
-     * @param cursor      The cursor from the database query
-     * @param layoutResId The layout resource id to use for each list item
-     * @param textViewId  The id for the TextView within the layout
+     * @param context     The Context
+     * @param cursor      The Cursor from the database query
+     * @param layoutResId The layout resource ID to use for each list item
+     * @param textViewId  The ID for the TextView within the layout
      */
     public CatListAdapter(Context context, Cursor cursor, int layoutResId, int textViewId) {
         mContext = context;
@@ -58,9 +58,9 @@ public class CatListAdapter extends BaseAdapter {
     }
 
     /**
-     * Set the cursor backing this adapter.
+     * Set the Cursor backing this Adapter.
      *
-     * @param newCursor The new cursor
+     * @param newCursor The new Cursor
      */
     public final void swapCursor(Cursor newCursor) {
         mCats.clear();
@@ -73,10 +73,10 @@ public class CatListAdapter extends BaseAdapter {
     }
 
     /**
-     * Read the new cursor into the array and sort by name.
+     * Read the new Cursor into the array and sort by name.
      *
-     * @param cursor The cursor
-     * @param cats   The array to add data to
+     * @param cursor The Cursor
+     * @param cats   The ArrayList to add data to
      */
     protected void readCursor(Cursor cursor, ArrayList<Category> cats) {
         cursor.moveToPosition(-1);
@@ -87,9 +87,9 @@ public class CatListAdapter extends BaseAdapter {
     }
 
     /**
-     * Read the current row into a Category object
+     * Read the current row into a Category object.
      *
-     * @param cursor The cursor
+     * @param cursor The Cursor
      * @return A Category read from the database row
      */
     protected Category readCursorRow(Cursor cursor) {
@@ -118,7 +118,7 @@ public class CatListAdapter extends BaseAdapter {
     /**
      * Get the position of an item based on ID.
      *
-     * @param id The database id of the item
+     * @param id The database ID of the item
      * @return The index of the item, or -1 if the item does not exist
      */
     public int getItemIndex(long id) {
@@ -150,7 +150,7 @@ public class CatListAdapter extends BaseAdapter {
      */
     public static class Category implements Comparable<Category> {
         /**
-         * The database id
+         * The database ID
          */
         public long id;
 
@@ -175,8 +175,8 @@ public class CatListAdapter extends BaseAdapter {
         public int numEntries;
 
         /**
-         * @param context    The context
-         * @param id         The database id
+         * @param context    The Context
+         * @param id         The database ID
          * @param name       The name of the category
          * @param preset     Whether this is a preset category
          * @param numEntries The number of entries in this category

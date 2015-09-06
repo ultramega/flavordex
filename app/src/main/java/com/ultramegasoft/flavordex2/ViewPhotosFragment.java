@@ -46,17 +46,17 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     private static final String ARG_PHOTO_POSITION = "photo_position";
 
     /**
-     * Request codes for external activities
+     * Request codes for external Activities
      */
     private static final int REQUEST_DELETE_IMAGE = 300;
 
     /**
-     * The database id for this entry
+     * The database ID for this entry
      */
     private long mEntryId;
 
     /**
-     * Views for this fragment
+     * Views for this Fragment
      */
     private ViewPager mPager;
     private LinearLayout mNoDataLayout;
@@ -207,8 +207,8 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     }
 
     /**
-     * Called whenever the list of photos might have been changed. This notifies the pager's adapter
-     * and the action bar.
+     * Called whenever the list of photos might have been changed. This notifies the ViewPager's
+     * Adapter and the ActionBar.
      */
     private void notifyDataChanged() {
         if(mPager != null) {
@@ -263,11 +263,11 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     }
 
     /**
-     * Adapter for the ViewPager
+     * Adapter for the ViewPager.
      */
     private class PagerAdapter extends FragmentStatePagerAdapter {
         /**
-         * The data backing the adapter
+         * The data backing the Adapter
          */
         private final ArrayList<PhotoHolder> mData;
 
@@ -295,22 +295,22 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     }
 
     /**
-     * Async task to insert a photo into the database.
+     * Task to insert a photo into the database in the background.
      */
     private static class PhotoSaver extends AsyncTask<PhotoHolder, Void, Void> {
         /**
-         * The context used to access the ContentManager
+         * The Context used to access the ContentManager
          */
         private final Context mContext;
 
         /**
-         * The entry id to assign the photo to
+         * The entry ID to assign the photo to
          */
         private final long mEntryId;
 
         /**
-         * @param context The context
-         * @param entryId The entry id
+         * @param context The Context
+         * @param entryId The entry ID
          */
         public PhotoSaver(Context context, long entryId) {
             mContext = context.getApplicationContext();
@@ -332,16 +332,16 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     }
 
     /**
-     * Async task to delete a photo from the database.
+     * Task to delete a photo from the database in the background.
      */
     private static class PhotoDeleter extends AsyncTask<PhotoHolder, Void, Void> {
         /**
-         * The context used to access the ContentManager
+         * The Context used to access the ContentManager
          */
         private final Context mContext;
 
         /**
-         * @param context The context
+         * @param context The Context
          */
         public PhotoDeleter(Context context) {
             mContext = context.getApplicationContext();

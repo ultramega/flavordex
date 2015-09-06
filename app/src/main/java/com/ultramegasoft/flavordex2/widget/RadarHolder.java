@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Holds the data associated with a point on a radar chart.
+ * Holds the data associated with a data point on a RadarView.
  *
  * @author Steve Guidetti
  */
@@ -22,7 +22,7 @@ public class RadarHolder implements Parcelable {
     };
 
     /**
-     * The id associated with this item, suh as a database row id
+     * The ID associated with this item
      */
     public long id;
 
@@ -37,7 +37,7 @@ public class RadarHolder implements Parcelable {
     public int value;
 
     /**
-     * @param id    The id associated with this item
+     * @param id    The ID associated with this item
      * @param name  The name of this item to use as the label
      * @param value The value of this data point
      */

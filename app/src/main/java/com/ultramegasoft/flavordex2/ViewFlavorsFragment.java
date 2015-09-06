@@ -34,13 +34,13 @@ import java.util.ArrayList;
  */
 public class ViewFlavorsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
-     * Keys for the saved state of this fragment
+     * Keys for the saved state of this Fragment
      */
     private static final String STATE_EDIT_MODE = "edit_mode";
     private static final String STATE_DATA = "flavor_data";
 
     /**
-     * The views from the fragment's layout
+     * The Views from the layout
      */
     private RadarView mRadarView;
     private RadarEditWidget mEditWidget;
@@ -62,7 +62,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     private boolean mEditMode;
 
     /**
-     * The database id for this entry
+     * The database ID for this entry
      */
     private long mEntryId;
 
@@ -160,7 +160,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     }
 
     /**
-     * Enable or disable the radar view's edit mode and show or hide the editing layout.
+     * Enable or disable the RadarView's interactive mode and show or hide the editing layout.
      *
      * @param editMode Whether to enable edit mode
      * @param animate  Whether to animate the edit interface sliding in
@@ -190,7 +190,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     }
 
     /**
-     * Save the current flavor data to the database
+     * Save the current flavor data to the database.
      */
     private void saveData() {
         setEditMode(false, true);
@@ -235,21 +235,21 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     }
 
     /**
-     * Async task to save the data.
+     * Task to save the data in the background.
      */
     private static class DataSaver extends AsyncTask<ArrayList<RadarHolder>, Void, Void> {
         /**
-         * The context used to access the ContentManager
+         * The Context used to access the ContentManager
          */
         private final Context mContext;
 
         /**
-         * The entry id to save the flavors to
+         * The entry ID to save the flavors to
          */
         private final long mEntryId;
 
         /**
-         * @param context The context
+         * @param context The Context
          * @param entryId The entry to save flavors to
          */
         public DataSaver(Context context, long entryId) {
@@ -275,5 +275,4 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
             return null;
         }
     }
-
 }

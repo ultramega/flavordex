@@ -20,8 +20,8 @@ public class EntryUtils {
     /**
      * Delete an entry.
      *
-     * @param context The context
-     * @param id      The entry's database id
+     * @param context The Context
+     * @param id      The entry's database ID
      */
     public static void delete(Context context, long id) {
         final ContentResolver cr = context.getContentResolver();
@@ -32,8 +32,8 @@ public class EntryUtils {
     /**
      * Remove a photo from an entry.
      *
-     * @param context The context
-     * @param photoId The photo's database id
+     * @param context The Context
+     * @param photoId The photo's database ID
      */
     public static void deletePhoto(Context context, long photoId) {
         final ContentResolver cr = context.getContentResolver();
@@ -56,12 +56,12 @@ public class EntryUtils {
     }
 
     /**
-     * Get a sharing intent.
+     * Get a sharing Intent.
      *
-     * @param context The context
+     * @param context The Context
      * @param title   The message title
      * @param rating  The rating to show
-     * @return A send action intent or null if the title is blank
+     * @return A send action Intent or null if the title is blank
      */
     public static Intent getShareIntent(Context context, String title, float rating) {
         if(TextUtils.isEmpty(title)) {
@@ -76,9 +76,9 @@ public class EntryUtils {
     }
 
     /**
-     * Get the message body for the share intent.
+     * Get the message body for the share Intent.
      *
-     * @param context The context
+     * @param context The Context
      * @param title   The message title
      * @param rating  The rating to show
      * @return The message body
@@ -89,9 +89,9 @@ public class EntryUtils {
     }
 
     /**
-     * Get the message subject for the share intent.
+     * Get the message subject for the share Intent.
      *
-     * @param context The context
+     * @param context The Context
      * @param title   The message title
      * @return The message subject
      */

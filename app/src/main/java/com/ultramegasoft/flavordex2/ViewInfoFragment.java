@@ -56,13 +56,13 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     private static final int REQUEST_DELETE_ENTRY = 100;
 
     /**
-     * Loader ids
+     * Loader IDs
      */
     private static final int LOADER_MAIN = 0;
     private static final int LOADER_EXTRAS = 1;
 
     /**
-     * The database id for this entry
+     * The database ID for this entry
      */
     private long mEntryId;
 
@@ -72,7 +72,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     private String mEntryCat;
 
     /**
-     * All the views for displaying details
+     * All the Views for displaying details
      */
     private TextView mTxtTitle;
     private RatingBar mRatingBar;
@@ -191,18 +191,18 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     /**
-     * Get the id for the layout to use.
+     * Get the ID for the layout to use.
      *
-     * @return An id from R.layout
+     * @return An ID from R.layout
      */
     protected int getLayoutId() {
         return R.layout.fragment_view_info;
     }
 
     /**
-     * Fills the views with data.
+     * Fills the Views with data.
      *
-     * @param data The cursor set to the correct row
+     * @param data The Cursor set to the correct row
      */
     private void populateViews(Cursor data) {
         ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(mTitle);
@@ -312,7 +312,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     /**
      * Set the text of a TextView, replacing empty values to a placeholder.
      *
-     * @param view  The view
+     * @param view  The TextView
      * @param value The text
      */
     public static void setViewText(TextView view, CharSequence value) {
@@ -406,10 +406,24 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
+    /**
+     * Task for deleting an entry in the background.
+     */
     private static class EntryDeleter extends AsyncTask<Void, Void, Void> {
+        /**
+         * The Context
+         */
         private final Context mContext;
+
+        /**
+         * The entry ID
+         */
         private final long mEntryId;
 
+        /**
+         * @param context The Context
+         * @param entryId The entry ID
+         */
         public EntryDeleter(Context context, long entryId) {
             mContext = context.getApplicationContext();
             mEntryId = entryId;

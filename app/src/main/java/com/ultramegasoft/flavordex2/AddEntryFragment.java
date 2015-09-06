@@ -32,13 +32,13 @@ import com.ultramegasoft.flavordex2.whiskey.EditWhiskeyInfoFragment;
 import com.ultramegasoft.flavordex2.wine.EditWineInfoFragment;
 
 /**
- * The parent fragment for the entry creation pages.
+ * The parent Fragment for the entry creation pages.
  *
  * @author Steve Guidetti
  */
 public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
-     * Keys for the fragment arguments
+     * Keys for the Fragment arguments
      */
     public static final String ARG_CAT_ID = "cat_id";
 
@@ -48,7 +48,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     private static final String STATE_CURRENT_PAGE = "current_page";
 
     /**
-     * The category id from the arguments
+     * The category ID from the arguments
      */
     private long mCatId;
 
@@ -58,7 +58,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     private String mCatName;
 
     /**
-     * The ViewPager containing the fragments
+     * The ViewPager containing the Fragments
      */
     private ViewPager mPager;
 
@@ -68,7 +68,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     private Button mBtnSave;
 
     /**
-     * The currently displayed page in the pager
+     * The currently displayed page in the ViewPager
      */
     private int mCurrentPage;
 
@@ -138,7 +138,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     /**
-     * Get the fragment class to use for adding the main details of the entry.
+     * Get the Fragment class to use for adding the main details of the entry.
      *
      * @return The Fragment class
      */
@@ -224,11 +224,11 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     /**
-     * Adapter for the ViewPager
+     * Adapter for the ViewPager.
      */
     private class PagerAdapter extends FragmentPagerAdapter {
         /**
-         * The list of fragments
+         * The list of Fragments
          */
         private String[] mFragments = new String[] {
                 EditInfoFragment.class.getName(),
@@ -237,7 +237,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         };
 
         /**
-         * Page title string resource ids
+         * Page title string resource IDs
          */
         private int[] mPageNames = {
                 R.string.title_add_entry,
@@ -274,12 +274,12 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
      */
     public static class DataSaverFragment extends Fragment {
         /**
-         * The tag to identify this fragment
+         * The tag to identify this Fragment
          */
         private static final String TAG = "DataSaverFragment";
 
         /**
-         * Keys for the fragment arguments
+         * Keys for the Fragment arguments
          */
         public static final String ARG_CAT_ID = "cat_id";
         public static final String ARG_ENTRY_CAT = "entry_cat";
@@ -289,12 +289,12 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         public static final String ARG_ENTRY_PHOTOS = "entry_photos";
 
         /**
-         * The category id of the entry
+         * The category ID of the entry
          */
         private long mCatId;
 
         /**
-         * The name of the category of entry
+         * The name of the entry category
          */
         private String mEntryCat;
 
@@ -319,17 +319,17 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         private ContentValues[] mEntryPhotos;
 
         /**
-         * The newly inserted entry id in case the fragment was detached when the insert task
+         * The newly inserted entry ID in case the Fragment was detached when the insert task
          * completed
          */
         private long mEntryId;
 
         /**
-         * Start a new instance of this fragment.
+         * Start a new instance of this Fragment.
          *
          * @param fm           The FragmentManager to use
-         * @param catId        The category id of the entry
-         * @param entryCat     The name of the category of entry
+         * @param catId        The category ID of the entry
+         * @param entryCat     The name of the entry category
          * @param entryInfo    Values for the entries table row
          * @param entryExtras  Values for the entries_extras table rows
          * @param entryFlavors Values for the entries_flavors table rows
@@ -380,9 +380,9 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         }
 
         /**
-         * Send the results to the activity.
+         * Send the results to the Activity.
          *
-         * @param entryId The id for the new entry
+         * @param entryId The ID for the new entry
          */
         private void onComplete(long entryId) {
             final AddEntryActivity activity = (AddEntryActivity)getActivity();
@@ -460,7 +460,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             /**
              * Insert the default flavors with 0 values in case the user did not supply data.
              *
-             * @param entryUri The uri of the newly inserted entry
+             * @param entryUri The Uri of the newly inserted entry
              */
             private void insertDefaultFlavors(Uri entryUri) {
                 final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);

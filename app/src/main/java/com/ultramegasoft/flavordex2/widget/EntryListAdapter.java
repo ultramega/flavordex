@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 /**
- * Custom adapter for the main entry list.
+ * Custom Adapter for the main journal entry list.
  *
  * @author Steve Guidetti
  */
@@ -54,7 +54,7 @@ public class EntryListAdapter extends CursorAdapter {
     private final HashMap<Long, Integer> mItemPositions = new HashMap<>();
 
     /**
-     * @param context The context
+     * @param context The Context
      */
     public EntryListAdapter(Context context) {
         super(context, null, true);
@@ -106,9 +106,9 @@ public class EntryListAdapter extends CursorAdapter {
     }
 
     /**
-     * Get the category of the item with the specified id.
+     * Get the category of the item with the specified ID.
      *
-     * @param id The row id
+     * @param id The row ID
      * @return The category name
      */
     public String getItemCat(long id) {
@@ -118,7 +118,7 @@ public class EntryListAdapter extends CursorAdapter {
     /**
      * Get the position of an item based on ID.
      *
-     * @param id The database id of the item
+     * @param id The database ID of the item
      * @return The index of the item
      */
     public int getItemIndex(long id) {

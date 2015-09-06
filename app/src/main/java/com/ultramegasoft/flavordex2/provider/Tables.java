@@ -10,8 +10,14 @@ import android.provider.BaseColumns;
  * @author Steve Guidetti
  */
 public class Tables {
+    /**
+     * The Authority string for the application
+     */
     public static final String AUTHORITY = "com.ultramegasoft.flavordex2";
 
+    /**
+     * The base for all content Uris
+     */
     private static final String URI_BASE = "content://" + AUTHORITY + "/";
 
     /**
@@ -20,9 +26,15 @@ public class Tables {
      * @author Steve Guidetti
      */
     public static class Entries implements BaseColumns {
+        /**
+         * Table names
+         */
         public static final String TABLE_NAME = "entries";
         public static final String VIEW_NAME = "view_entry";
 
+        /**
+         * Column names
+         */
         public static final String TITLE = "title";
         public static final String CAT_ID = "cat_id";
         public static final String CAT = "cat";
@@ -35,11 +47,17 @@ public class Tables {
         public static final String RATING = "rating";
         public static final String NOTES = "notes";
 
+        /**
+         * Content data types
+         */
         public static final String DATA_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".entry";
         public static final String DATA_TYPE_ITEM =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".entry";
 
+        /**
+         * Content Uris
+         */
         public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
         public static final Uri CONTENT_FILTER_URI_BASE
@@ -55,9 +73,15 @@ public class Tables {
      * @author Steve Guidetti
      */
     public static class EntriesExtras implements BaseColumns {
+        /**
+         * Table names
+         */
         public static final String TABLE_NAME = "entries_extras";
         public static final String VIEW_NAME = "view_entry_extra";
 
+        /**
+         * Column names
+         */
         public static final String ENTRY = "entry";
         public static final String EXTRA = "extra";
         public static final String VALUE = "value";
@@ -72,9 +96,15 @@ public class Tables {
      * @author Steve Guidetti
      */
     public static class EntriesFlavors implements BaseColumns {
+        /**
+         * Table names
+         */
         public static final String TABLE_NAME = "entries_flavors";
         public static final String VIEW_NAME = "view_entry_flavor";
 
+        /**
+         * Column names
+         */
         public static final String ENTRY = "entry";
         public static final String FLAVOR = "flavor";
         public static final String VALUE = "value";
@@ -89,24 +119,39 @@ public class Tables {
      * @author Steve Guidetti
      */
     public static class Extras implements BaseColumns {
+        /**
+         * Table names
+         */
         public static final String TABLE_NAME = "extras";
 
+        /**
+         * Column names
+         */
         public static final String CAT = "cat";
         public static final String NAME = "name";
         public static final String PRESET = "preset";
         public static final String DELETED = "deleted";
 
+        /**
+         * Content data types
+         */
         public static final String DATA_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".extra";
         public static final String DATA_TYPE_ITEM =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".extra";
 
+        /**
+         * Content Uris
+         */
         public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
 
         private Extras() {
         }
 
+        /**
+         * Beer preset extra names
+         */
         public static class Beer {
             public static final String STYLE = "_style";
             public static final String SERVING = "_serving";
@@ -116,18 +161,27 @@ public class Tables {
             public static final String STATS_FG = "_stats_fg";
         }
 
+        /**
+         * Wine preset extra names
+         */
         public static class Wine {
             public static final String VARIETAL = "_varietal";
             public static final String STATS_VINTAGE = "_stats_vintage";
             public static final String STATS_ABV = "_stats_abv";
         }
 
+        /**
+         * Whiskey preset extra names
+         */
         public static class Whiskey {
             public static final String TYPE = "_type";
             public static final String STATS_AGE = "_stats_age";
             public static final String STATS_ABV = "_stats_abv";
         }
 
+        /**
+         * Coffee preset extra names
+         */
         public static class Coffee {
             public static final String ROASTER = "_roaster";
             public static final String ROAST_DATE = "_roast_date";
@@ -148,17 +202,29 @@ public class Tables {
      * @author Steve Guidetti
      */
     public static class Flavors implements BaseColumns {
+        /**
+         * Table names
+         */
         public static final String TABLE_NAME = "flavors";
 
+        /**
+         * Column names
+         */
         public static final String CAT = "cat";
         public static final String NAME = "name";
         public static final String DELETED = "deleted";
 
+        /**
+         * Content data types
+         */
         public static final String DATA_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".flavor";
         public static final String DATA_TYPE_ITEM =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".flavor";
 
+        /**
+         * Content Uris
+         */
         public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
 
@@ -172,16 +238,28 @@ public class Tables {
      * @author Steve Guidetti
      */
     public static class Makers implements BaseColumns {
+        /**
+         * Table names
+         */
         public static final String TABLE_NAME = "makers";
 
+        /**
+         * Column names
+         */
         public static final String NAME = "name";
         public static final String LOCATION = "location";
 
+        /**
+         * Content data types
+         */
         public static final String DATA_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".maker";
         public static final String DATA_TYPE_ITEM =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".maker";
 
+        /**
+         * Content Uris
+         */
         public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
         public static final Uri CONTENT_FILTER_URI_BASE
@@ -197,16 +275,28 @@ public class Tables {
      * @author Steve Guidetti
      */
     public static class Photos implements BaseColumns {
+        /**
+         * Table names
+         */
         public static final String TABLE_NAME = "photos";
 
+        /**
+         * Column names
+         */
         public static final String ENTRY = "entry";
         public static final String PATH = "path";
 
+        /**
+         * Content data types
+         */
         public static final String DATA_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".photo";
         public static final String DATA_TYPE_ITEM =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".photo";
 
+        /**
+         * Content Uris
+         */
         public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
 
@@ -220,17 +310,29 @@ public class Tables {
      * @author Steve Guidetti
      */
     public static class Locations implements BaseColumns {
+        /**
+         * Table names
+         */
         public static final String TABLE_NAME = "locations";
 
+        /**
+         * Column names
+         */
         public static final String LATITUDE = "lat";
         public static final String LONGITUDE = "lon";
         public static final String NAME = "name";
 
+        /**
+         * Content data types
+         */
         public static final String DATA_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".location";
         public static final String DATA_TYPE_ITEM =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".location";
 
+        /**
+         * Content Uris
+         */
         public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
 
@@ -244,18 +346,30 @@ public class Tables {
      * @author Steve Guidetti
      */
     public static class Cats implements BaseColumns {
+        /**
+         * Table names
+         */
         public static final String TABLE_NAME = "cats";
         public static final String VIEW_NAME = "view_cat";
 
+        /**
+         * Column names
+         */
         public static final String NAME = "name";
         public static final String PRESET = "preset";
         public static final String NUM_ENTRIES = "num_entries";
 
+        /**
+         * Content data types
+         */
         public static final String DATA_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".cat";
         public static final String DATA_TYPE_ITEM =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd." + AUTHORITY + ".cat";
 
+        /**
+         * Content Uris
+         */
         public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
 

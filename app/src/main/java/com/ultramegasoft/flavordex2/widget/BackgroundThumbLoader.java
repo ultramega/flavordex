@@ -34,9 +34,9 @@ public abstract class BackgroundThumbLoader<K> {
     private final ExecutorService mPool = Executors.newFixedThreadPool(NUM_THREADS);
 
     /**
-     * Start loading an image into a view.
+     * Start loading an image into aa ImageView.
      *
-     * @param imageView The view to hold the image
+     * @param imageView The ImageView to hold the image
      * @param key       The key to reference the image in the cache
      */
     public void load(ImageView imageView, K key) {
@@ -50,18 +50,18 @@ public abstract class BackgroundThumbLoader<K> {
     }
 
     /**
-     * Load a bitmap from the source.
+     * Load a Bitmap from the source.
      *
      * @param thumb The Thumb object referencing the thumbnail
-     * @return A bitmap
+     * @return A Bitmap
      */
     protected abstract Bitmap getBitmap(Thumb thumb);
 
     /**
-     * Set the bitmap of an ImageView on the UI thread.
+     * Set the Bitmap of an ImageView on the UI thread.
      *
-     * @param imageView The view
-     * @param bitmap    The bitmap
+     * @param imageView The ImageView
+     * @param bitmap    The Bitmap
      */
     private void setBitmap(final ImageView imageView, final Bitmap bitmap) {
         mHandler.post(new Runnable() {
@@ -72,9 +72,12 @@ public abstract class BackgroundThumbLoader<K> {
     }
 
     /**
-     * A task for loading bitmaps in the background.
+     * A task for loading Bitmaps in the background.
      */
     private class LoadTask implements Runnable {
+        /**
+         * The Thumb object to load
+         */
         private final Thumb mThumb;
 
         /**
@@ -99,15 +102,22 @@ public abstract class BackgroundThumbLoader<K> {
     }
 
     /**
-     * An object to store a reference to an ImageView while its bitmap is loading.
+     * An object to store a reference to an ImageView while its Bitmap is loading.
      */
     public static class Thumb {
+        /**
+         * The key to reference this thumbnail
+         */
         public final Object key;
+
+        /**
+         * A reference to the ImageView
+         */
         private final WeakReference<ImageView> mReference;
 
         /**
          * @param key       The key to reference this thumbnail
-         * @param imageView The view
+         * @param imageView The ImageView
          */
         public Thumb(Object key, ImageView imageView) {
             this.key = key;
@@ -118,7 +128,7 @@ public abstract class BackgroundThumbLoader<K> {
         /**
          * Get the ImageView.
          *
-         * @return The view
+         * @return The ImageView
          */
         public ImageView get() {
             return mReference.get();
@@ -129,6 +139,9 @@ public abstract class BackgroundThumbLoader<K> {
      * A dummy Drawable to serve as a placeholder
      */
     private static class ThumbDrawable extends BitmapDrawable {
+        /**
+         * The key to reference this thumbnail
+         */
         public final Object key;
 
         /**

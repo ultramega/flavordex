@@ -43,7 +43,7 @@ import java.util.Locale;
  */
 public class EntryFilterDialog extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
-     * Tag to identify the fragment
+     * Tag to identify the Fragment
      */
     private static final String TAG = "EntryFilterDialog";
 
@@ -54,17 +54,17 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
     private static final int REQUEST_SET_DATE_MAX = 200;
 
     /**
-     * Loader ids
+     * Loader IDs
      */
     private static final int LOADER_CATS = 0;
 
     /**
-     * Arguments for the fragment
+     * Arguments for the Fragment
      */
     public static final String ARG_FILTER_VALUES = "filter_values";
 
     /**
-     * Keys for the result data intent
+     * Keys for the result data Intent
      */
     public static final String EXTRA_FILTER_VALUES = "filter_values";
     public static final String EXTRA_SQL_WHERE = "where";
@@ -89,7 +89,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
     private Button mBtnDateMax;
 
     /**
-     * The currently selected category id
+     * The currently selected category ID
      */
     private long mCatId;
 
@@ -108,7 +108,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
      * Show the filter dialog.
      *
      * @param fm          The FragmentManager to use
-     * @param target      The fragment to send results to
+     * @param target      The Fragment to send results to
      * @param requestCode The request code
      * @param filters     Initial values for the form fields
      */
@@ -154,7 +154,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
     /**
      * Get the layout for the filter form.
      *
-     * @param savedInstanceState The last saved state for the fragment
+     * @param savedInstanceState The last saved state for the Fragment
      * @return The layout
      */
     private View getLayout(Bundle savedInstanceState) {
@@ -252,7 +252,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
     }
 
     /**
-     * Initialize form fields from fragment arguments.
+     * Initialize form fields from Fragment arguments.
      */
     private void populateFields() {
         final Bundle args = getArguments();
@@ -296,7 +296,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
     }
 
     /**
-     * Send the results to the target fragment.
+     * Send the results to the target Fragment.
      */
     private void performFilter() {
         final Fragment fragment = getTargetFragment();
@@ -309,9 +309,9 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
     }
 
     /**
-     * Parse the form fields and place the data into the intent.
+     * Parse the form fields and place the data into the Intent.
      *
-     * @param data An intent to hold the data
+     * @param data An Intent to hold the data
      */
     private void parseFields(Intent data) {
         final ContentValues filterValues = new ContentValues();
@@ -392,11 +392,11 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
     }
 
     /**
-     * Adapter for the category spinner.
+     * Adapter for the category Spinner.
      */
     private class CatSpinnerAdapter extends CatListAdapter {
         /**
-         * @param cursor The cursor
+         * @param cursor The Cursor
          */
         public CatSpinnerAdapter(Cursor cursor) {
             super(getActivity(), cursor, android.R.layout.simple_dropdown_item_1line,
@@ -419,11 +419,11 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
      */
     public static class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
         /**
-         * Tag to identify the fragment
+         * Tag to identify the Fragment
          */
         private static final String TAG = "DateDialog";
         /**
-         * Arguments for the fragment
+         * Arguments for the Fragment
          */
         public static final String ARG_DATE = "date";
 
@@ -431,7 +431,7 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
          * Show a date picker dialog.
          *
          * @param fm             The FragmentManager to use
-         * @param targetFragment The fragment to send the results to
+         * @param targetFragment The Fragment to send the results to
          * @param requestCode    The request code
          * @param initTime       The initial value of the date picker
          */

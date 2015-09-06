@@ -6,16 +6,16 @@ import android.support.v7.app.AppCompatActivity;
 
 
 /**
- * The main application activity. This shows a list of all the journal entries. On narrow screens,
- * selecting an entry launches a new activity to show details. On wide screens, selecting an entry
- * shows details in a fragment in this activity.
+ * The main application Activity. This shows a list of all the journal entries. On narrow screens,
+ * selecting an entry launches a new Activity to show details. On wide screens, selecting an entry
+ * shows details in a Fragment in this Activity.
  *
  * @author Steve Guidetti
  */
 public class EntryListActivity extends AppCompatActivity implements EntryListFragment.Callbacks {
 
     /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
+     * Whether the Activity is in two-pane mode
      */
     private boolean mTwoPane;
 

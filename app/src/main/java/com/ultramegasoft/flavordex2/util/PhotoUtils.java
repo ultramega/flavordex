@@ -59,7 +59,7 @@ public class PhotoUtils {
     private static final String THUMB_FILE_PREFIX = "thumb_";
 
     /**
-     * The width and height of thumbnail bitmaps
+     * The width and height of thumbnail Bitmaps
      */
     private static final int THUMB_SIZE = 40;
 
@@ -69,10 +69,10 @@ public class PhotoUtils {
     private static final BitmapCache sThumbCache = new BitmapCache();
 
     /**
-     * Get an intent to capture a photo.
+     * Get an Intent to capture a photo.
      *
      * @param outputPath Path to save the captured photo
-     * @return Image capture intent
+     * @return Image capture Intent
      */
     public static Intent getTakePhotoIntent(Uri outputPath) {
         final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -81,9 +81,9 @@ public class PhotoUtils {
     }
 
     /**
-     * Get an intent to select a photo from the gallery.
+     * Get an Intent to select a photo from the gallery.
      *
-     * @return Get content intent
+     * @return Get content Intent
      */
     public static Intent getSelectPhotoIntent() {
         final Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -104,9 +104,9 @@ public class PhotoUtils {
      * Calculate the sample size for an image being loaded.
      *
      * @param options   Options object containing the original dimensions
-     * @param reqWidth  The requested width of the decoded bitmap
-     * @param reqHeight The requested height of the decoded bitmap
-     * @return The final sample size
+     * @param reqWidth  The requested width of the decoded Bitmap
+     * @param reqHeight The requested height of the decoded Bitmap
+     * @return The sample size
      */
     private static int calculateInSampleSize(Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
@@ -129,8 +129,8 @@ public class PhotoUtils {
      * Rotate an image according to its EXIF data.
      *
      * @param path   The path to the image file
-     * @param bitmap The bitmap to rotate
-     * @return The rotated bitmap
+     * @param bitmap The Bitmap to rotate
+     * @return The rotated Bitmap
      */
     private static Bitmap rotatePhoto(String path, Bitmap bitmap) {
         try {
@@ -163,12 +163,12 @@ public class PhotoUtils {
     }
 
     /**
-     * Load a bitmap from an image file.
+     * Load a Bitmap from an image file.
      *
      * @param path      Path to the image file
-     * @param reqWidth  The requested width of the decoded bitmap
-     * @param reqHeight The requested height of the decoded bitmap
-     * @return A bitmap
+     * @param reqWidth  The requested width of the decoded Bitmap
+     * @param reqHeight The requested height of the decoded Bitmap
+     * @return A Bitmap
      */
     public static Bitmap loadBitmap(String path, int reqWidth, int reqHeight) {
         try {
@@ -194,8 +194,8 @@ public class PhotoUtils {
      * Generate a thumbnail image file and save it to the persistent cache. If no photos exist for
      * the entry, te current file is deleted.
      *
-     * @param context The context
-     * @param id      Te id for the entry
+     * @param context The Context
+     * @param id      Te ID for the entry
      */
     public static void generateThumb(Context context, long id) {
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
@@ -218,11 +218,11 @@ public class PhotoUtils {
     }
 
     /**
-     * Load a bitmap as a thumbnail and save it to the persistent cache.
+     * Load a Bitmap as a thumbnail and save it to the persistent cache.
      *
-     * @param context The context
+     * @param context The Context
      * @param path    The path to the original image
-     * @param id      The id of the entry the image belongs to
+     * @param id      The ID of the entry the image belongs to
      */
     public static void generateThumb(Context context, String path, long id) {
         final Bitmap inputBitmap = loadBitmap(path, THUMB_SIZE, THUMB_SIZE);
@@ -245,9 +245,9 @@ public class PhotoUtils {
     /**
      * Get the thumbnail for an entry, generating one as needed.
      *
-     * @param context The context
-     * @param id      The entry id
-     * @return A bitmap
+     * @param context The Context
+     * @param id      The entry ID
+     * @return A Bitmap
      */
     public static Bitmap getThumb(Context context, long id) {
         final File file = getThumbFile(context, id);
@@ -270,8 +270,8 @@ public class PhotoUtils {
     /**
      * Delete a thumbnail.
      *
-     * @param context The context
-     * @param id      The entry id
+     * @param context The Context
+     * @param id      The entry ID
      */
     public static void deleteThumb(Context context, long id) {
         final File file = getThumbFile(context, id);
@@ -282,10 +282,10 @@ public class PhotoUtils {
     }
 
     /**
-     * Get a bitmap file for an entry.
+     * Get a Bitmap file for an entry.
      *
-     * @param context The context
-     * @param id      The entry id
+     * @param context The Context
+     * @param id      The entry ID
      * @return A reference to the image file
      */
     private static File getThumbFile(Context context, long id) {
@@ -306,7 +306,7 @@ public class PhotoUtils {
     /**
      * Get the output file for a new captured image.
      *
-     * @return A File pointing to the file
+     * @return A File object pointing to the file
      * @throws IOException
      */
     public static File getOutputMediaFile() throws IOException {
@@ -344,7 +344,7 @@ public class PhotoUtils {
      * Documents, as well as the _data field for the MediaStore and other file-based
      * ContentProviders.
      *
-     * @param context The context
+     * @param context The Context
      * @param uri     The Uri to query
      */
     @TargetApi(19)
@@ -411,7 +411,7 @@ public class PhotoUtils {
      * Get the value of the data column for this Uri. This is useful for MediaStore Uris, and other
      * file-based ContentProviders.
      *
-     * @param context       The context
+     * @param context       The Context
      * @param uri           The Uri to query
      * @param selection     (Optional) Filter used in the query
      * @param selectionArgs (Optional) Selection arguments used in the query
@@ -440,7 +440,6 @@ public class PhotoUtils {
 
         return null;
     }
-
 
     /**
      * @param uri The Uri to check.

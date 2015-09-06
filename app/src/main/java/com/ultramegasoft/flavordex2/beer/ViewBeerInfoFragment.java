@@ -16,7 +16,7 @@ import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import java.util.LinkedHashMap;
 
 /**
- * Beer specific entry view fragment.
+ * Beer specific entry view Fragment.
  *
  * @author Steve Guidetti
  */

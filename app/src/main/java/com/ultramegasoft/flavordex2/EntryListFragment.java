@@ -33,13 +33,13 @@ import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
 
 /**
- * The main entry list fragment. Shows a list of all the journal entries.
+ * The main entry list Fragment. Shows a list of all the journal entries.
  *
  * @author Steve Guidetti
  */
 public class EntryListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
-     * Request codes
+     * Request codes for external Activities
      */
     private static final int REQUEST_SET_FILTERS = 100;
     private static final int REQUEST_ADD_ENTRY = 200;
@@ -67,22 +67,22 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     };
 
     /**
-     * The fragment's current callback object, which is notified of list item clicks.
+     * The Fragment's current callback object, which is notified of list item clicks
      */
     private Callbacks mCallbacks = sDummyCallbacks;
 
     /**
-     * The main list toolbar
+     * The main list Toolbar
      */
     private Toolbar mToolbar;
 
     /**
-     * The toolbar for displaying filter settings
+     * The Toolbar for displaying filter settings
      */
     private Toolbar mFilterToolbar;
 
     /**
-     * The current activated item. Only used on tablets.
+     * The current activated item if in two-pane mode
      */
     private long mActivatedItem = -1;
 
@@ -122,19 +122,19 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     private boolean mSortReversed = false;
 
     /**
-     * The adapter for the list
+     * The Adapter for the ListView
      */
     private EntryListAdapter mAdapter;
 
     /**
-     * A callback interface that all activities containing this fragment must implement. This
-     * mechanism allows activities to be notified of item selections.
+     * A callback interface that all Activities containing this Fragment must implement. This
+     * mechanism allows Activities to be notified of item selections.
      */
     public interface Callbacks {
         /**
          * Callback for when an item has been selected.
          *
-         * @param id   The row id of the selected item
+         * @param id  The row ID of the selected item
          * @param cat The category of item selected
          */
         void onItemSelected(long id, String cat);
@@ -142,7 +142,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
 
     /**
      * A dummy implementation of the Callbacks interface that does nothing. Used only when this
-     * fragment is not attached to an activity.
+     * Fragment is not attached to an Activity.
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
@@ -377,9 +377,9 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     }
 
     /**
-     * Set the list query searchQuery.
+     * Set the list searchQuery.
      *
-     * @param searchQuery The query searchQuery
+     * @param searchQuery The searchQuery
      */
     private void setSearchQuery(String searchQuery) {
         mSearchQuery = searchQuery;
@@ -390,7 +390,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     /**
      * Set the filter parameters from the result from the filter dialog.
      *
-     * @param filterData The intent returned by EntryFilterDialog
+     * @param filterData The Intent returned by EntryFilterDialog
      */
     private void setFilters(Intent filterData) {
         if(filterData == null) {
@@ -443,7 +443,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     }
 
     /**
-     * Update the state of the filter toolbar
+     * Update the state of the filter Toolbar.
      */
     private void updateFilterToolbar() {
         if(mFilters == null || mFilters.size() == 0) {
@@ -461,8 +461,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     }
 
     /**
-     * Turns on activate-on-click mode. When this mode is on, list items will be given the
-     * 'activated' state when touched.
+     * Turn on activate-on-click mode. When this mode is on, list items will be given the activated
+     * state when touched.
      */
     public void setActivateOnItemClick(boolean activateOnItemClick) {
         getListView().setChoiceMode(activateOnItemClick
@@ -471,7 +471,7 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     }
 
     /**
-     * Set the select list item.
+     * Set the selected list item.
      *
      * @param position The index of the item to activate
      */

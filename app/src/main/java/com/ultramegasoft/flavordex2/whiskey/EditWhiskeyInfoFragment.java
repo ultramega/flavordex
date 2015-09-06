@@ -18,13 +18,13 @@ import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import java.util.HashMap;
 
 /**
- * Fragment for adding details for a new whiskey entry.
+ * Fragment for editing details for a new or existing whiskey entry.
  *
  * @author Steve Guidetti
  */
 public class EditWhiskeyInfoFragment extends EditInfoFragment {
     /**
-     * The views for the form fields
+     * The Views for the form fields
      */
     private AutoCompleteTextView mTxtType;
     private EditText mTxtAge;

@@ -39,7 +39,7 @@ public class FlavordexApp extends Application implements
     public static final String CAT_COFFEE = "_coffee";
 
     /**
-     * Map of preset category names to string resource ids
+     * Map of preset category names to string resource IDs
      */
     private static final HashMap<String, Integer> sCatNameMap = new HashMap<String, Integer>() {
         {
@@ -51,7 +51,7 @@ public class FlavordexApp extends Application implements
     };
 
     /**
-     * Listener for location updates.
+     * Listener for location updates
      */
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
@@ -78,7 +78,7 @@ public class FlavordexApp extends Application implements
     private final LocatorTask mLocatorTask = new LocatorTask();
 
     /**
-     * The current location
+     * The current Location
      */
     private Location mLocation;
 
@@ -108,7 +108,7 @@ public class FlavordexApp extends Application implements
      * Get the real display name of an entry category from a raw database name value, translating
      * internal names as needed.
      *
-     * @param context The context
+     * @param context The Context
      * @param name    The name from the database
      * @return The real display name
      */
@@ -120,9 +120,9 @@ public class FlavordexApp extends Application implements
     }
 
     /**
-     * Get the current location.
+     * Get the current Location.
      *
-     * @return The current location
+     * @return The current Location
      */
     public Location getLocation() {
         return mLocation;
@@ -138,9 +138,9 @@ public class FlavordexApp extends Application implements
     }
 
     /**
-     * Set the current location.
+     * Set the current Location.
      *
-     * @param location The location
+     * @param location The Location
      */
     private void setLocation(Location location) {
         mLocation = location;

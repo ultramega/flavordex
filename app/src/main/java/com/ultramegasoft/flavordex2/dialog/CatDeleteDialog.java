@@ -29,24 +29,25 @@ import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 
 /**
- * Dialog for confirming the deletion of a category. This also handles the deleting of the category.
+ * Dialog for confirming the deletion of a category. This also handles the deleting of the
+ * category.
  *
  * @author Steve Guidetti
  */
 public class CatDeleteDialog extends DialogFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
-     * Tag to identify the fragment
+     * Tag to identify the Fragment
      */
     private static final String TAG = "CatDeleteDialog";
 
     /**
-     * Arguments for the fragment
+     * Arguments for the Fragment
      */
     public static final String ARG_CAT_ID = "cat_id";
 
     /**
-     * Loader ids
+     * Loader IDs
      */
     private static final int LOADER_CAT = 0;
 
@@ -69,7 +70,7 @@ public class CatDeleteDialog extends DialogFragment
     private boolean mShowCheckLayout = true;
 
     /**
-     * The database id for the category
+     * The database ID for the category
      */
     private long mCatId;
 
@@ -77,9 +78,9 @@ public class CatDeleteDialog extends DialogFragment
      * Show the confirmation dialog to delete a category.
      *
      * @param fm          The FragmentManager to use
-     * @param target      The fragment to send the result to
+     * @param target      The Fragment to send the result to
      * @param requestCode The code to identify the request
-     * @param catId      The database id for the category
+     * @param catId       The database ID for the category
      */
     public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
                                   long catId) {
@@ -157,7 +158,7 @@ public class CatDeleteDialog extends DialogFragment
      * Get the inner layout of the dialog.
      *
      * @param savedInstanceState The saved state
-     * @return The view to place in the dialog
+     * @return The View to place in the dialog
      */
     private View getLayout(Bundle savedInstanceState) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -232,7 +233,7 @@ public class CatDeleteDialog extends DialogFragment
     }
 
     /**
-     * Task for deleted the category in the background.
+     * Task for deleting the category in the background.
      */
     private static class CatDeleteTask extends AsyncTask<Void, Void, Void> {
         /**
@@ -241,13 +242,13 @@ public class CatDeleteDialog extends DialogFragment
         private final ContentResolver mResolver;
 
         /**
-         * The category database id
+         * The category database ID
          */
         private final long mCatId;
 
         /**
-         * @param cr     The ContentResolver to use
-         * @param catId The category database id
+         * @param cr    The ContentResolver to use
+         * @param catId The category database ID
          */
         public CatDeleteTask(ContentResolver cr, long catId) {
             mResolver = cr;

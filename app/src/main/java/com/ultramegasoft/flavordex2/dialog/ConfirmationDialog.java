@@ -20,12 +20,12 @@ import com.ultramegasoft.flavordex2.R;
  */
 public class ConfirmationDialog extends DialogFragment {
     /**
-     * Tag to identify the fragment
+     * Tag to identify the Fragment
      */
     private static final String TAG = "ConfirmationDialog";
 
     /**
-     * Arguments for the fragment
+     * Arguments for the Fragment
      */
     public static final String ARG_TITLE = "title";
     public static final String ARG_MESSAGE = "message";
@@ -35,7 +35,7 @@ public class ConfirmationDialog extends DialogFragment {
      * Show a confirmation dialog.
      *
      * @param fm          The FragmentManager to use
-     * @param target      The fragment to notify of the result
+     * @param target      The Fragment to notify of the result
      * @param requestCode A number to identify this request
      * @param title       The dialog title
      * @param message     The dialog message
@@ -49,7 +49,7 @@ public class ConfirmationDialog extends DialogFragment {
      * Show a confirmation dialog.
      *
      * @param fm          The FragmentManager to use
-     * @param target      The fragment to notify of the result
+     * @param target      The Fragment to notify of the result
      * @param requestCode A number to identify this request
      * @param title       The dialog title
      * @param message     The dialog message

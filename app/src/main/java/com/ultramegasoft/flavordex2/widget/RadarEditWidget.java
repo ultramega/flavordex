@@ -27,7 +27,7 @@ public class RadarEditWidget extends LinearLayout {
     private RadarView mRadarView;
 
     /**
-     * The listener for button clicks, i any
+     * The listener for button clicks
      */
     private OnButtonClickListener mListener;
 

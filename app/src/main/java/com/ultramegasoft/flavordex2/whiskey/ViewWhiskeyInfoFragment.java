@@ -15,7 +15,7 @@ import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import java.util.LinkedHashMap;
 
 /**
- * Whiskey specific entry view fragment.
+ * Whiskey specific entry view Fragment.
  *
  * @author Steve Guidetti
  */

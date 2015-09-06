@@ -18,13 +18,13 @@ import com.ultramegasoft.flavordex2.widget.SpecialArrayAdapter;
 import java.util.HashMap;
 
 /**
- * Fragment for adding details for a new beer entry.
+ * Fragment for editing details for a new or existing beer entry.
  *
  * @author Steve Guidetti
  */
 public class EditBeerInfoFragment extends EditInfoFragment {
     /**
-     * The views for the form fields
+     * The Views for the form fields
      */
     private AutoCompleteTextView mTxtStyle;
     private Spinner mSpnServing;

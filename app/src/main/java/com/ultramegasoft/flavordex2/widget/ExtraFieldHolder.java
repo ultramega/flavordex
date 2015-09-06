@@ -22,7 +22,7 @@ public class ExtraFieldHolder implements Parcelable {
     };
 
     /**
-     * The database id of the extra
+     * The database ID of the extra
      */
     public final long id;
 
@@ -42,7 +42,7 @@ public class ExtraFieldHolder implements Parcelable {
     public String value;
 
     /**
-     * @param id     The database id of the extra
+     * @param id     The database ID of the extra
      * @param name   The name of the field
      * @param preset Whether this is a preset extra
      */
@@ -51,7 +51,7 @@ public class ExtraFieldHolder implements Parcelable {
     }
 
     /**
-     * @param id     The database id of the extra
+     * @param id     The database ID of the extra
      * @param name   The name of the field
      * @param preset Whether this is a preset extra
      * @param value  The initial value of the field

@@ -7,12 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 /**
- * This activity holds the entry details on narrow screen devices.
+ * This Activity holds the entry details on narrow screen devices.
  *
  * @author Steve Guidetti
  */
 public class ViewEntryActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -27,12 +27,12 @@ import java.util.ArrayList;
  */
 public class AddFlavorsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
-     * The views from the layout
+     * The Views from the layout
      */
     private RadarView mRadarView;
 
     /**
-     * The category id for the entry being added
+     * The category ID for the entry being added
      */
     private long mCatId;
 

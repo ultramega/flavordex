@@ -27,12 +27,12 @@ import java.util.HashMap;
  */
 public class AddPhotosFragment extends AbsPhotosFragment {
     /**
-     * The adapter backing the GridView
+     * The Adapter backing the GridView
      */
     private ImageAdapter mAdapter;
 
     /**
-     * Memory cache for bitmaps
+     * Memory cache for Bitmaps
      */
     private final BitmapCache mCache = new BitmapCache();
 
@@ -103,16 +103,16 @@ public class AddPhotosFragment extends AbsPhotosFragment {
     }
 
     /**
-     * Custom adapter for loading images with remove buttons into the GridView.
+     * Custom Adapter for loading images with remove buttons into the GridView.
      */
     private class ImageAdapter extends BaseAdapter {
         /**
-         * The data backing the adapter
+         * The data backing the Adapter
          */
         private final ArrayList<PhotoHolder> mData;
 
         /**
-         * List of reusable views
+         * List of reusable Views
          */
         private final HashMap<String, View> mViews = new HashMap<>();
 
@@ -176,9 +176,9 @@ public class AddPhotosFragment extends AbsPhotosFragment {
         }
 
         /**
-         * Load a bitmap in the background.
+         * Load a Bitmap in the background.
          *
-         * @param view The ImageView to hold the bitmap
+         * @param view The ImageView to hold the Bitmap
          * @param path The path to the photo to load
          */
         private void loadImage(ImageView view, String path) {

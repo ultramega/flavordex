@@ -28,10 +28,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
 
     /**
-     * The context
+     * The Context
      */
     private final Context mContext;
 
+    /**
+     * @param context The Context
+     */
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         mContext = context;
@@ -63,7 +66,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param db        The database
      * @param name      The internal name of the category
      * @param extras    List of internal names of the extra fields
-     * @param flavorRes String-array resource id for the list of flavors
+     * @param flavorRes String-array resource ID for the list of flavors
      */
     private void insertPreset(SQLiteDatabase db, String name, String[] extras, int flavorRes) {
         ContentValues values = new ContentValues();
@@ -156,7 +159,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Add some sample data
+     * Add some sample data.
      *
      * @param db The database
      */

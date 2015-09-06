@@ -10,7 +10,7 @@ import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import java.lang.ref.WeakReference;
 
 /**
- * Loads images in the background.
+ * Task for loading images in the background.
  *
  * @author Steve Guidetti
  */
@@ -36,7 +36,7 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
     private final String mPath;
 
     /**
-     * The cache to store loaded bitmaps
+     * The cache to store loaded Bitmaps
      */
     private final BitmapCache mCache;
 
@@ -45,7 +45,7 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
      * @param width     The width of the container
      * @param height    The height of the container
      * @param path      The path to the photo file to load from disk
-     * @param cache     The cache to store loaded bitmaps
+     * @param cache     The cache to store loaded Bitmaps
      */
     public ImageLoader(ImageView imageView, int width, int height, String path, BitmapCache cache) {
         mImageViewReference = new WeakReference<>(imageView);

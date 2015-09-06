@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import com.ultramegasoft.flavordex2.R;
 
 /**
- * Custom view for allowing custom list items to be checkable
+ * Custom View for allowing custom list items to be checkable.
  *
  * @author Steve Guidetti
  */

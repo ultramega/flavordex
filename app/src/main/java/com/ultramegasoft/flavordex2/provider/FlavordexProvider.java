@@ -11,9 +11,20 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
+/**
+ * The ContentProvider backing the application.
+ *
+ * @author Steve Guidetti
+ */
 public class FlavordexProvider extends ContentProvider {
+    /**
+     * The Authority string for this ContentProvider
+     */
     private static final String AUTHORITY = Tables.AUTHORITY;
 
+    /**
+     * URI identifier codes
+     */
     private static final int ENTRIES = 1;
     private static final int ENTRIES_ID = 2;
     private static final int ENTRIES_FILTER = 3;
@@ -36,6 +47,9 @@ public class FlavordexProvider extends ContentProvider {
     private static final int LOCATIONS = 20;
     private static final int LOCATIONS_ID = 21;
 
+    /**
+     * The UriMatcher to use
+     */
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
@@ -62,6 +76,9 @@ public class FlavordexProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "locations/#", LOCATIONS_ID);
     }
 
+    /**
+     * The helper to access the database
+     */
     private DatabaseHelper mDbHelper;
 
     public FlavordexProvider() {
@@ -495,8 +512,8 @@ public class FlavordexProvider extends ContentProvider {
 
 
     /**
-     * Finds or creates a maker based on data in values, replacing relevant values with the maker's
-     * id. Used while inserting or updating an entry.
+     * Find or create a maker based on data in values, replacing relevant values with the maker's
+     * ID. Used while inserting or updating an entry.
      *
      * @param values ContentValues containing the name and/or origin of the maker
      */

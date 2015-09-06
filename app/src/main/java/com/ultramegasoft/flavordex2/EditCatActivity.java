@@ -12,7 +12,7 @@ import android.view.MenuItem;
  */
 public class EditCatActivity extends AppCompatActivity {
     /**
-     * Intent extra for the category id
+     * Intent extra for the category ID
      */
     public static final String EXTRA_CAT_ID = "cat_id";
     public static final String EXTRA_CAT_NAME = "cat_name";
