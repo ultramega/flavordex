@@ -1,6 +1,7 @@
 package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -147,14 +148,14 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         notifyDataChanged();
         mPager.setCurrentItem(getPhotos().size() - 1, true);
 
-        new PhotoSaver(getActivity(), mEntryId).execute(photo);
+        new PhotoSaver(getContext().getContentResolver(), mEntryId, photo).execute();
 
     }
 
     @Override
     protected void onPhotoRemoved(PhotoHolder photo) {
         notifyDataChanged();
-        new PhotoDeleter(getActivity()).execute(photo);
+        new PhotoDeleter(getContext(), photo).execute();
     }
 
     /**
@@ -298,11 +299,11 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     /**
      * Task to insert a photo into the database in the background.
      */
-    private static class PhotoSaver extends AsyncTask<PhotoHolder, Void, Void> {
+    private static class PhotoSaver extends AsyncTask<Void, Void, Void> {
         /**
-         * The Context used to access the ContentManager
+         * The ContentResolver to use
          */
-        private final Context mContext;
+        private final ContentResolver mResolver;
 
         /**
          * The entry ID to assign the photo to
@@ -310,25 +311,31 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         private final long mEntryId;
 
         /**
-         * @param context The Context
-         * @param entryId The entry ID
+         * The photo to save
          */
-        public PhotoSaver(Context context, long entryId) {
-            mContext = context.getApplicationContext();
+        private final PhotoHolder mPhoto;
+
+        /**
+         * @param cr      The ContentResolver to use
+         * @param entryId The entry ID
+         * @param photo   The photo to save
+         */
+        public PhotoSaver(ContentResolver cr, long entryId, PhotoHolder photo) {
+            mResolver = cr;
             mEntryId = entryId;
+            mPhoto = photo;
         }
 
         @Override
-        protected Void doInBackground(PhotoHolder... params) {
-            final PhotoHolder photo = params[0];
+        protected Void doInBackground(Void... params) {
             Uri uri =
                     Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/photos");
 
             final ContentValues values = new ContentValues();
-            values.put(Tables.Photos.PATH, photo.path);
+            values.put(Tables.Photos.PATH, mPhoto.path);
 
-            uri = mContext.getContentResolver().insert(uri, values);
-            photo.id = Long.valueOf(uri.getLastPathSegment());
+            uri = mResolver.insert(uri, values);
+            mPhoto.id = Long.valueOf(uri.getLastPathSegment());
             return null;
         }
     }
@@ -336,23 +343,29 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     /**
      * Task to delete a photo from the database in the background.
      */
-    private static class PhotoDeleter extends AsyncTask<PhotoHolder, Void, Void> {
+    private static class PhotoDeleter extends AsyncTask<Void, Void, Void> {
         /**
-         * The Context used to access the ContentManager
+         * The Context
          */
         private final Context mContext;
 
         /**
-         * @param context The Context
+         * The photo to delete
          */
-        public PhotoDeleter(Context context) {
+        private final PhotoHolder mPhoto;
+
+        /**
+         * @param context The Context
+         * @param photo   The photo to delete
+         */
+        public PhotoDeleter(Context context, PhotoHolder photo) {
             mContext = context.getApplicationContext();
+            mPhoto = photo;
         }
 
         @Override
-        protected Void doInBackground(PhotoHolder... params) {
-            final PhotoHolder photo = params[0];
-            EntryUtils.deletePhoto(mContext, photo.id);
+        protected Void doInBackground(Void... params) {
+            EntryUtils.deletePhoto(mContext, mPhoto.id);
             return null;
         }
     }

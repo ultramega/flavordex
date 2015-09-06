@@ -2,7 +2,6 @@ package com.ultramegasoft.flavordex2;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -196,7 +195,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     private void saveData() {
         setEditMode(false, true);
         mData = mRadarView.getData();
-        new DataSaver(getActivity().getApplicationContext(), mEntryId).execute(mData);
+        new DataSaver(getContext().getContentResolver(), mEntryId, mData).execute();
     }
 
     /**
@@ -242,11 +241,11 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     /**
      * Task to save the data in the background.
      */
-    private static class DataSaver extends AsyncTask<ArrayList<RadarHolder>, Void, Void> {
+    private static class DataSaver extends AsyncTask<Void, Void, Void> {
         /**
-         * The Context used to access the ContentManager
+         * The ContentResolver to use
          */
-        private final Context mContext;
+        private final ContentResolver mResolver;
 
         /**
          * The entry ID to save the flavors to
@@ -254,29 +253,31 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
         private final long mEntryId;
 
         /**
-         * @param context The Context
-         * @param entryId The entry to save flavors to
+         * The radar chart data to insert
          */
-        public DataSaver(Context context, long entryId) {
-            mContext = context.getApplicationContext();
+        private final ArrayList<RadarHolder> mData;
+
+        /**
+         * @param cr      The ContentResolver to use
+         * @param entryId The entry to save flavors to
+         * @param data    The radar chart data to insert
+         */
+        public DataSaver(ContentResolver cr, long entryId, ArrayList<RadarHolder> data) {
+            mResolver = cr;
             mEntryId = entryId;
+            mData = data;
         }
 
         @Override
-        protected Void doInBackground(ArrayList<RadarHolder>... arg0) {
-            final ArrayList<RadarHolder> data = arg0[0];
-            final ContentResolver cr = mContext.getContentResolver();
+        protected Void doInBackground(Void... arg0) {
             Uri uri =
                     Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/flavor");
-
-            // do a bulk insert of all values (replaces existing)
-            final ContentValues[] values = new ContentValues[data.size()];
-            for(int i = 0; i < data.size(); i++) {
-                values[i] = new ContentValues();
-                values[i].put(Tables.EntriesFlavors.FLAVOR, data.get(i).id);
-                values[i].put(Tables.EntriesFlavors.VALUE, data.get(i).value);
+            final ContentValues values = new ContentValues();
+            for(RadarHolder item : mData) {
+                values.put(Tables.EntriesFlavors.FLAVOR, item.id);
+                values.put(Tables.EntriesFlavors.VALUE, item.value);
+                mResolver.insert(uri, values);
             }
-            cr.bulkInsert(uri, values);
 
             return null;
         }
