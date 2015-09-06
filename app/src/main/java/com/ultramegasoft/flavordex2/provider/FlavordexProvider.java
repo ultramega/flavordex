@@ -309,6 +309,10 @@ public class FlavordexProvider extends ContentProvider {
                 break;
             case ENTRIES_ID:
                 table = Tables.Entries.TABLE_NAME;
+                if(values.containsKey(Tables.Entries.MAKER)
+                        || values.containsKey(Tables.Entries.ORIGIN)) {
+                    processMaker(values);
+                }
                 selection = appendWhere(selection,
                         Tables.Entries._ID + " = " + uri.getLastPathSegment());
                 break;
