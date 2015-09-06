@@ -112,7 +112,8 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         final View rootView = inflater.inflate(getLayoutId(), container, false);
 
         mTxtTitle = (TextView)rootView.findViewById(R.id.entry_title);
@@ -173,8 +174,8 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                 case REQUEST_DELETE_ENTRY:
                     new EntryDeleter(getActivity(), mEntryId).execute();
                     final FragmentManager fm = getParentFragment().getFragmentManager();
-                    final EntryListFragment listFragment = (EntryListFragment)fm
-                            .findFragmentById(R.id.entry_list);
+                    final EntryListFragment listFragment =
+                            (EntryListFragment)fm.findFragmentById(R.id.entry_list);
                     if(listFragment != null) {
                         listFragment.setActivatedPosition(ListView.INVALID_POSITION);
                         Fragment fragment = fm.findFragmentById(R.id.entry_detail_container);

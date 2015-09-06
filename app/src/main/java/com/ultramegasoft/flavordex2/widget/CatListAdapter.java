@@ -137,7 +137,8 @@ public class CatListAdapter extends BaseAdapter {
         }
 
         final Category cat = getItem(position);
-        final String text = mContext.getString(R.string.list_item_cat, cat.realName, cat.numEntries);
+        final String text =
+                mContext.getString(R.string.list_item_cat, cat.realName, cat.numEntries);
 
         final TextView textView = (TextView)convertView.findViewById(mTextViewId);
         textView.setText(text);

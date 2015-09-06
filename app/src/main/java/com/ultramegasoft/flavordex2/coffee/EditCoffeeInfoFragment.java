@@ -49,7 +49,8 @@ public class EditCoffeeInfoFragment extends EditInfoFragment {
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
         mTxtRoaster = (EditText)root.findViewById(R.id.entry_roaster);
@@ -111,7 +112,8 @@ public class EditCoffeeInfoFragment extends EditInfoFragment {
      * @param sec   The EditText for seconds
      * @param extra The extraction time extra field
      */
-    private static void initExtractionTime(final EditText min, final EditText sec, final ExtraFieldHolder extra) {
+    private static void initExtractionTime(final EditText min, final EditText sec,
+                                           final ExtraFieldHolder extra) {
         if(extra.value != null) {
             final int extTime = Integer.valueOf(extra.value);
             min.setText(String.valueOf(extTime / 60));

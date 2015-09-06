@@ -41,7 +41,8 @@ import java.util.Locale;
  *
  * @author Steve Guidetti
  */
-public class EntryFilterDialog extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class EntryFilterDialog extends DialogFragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Tag to identify the Fragment
      */
@@ -235,14 +236,16 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
             }
         });
 
-        final ImageButton btnClearDateMin = (ImageButton)root.findViewById(R.id.button_date_min_clear);
+        final ImageButton btnClearDateMin =
+                (ImageButton)root.findViewById(R.id.button_date_min_clear);
         btnClearDateMin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mDateMin = null;
                 mBtnDateMin.setText(null);
             }
         });
-        final ImageButton btnClearDateMax = (ImageButton)root.findViewById(R.id.button_date_max_clear);
+        final ImageButton btnClearDateMax =
+                (ImageButton)root.findViewById(R.id.button_date_max_clear);
         btnClearDateMax.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mDateMax = null;
@@ -417,7 +420,8 @@ public class EntryFilterDialog extends DialogFragment implements LoaderManager.L
     /**
      * Dialog for showing a date picker
      */
-    public static class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+    public static class DateDialog extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
         /**
          * Tag to identify the Fragment
          */

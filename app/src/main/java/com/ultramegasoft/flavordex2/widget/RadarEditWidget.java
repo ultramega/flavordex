@@ -116,7 +116,8 @@ public class RadarEditWidget extends LinearLayout {
      * @param attrs The AttributeSet from the constructor
      */
     private void applyAttrs(AttributeSet attrs) {
-        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.RadarEditWidget);
+        final TypedArray a =
+                getContext().obtainStyledAttributes(attrs, R.styleable.RadarEditWidget);
 
         setShowButtonBar(a.getBoolean(R.styleable.RadarEditWidget_showButtonBar, false));
 

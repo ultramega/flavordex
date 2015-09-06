@@ -44,7 +44,8 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
         mTxtRoaster = (TextView)root.findViewById(R.id.entry_roaster);

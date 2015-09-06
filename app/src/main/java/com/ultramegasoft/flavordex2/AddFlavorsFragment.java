@@ -56,7 +56,8 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_add_flavors, container, false);
         mRadarView = (RadarView)root.findViewById(R.id.radar);
         ((RadarEditWidget)root.findViewById(R.id.edit_widget)).setTarget(mRadarView);

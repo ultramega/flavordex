@@ -32,7 +32,8 @@ public class EditWhiskeyInfoFragment extends EditInfoFragment {
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
         mTxtType = (AutoCompleteTextView)root.findViewById(R.id.entry_type);

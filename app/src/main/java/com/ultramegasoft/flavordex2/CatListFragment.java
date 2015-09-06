@@ -82,7 +82,8 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getActivity().getMenuInflater().inflate(R.menu.cat_context_menu, menu);
 
@@ -101,7 +102,8 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
             case R.id.menu_edit:
                 final Intent intent = new Intent(getContext(), EditCatActivity.class);
                 intent.putExtra(EditCatActivity.EXTRA_CAT_ID, info.id);
-                intent.putExtra(EditCatActivity.EXTRA_CAT_NAME, mAdapter.getItem(info.position).name);
+                intent.putExtra(EditCatActivity.EXTRA_CAT_NAME,
+                        mAdapter.getItem(info.position).name);
                 startActivity(intent);
                 return true;
             case R.id.menu_delete:

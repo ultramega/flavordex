@@ -35,7 +35,8 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         final String path = getArguments().getString(ARG_PATH);
         if(path == null) {
             return null;

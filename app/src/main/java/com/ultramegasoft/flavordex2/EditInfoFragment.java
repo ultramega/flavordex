@@ -110,14 +110,16 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
             }
             getLoaderManager().initLoader(LOADER_EXTRAS, null, this);
         } else {
-            mExtras = (HashMap<String, ExtraFieldHolder>)savedInstanceState.getSerializable(STATE_EXTRAS);
+            mExtras = (HashMap<String, ExtraFieldHolder>)savedInstanceState
+                    .getSerializable(STATE_EXTRAS);
             populateExtras(mExtras);
         }
     }
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         final View root = inflater.inflate(getLayoutId(), container, false);
 
         mTxtTitle = (EditText)root.findViewById(R.id.entry_title);

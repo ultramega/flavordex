@@ -37,7 +37,8 @@ import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
  *
  * @author Steve Guidetti
  */
-public class EntryListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class EntryListFragment extends ListFragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Request codes for external Activities
      */
@@ -187,7 +188,8 @@ public class EntryListFragment extends ListFragment implements LoaderManager.Loa
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_entry_list, container, false);
 
         final FrameLayout list = (FrameLayout)root.findViewById(R.id.list);

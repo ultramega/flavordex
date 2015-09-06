@@ -72,7 +72,8 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         if(!isMediaMounted()) {
             return inflater.inflate(R.layout.no_media, container, false);
         }
@@ -162,8 +163,8 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     private void showNoDataLayout() {
         final AppCompatActivity activity = (AppCompatActivity)getActivity();
         if(mNoDataLayout == null) {
-            mNoDataLayout = (LinearLayout)((ViewStub)activity.findViewById(R.id.no_photos))
-                    .inflate();
+            mNoDataLayout =
+                    (LinearLayout)((ViewStub)activity.findViewById(R.id.no_photos)).inflate();
 
             final Button btnTakePhoto = (Button)mNoDataLayout.findViewById(R.id.button_take_photo);
             if(hasCamera()) {
@@ -230,8 +231,8 @@ public class ViewPhotosFragment extends AbsPhotosFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final Uri uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE,
-                mEntryId + "/photos");
+        final Uri uri =
+                Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/photos");
         final String[] projection = new String[] {
                 Tables.Photos._ID,
                 Tables.Photos.PATH
@@ -320,7 +321,8 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         @Override
         protected Void doInBackground(PhotoHolder... params) {
             final PhotoHolder photo = params[0];
-            Uri uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/photos");
+            Uri uri =
+                    Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/photos");
 
             final ContentValues values = new ContentValues();
             values.put(Tables.Photos.PATH, photo.path);

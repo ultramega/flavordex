@@ -60,8 +60,8 @@ public class Tables {
          */
         public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
-        public static final Uri CONTENT_FILTER_URI_BASE
-                = Uri.parse(URI_BASE + TABLE_NAME + "/filter/");
+        public static final Uri CONTENT_FILTER_URI_BASE =
+                Uri.parse(URI_BASE + TABLE_NAME + "/filter/");
 
         private Entries() {
         }
@@ -262,8 +262,8 @@ public class Tables {
          */
         public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
-        public static final Uri CONTENT_FILTER_URI_BASE
-                = Uri.parse(URI_BASE + TABLE_NAME + "/filter/");
+        public static final Uri CONTENT_FILTER_URI_BASE =
+                Uri.parse(URI_BASE + TABLE_NAME + "/filter/");
 
         private Makers() {
         }

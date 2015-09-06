@@ -49,7 +49,8 @@ public class AddPhotosFragment extends AbsPhotosFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         if(!isMediaMounted()) {
             return inflater.inflate(R.layout.no_media, container, false);
         }

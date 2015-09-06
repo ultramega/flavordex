@@ -35,7 +35,8 @@ public class EditBeerInfoFragment extends EditInfoFragment {
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
         mTxtStyle = (AutoCompleteTextView)root.findViewById(R.id.entry_style);

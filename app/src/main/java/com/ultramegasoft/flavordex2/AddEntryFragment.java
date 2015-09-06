@@ -84,7 +84,8 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_add_entry, container, false);
         mPager = (ViewPager)root.findViewById(R.id.pager);
 

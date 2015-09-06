@@ -48,7 +48,8 @@ public class EntryUtils {
 
                 final long entryId = cursor.getLong(0);
                 PhotoUtils.generateThumb(context, entryId);
-                cr.notifyChange(ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId), null);
+                cr.notifyChange(ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE,
+                        entryId), null);
             }
         } finally {
             cursor.close();

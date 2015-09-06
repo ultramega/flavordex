@@ -92,7 +92,8 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_view_flavors, container, false);
 
         mRadarView = (RadarView)root.findViewById(R.id.radar);
@@ -206,8 +207,10 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
         mRadarView.setData(mData);
     }
 
+    @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        final Uri uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/flavor");
+        final Uri uri =
+                Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/flavor");
         final String[] projection = new String[] {
                 Tables.EntriesFlavors.FLAVOR,
                 Tables.Flavors.NAME,
@@ -217,6 +220,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                 Tables.EntriesFlavors._ID + " ASC");
     }
 
+    @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor d) {
         final ArrayList<RadarHolder> flavorValues = new ArrayList<>();
 
@@ -231,6 +235,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
         getLoaderManager().destroyLoader(0);
     }
 
+    @Override
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
@@ -261,7 +266,8 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
         protected Void doInBackground(ArrayList<RadarHolder>... arg0) {
             final ArrayList<RadarHolder> data = arg0[0];
             final ContentResolver cr = mContext.getContentResolver();
-            Uri uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/flavor");
+            Uri uri =
+                    Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/flavor");
 
             // do a bulk insert of all values (replaces existing)
             final ContentValues[] values = new ContentValues[data.size()];
