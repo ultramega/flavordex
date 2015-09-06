@@ -50,6 +50,11 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     private static final int LOADER_EXTRAS = 0;
 
     /**
+     * Keys for the saved state
+     */
+    private static final String STATE_EXTRAS = "extras";
+
+    /**
      * The views for the form fields
      */
     private EditText mTxtTitle;
@@ -87,7 +92,12 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(LOADER_EXTRAS, null, this);
+        if(savedInstanceState == null) {
+            getLoaderManager().initLoader(LOADER_EXTRAS, null, this);
+        } else {
+            mExtras = (HashMap<String, ExtraFieldHolder>)savedInstanceState.getSerializable(STATE_EXTRAS);
+            populateExtras(mExtras);
+        }
     }
 
     @NonNull
@@ -115,6 +125,12 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mTxtTitle.requestFocus();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(STATE_EXTRAS, mExtras);
     }
 
     /**
@@ -274,7 +290,7 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
      */
     protected static void initSpinner(Spinner spinner, final ExtraFieldHolder extra) {
         if(extra.value != null) {
-            spinner.setSelection(Integer.getInteger(extra.value));
+            spinner.setSelection(Integer.valueOf(extra.value));
         }
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
