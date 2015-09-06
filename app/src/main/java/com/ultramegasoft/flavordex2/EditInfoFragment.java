@@ -39,15 +39,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Fragment for adding details for a new journal entry.
+ * Fragment for editing details for a new or existing journal entry.
  *
  * @author Steve Guidetti
  */
-public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * Keys for the fragment arguments
+     */
+    public static final String ARG_ENTRY_ID = "entry_id";
+
     /**
      * Loader ids
      */
-    private static final int LOADER_EXTRAS = 0;
+    private static final int LOADER_ENTRY = 0;
+    private static final int LOADER_EXTRAS = 1;
 
     /**
      * Keys for the saved state
@@ -60,8 +66,8 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     private EditText mTxtTitle;
     private AutoCompleteTextView mTxtMaker;
     private EditText mTxtOrigin;
-    private EditText mTxtLocation;
     private EditText mTxtPrice;
+    private EditText mTxtLocation;
     private RatingBar mRatingBar;
     private EditText mTxtNotes;
 
@@ -76,23 +82,32 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     private long mCatId;
 
     /**
+     * The entry id to edit
+     */
+    private long mEntryId;
+
+    /**
      * Map of extra fields to their data
      */
     private HashMap<String, ExtraFieldHolder> mExtras = new HashMap<>();
 
-    public AddInfoFragment() {
+    public EditInfoFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCatId = getArguments().getLong(AddEntryFragment.ARG_CAT_ID);
+        mEntryId = getArguments().getLong(ARG_ENTRY_ID);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState == null) {
+            if(mEntryId > 0) {
+                getLoaderManager().initLoader(LOADER_ENTRY, null, this);
+            }
             getLoaderManager().initLoader(LOADER_EXTRAS, null, this);
         } else {
             mExtras = (HashMap<String, ExtraFieldHolder>)savedInstanceState.getSerializable(STATE_EXTRAS);
@@ -108,8 +123,8 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
         mTxtTitle = (EditText)root.findViewById(R.id.entry_title);
         mTxtMaker = (AutoCompleteTextView)root.findViewById(R.id.entry_maker);
         mTxtOrigin = (EditText)root.findViewById(R.id.entry_origin);
-        mTxtLocation = (EditText)root.findViewById(R.id.entry_location);
         mTxtPrice = (EditText)root.findViewById(R.id.entry_price);
+        mTxtLocation = (EditText)root.findViewById(R.id.entry_location);
         mRatingBar = (RatingBar)root.findViewById(R.id.entry_rating);
         mTxtNotes = (EditText)root.findViewById(R.id.entry_notes);
 
@@ -187,6 +202,27 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     /**
+     * Load the main details of the entry being edited.
+     *
+     * @param cursor The cursor returned from the database query
+     */
+    private void loadEntry(Cursor cursor) {
+        if(cursor == null) {
+            return;
+        }
+
+        if(cursor.moveToFirst()) {
+            mTxtTitle.setText(cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE)));
+            mTxtMaker.setText(cursor.getString(cursor.getColumnIndex(Tables.Entries.MAKER)));
+            mTxtOrigin.setText(cursor.getString(cursor.getColumnIndex(Tables.Entries.ORIGIN)));
+            mTxtPrice.setText(cursor.getString(cursor.getColumnIndex(Tables.Entries.PRICE)));
+            mTxtLocation.setText(cursor.getString(cursor.getColumnIndex(Tables.Entries.LOCATION)));
+            mRatingBar.setRating(cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING)));
+            mTxtNotes.setText(cursor.getString(cursor.getColumnIndex(Tables.Entries.NOTES)));
+        }
+    }
+
+    /**
      * Load the extra fields from the database.
      *
      * @param cursor The cursor returned from the database query
@@ -200,11 +236,17 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
         String name;
         boolean preset;
         while(cursor.moveToNext()) {
-            id = cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
+            id = cursor.getLong(cursor.getColumnIndex(
+                    mEntryId > 0 ? Tables.EntriesExtras.EXTRA : Tables.Extras._ID));
             name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
             preset = cursor.getInt(cursor.getColumnIndex(Tables.Extras.PRESET)) == 1;
 
             final ExtraFieldHolder extra = new ExtraFieldHolder(id, name, preset);
+
+            if(mEntryId > 0) {
+                extra.value = cursor.getString(cursor.getColumnIndex(Tables.EntriesExtras.VALUE));
+            }
+
             mExtras.put(extra.name, extra);
         }
 
@@ -324,8 +366,10 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     public final ContentValues getData() {
         final ContentValues values = new ContentValues();
 
-        values.put(Tables.Entries.CAT, mCatId);
-        values.put(Tables.Entries.DATE, System.currentTimeMillis());
+        if(mEntryId == 0) {
+            values.put(Tables.Entries.CAT, mCatId);
+            values.put(Tables.Entries.DATE, System.currentTimeMillis());
+        }
 
         values.put(Tables.Entries.TITLE, mTxtTitle.getText().toString());
         values.put(Tables.Entries.MAKER, mTxtMaker.getText().toString());
@@ -360,12 +404,24 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        final Uri baseUri;
+        if(mCatId > 0) {
+            baseUri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
+        } else {
+            baseUri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId);
+        }
         switch(id) {
+            case LOADER_ENTRY:
+                return new CursorLoader(getActivity(), baseUri, null, null, null, null);
             case LOADER_EXTRAS:
-                final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE,
-                        mCatId);
-                return new CursorLoader(getActivity(), Uri.withAppendedPath(uri, "/extras"), null,
-                        null, null, Tables.Extras._ID + " ASC");
+                final String sort;
+                if(mCatId > 0) {
+                    sort = Tables.Extras._ID + " ASC";
+                } else {
+                    sort = Tables.EntriesExtras.EXTRA + " ASC";
+                }
+                return new CursorLoader(getActivity(), Uri.withAppendedPath(baseUri, "/extras"),
+                        null, null, null, sort);
         }
         return null;
     }
@@ -373,12 +429,13 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch(loader.getId()) {
+            case LOADER_ENTRY:
+                loadEntry(data);
+                break;
             case LOADER_EXTRAS:
                 loadExtras(data);
                 break;
         }
-
-        getLoaderManager().destroyLoader(loader.getId());
     }
 
     @Override

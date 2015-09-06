@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TableRow;
 
-import com.ultramegasoft.flavordex2.AddInfoFragment;
+import com.ultramegasoft.flavordex2.EditInfoFragment;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
@@ -24,7 +24,7 @@ import java.util.HashMap;
  *
  * @author Steve Guidetti
  */
-public class AddCoffeeInfoFragment extends AddInfoFragment {
+public class EditCoffeeInfoFragment extends EditInfoFragment {
     /**
      * The views for the form fields
      */

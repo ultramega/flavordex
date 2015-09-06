@@ -25,11 +25,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.ultramegasoft.flavordex2.beer.AddBeerInfoFragment;
-import com.ultramegasoft.flavordex2.coffee.AddCoffeeInfoFragment;
+import com.ultramegasoft.flavordex2.beer.EditBeerInfoFragment;
+import com.ultramegasoft.flavordex2.coffee.EditCoffeeInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.whiskey.AddWhiskeyInfoFragment;
-import com.ultramegasoft.flavordex2.wine.AddWineInfoFragment;
+import com.ultramegasoft.flavordex2.whiskey.EditWhiskeyInfoFragment;
+import com.ultramegasoft.flavordex2.wine.EditWineInfoFragment;
 
 /**
  * The parent fragment for the entry creation pages.
@@ -142,21 +142,21 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
      *
      * @return The Fragment class
      */
-    private Class<? extends AddInfoFragment> getEntryInfoClass() {
+    private Class<? extends EditInfoFragment> getEntryInfoClass() {
         if(FlavordexApp.CAT_BEER.equals(mCatName)) {
-            return AddBeerInfoFragment.class;
+            return EditBeerInfoFragment.class;
         }
         if(FlavordexApp.CAT_WINE.equals(mCatName)) {
-            return AddWineInfoFragment.class;
+            return EditWineInfoFragment.class;
         }
         if(FlavordexApp.CAT_WHISKEY.equals(mCatName)) {
-            return AddWhiskeyInfoFragment.class;
+            return EditWhiskeyInfoFragment.class;
         }
         if(FlavordexApp.CAT_COFFEE.equals(mCatName)) {
-            return AddCoffeeInfoFragment.class;
+            return EditCoffeeInfoFragment.class;
         }
 
-        return AddInfoFragment.class;
+        return EditInfoFragment.class;
     }
 
     /**
@@ -173,13 +173,13 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         ContentValues[] entryFlavors = null;
         ContentValues[] entryPhotos = null;
         for(Fragment fragment : fm.getFragments()) {
-            if(fragment instanceof AddInfoFragment) {
-                isValid = ((AddInfoFragment)fragment).isValid();
+            if(fragment instanceof EditInfoFragment) {
+                isValid = ((EditInfoFragment)fragment).isValid();
                 if(!isValid) {
                     break;
                 }
-                entryInfo = ((AddInfoFragment)fragment).getData();
-                entryExtras = ((AddInfoFragment)fragment).getExtras();
+                entryInfo = ((EditInfoFragment)fragment).getData();
+                entryExtras = ((EditInfoFragment)fragment).getExtras();
                 continue;
             }
             if(fragment instanceof AddFlavorsFragment) {
@@ -231,7 +231,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
          * The list of fragments
          */
         private String[] mFragments = new String[] {
-                AddInfoFragment.class.getName(),
+                EditInfoFragment.class.getName(),
                 AddFlavorsFragment.class.getName(),
                 AddPhotosFragment.class.getName()
         };
@@ -269,6 +269,9 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         }
     }
 
+    /**
+     * Fragment for saving the entry in the background.
+     */
     public static class DataSaverFragment extends Fragment {
         /**
          * The tag to identify this fragment
@@ -325,8 +328,8 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
          * Start a new instance of this fragment.
          *
          * @param fm           The FragmentManager to use
-         * @param catId       The category id of the entry
-         * @param entryCat    The name of the category of entry
+         * @param catId        The category id of the entry
+         * @param entryCat     The name of the category of entry
          * @param entryInfo    Values for the entries table row
          * @param entryExtras  Values for the entries_extras table rows
          * @param entryFlavors Values for the entries_flavors table rows

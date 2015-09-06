@@ -45,6 +45,7 @@
     <string name="menu_sort_rating">Rating</string>
     <string name="menu_add_entry">Add Entry</string>
     <string name="menu_edit_entry">Edit Entry</string>
+    <string name="menu_save_entry">Save Entry</string>
     <string name="menu_delete_entry">Delete Entry</string>
     <string name="menu_share_entry">Share Entry</string>
     <string name="menu_add_photo">Add Photo</string>

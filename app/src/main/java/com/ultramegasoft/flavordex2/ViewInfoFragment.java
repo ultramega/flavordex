@@ -67,6 +67,11 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     private long mEntryId;
 
     /**
+     * The name of the entry category
+     */
+    private String mEntryCat;
+
+    /**
      * All the views for displaying details
      */
     private TextView mTxtTitle;
@@ -147,7 +152,10 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_edit_entry:
-                // TODO: 8/14/2015 Add editing
+                final Intent intent = new Intent(getContext(), EditEntryActivity.class);
+                intent.putExtra(EditEntryActivity.EXTRA_ENTRY_ID, mEntryId);
+                intent.putExtra(EditEntryActivity.EXTRA_ENTRY_CAT, mEntryCat);
+                startActivity(intent);
                 return true;
             case R.id.menu_delete_entry:
                 ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_ENTRY,
@@ -370,6 +378,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
         switch(id) {
             case LOADER_MAIN:
                 if(data.moveToFirst()) {
+                    mEntryCat = data.getString(data.getColumnIndex(Tables.Entries.CAT));
                     mTitle = data.getString(data.getColumnIndex(Tables.Entries.TITLE));
                     mRating = data.getFloat(data.getColumnIndex(Tables.Entries.RATING));
                     populateViews(data);
