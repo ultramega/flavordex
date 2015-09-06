@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.ViewInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -71,13 +72,13 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
     }
 
     @Override
-    protected void populateExtras(LinkedHashMap<String, String> data) {
+    protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> data) {
         super.populateExtras(data);
-        setViewText(mTxtRoaster, data.get(Tables.Extras.Coffee.ROASTER));
-        setViewText(mTxtRoastDate, data.get(Tables.Extras.Coffee.ROAST_DATE));
-        setViewText(mTxtGrind, data.get(Tables.Extras.Coffee.GRIND));
+        setViewText(mTxtRoaster, data.get(Tables.Extras.Coffee.ROASTER).value);
+        setViewText(mTxtRoastDate, data.get(Tables.Extras.Coffee.ROAST_DATE).value);
+        setViewText(mTxtGrind, data.get(Tables.Extras.Coffee.GRIND).value);
 
-        final int brewMethod = stringToInt(data.get(Tables.Extras.Coffee.BREW_METHOD));
+        final int brewMethod = stringToInt(data.get(Tables.Extras.Coffee.BREW_METHOD).value);
         if(brewMethod > 0) {
             final Resources res = getResources();
             final String[] servingTypes = res.getStringArray(R.array.coffee_brew_methods);
@@ -87,11 +88,11 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
             mTxtBrewMethod.setText(R.string.hint_empty);
         }
 
-        setTextWithUnit(mTxtDose, data.get(Tables.Extras.Coffee.STATS_DOSE), "g");
-        setTextWithUnit(mTxtMass, data.get(Tables.Extras.Coffee.STATS_MASS), "g");
+        setTextWithUnit(mTxtDose, data.get(Tables.Extras.Coffee.STATS_DOSE).value, "g");
+        setTextWithUnit(mTxtMass, data.get(Tables.Extras.Coffee.STATS_MASS).value, "g");
 
-        final float dose = stringToFloat(data.get(Tables.Extras.Coffee.STATS_DOSE));
-        final float mass = stringToFloat(data.get(Tables.Extras.Coffee.STATS_MASS));
+        final float dose = stringToFloat(data.get(Tables.Extras.Coffee.STATS_DOSE).value);
+        final float mass = stringToFloat(data.get(Tables.Extras.Coffee.STATS_MASS).value);
         if(dose > 0 && mass > 0) {
             if(brewMethod == 4) {
                 mTxtRatio.setText(String.format(Locale.US, "%.1f%%", dose / mass * 100));
@@ -102,9 +103,9 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
             mTxtRatio.setText(null);
         }
 
-        setTextWithUnit(mTxtTemp, data.get(Tables.Extras.Coffee.STATS_TEMP), "°C");
+        setTextWithUnit(mTxtTemp, data.get(Tables.Extras.Coffee.STATS_TEMP).value, "°C");
 
-        final int extTime = stringToInt(data.get(Tables.Extras.Coffee.STATS_EXTIME));
+        final int extTime = stringToInt(data.get(Tables.Extras.Coffee.STATS_EXTIME).value);
         if(extTime > 0) {
             final int extTimeM = extTime / 60;
             final int extTimeS = extTime % 60;
@@ -113,8 +114,8 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
             mTxtExtTime.setText(null);
         }
 
-        setTextWithUnit(mTxtTDS, data.get(Tables.Extras.Coffee.STATS_TDS), "%");
-        setTextWithUnit(mTxtYield, data.get(Tables.Extras.Coffee.STATS_YIELD), "%");
+        setTextWithUnit(mTxtTDS, data.get(Tables.Extras.Coffee.STATS_TDS).value, "%");
+        setTextWithUnit(mTxtYield, data.get(Tables.Extras.Coffee.STATS_YIELD).value, "%");
     }
 
     private void setIsEspresso(boolean isEspresso) {

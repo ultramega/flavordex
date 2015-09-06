@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.ViewInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
 import java.util.LinkedHashMap;
 
@@ -54,11 +55,11 @@ public class ViewBeerInfoFragment extends ViewInfoFragment {
     }
 
     @Override
-    protected void populateExtras(LinkedHashMap<String, String> data) {
+    protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> data) {
         super.populateExtras(data);
-        setViewText(mTxtStyle, data.get(Tables.Extras.Beer.STYLE));
+        setViewText(mTxtStyle, data.get(Tables.Extras.Beer.STYLE).value);
 
-        final int servingType = stringToInt(data.get(Tables.Extras.Beer.SERVING));
+        final int servingType = stringToInt(data.get(Tables.Extras.Beer.SERVING).value);
         if(servingType > 0) {
             final Resources res = getResources();
             final String[] servingTypes = res.getStringArray(R.array.beer_serving_types);
@@ -67,9 +68,9 @@ public class ViewBeerInfoFragment extends ViewInfoFragment {
             mTxtServingType.setText(R.string.hint_empty);
         }
 
-        mTxtIBU.setText(data.get(Tables.Extras.Beer.STATS_IBU));
-        mTxtABV.setText(data.get(Tables.Extras.Beer.STATS_ABV));
-        mTxtOG.setText(data.get(Tables.Extras.Beer.STATS_OG));
-        mTxtFG.setText(data.get(Tables.Extras.Beer.STATS_FG));
+        mTxtIBU.setText(data.get(Tables.Extras.Beer.STATS_IBU).value);
+        mTxtABV.setText(data.get(Tables.Extras.Beer.STATS_ABV).value);
+        mTxtOG.setText(data.get(Tables.Extras.Beer.STATS_OG).value);
+        mTxtFG.setText(data.get(Tables.Extras.Beer.STATS_FG).value);
     }
 }

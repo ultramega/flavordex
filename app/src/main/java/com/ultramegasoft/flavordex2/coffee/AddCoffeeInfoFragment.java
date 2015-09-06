@@ -2,6 +2,8 @@ package com.ultramegasoft.flavordex2.coffee;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.widget.TableRow;
 import com.ultramegasoft.flavordex2.AddInfoFragment;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
 import java.util.HashMap;
 
@@ -84,47 +87,64 @@ public class AddCoffeeInfoFragment extends AddInfoFragment {
     }
 
     @Override
-    protected void readExtras(HashMap<String, String> values) {
-        super.readExtras(values);
-        final int brewMethod = mSpnBrewMethod.getSelectedItemPosition();
+    protected void populateExtras(HashMap<String, ExtraFieldHolder> extras) {
+        super.populateExtras(extras);
+        initSpinner(mSpnBrewMethod, extras.get(Tables.Extras.Coffee.BREW_METHOD));
 
-        values.put(Tables.Extras.Coffee.ROASTER, mTxtRoaster.getText().toString());
-        values.put(Tables.Extras.Coffee.ROAST_DATE, mTxtRoastDate.getText().toString());
-        values.put(Tables.Extras.Coffee.GRIND, mTxtGrind.getText().toString());
-        values.put(Tables.Extras.Coffee.BREW_METHOD, brewMethod + "");
+        initEditText(mTxtRoaster, extras.get(Tables.Extras.Coffee.ROASTER));
+        initEditText(mTxtRoastDate, extras.get(Tables.Extras.Coffee.ROAST_DATE));
+        initEditText(mTxtGrind, extras.get(Tables.Extras.Coffee.GRIND));
 
-        values.put(Tables.Extras.Coffee.STATS_DOSE, mTxtDose.getText().toString());
-
-        if(brewMethod == 4) {
-            values.put(Tables.Extras.Coffee.STATS_MASS, mTxtEspMass.getText().toString());
-        } else {
-            values.put(Tables.Extras.Coffee.STATS_MASS, mTxtWaterMass.getText().toString());
-        }
-
-        values.put(Tables.Extras.Coffee.STATS_TEMP, mTxtTemp.getText().toString());
-        values.put(Tables.Extras.Coffee.STATS_EXTIME, calculateExtTime() + "");
-        values.put(Tables.Extras.Coffee.STATS_TDS, mTxtTDS.getText().toString());
-        values.put(Tables.Extras.Coffee.STATS_YIELD, mTxtYield.getText().toString());
+        initEditText(mTxtDose, extras.get(Tables.Extras.Coffee.STATS_DOSE));
+        initEditText(mTxtEspMass, extras.get(Tables.Extras.Coffee.STATS_MASS));
+        initEditText(mTxtWaterMass, extras.get(Tables.Extras.Coffee.STATS_MASS));
+        initEditText(mTxtTemp, extras.get(Tables.Extras.Coffee.STATS_TEMP));
+        initExtractionTime(mTxtExtTimeM, mTxtExtTimeS, extras.get(Tables.Extras.Coffee.STATS_EXTIME));
+        initEditText(mTxtTDS, extras.get(Tables.Extras.Coffee.STATS_TDS));
+        initEditText(mTxtYield, extras.get(Tables.Extras.Coffee.STATS_YIELD));
     }
 
     /**
-     * Calculate the extraction time in seconds from the minute and second fields.
+     * Set up the extraction time fields.
      *
-     * @return The extraction time in seconds
+     * @param min   The EditText for minutes
+     * @param sec   The EditText for seconds
+     * @param extra The extraction time extra field
      */
-    private int calculateExtTime() {
-        int extTimeM = 0;
-        int extTimeS = 0;
-        try {
-            extTimeM = Integer.parseInt(mTxtExtTimeM.getText().toString());
-        } catch(NumberFormatException ignored) {
-        }
-        try {
-            extTimeS = Integer.parseInt(mTxtExtTimeS.getText().toString());
-        } catch(NumberFormatException ignored) {
+    private static void initExtractionTime(final EditText min, final EditText sec, final ExtraFieldHolder extra) {
+        if(extra.value != null) {
+            final int extTime = Integer.valueOf(extra.value);
+            min.setText(String.valueOf(extTime / 60));
+            sec.setText(String.format("%02d", extTime % 60));
         }
 
-        return extTimeM * 60 + extTimeS;
+        final TextWatcher watcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                int extTimeM = 0;
+                int extTimeS = 0;
+                try {
+                    extTimeM = Integer.parseInt(min.getText().toString());
+                } catch(NumberFormatException ignored) {
+                }
+                try {
+                    extTimeS = Integer.parseInt(sec.getText().toString());
+                } catch(NumberFormatException ignored) {
+                }
+
+                extra.value = (extTimeM * 60 + extTimeS) + "";
+            }
+        };
+        min.addTextChangedListener(watcher);
+        sec.addTextChangedListener(watcher);
     }
 
     /**

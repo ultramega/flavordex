@@ -37,12 +37,12 @@ import android.widget.TextView;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
+import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Fragment to display the main details of a journal entry.
@@ -244,7 +244,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      *
      * @param data A LinkedHashMap containing the extra values
      */
-    protected void populateExtras(LinkedHashMap<String, String> data) {
+    protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> data) {
         if(data.size() > 0) {
             final TableLayout table = (TableLayout)getActivity().findViewById(R.id.entry_info);
 
@@ -254,8 +254,8 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
 
             final int padding = getPixelValue(TypedValue.COMPLEX_UNIT_DIP, 4);
 
-            for(Map.Entry<String, String> entry : data.entrySet()) {
-                if(entry.getKey().startsWith("_")) {
+            for(ExtraFieldHolder extra : data.values()) {
+                if(extra.preset) {
                     continue;
                 }
                 tableRow = new TableRow(getActivity());
@@ -265,14 +265,14 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                 textView.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
                 textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-                textView.setText(entry.getKey() + ": ");
+                textView.setText(extra.name + ": ");
                 tableRow.addView(textView);
 
                 textView = new TextView(getActivity());
                 textView.setPadding(padding, 0, padding, 0);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                 textView.setTextIsSelectable(true);
-                textView.setText(entry.getValue());
+                textView.setText(extra.value);
                 tableRow.addView(textView);
 
                 divider = new View(getActivity());
@@ -376,13 +376,15 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                 }
                 break;
             case LOADER_EXTRAS:
-                final LinkedHashMap<String, String> extras = new LinkedHashMap<>();
-                String key;
+                final LinkedHashMap<String, ExtraFieldHolder> extras = new LinkedHashMap<>();
+                String name;
                 String value;
+                boolean preset;
                 while(data.moveToNext()) {
-                    key = data.getString(data.getColumnIndex(Tables.Extras.NAME));
+                    name = data.getString(data.getColumnIndex(Tables.Extras.NAME));
                     value = data.getString(data.getColumnIndex(Tables.EntriesExtras.VALUE));
-                    extras.put(key, value);
+                    preset = data.getInt(data.getColumnIndex(Tables.Extras.PRESET)) == 1;
+                    extras.put(name, new ExtraFieldHolder(0, name, preset, value));
                 }
                 populateExtras(extras);
                 getLoaderManager().destroyLoader(LOADER_EXTRAS);

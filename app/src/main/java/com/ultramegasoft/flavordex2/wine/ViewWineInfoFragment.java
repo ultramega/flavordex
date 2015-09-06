@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.ViewInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
 import java.util.LinkedHashMap;
 
@@ -46,11 +47,11 @@ public class ViewWineInfoFragment extends ViewInfoFragment {
     }
 
     @Override
-    protected void populateExtras(LinkedHashMap<String, String> data) {
+    protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> data) {
         super.populateExtras(data);
-        setViewText(mTxtVarietal, data.get(Tables.Extras.Wine.VARIETAL));
+        setViewText(mTxtVarietal, data.get(Tables.Extras.Wine.VARIETAL).value);
 
-        mTxtVintage.setText(data.get(Tables.Extras.Wine.STATS_VINTAGE));
-        mTxtABV.setText(data.get(Tables.Extras.Wine.STATS_ABV));
+        mTxtVintage.setText(data.get(Tables.Extras.Wine.STATS_VINTAGE).value);
+        mTxtABV.setText(data.get(Tables.Extras.Wine.STATS_ABV).value);
     }
 }

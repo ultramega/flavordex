@@ -11,8 +11,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -25,15 +27,16 @@ import android.widget.EditText;
 import android.widget.FilterQueryProvider;
 import android.widget.RatingBar;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Fragment for adding details for a new journal entry.
@@ -68,14 +71,9 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     private long mCatId;
 
     /**
-     * Map of extra field names to their database ids
+     * Map of extra fields to their data
      */
-    private HashMap<String, Long> mExtraIds = new HashMap<>();
-
-    /**
-     * List of extra fields
-     */
-    private ArrayList<EditText> mExtraFields = new ArrayList<>();
+    private HashMap<String, ExtraFieldHolder> mExtras = new HashMap<>();
 
     public AddInfoFragment() {
     }
@@ -178,31 +176,44 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
      * @param cursor The cursor returned from the database query
      */
     private void loadExtras(Cursor cursor) {
-        mExtraFields.clear();
-        mExtraIds.clear();
-
         if(cursor == null) {
             return;
         }
 
         long id;
         String name;
+        boolean preset;
         while(cursor.moveToNext()) {
             id = cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
             name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
-            mExtraIds.put(name, id);
-            if(TextUtils.indexOf(name, '_') != 0) {
-                addExtraRow(name);
+            preset = cursor.getInt(cursor.getColumnIndex(Tables.Extras.PRESET)) == 1;
+
+            final ExtraFieldHolder extra = new ExtraFieldHolder(id, name, preset);
+            mExtras.put(extra.name, extra);
+        }
+
+        populateExtras(mExtras);
+    }
+
+    /**
+     * Create and set up the extra field views.
+     *
+     * @param extras A map of extra names to the extra field
+     */
+    protected void populateExtras(HashMap<String, ExtraFieldHolder> extras) {
+        for(ExtraFieldHolder extra : extras.values()) {
+            if(!extra.preset) {
+                addExtraRow(extra);
             }
         }
     }
 
     /**
-     * Add an extra field to the interface.
+     * Add an extra field view to the interface.
      *
-     * @param name The name of the field
+     * @param extra The extra field
      */
-    private void addExtraRow(String name) {
+    private void addExtraRow(ExtraFieldHolder extra) {
         final TableRow tableRow = new TableRow(getActivity());
 
         final DisplayMetrics metrics = getResources().getDisplayMetrics();
@@ -213,7 +224,7 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
         label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
         label.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         label.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-        label.setText(name + ": ");
+        label.setText(extra.name + ": ");
         tableRow.addView(label);
 
         final EditText editText = new EditText(getActivity());
@@ -222,13 +233,61 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
         editText.setEllipsize(TextUtils.TruncateAt.END);
         editText.setWidth(0);
         editText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(256)});
-        editText.setTag(name);
-        editText.setHint(name);
+        editText.setHint(extra.name);
         tableRow.addView(editText);
 
-        mExtraFields.add(editText);
+        initEditText(editText, extra);
 
         mInfoTable.addView(tableRow);
+    }
+
+    /**
+     * Set up an EditText with an extra field.
+     *
+     * @param editText The EditText
+     * @param extra    The extra field to associate with the view
+     */
+    protected static void initEditText(EditText editText, final ExtraFieldHolder extra) {
+        editText.setText(extra.value);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                extra.value = s.toString();
+            }
+        });
+    }
+
+    /**
+     * Set up a Spinner with an extra field.
+     *
+     * @param spinner The Spinner
+     * @param extra   The extra field to associate with the view
+     */
+    protected static void initSpinner(Spinner spinner, final ExtraFieldHolder extra) {
+        if(extra.value != null) {
+            spinner.setSelection(Integer.getInteger(extra.value));
+        }
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                extra.value = position + "";
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     /**
@@ -264,33 +323,18 @@ public class AddInfoFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     /**
-     * Read the values from the extra fields into the supplied HashMap, mapping field names to
-     * values.
-     *
-     * @param values A HashMap to add values to
-     */
-    protected void readExtras(HashMap<String, String> values) {
-        for(EditText field : mExtraFields) {
-            values.put(field.getTag().toString(), field.getText().toString());
-        }
-    }
-
-    /**
      * Get the values of the extra fields as an array of ContentValues objects ready to be bulk
      * inserted into the entries_extras database table.
      *
      * @return Array of ContentValues containing data for the entries_extras table
      */
     public final ContentValues[] getExtras() {
-        final HashMap<String, String> fieldValues = new HashMap<>();
-        readExtras(fieldValues);
-
         final ArrayList<ContentValues> values = new ArrayList<>();
         ContentValues rowValues;
-        for(Map.Entry<String, String> entry : fieldValues.entrySet()) {
+        for(ExtraFieldHolder extra : mExtras.values()) {
             rowValues = new ContentValues();
-            rowValues.put(Tables.EntriesExtras.EXTRA, mExtraIds.get(entry.getKey()));
-            rowValues.put(Tables.EntriesExtras.VALUE, entry.getValue());
+            rowValues.put(Tables.EntriesExtras.EXTRA, extra.id);
+            rowValues.put(Tables.EntriesExtras.VALUE, extra.value);
 
             values.add(rowValues);
         }

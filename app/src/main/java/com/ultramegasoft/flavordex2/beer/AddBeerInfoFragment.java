@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import com.ultramegasoft.flavordex2.AddInfoFragment;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.widget.SpecialArrayAdapter;
 
 import java.util.HashMap;
@@ -22,6 +23,9 @@ import java.util.HashMap;
  * @author Steve Guidetti
  */
 public class AddBeerInfoFragment extends AddInfoFragment {
+    /**
+     * The views for the form fields
+     */
     private AutoCompleteTextView mTxtStyle;
     private Spinner mSpnServing;
     private EditText mTxtIBU;
@@ -57,13 +61,13 @@ public class AddBeerInfoFragment extends AddInfoFragment {
     }
 
     @Override
-    protected void readExtras(HashMap<String, String> values) {
-        super.readExtras(values);
-        values.put(Tables.Extras.Beer.STYLE, mTxtStyle.getText().toString());
-        values.put(Tables.Extras.Beer.SERVING, mSpnServing.getSelectedItemPosition() + "");
-        values.put(Tables.Extras.Beer.STATS_IBU, mTxtIBU.getText().toString());
-        values.put(Tables.Extras.Beer.STATS_ABV, mTxtABV.getText().toString());
-        values.put(Tables.Extras.Beer.STATS_OG, mTxtOG.getText().toString());
-        values.put(Tables.Extras.Beer.STATS_FG, mTxtFG.getText().toString());
+    protected void populateExtras(final HashMap<String, ExtraFieldHolder> extras) {
+        super.populateExtras(extras);
+        initEditText(mTxtStyle, extras.get(Tables.Extras.Beer.STYLE));
+        initSpinner(mSpnServing, extras.get(Tables.Extras.Beer.SERVING));
+        initEditText(mTxtIBU, extras.get(Tables.Extras.Beer.STATS_IBU));
+        initEditText(mTxtABV, extras.get(Tables.Extras.Beer.STATS_ABV));
+        initEditText(mTxtOG, extras.get(Tables.Extras.Beer.STATS_OG));
+        initEditText(mTxtFG, extras.get(Tables.Extras.Beer.STATS_FG));
     }
 }

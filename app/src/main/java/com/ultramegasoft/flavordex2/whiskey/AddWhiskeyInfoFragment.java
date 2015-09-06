@@ -13,6 +13,7 @@ import android.widget.EditText;
 import com.ultramegasoft.flavordex2.AddInfoFragment;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
 import java.util.HashMap;
 
@@ -53,10 +54,10 @@ public class AddWhiskeyInfoFragment extends AddInfoFragment {
     }
 
     @Override
-    protected void readExtras(HashMap<String, String> values) {
-        super.readExtras(values);
-        values.put(Tables.Extras.Whiskey.TYPE, mTxtType.getText().toString());
-        values.put(Tables.Extras.Whiskey.STATS_AGE, mTxtAge.getText().toString());
-        values.put(Tables.Extras.Whiskey.STATS_ABV, mTxtABV.getText().toString());
+    protected void populateExtras(HashMap<String, ExtraFieldHolder> extras) {
+        super.populateExtras(extras);
+        initEditText(mTxtType, extras.get(Tables.Extras.Whiskey.TYPE));
+        initEditText(mTxtAge, extras.get(Tables.Extras.Whiskey.STATS_AGE));
+        initEditText(mTxtABV, extras.get(Tables.Extras.Whiskey.STATS_ABV));
     }
 }

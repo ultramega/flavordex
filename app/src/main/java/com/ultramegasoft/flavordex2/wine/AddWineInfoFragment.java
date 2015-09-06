@@ -11,6 +11,7 @@ import android.widget.EditText;
 import com.ultramegasoft.flavordex2.AddInfoFragment;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.widget.SpecialArrayAdapter;
 
 import java.util.HashMap;
@@ -52,10 +53,10 @@ public class AddWineInfoFragment extends AddInfoFragment {
     }
 
     @Override
-    protected void readExtras(HashMap<String, String> values) {
-        super.readExtras(values);
-        values.put(Tables.Extras.Wine.VARIETAL, mTxtVarietal.getText().toString());
-        values.put(Tables.Extras.Wine.STATS_VINTAGE, mTxtVintage.getText().toString());
-        values.put(Tables.Extras.Wine.STATS_ABV, mTxtABV.getText().toString());
+    protected void populateExtras(HashMap<String, ExtraFieldHolder> extras) {
+        super.populateExtras(extras);
+        initEditText(mTxtVarietal, extras.get(Tables.Extras.Wine.VARIETAL));
+        initEditText(mTxtVintage, extras.get(Tables.Extras.Wine.STATS_VINTAGE));
+        initEditText(mTxtABV, extras.get(Tables.Extras.Wine.STATS_ABV));
     }
 }
