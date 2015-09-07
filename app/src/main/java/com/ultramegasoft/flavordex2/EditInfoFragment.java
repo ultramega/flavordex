@@ -273,7 +273,9 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param extra    The extra field to associate with the View
      */
     protected static void initEditText(EditText editText, final ExtraFieldHolder extra) {
-        editText.setHint(extra.name);
+        if(!extra.preset) {
+            editText.setHint(extra.name);
+        }
         editText.setText(extra.value);
 
         editText.addTextChangedListener(new TextWatcher() {
