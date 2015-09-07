@@ -25,20 +25,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:numStars="5"
-            android:paddingBottom="4dp"
             android:stepSize="0.5" />
-
-        <View
-            style="@style/Divider"
-            android:layout_marginTop="8dp" />
 
         <TableLayout
             android:id="@+id/entry_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:stretchColumns="1">
 
-            <TableRow>
+            <TableRow android:background="@drawable/divider">
 
                 <TextView
                     style="@style/TableText.Label"
@@ -50,9 +46,7 @@
                     android:width="0dp" />
             </TableRow>
 
-            <View style="@style/Divider" />
-
-            <TableRow>
+            <TableRow android:background="@drawable/divider">
 
                 <TextView
                     style="@style/TableText.Label"
@@ -76,9 +70,7 @@
                 </LinearLayout>
             </TableRow>
 
-            <View style="@style/Divider" />
-
-            <TableRow>
+            <TableRow android:background="@drawable/divider">
 
                 <TextView
                     style="@style/TableText.Label"
@@ -90,9 +82,7 @@
                     android:width="0dp" />
             </TableRow>
 
-            <View style="@style/Divider" />
-
-            <TableRow>
+            <TableRow android:background="@drawable/divider">
 
                 <TextView
                     style="@style/TableText.Label"
@@ -122,8 +112,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/wine_label_stats" />
-
-        <View style="@style/Divider" />
 
         <TableLayout
             android:layout_width="match_parent"
@@ -155,8 +143,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/header_notes" />
-
-        <View style="@style/Divider" />
 
         <TextView
             android:id="@+id/entry_notes"

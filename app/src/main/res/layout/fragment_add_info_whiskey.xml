@@ -23,8 +23,6 @@
             android:layout_height="wrap_content"
             android:text="@string/header_details" />
 
-        <View style="@style/Divider" />
-
         <TableLayout
             android:id="@+id/entry_info"
             android:layout_width="match_parent"
@@ -101,8 +99,6 @@
             android:layout_height="wrap_content"
             android:text="@string/whiskey_label_stats" />
 
-        <View style="@style/Divider" />
-
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -138,8 +134,6 @@
             android:layout_height="wrap_content"
             android:text="@string/header_rating" />
 
-        <View style="@style/Divider" />
-
         <RatingBar
             android:id="@+id/entry_rating"
             android:layout_width="wrap_content"
@@ -154,15 +148,11 @@
             android:layout_height="wrap_content"
             android:text="@string/header_notes" />
 
-        <View style="@style/Divider" />
-
         <EditText
             android:id="@+id/entry_notes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/hint_notes"
             android:minLines="4" />
-
-        <View style="@style/Divider" />
     </LinearLayout>
 </ScrollView>
