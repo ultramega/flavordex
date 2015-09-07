@@ -64,9 +64,6 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     private LinearLayout mNoDataLayout;
     private ProgressBar mProgressBar;
 
-    public ViewPhotosFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

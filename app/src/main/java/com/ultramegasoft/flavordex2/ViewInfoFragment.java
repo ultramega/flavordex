@@ -90,9 +90,6 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      */
     private float mRating;
 
-    public ViewInfoFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

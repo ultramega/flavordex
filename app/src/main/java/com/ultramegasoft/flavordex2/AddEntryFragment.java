@@ -357,9 +357,6 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             fm.beginTransaction().add(fragment, TAG).commit();
         }
 
-        public DataSaverFragment() {
-        }
-
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);

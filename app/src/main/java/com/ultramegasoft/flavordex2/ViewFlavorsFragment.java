@@ -65,9 +65,6 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
      */
     private long mEntryId;
 
-    public ViewFlavorsFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

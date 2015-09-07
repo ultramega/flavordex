@@ -25,9 +25,6 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
      */
     public static final String ARG_PATH = "path";
 
-    public PhotoFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

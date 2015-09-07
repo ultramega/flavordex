@@ -38,9 +38,6 @@ public class ViewEntryFragment extends Fragment {
      */
     private long mEntryId;
 
-    public ViewEntryFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -86,9 +86,6 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
      */
     private HashMap<String, ExtraFieldHolder> mExtras = new HashMap<>();
 
-    public EditInfoFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -36,9 +36,6 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
      */
     private long mCatId;
 
-    public AddFlavorsFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

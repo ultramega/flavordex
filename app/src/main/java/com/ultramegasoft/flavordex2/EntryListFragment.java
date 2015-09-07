@@ -153,9 +153,6 @@ public class EntryListFragment extends ListFragment
         }
     };
 
-    public EntryListFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

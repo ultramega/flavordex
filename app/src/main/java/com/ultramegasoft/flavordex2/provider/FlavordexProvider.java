@@ -81,9 +81,6 @@ public class FlavordexProvider extends ContentProvider {
      */
     private DatabaseHelper mDbHelper;
 
-    public FlavordexProvider() {
-    }
-
     @Override
     public boolean onCreate() {
         mDbHelper = new DatabaseHelper(getContext());

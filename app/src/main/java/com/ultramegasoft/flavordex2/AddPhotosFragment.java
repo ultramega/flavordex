@@ -36,9 +36,6 @@ public class AddPhotosFragment extends AbsPhotosFragment {
      */
     private final BitmapCache mCache = new BitmapCache();
 
-    public AddPhotosFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
