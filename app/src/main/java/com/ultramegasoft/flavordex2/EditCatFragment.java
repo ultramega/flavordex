@@ -141,6 +141,9 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
             } else {
                 addFlavor(0, null);
                 mRadarView.setVisibility(View.VISIBLE);
+                if(mTxtTitle != null) {
+                    mTxtTitle.requestFocus();
+                }
             }
         } else {
             mExtraFields = savedInstanceState.getParcelableArrayList(STATE_EXTRA_FIELDS);
@@ -447,6 +450,9 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         }
 
         tableLayout.addView(root);
+        if(TextUtils.isEmpty(text)) {
+            editText.requestFocus();
+        }
     }
 
     /**
