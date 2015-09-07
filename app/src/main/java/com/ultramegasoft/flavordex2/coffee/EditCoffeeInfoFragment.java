@@ -84,7 +84,7 @@ public class EditCoffeeInfoFragment extends EditInfoFragment {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_add_info_coffee;
+        return R.layout.fragment_edit_info_coffee;
     }
 
     @Override

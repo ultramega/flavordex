@@ -58,7 +58,7 @@ public class EditBeerInfoFragment extends EditInfoFragment {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_add_info_beer;
+        return R.layout.fragment_edit_info_beer;
     }
 
     @Override

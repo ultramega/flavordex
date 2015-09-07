@@ -150,7 +150,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @return An ID from R.layout
      */
     protected int getLayoutId() {
-        return R.layout.fragment_add_info;
+        return R.layout.fragment_edit_info;
     }
 
     /**

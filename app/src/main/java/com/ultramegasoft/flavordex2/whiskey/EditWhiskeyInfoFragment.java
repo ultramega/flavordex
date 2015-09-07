@@ -51,7 +51,7 @@ public class EditWhiskeyInfoFragment extends EditInfoFragment {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_add_info_whiskey;
+        return R.layout.fragment_edit_info_whiskey;
     }
 
     @Override
