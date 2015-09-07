@@ -219,6 +219,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
                 final String name = FlavordexApp.getRealCatName(getContext(), mCatName);
                 final String title = getString(R.string.title_add_cat_entry, name);
                 actionBar.setTitle(title);
+                actionBar.setSubtitle(null);
             }
         }
     }
