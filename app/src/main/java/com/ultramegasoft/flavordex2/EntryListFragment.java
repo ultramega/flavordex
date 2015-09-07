@@ -14,6 +14,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -188,6 +189,7 @@ public class EntryListFragment extends ListFragment
         getLoaderManager().initLoader(0, null, this);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -480,7 +482,10 @@ public class EntryListFragment extends ListFragment
      */
     public void setActivatedPosition(int position) {
         if(position == ListView.INVALID_POSITION) {
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setSubtitle(null);
+            final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+            if(actionBar != null) {
+                actionBar.setSubtitle(null);
+            }
         } else {
             getListView().setItemChecked(position, true);
         }

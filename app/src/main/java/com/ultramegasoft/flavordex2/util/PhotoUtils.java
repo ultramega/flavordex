@@ -272,13 +272,15 @@ public class PhotoUtils {
      *
      * @param context The Context
      * @param id      The entry ID
+     * @return Whether the file was successfully deleted
      */
-    public static void deleteThumb(Context context, long id) {
+    public static boolean deleteThumb(Context context, long id) {
         final File file = getThumbFile(context, id);
         if(file.exists()) {
-            file.delete();
             sThumbCache.remove(id);
+            return file.delete();
         }
+        return false;
     }
 
     /**

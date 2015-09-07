@@ -16,6 +16,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -213,9 +214,12 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             mPager.setAdapter(new PagerAdapter());
             mPager.setCurrentItem(mCurrentPage);
 
-            final String name = FlavordexApp.getRealCatName(getContext(), mCatName);
-            final String title = getString(R.string.title_add_cat_entry, name);
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(title);
+            final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+            if(actionBar != null) {
+                final String name = FlavordexApp.getRealCatName(getContext(), mCatName);
+                final String title = getString(R.string.title_add_cat_entry, name);
+                actionBar.setTitle(title);
+            }
         }
     }
 

@@ -48,11 +48,16 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        actionBar.setTitle(R.string.title_add);
-        actionBar.setSubtitle(R.string.title_select_cat);
+        if(actionBar != null) {
+            actionBar.setTitle(R.string.title_add);
+            actionBar.setSubtitle(R.string.title_select_cat);
+        }
+
         setListShown(false);
         registerForContextMenu(getListView());
+
         getLoaderManager().initLoader(0, null, this);
     }
 

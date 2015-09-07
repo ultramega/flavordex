@@ -15,6 +15,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -187,7 +188,10 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         }
 
         mNoDataLayout.setVisibility(View.VISIBLE);
-        activity.getSupportActionBar().invalidateOptionsMenu();
+        final ActionBar actionBar = activity.getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.invalidateOptionsMenu();
+        }
     }
 
     /**
@@ -227,7 +231,10 @@ public class ViewPhotosFragment extends AbsPhotosFragment
             showNoDataLayout();
         }
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().invalidateOptionsMenu();
+        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.invalidateOptionsMenu();
+        }
     }
 
     @Override

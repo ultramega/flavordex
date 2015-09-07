@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2;
 
+import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -254,6 +255,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
      *
      * @param extras A map of extra names to the extra field
      */
+    @SuppressLint("InflateParams")
     protected void populateExtras(HashMap<String, ExtraFieldHolder> extras) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
         for(ExtraFieldHolder extra : extras.values()) {

@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
@@ -160,6 +161,7 @@ public class CatDeleteDialog extends DialogFragment
      * @param savedInstanceState The saved state
      * @return The View to place in the dialog
      */
+    @SuppressLint("InflateParams")
     private View getLayout(Bundle savedInstanceState) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
         final View root = inflater.inflate(R.layout.dialog_delete_cat, null);

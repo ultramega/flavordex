@@ -3,6 +3,7 @@ package com.ultramegasoft.flavordex2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
 /**
@@ -27,7 +28,10 @@ public class AddEntryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         final long catId = getIntent().getLongExtra(EXTRA_CAT_ID, 0);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        final ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         if(savedInstanceState == null) {
             if(catId > 0) {

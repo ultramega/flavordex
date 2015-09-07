@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -158,6 +159,7 @@ public class EntryFilterDialog extends DialogFragment
      * @param savedInstanceState The last saved state for the Fragment
      * @return The layout
      */
+    @SuppressLint("InflateParams")
     private View getLayout(Bundle savedInstanceState) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
         final View root = inflater.inflate(R.layout.dialog_filter_list, null);

@@ -47,6 +47,7 @@ public class ViewEntryFragment extends Fragment {
         mEntryId = getArguments().getLong(ARG_ITEM_ID);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
