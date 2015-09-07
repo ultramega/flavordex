@@ -47,9 +47,10 @@
 
     <style name="TableText.Stats">
         <item name="android:textColor">#333333</item>
-        <item name="android:background">@android:drawable/editbox_background</item>
+        <item name="android:background">@drawable/stat_field</item>
         <item name="android:typeface">monospace</item>
         <item name="android:paddingLeft">8dp</item>
+        <item name="android:layout_margin">2dp</item>
     </style>
 
     <style name="TextInput">
