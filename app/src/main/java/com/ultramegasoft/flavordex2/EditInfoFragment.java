@@ -105,6 +105,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
             }
             getLoaderManager().initLoader(LOADER_EXTRAS, null, this);
         } else {
+            //noinspection unchecked
             mExtras = (HashMap<String, ExtraFieldHolder>)savedInstanceState
                     .getSerializable(STATE_EXTRAS);
             populateExtras(mExtras);

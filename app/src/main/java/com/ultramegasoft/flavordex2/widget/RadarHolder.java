@@ -24,7 +24,7 @@ public class RadarHolder implements Parcelable {
     /**
      * The ID associated with this item
      */
-    public long id;
+    public final long id;
 
     /**
      * The label for this item
@@ -47,7 +47,7 @@ public class RadarHolder implements Parcelable {
         this.value = value;
     }
 
-    protected RadarHolder(Parcel in) {
+    private RadarHolder(Parcel in) {
         this(in.readLong(), in.readString(), in.readInt());
     }
 

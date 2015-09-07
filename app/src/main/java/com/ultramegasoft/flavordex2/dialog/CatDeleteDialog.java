@@ -45,7 +45,7 @@ public class CatDeleteDialog extends DialogFragment
     /**
      * Arguments for the Fragment
      */
-    public static final String ARG_CAT_ID = "cat_id";
+    private static final String ARG_CAT_ID = "cat_id";
 
     /**
      * Loader IDs

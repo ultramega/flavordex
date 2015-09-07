@@ -706,7 +706,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         /**
          * The database ID for this field
          */
-        public long id;
+        public final long id;
 
         /**
          * The name of this field
@@ -727,7 +727,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
             this.name = name;
         }
 
-        protected Field(Parcel in) {
+        Field(Parcel in) {
             this.id = in.readLong();
             this.name = in.readString();
             final boolean[] booleans = new boolean[1];

@@ -92,7 +92,7 @@ public class CatListAdapter extends BaseAdapter {
      * @param cursor The Cursor
      * @return A Category read from the database row
      */
-    protected Category readCursorRow(Cursor cursor) {
+    private Category readCursorRow(Cursor cursor) {
         final long id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
         final String name = cursor.getString(cursor.getColumnIndex(Tables.Cats.NAME));
         final boolean preset = cursor.getInt(cursor.getColumnIndex(Tables.Cats.PRESET)) == 1;
@@ -153,27 +153,27 @@ public class CatListAdapter extends BaseAdapter {
         /**
          * The database ID
          */
-        public long id;
+        public final long id;
 
         /**
          * The name of the category
          */
-        public String name;
+        public final String name;
 
         /**
          * The display name of the category
          */
-        public String realName;
+        public final String realName;
 
         /**
          * Whether this is a preset category
          */
-        public boolean preset;
+        public final boolean preset;
 
         /**
          * The number of entries in this category
          */
-        public int numEntries;
+        public final int numEntries;
 
         /**
          * @param context    The Context

@@ -39,9 +39,9 @@ public class RadarEditWidget extends LinearLayout {
     /**
      * Views from the widget's layout
      */
-    private TextView mTxtItemName;
-    private SeekBar mSeekBar;
-    private RelativeLayout mButtonBar;
+    private final TextView mTxtItemName;
+    private final SeekBar mSeekBar;
+    private final RelativeLayout mButtonBar;
 
     /**
      * Interface for listeners for button bar clicks

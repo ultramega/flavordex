@@ -9,12 +9,6 @@
     android:showDividers="middle"
     tools:context=".EntryListActivity">
 
-    <!--
-    This layout is a two-pane layout for the Entries
-    master/detail flow.
-    
-    -->
-
     <fragment
         android:id="@+id/entry_list"
         android:name="com.ultramegasoft.flavordex2.EntryListFragment"
@@ -27,6 +21,7 @@
         android:id="@+id/entry_detail_container"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="3" />
+        android:layout_weight="3"
+        tools:ignore="InconsistentLayout" />
 
 </LinearLayout>

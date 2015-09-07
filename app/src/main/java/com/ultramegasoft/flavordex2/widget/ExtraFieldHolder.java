@@ -63,7 +63,7 @@ public class ExtraFieldHolder implements Parcelable {
         this.value = value;
     }
 
-    protected ExtraFieldHolder(Parcel in) {
+    private ExtraFieldHolder(Parcel in) {
         id = in.readLong();
         name = in.readString();
         final boolean[] booleans = new boolean[1];

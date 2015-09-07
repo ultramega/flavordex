@@ -27,9 +27,9 @@ public class ConfirmationDialog extends DialogFragment {
     /**
      * Arguments for the Fragment
      */
-    public static final String ARG_TITLE = "title";
-    public static final String ARG_MESSAGE = "message";
-    public static final String ARG_DATA = "data";
+    private static final String ARG_TITLE = "title";
+    private static final String ARG_MESSAGE = "message";
+    private static final String ARG_DATA = "data";
 
     /**
      * Show a confirmation dialog.

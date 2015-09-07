@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
  *
  * @author Steve Guidetti
  */
-public abstract class BackgroundThumbLoader<K> {
+abstract class BackgroundThumbLoader<K> {
     /**
      * Maximum number of concurrent threads
      */

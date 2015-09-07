@@ -63,7 +63,7 @@ public class EntryFilterDialog extends DialogFragment
     /**
      * Arguments for the Fragment
      */
-    public static final String ARG_FILTER_VALUES = "filter_values";
+    private static final String ARG_FILTER_VALUES = "filter_values";
 
     /**
      * Keys for the result data Intent
@@ -76,9 +76,9 @@ public class EntryFilterDialog extends DialogFragment
     /**
      * Keys for the saved state
      */
-    public static final String STATE_DATE_MIN = "date_min";
-    public static final String STATE_DATE_MAX = "date_max";
-    public static final String STATE_CAT = "cat";
+    private static final String STATE_DATE_MIN = "date_min";
+    private static final String STATE_DATE_MAX = "date_max";
+    private static final String STATE_CAT = "cat";
 
     /**
      * Views from the layout

@@ -16,16 +16,16 @@ import java.util.Scanner;
  *
  * @author Steve Guidetti
  */
-public class DatabaseHelper extends SQLiteOpenHelper {
+class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * The name of the database file
      */
-    public static final String DATABASE_NAME = "flavordex.db";
+    private static final String DATABASE_NAME = "flavordex.db";
 
     /**
      * The current version of the schema, incremented by 1 for each iteration
      */
-    public static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 1;
 
     /**
      * The Context

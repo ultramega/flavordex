@@ -224,7 +224,7 @@ public class PhotoUtils {
      * @param path    The path to the original image
      * @param id      The ID of the entry the image belongs to
      */
-    public static void generateThumb(Context context, String path, long id) {
+    private static void generateThumb(Context context, String path, long id) {
         final Bitmap inputBitmap = loadBitmap(path, THUMB_SIZE, THUMB_SIZE);
 
         if(inputBitmap != null) {
@@ -272,15 +272,14 @@ public class PhotoUtils {
      *
      * @param context The Context
      * @param id      The entry ID
-     * @return Whether the file was successfully deleted
      */
-    public static boolean deleteThumb(Context context, long id) {
+    private static void deleteThumb(Context context, long id) {
         final File file = getThumbFile(context, id);
         if(file.exists()) {
             sThumbCache.remove(id);
-            return file.delete();
+            //noinspection ResultOfMethodCallIgnored
+            file.delete();
         }
-        return false;
     }
 
     /**
@@ -311,7 +310,7 @@ public class PhotoUtils {
      * @return A File object pointing to the file
      * @throws IOException
      */
-    public static File getOutputMediaFile() throws IOException {
+    private static File getOutputMediaFile() throws IOException {
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             throw new IOException("Media storage not mounted");
         }
@@ -327,7 +326,7 @@ public class PhotoUtils {
      * @return The media storage directory
      * @throws IOException
      */
-    public static File getMediaStorageDir() throws IOException {
+    private static File getMediaStorageDir() throws IOException {
         final File mediaStorageDir =
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         final File albumDir = new File(mediaStorageDir, ALBUM_DIR);
@@ -419,8 +418,8 @@ public class PhotoUtils {
      * @param selectionArgs (Optional) Selection arguments used in the query
      * @return The value of the _data column, which is typically a file path
      */
-    public static String getDataColumn(Context context, Uri uri, String selection,
-                                       String[] selectionArgs) {
+    private static String getDataColumn(Context context, Uri uri, String selection,
+                                        String[] selectionArgs) {
         Cursor cursor = null;
         final String column = "_data";
         final String[] projection = {
@@ -447,7 +446,7 @@ public class PhotoUtils {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is ExternalStorageProvider
      */
-    public static boolean isExternalStorageDocument(Uri uri) {
+    private static boolean isExternalStorageDocument(Uri uri) {
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
     }
 
@@ -455,7 +454,7 @@ public class PhotoUtils {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is DownloadsProvider
      */
-    public static boolean isDownloadsDocument(Uri uri) {
+    private static boolean isDownloadsDocument(Uri uri) {
         return "com.android.providers.downloads.documents".equals(uri.getAuthority());
     }
 
@@ -463,7 +462,7 @@ public class PhotoUtils {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is MediaProvider
      */
-    public static boolean isMediaDocument(Uri uri) {
+    private static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 }

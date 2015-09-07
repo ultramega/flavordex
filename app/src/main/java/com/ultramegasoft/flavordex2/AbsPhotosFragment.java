@@ -114,7 +114,7 @@ public abstract class AbsPhotosFragment extends Fragment {
      *
      * @return The list of photos
      */
-    protected final ArrayList<PhotoHolder> getPhotos() {
+    final ArrayList<PhotoHolder> getPhotos() {
         return mPhotos;
     }
 
@@ -123,7 +123,7 @@ public abstract class AbsPhotosFragment extends Fragment {
      *
      * @return Whether the device has a camera
      */
-    public final boolean hasCamera() {
+    final boolean hasCamera() {
         return mHasCamera;
     }
 
@@ -132,14 +132,14 @@ public abstract class AbsPhotosFragment extends Fragment {
      *
      * @return Whether the external storage is mounted
      */
-    public final boolean isMediaMounted() {
+    final boolean isMediaMounted() {
         return mMediaMounted;
     }
 
     /**
      * Launch an image capturing Intent.
      */
-    public final void takePhoto() {
+    final void takePhoto() {
         try {
             mCapturedPhoto = PhotoUtils.getOutputMediaUri();
             final Intent intent = PhotoUtils.getTakePhotoIntent(mCapturedPhoto);
@@ -154,7 +154,7 @@ public abstract class AbsPhotosFragment extends Fragment {
     /**
      * Launch an image selection Intent.
      */
-    public final void addPhotoFromGallery() {
+    final void addPhotoFromGallery() {
         final Intent intent = PhotoUtils.getSelectPhotoIntent();
         getParentFragment().startActivityForResult(intent, REQUEST_SELECT_IMAGE);
     }
@@ -197,7 +197,7 @@ public abstract class AbsPhotosFragment extends Fragment {
      *
      * @param position The position index of the photo
      */
-    protected final void removePhoto(int position) {
+    final void removePhoto(int position) {
         if(position < 0 || position >= mPhotos.size()) {
             return;
         }

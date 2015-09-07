@@ -9,6 +9,7 @@ import android.provider.BaseColumns;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("unused")
 public class Tables {
     /**
      * The Authority string for the application

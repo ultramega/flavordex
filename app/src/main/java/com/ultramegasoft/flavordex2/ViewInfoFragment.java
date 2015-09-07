@@ -279,7 +279,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param view  The TextView
      * @param value The text
      */
-    public static void setViewText(TextView view, CharSequence value) {
+    protected static void setViewText(TextView view, CharSequence value) {
         if(view == null) {
             return;
         }
@@ -296,7 +296,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param string A numeric string
      * @return The integer value or 0 if the string is not numeric
      */
-    public static int stringToInt(String string) {
+    protected static int stringToInt(String string) {
         try {
             return Integer.valueOf(string);
         } catch(NumberFormatException e) {
@@ -310,7 +310,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param string A numeric string
      * @return The float value or 0 if the string is not numeric
      */
-    public static float stringToFloat(String string) {
+    protected static float stringToFloat(String string) {
         if(string == null) {
             return 0;
         }

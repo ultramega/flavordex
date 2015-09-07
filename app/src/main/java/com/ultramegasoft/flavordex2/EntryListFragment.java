@@ -147,7 +147,7 @@ public class EntryListFragment extends ListFragment
      * A dummy implementation of the Callbacks interface that does nothing. Used only when this
      * Fragment is not attached to an Activity.
      */
-    private static Callbacks sDummyCallbacks = new Callbacks() {
+    private static final Callbacks sDummyCallbacks = new Callbacks() {
         @Override
         public void onItemSelected(long id, String cat) {
         }

@@ -235,7 +235,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         /**
          * The list of Fragments
          */
-        private String[] mFragments = new String[] {
+        private final String[] mFragments = new String[] {
                 EditInfoFragment.class.getName(),
                 AddFlavorsFragment.class.getName(),
                 AddPhotosFragment.class.getName()
@@ -244,7 +244,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         /**
          * Page title string resource IDs
          */
-        private int[] mPageNames = {
+        private final int[] mPageNames = {
                 R.string.title_add_entry,
                 R.string.title_add_flavor,
                 R.string.title_add_photos
