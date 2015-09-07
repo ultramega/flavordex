@@ -3,7 +3,6 @@ package com.ultramegasoft.flavordex2;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,12 +11,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
-import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +24,6 @@ import android.widget.RatingBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
@@ -261,44 +255,15 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param extras A map of extra names to the extra field
      */
     protected void populateExtras(HashMap<String, ExtraFieldHolder> extras) {
+        final LayoutInflater inflater = LayoutInflater.from(getContext());
         for(ExtraFieldHolder extra : extras.values()) {
             if(!extra.preset) {
-                addExtraRow(extra);
+                final View root = inflater.inflate(R.layout.edit_info_extra, null);
+                ((TextView)root.findViewById(R.id.label)).setText(extra.name + ": ");
+                initEditText((EditText)root.findViewById(R.id.value), extra);
+                mInfoTable.addView(root);
             }
         }
-    }
-
-    /**
-     * Add an extra field view to the interface.
-     *
-     * @param extra The extra field
-     */
-    private void addExtraRow(ExtraFieldHolder extra) {
-        final TableRow tableRow = new TableRow(getContext());
-
-        final DisplayMetrics metrics = getResources().getDisplayMetrics();
-        final int padding = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, metrics);
-
-        final TextView label = new TextView(getContext());
-        label.setPadding(padding, 0, padding, 0);
-        label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-        label.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-        label.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-        label.setText(extra.name + ": ");
-        tableRow.addView(label);
-
-        final EditText editText = new EditText(getContext());
-
-        editText.setSingleLine();
-        editText.setEllipsize(TextUtils.TruncateAt.END);
-        editText.setWidth(0);
-        editText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(256)});
-        editText.setHint(extra.name);
-        tableRow.addView(editText);
-
-        initEditText(editText, extra);
-
-        mInfoTable.addView(tableRow);
     }
 
     /**
@@ -308,6 +273,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param extra    The extra field to associate with the View
      */
     protected static void initEditText(EditText editText, final ExtraFieldHolder extra) {
+        editText.setHint(extra.name);
         editText.setText(extra.value);
 
         editText.addTextChangedListener(new TextWatcher() {

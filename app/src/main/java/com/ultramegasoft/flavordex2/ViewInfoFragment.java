@@ -5,7 +5,6 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,9 +18,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,7 +27,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
@@ -256,58 +251,19 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> data) {
         if(data.size() > 0) {
             final TableLayout table = (TableLayout)getActivity().findViewById(R.id.entry_info);
-
-            TableRow tableRow;
-            TextView textView;
-            View divider;
-
-            final int padding = getPixelValue(TypedValue.COMPLEX_UNIT_DIP, 4);
-
+            final LayoutInflater inflater = LayoutInflater.from(getContext());
             for(ExtraFieldHolder extra : data.values()) {
                 if(extra.preset) {
                     continue;
                 }
-                tableRow = new TableRow(getContext());
-
-                textView = new TextView(getContext());
-                textView.setPadding(padding, 0, padding, 0);
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-                textView.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-                textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-                textView.setText(extra.name + ": ");
-                tableRow.addView(textView);
-
-                textView = new TextView(getContext());
-                textView.setPadding(padding, 0, padding, 0);
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-                textView.setTextIsSelectable(true);
-                textView.setText(extra.value);
-                tableRow.addView(textView);
-
-                divider = new View(getContext());
-                divider.setLayoutParams(new ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        getPixelValue(TypedValue.COMPLEX_UNIT_DIP, 1)));
-                divider.setBackgroundResource(android.R.drawable.divider_horizontal_dark);
-
-                table.addView(divider);
-                table.addView(tableRow);
+                final View root = inflater.inflate(R.layout.view_info_extra, null);
+                ((TextView)root.findViewById(R.id.label)).setText(extra.name + ": ");
+                ((TextView)root.findViewById(R.id.value)).setText(extra.value);
+                table.addView(root);
             }
 
             table.setVisibility(View.VISIBLE);
         }
-    }
-
-    /**
-     * Convert a typed value to pixels.
-     *
-     * @param fromType  One of the unit constants in TypedValue
-     * @param fromValue The value to convert
-     * @return The pixel equivalent of the value as an integer
-     */
-    public int getPixelValue(int fromType, int fromValue) {
-        final DisplayMetrics metrics = getResources().getDisplayMetrics();
-        return (int)TypedValue.applyDimension(fromType, fromValue, metrics);
     }
 
     /**
