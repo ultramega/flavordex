@@ -125,7 +125,7 @@
 
     <string name="pref_cat_general">General Settings</string>
     <string name="pref_detect_location">Remember locations</string>
-    <string name="pref_summary_detect_location">Autofill location name based on previous entries</string>
+    <string name="pref_summary_detect_location">Auto-fill location name based on previous entries</string>
 
     <string name="error_camera">Error: Unable to launch camera</string>
     <string name="error_invalid_file">invalid file name</string>

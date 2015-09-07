@@ -220,6 +220,6 @@ INSERT INTO `entries` VALUES (2,1,'Pliney The Elder',2,'Bottleworks',13722191560
 --
 INSERT INTO `entries` VALUES (3,2,'2009 Old Vine Cuvee',3,'',1337526402000,'$9',3.5,'Rich & mineral heavy but with a brightness & heat bursting through to prevent it from lingering metallic, instead leaving behind rich, concentrated cherry and pleasant warmth.');
 --
-INSERT INTO `entries` VALUES (4,4,'Ethiopia Gedeo',4,'Herkimer',1337526009000,'$2',4.0,'Strong smell and taste of blueberry, balnced, medum body doesn''t overexpose the dark berry flavor - easy. I like turtles.');
+INSERT INTO `entries` VALUES (4,4,'Ethiopia Gedeo',4,'Herkimer',1337526009000,'$2',4.0,'Strong smell and taste of blueberry, balanced, medium body doesn''t overexpose the dark berry flavor - easy. I like turtles.');
 --
 INSERT INTO `entries` VALUES (5,5,'Sample Entry',5,'Nowhere',1440701993000,'$6',3.0,'This is just a sample...');
