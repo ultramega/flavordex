@@ -1,7 +1,7 @@
 <resources>
-
     <style name="AppTheme" parent="Theme.AppCompat">
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="colorControlHighlight">#fff</item>
     </style>
 
     <style name="Header" parent="TextAppearance.AppCompat.Large">
