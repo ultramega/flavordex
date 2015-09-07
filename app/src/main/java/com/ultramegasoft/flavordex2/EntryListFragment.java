@@ -2,6 +2,7 @@ package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -242,14 +243,14 @@ public class EntryListFragment extends ListFragment
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-        if(!(activity instanceof Callbacks)) {
+        if(!(context instanceof Callbacks)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
 
-        mCallbacks = (Callbacks)activity;
+        mCallbacks = (Callbacks)context;
     }
 
     @Override

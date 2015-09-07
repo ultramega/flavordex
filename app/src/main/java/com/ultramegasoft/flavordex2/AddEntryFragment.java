@@ -1,6 +1,5 @@
 package com.ultramegasoft.flavordex2;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -373,8 +372,8 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         }
 
         @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
             if(mEntryId > 0) {
                 onComplete(mEntryId);
             }
