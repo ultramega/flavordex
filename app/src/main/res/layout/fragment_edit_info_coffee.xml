@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -75,7 +76,8 @@
                 <EditText
                     android:id="@+id/entry_roast_date"
                     style="@style/TextInput"
-                    android:hint="@string/coffee_hint_roast_date" />
+                    android:hint="@string/coffee_hint_roast_date"
+                    tools:ignore="TextFields" />
             </TableRow>
 
             <TableRow>
@@ -248,7 +250,8 @@
 
                 <EditText
                     android:enabled="false"
-                    android:visibility="invisible" />
+                    android:visibility="invisible"
+                    tools:ignore="TextFields" />
             </TableRow>
 
             <TableRow>
