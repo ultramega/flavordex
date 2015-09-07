@@ -76,7 +76,7 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
      * @param v The View to attach the menu to
      */
     private void showMenu(View v) {
-        final PopupMenu popupMenu = new PopupMenu(getActivity(), v);
+        final PopupMenu popupMenu = new PopupMenu(getContext(), v);
         popupMenu.setOnMenuItemClickListener(this);
         popupMenu.inflate(R.menu.photo_menu);
         popupMenu.show();

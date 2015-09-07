@@ -73,7 +73,7 @@ public class ConfirmationDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Bundle args = getArguments();
-        return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(getContext())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(args.getString(ARG_TITLE))
                 .setMessage(args.getString(ARG_MESSAGE))

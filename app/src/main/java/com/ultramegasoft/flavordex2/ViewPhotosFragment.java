@@ -238,7 +238,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
                 Tables.Photos._ID,
                 Tables.Photos.PATH
         };
-        return new CursorLoader(getActivity(), uri, projection, null, null,
+        return new CursorLoader(getContext(), uri, projection, null, null,
                 Tables.Photos._ID + " ASC");
     }
 
@@ -282,7 +282,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         public Fragment getItem(int position) {
             final Bundle args = new Bundle();
             args.putString(PhotoFragment.ARG_PATH, mData.get(position).path);
-            return Fragment.instantiate(getActivity(), PhotoFragment.class.getName(), args);
+            return Fragment.instantiate(getContext(), PhotoFragment.class.getName(), args);
         }
 
         @Override

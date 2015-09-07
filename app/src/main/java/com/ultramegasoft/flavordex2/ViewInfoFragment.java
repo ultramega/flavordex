@@ -140,7 +140,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
 
         final MenuItem shareItem = menu.findItem(R.id.menu_share);
         if(shareItem != null) {
-            final Intent shareIntent = EntryUtils.getShareIntent(getActivity(), mTitle, mRating);
+            final Intent shareIntent = EntryUtils.getShareIntent(getContext(), mTitle, mRating);
             final ShareActionProvider actionProvider =
                     (ShareActionProvider)MenuItemCompat.getActionProvider(shareItem);
             if(actionProvider != null) {
@@ -172,7 +172,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
                 case REQUEST_DELETE_ENTRY:
-                    new EntryDeleter(getActivity(), mEntryId).execute();
+                    new EntryDeleter(getContext(), mEntryId).execute();
                     final FragmentManager fm = getParentFragment().getFragmentManager();
                     final EntryListFragment listFragment =
                             (EntryListFragment)fm.findFragmentById(R.id.entry_list);
@@ -227,7 +227,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
         String date = null;
         final long timestamp = data.getLong(data.getColumnIndex(Tables.Entries.DATE));
         if(timestamp > 0) {
-            final String format = getActivity().getResources().getString(R.string.date_format);
+            final String format = getResources().getString(R.string.date_format);
             date = new SimpleDateFormat(format, Locale.US).format(new Date(timestamp));
         }
 
@@ -267,9 +267,9 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                 if(extra.preset) {
                     continue;
                 }
-                tableRow = new TableRow(getActivity());
+                tableRow = new TableRow(getContext());
 
-                textView = new TextView(getActivity());
+                textView = new TextView(getContext());
                 textView.setPadding(padding, 0, padding, 0);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                 textView.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
@@ -277,14 +277,14 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                 textView.setText(extra.name + ": ");
                 tableRow.addView(textView);
 
-                textView = new TextView(getActivity());
+                textView = new TextView(getContext());
                 textView.setPadding(padding, 0, padding, 0);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                 textView.setTextIsSelectable(true);
                 textView.setText(extra.value);
                 tableRow.addView(textView);
 
-                divider = new View(getActivity());
+                divider = new View(getContext());
                 divider.setLayoutParams(new ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         getPixelValue(TypedValue.COMPLEX_UNIT_DIP, 1)));
@@ -363,10 +363,10 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
         Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId);
         switch(id) {
             case LOADER_MAIN:
-                return new CursorLoader(getActivity(), uri, null, null, null, null);
+                return new CursorLoader(getContext(), uri, null, null, null, null);
             case LOADER_EXTRAS:
                 uri = Uri.withAppendedPath(uri, "/extras");
-                return new CursorLoader(getActivity(), uri, null, null, null,
+                return new CursorLoader(getContext(), uri, null, null, null,
                         Tables.Extras._ID + " ASC");
         }
 

@@ -151,7 +151,7 @@ public class AddPhotosFragment extends AbsPhotosFragment {
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             if(convertView == null) {
-                convertView = LayoutInflater.from(getActivity())
+                convertView = LayoutInflater.from(getContext())
                         .inflate(R.layout.photo_grid_item, parent, false);
             }
 

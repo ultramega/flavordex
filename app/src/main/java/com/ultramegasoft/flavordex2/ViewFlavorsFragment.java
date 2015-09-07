@@ -167,8 +167,8 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
      */
     private void setEditMode(boolean editMode, boolean animate) {
         if(animate && mInAnimation == null) {
-            mInAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.flavor_edit_in);
-            mOutAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.flavor_edit_out);
+            mInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.flavor_edit_in);
+            mOutAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.flavor_edit_out);
         }
 
         if(editMode) {
@@ -215,7 +215,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                 Tables.Flavors.NAME,
                 Tables.EntriesFlavors.VALUE
         };
-        return new CursorLoader(getActivity(), uri, projection, null, null,
+        return new CursorLoader(getContext(), uri, projection, null, null,
                 Tables.EntriesFlavors._ID + " ASC");
     }
 

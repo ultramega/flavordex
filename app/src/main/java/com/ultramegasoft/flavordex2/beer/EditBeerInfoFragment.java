@@ -41,7 +41,7 @@ public class EditBeerInfoFragment extends EditInfoFragment {
 
         mTxtStyle = (AutoCompleteTextView)root.findViewById(R.id.entry_style);
         mTxtStyle.setAdapter(SpecialArrayAdapter.createFromResource(
-                getActivity(),
+                getContext(),
                 R.array.beer_styles,
                 android.R.layout.simple_dropdown_item_1line
         ));

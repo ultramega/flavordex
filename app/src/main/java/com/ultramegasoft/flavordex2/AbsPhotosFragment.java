@@ -62,7 +62,7 @@ public abstract class AbsPhotosFragment extends Fragment {
         }
         setHasOptionsMenu(true);
 
-        mHasCamera = getActivity().getPackageManager()
+        mHasCamera = getContext().getPackageManager()
                 .hasSystemFeature(PackageManager.FEATURE_CAMERA);
 
         if(savedInstanceState != null) {
@@ -96,7 +96,7 @@ public abstract class AbsPhotosFragment extends Fragment {
                 case REQUEST_CAPTURE_IMAGE:
                     final Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                     scanIntent.setData(mCapturedPhoto);
-                    getActivity().sendBroadcast(scanIntent);
+                    getContext().sendBroadcast(scanIntent);
 
                     addPhoto(mCapturedPhoto);
                     break;
@@ -143,11 +143,11 @@ public abstract class AbsPhotosFragment extends Fragment {
         try {
             mCapturedPhoto = PhotoUtils.getOutputMediaUri();
             final Intent intent = PhotoUtils.getTakePhotoIntent(mCapturedPhoto);
-            if(intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            if(intent.resolveActivity(getContext().getPackageManager()) != null) {
                 getParentFragment().startActivityForResult(intent, REQUEST_CAPTURE_IMAGE);
             }
         } catch(IOException e) {
-            Toast.makeText(getActivity(), R.string.error_camera, Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), R.string.error_camera, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -169,7 +169,7 @@ public abstract class AbsPhotosFragment extends Fragment {
             return;
         }
 
-        final String path = PhotoUtils.getPath(getActivity(), uri);
+        final String path = PhotoUtils.getPath(getContext(), uri);
         if(path == null) {
             return;
         }

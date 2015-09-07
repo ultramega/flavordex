@@ -36,7 +36,7 @@ public class EditWineInfoFragment extends EditInfoFragment {
 
         mTxtVarietal = (AutoCompleteTextView)root.findViewById(R.id.entry_varietal);
         mTxtVarietal.setAdapter(SpecialArrayAdapter.createFromResource(
-                getActivity(),
+                getContext(),
                 R.array.wine_varietals,
                 android.R.layout.simple_dropdown_item_1line
         ));

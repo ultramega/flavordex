@@ -52,7 +52,7 @@ public class ViewEntryFragment extends Fragment {
                              Bundle savedInstanceState) {
         final FragmentTabHost tabHost =
                 (FragmentTabHost)inflater.inflate(R.layout.fragment_view_entry, container, false);
-        tabHost.setup(getActivity(), getChildFragmentManager(), R.id.content);
+        tabHost.setup(getContext(), getChildFragmentManager(), R.id.content);
 
         final Resources res = getResources();
         final Bundle args = new Bundle();

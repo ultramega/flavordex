@@ -167,7 +167,7 @@ public class EntryListFragment extends ListFragment
         }
 
         final SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(getActivity());
+                .getDefaultSharedPreferences(getContext());
         mSortField = prefs.getString(FlavordexApp.PREF_LIST_SORT_FIELD, mSortField);
         mSortReversed = prefs.getBoolean(FlavordexApp.PREF_LIST_SORT_REVERSED, mSortReversed);
     }
@@ -181,7 +181,7 @@ public class EntryListFragment extends ListFragment
 
         setListShown(false);
 
-        mAdapter = new EntryListAdapter(getActivity());
+        mAdapter = new EntryListAdapter(getContext());
         setListAdapter(mAdapter);
 
         getLoaderManager().initLoader(0, null, this);
@@ -309,19 +309,19 @@ public class EntryListFragment extends ListFragment
                 setSort(Tables.Entries.RATING);
                 return true;
             case R.id.menu_add_entry:
-                startActivityForResult(new Intent(getActivity(), AddEntryActivity.class),
+                startActivityForResult(new Intent(getContext(), AddEntryActivity.class),
                         REQUEST_ADD_ENTRY);
                 return true;
             case R.id.menu_xport:
                 if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     // TODO: 8/14/2015 Add import/export
                 } else {
-                    Toast.makeText(getActivity(), R.string.message_no_media, Toast.LENGTH_LONG)
+                    Toast.makeText(getContext(), R.string.message_no_media, Toast.LENGTH_LONG)
                             .show();
                 }
                 return true;
             case R.id.menu_settings:
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
+                startActivity(new Intent(getContext(), SettingsActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -425,7 +425,7 @@ public class EntryListFragment extends ListFragment
         getLoaderManager().restartLoader(0, null, this);
 
         final SharedPreferences.Editor editor = PreferenceManager
-                .getDefaultSharedPreferences(getActivity()).edit();
+                .getDefaultSharedPreferences(getContext()).edit();
         editor.putString(FlavordexApp.PREF_LIST_SORT_FIELD, mSortField);
         editor.putBoolean(FlavordexApp.PREF_LIST_SORT_REVERSED, mSortReversed);
         editor.apply();
@@ -494,7 +494,7 @@ public class EntryListFragment extends ListFragment
             uri = Uri.withAppendedPath(Tables.Entries.CONTENT_FILTER_URI_BASE, mSearchQuery);
         }
         final String sort = mSortField + (mSortReversed ? " DESC" : " ASC");
-        return new CursorLoader(getActivity(), uri, LIST_PROJECTION, mWhere, mWhereArgs, sort);
+        return new CursorLoader(getContext(), uri, LIST_PROJECTION, mWhere, mWhereArgs, sort);
     }
 
     @Override

@@ -203,7 +203,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
-        return new CursorLoader(getActivity(), uri, null, null, null, null);
+        return new CursorLoader(getContext(), uri, null, null, null, null);
     }
 
     @Override
@@ -214,7 +214,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             mPager.setAdapter(new PagerAdapter());
             mPager.setCurrentItem(mCurrentPage);
 
-            final String name = FlavordexApp.getRealCatName(getActivity(), mCatName);
+            final String name = FlavordexApp.getRealCatName(getContext(), mCatName);
             final String title = getString(R.string.title_add_cat_entry, name);
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(title);
         }
@@ -261,7 +261,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             final Bundle args = new Bundle();
             args.putLong(ARG_CAT_ID, mCatId);
 
-            return Fragment.instantiate(getActivity(), mFragments[position], args);
+            return Fragment.instantiate(getContext(), mFragments[position], args);
         }
 
         @Override
@@ -369,7 +369,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             mEntryFlavors = (ContentValues[])args.getParcelableArray(ARG_ENTRY_FLAVORS);
             mEntryPhotos = (ContentValues[])args.getParcelableArray(ARG_ENTRY_PHOTOS);
 
-            new DataSaver(getActivity().getContentResolver()).execute();
+            new DataSaver(getContext().getContentResolver()).execute();
         }
 
         @Override

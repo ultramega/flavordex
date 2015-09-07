@@ -135,7 +135,7 @@ public class EntryFilterDialog extends DialogFragment
             mCatId = savedInstanceState.getLong(STATE_CAT, 0);
         }
 
-        return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(getContext())
                 .setTitle(R.string.title_filter)
                 .setIcon(R.drawable.ic_filter_list)
                 .setView(getLayout(savedInstanceState))
@@ -159,7 +159,7 @@ public class EntryFilterDialog extends DialogFragment
      * @return The layout
      */
     private View getLayout(Bundle savedInstanceState) {
-        final LayoutInflater inflater = LayoutInflater.from(getActivity());
+        final LayoutInflater inflater = LayoutInflater.from(getContext());
         final View root = inflater.inflate(R.layout.dialog_filter_list, null);
 
         mSpinnerCat = (Spinner)root.findViewById(R.id.entry_cat);
@@ -380,7 +380,7 @@ public class EntryFilterDialog extends DialogFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), Tables.Cats.CONTENT_URI, null, null, null, null);
+        return new CursorLoader(getContext(), Tables.Cats.CONTENT_URI, null, null, null, null);
     }
 
     @Override
@@ -402,7 +402,7 @@ public class EntryFilterDialog extends DialogFragment
          * @param cursor The Cursor
          */
         public CatSpinnerAdapter(Cursor cursor) {
-            super(getActivity(), cursor, android.R.layout.simple_dropdown_item_1line,
+            super(getContext(), cursor, android.R.layout.simple_dropdown_item_1line,
                     android.R.id.text1);
         }
 
@@ -468,7 +468,7 @@ public class EntryFilterDialog extends DialogFragment
             final int month = calendar.get(Calendar.MONTH);
             final int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-            return new DatePickerDialog(getActivity(), this, year, month, day);
+            return new DatePickerDialog(getContext(), this, year, month, day);
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {

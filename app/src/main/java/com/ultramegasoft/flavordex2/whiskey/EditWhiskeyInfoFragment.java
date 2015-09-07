@@ -37,7 +37,7 @@ public class EditWhiskeyInfoFragment extends EditInfoFragment {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
         mTxtType = (AutoCompleteTextView)root.findViewById(R.id.entry_type);
-        mTxtType.setAdapter(ArrayAdapter.createFromResource(getActivity(), R.array.whiskey_types,
+        mTxtType.setAdapter(ArrayAdapter.createFromResource(getContext(), R.array.whiskey_types,
                 android.R.layout.simple_dropdown_item_1line));
 
         mTxtAge = (EditText)root.findViewById(R.id.entry_stats_age);

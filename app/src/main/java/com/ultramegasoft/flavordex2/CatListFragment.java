@@ -74,7 +74,7 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
                 getActivity().finish();
                 return true;
             case R.id.menu_add_cat:
-                final Intent intent = new Intent(getActivity(), EditCatActivity.class);
+                final Intent intent = new Intent(getContext(), EditCatActivity.class);
                 startActivityForResult(intent, REQUEST_ADD_CAT);
                 return true;
         }
@@ -139,12 +139,12 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), Tables.Cats.CONTENT_URI, null, null, null, null);
+        return new CursorLoader(getContext(), Tables.Cats.CONTENT_URI, null, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter = new CatListAdapter(getActivity(), data, android.R.layout.simple_list_item_1,
+        mAdapter = new CatListAdapter(getContext(), data, android.R.layout.simple_list_item_1,
                 android.R.id.text1);
         setListAdapter(mAdapter);
         setListShown(true);

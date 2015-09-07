@@ -163,7 +163,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * Set up the autocomplete for the maker field.
      */
     private void setupMakersAutoComplete() {
-        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
+        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(getContext(),
                 R.layout.simple_dropdown_item_2line, null,
                 new String[] {Tables.Makers.NAME, Tables.Makers.LOCATION},
                 new int[] {android.R.id.text1, android.R.id.text2}, 0);
@@ -179,7 +179,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
                     uri = Uri.withAppendedPath(Tables.Makers.CONTENT_FILTER_URI_BASE,
                             constraint.toString());
                 }
-                return getActivity().getContentResolver().query(uri, null, null, null, order);
+                return getContext().getContentResolver().query(uri, null, null, null, order);
             }
         });
 
@@ -274,12 +274,12 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param extra The extra field
      */
     private void addExtraRow(ExtraFieldHolder extra) {
-        final TableRow tableRow = new TableRow(getActivity());
+        final TableRow tableRow = new TableRow(getContext());
 
         final DisplayMetrics metrics = getResources().getDisplayMetrics();
         final int padding = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, metrics);
 
-        final TextView label = new TextView(getActivity());
+        final TextView label = new TextView(getContext());
         label.setPadding(padding, 0, padding, 0);
         label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
         label.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
@@ -287,7 +287,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
         label.setText(extra.name + ": ");
         tableRow.addView(label);
 
-        final EditText editText = new EditText(getActivity());
+        final EditText editText = new EditText(getContext());
 
         editText.setSingleLine();
         editText.setEllipsize(TextUtils.TruncateAt.END);
@@ -414,7 +414,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
         }
         switch(id) {
             case LOADER_ENTRY:
-                return new CursorLoader(getActivity(), baseUri, null, null, null, null);
+                return new CursorLoader(getContext(), baseUri, null, null, null, null);
             case LOADER_EXTRAS:
                 final String sort;
                 if(mCatId > 0) {
@@ -422,7 +422,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
                 } else {
                     sort = Tables.EntriesExtras.EXTRA + " ASC";
                 }
-                return new CursorLoader(getActivity(), Uri.withAppendedPath(baseUri, "/extras"),
+                return new CursorLoader(getContext(), Uri.withAppendedPath(baseUri, "/extras"),
                         null, null, null, sort);
         }
         return null;
