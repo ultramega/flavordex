@@ -171,6 +171,9 @@ public class PhotoUtils {
      * @return A Bitmap
      */
     public static Bitmap loadBitmap(String path, int reqWidth, int reqHeight) {
+        if(!new File(path).canRead()) {
+            return null;
+        }
         try {
             final Options opts = new BitmapFactory.Options();
             opts.inJustDecodeBounds = true;

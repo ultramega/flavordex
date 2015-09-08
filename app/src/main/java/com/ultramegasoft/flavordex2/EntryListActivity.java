@@ -2,7 +2,10 @@ package com.ultramegasoft.flavordex2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+
+import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 
 /**
@@ -30,6 +33,17 @@ public class EntryListActivity extends AppCompatActivity implements EntryListFra
             ((EntryListFragment)getSupportFragmentManager().findFragmentById(R.id.entry_list))
                     .setActivateOnItemClick(true);
         }
+
+        if(savedInstanceState == null) {
+            PermissionUtils.checkExternalStoragePerm(this, R.string.message_request_storage);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override

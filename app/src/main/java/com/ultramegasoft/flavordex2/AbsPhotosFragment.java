@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.ultramegasoft.flavordex2.util.PermissionUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
@@ -140,6 +141,10 @@ public abstract class AbsPhotosFragment extends Fragment {
      * Launch an image capturing Intent.
      */
     final void takePhoto() {
+        if(!PermissionUtils.checkExternalStoragePerm(getActivity(),
+                R.string.message_request_storage_camera)) {
+            return;
+        }
         try {
             mCapturedPhoto = PhotoUtils.getOutputMediaUri();
             final Intent intent = PhotoUtils.getTakePhotoIntent(mCapturedPhoto);
