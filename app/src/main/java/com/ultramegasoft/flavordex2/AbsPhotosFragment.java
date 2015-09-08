@@ -7,7 +7,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
@@ -35,9 +39,9 @@ public abstract class AbsPhotosFragment extends Fragment {
     private static final int REQUEST_SELECT_IMAGE = 200;
 
     /**
-     * Whether the external storage is mounted
+     * Whether the external storage is readable
      */
-    private boolean mMediaMounted;
+    private boolean mMediaReadable;
 
     /**
      * Whether the device has a camera
@@ -57,8 +61,8 @@ public abstract class AbsPhotosFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMediaMounted = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
-        if(!mMediaMounted) {
+        mMediaReadable = Environment.getExternalStorageDirectory().canRead();
+        if(!mMediaReadable) {
             return;
         }
         setHasOptionsMenu(true);
@@ -69,6 +73,32 @@ public abstract class AbsPhotosFragment extends Fragment {
         if(savedInstanceState != null) {
             mPhotos = savedInstanceState.getParcelableArrayList(STATE_PHOTOS);
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if(!mMediaReadable) {
+            final View root = inflater.inflate(R.layout.no_media, container, false);
+
+            if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                return root;
+            }
+
+            if(!PermissionUtils.hasExternalStoragePerm(getContext())
+                    && PermissionUtils.shouldAskExternalStoragePerm(getActivity())) {
+                final Button permButton = (Button)root.findViewById(R.id.button_grant_permission);
+                permButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        PermissionUtils.requestExternalStoragePerm(getActivity());
+                    }
+                });
+                permButton.setVisibility(View.VISIBLE);
+            }
+
+            return root;
+        }
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -133,18 +163,14 @@ public abstract class AbsPhotosFragment extends Fragment {
      *
      * @return Whether the external storage is mounted
      */
-    final boolean isMediaMounted() {
-        return mMediaMounted;
+    final boolean isMediaReadable() {
+        return mMediaReadable;
     }
 
     /**
      * Launch an image capturing Intent.
      */
     final void takePhoto() {
-        if(!PermissionUtils.checkExternalStoragePerm(getActivity(),
-                R.string.message_request_storage_camera)) {
-            return;
-        }
         try {
             mCapturedPhoto = PhotoUtils.getOutputMediaUri();
             final Intent intent = PhotoUtils.getTakePhotoIntent(mCapturedPhoto);

@@ -81,6 +81,7 @@
     <string name="button_add_flavor">Add Flavor</string>
     <string name="button_remove_extra">Remove Field</string>
     <string name="button_remove_flavor">Remove Flavor</string>
+    <string name="button_grant_permission">Grant Permission</string>
 
     <string name="hint_empty" translatable="false">\?</string>
     <string name="hint_entry_title">Entry Title</string>
@@ -124,7 +125,6 @@
     <string name="message_confirm_delete_cat">Are you sure you want to delete the %s category?</string>
     <string name="message_delete_cat_entries">Delete &lt;b>%1$d %2$s&lt;/b> from this category.</string>
     <string name="message_request_storage">Flavordex requires external storage access to enable photo features.</string>
-    <string name="message_request_storage_camera">Flavordex requires permission to write to external storage to take photos.</string>
 
     <string name="pref_cat_general">General Settings</string>
     <string name="pref_detect_location">Remember locations</string>

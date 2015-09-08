@@ -73,8 +73,8 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if(!isMediaMounted()) {
-            return inflater.inflate(R.layout.no_media, container, false);
+        if(!isMediaReadable()) {
+            return super.onCreateView(inflater, container, savedInstanceState);
         }
 
         final View root = inflater.inflate(R.layout.fragment_entry_photos, container, false);
@@ -91,7 +91,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(!isMediaMounted()) {
+        if(!isMediaReadable()) {
             return;
         }
         if(savedInstanceState == null) {
@@ -119,7 +119,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        final boolean showAdd = isMediaMounted();
+        final boolean showAdd = isMediaReadable();
         menu.findItem(R.id.menu_add_photo).setEnabled(showAdd).setVisible(showAdd);
         menu.findItem(R.id.menu_select_photo).setEnabled(showAdd);
 

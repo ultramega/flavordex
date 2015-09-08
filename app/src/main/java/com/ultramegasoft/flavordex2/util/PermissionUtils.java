@@ -62,8 +62,7 @@ public class PermissionUtils {
             return true;
         }
 
-        if(ActivityCompat.shouldShowRequestPermissionRationale(activity,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if(shouldAskExternalStoragePerm(activity)) {
             PermissionDialog.showDialog(activity, rationale);
         } else {
             requestExternalStoragePerm(activity);
@@ -77,20 +76,35 @@ public class PermissionUtils {
      *
      * @param activity The Activity making the request
      */
-    private static void requestExternalStoragePerm(Activity activity) {
+    public static void requestExternalStoragePerm(Activity activity) {
         ActivityCompat.requestPermissions(activity,
                 new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE);
     }
 
     /**
-     * Callback for permission requests. If external storage permissions are granted, this will
-     * restart the application.
+     * Should we ask for external storage permissions? Returns true if the user has previously
+     * denied permission but has not checked 'Never ask again.'
      *
+     * @param activity The Activity making the request
+     * @return Whether we should ask for external storage permissions
+     */
+    public static boolean shouldAskExternalStoragePerm(Activity activity) {
+        return ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    }
+
+    /**
+     * Callback for permission requests. If external storage permissions are granted, this will
+     * restart the application. If the user checks 'Never ask again' this will restart the
+     * Activity.
+     *
+     * @param activity     The Activity making the request
      * @param requestCode  The request code
      * @param permissions  Array of permissions requested
      * @param grantResults Array of results of the permission requests
      */
-    public static void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+    public static void onRequestPermissionsResult(Activity activity, int requestCode,
+                                                  @NonNull String[] permissions,
                                                   @NonNull int[] grantResults) {
         if(requestCode == REQUEST_STORAGE) {
             for(int i = 0; i < grantResults.length; i++) {
@@ -99,6 +113,8 @@ public class PermissionUtils {
                 }
                 if(grantResults[i] == PermissionChecker.PERMISSION_GRANTED) {
                     Runtime.getRuntime().exit(0);
+                } else if(!shouldAskExternalStoragePerm(activity)) {
+                    activity.recreate();
                 }
             }
         }

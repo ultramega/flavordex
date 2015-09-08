@@ -2,9 +2,12 @@ package com.ultramegasoft.flavordex2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+
+import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 /**
  * Activity for adding a new journal entry.
@@ -47,6 +50,13 @@ public class AddEntryActivity extends AppCompatActivity {
                         .commit();
             }
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionUtils.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
     /**

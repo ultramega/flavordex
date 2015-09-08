@@ -39,7 +39,7 @@ public class AddPhotosFragment extends AbsPhotosFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!isMediaMounted()) {
+        if(!isMediaReadable()) {
             return;
         }
         mAdapter = new ImageAdapter();
@@ -48,8 +48,8 @@ public class AddPhotosFragment extends AbsPhotosFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if(!isMediaMounted()) {
-            return inflater.inflate(R.layout.no_media, container, false);
+        if(!isMediaReadable()) {
+            return super.onCreateView(inflater, container, savedInstanceState);
         }
 
         final View root = inflater.inflate(R.layout.fragment_add_photos, container, false);
