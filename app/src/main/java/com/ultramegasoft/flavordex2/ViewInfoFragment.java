@@ -93,7 +93,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ITEM_ID);
+        mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ENTRY_ID);
         setHasOptionsMenu(true);
     }
 

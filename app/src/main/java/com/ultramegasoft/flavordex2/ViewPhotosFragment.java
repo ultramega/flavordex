@@ -67,7 +67,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ITEM_ID);
+        mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ENTRY_ID);
     }
 
     @Override

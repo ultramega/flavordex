@@ -68,7 +68,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ITEM_ID);
+        mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ENTRY_ID);
         setHasOptionsMenu(true);
     }
 

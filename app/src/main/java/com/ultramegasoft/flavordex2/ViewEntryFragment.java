@@ -24,14 +24,10 @@ import com.ultramegasoft.flavordex2.wine.ViewWineInfoFragment;
  */
 public class ViewEntryFragment extends Fragment {
     /**
-     * The Fragment argument representing the item ID that this Fragment represents
+     * Keys for the Fragment arguments
      */
-    public static final String ARG_ITEM_ID = "item_id";
-
-    /**
-     * The Fragment argument representing the category of item
-     */
-    public static final String ARG_ITEM_CAT = "item_cat";
+    public static final String ARG_ENTRY_ID = "entry_id";
+    public static final String ARG_ENTRY_CAT = "entry_cat";
 
     /**
      * The database ID for this entry
@@ -41,7 +37,7 @@ public class ViewEntryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mEntryId = getArguments().getLong(ARG_ITEM_ID);
+        mEntryId = getArguments().getLong(ARG_ENTRY_ID);
     }
 
     @SuppressWarnings("deprecation")
@@ -54,7 +50,7 @@ public class ViewEntryFragment extends Fragment {
 
         final Resources res = getResources();
         final Bundle args = new Bundle();
-        args.putLong(ARG_ITEM_ID, mEntryId);
+        args.putLong(ARG_ENTRY_ID, mEntryId);
 
         Drawable icon;
         TabHost.TabSpec tab;
@@ -88,7 +84,7 @@ public class ViewEntryFragment extends Fragment {
      * @return The Fragment class
      */
     private Class<? extends ViewInfoFragment> getEntryInfoClass() {
-        final String cat = getArguments().getString(ARG_ITEM_CAT);
+        final String cat = getArguments().getString(ARG_ENTRY_CAT);
 
         if(FlavordexApp.CAT_BEER.equals(cat)) {
             return ViewBeerInfoFragment.class;
