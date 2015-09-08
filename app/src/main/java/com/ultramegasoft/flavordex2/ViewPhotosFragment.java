@@ -94,7 +94,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         if(!isMediaReadable()) {
             return;
         }
-        if(savedInstanceState == null) {
+        if(getPhotos().isEmpty()) {
             getLoaderManager().initLoader(0, null, this);
         } else {
             notifyDataChanged();
