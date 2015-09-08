@@ -16,8 +16,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -200,10 +198,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param data The Cursor set to the correct row
      */
     private void populateViews(Cursor data) {
-        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setSubtitle(mTitle);
-        }
+        ((ViewEntryFragment)getParentFragment()).setEntryTitle(mTitle);
 
         mTxtTitle.setText(mTitle);
         mRatingBar.setRating(mRating);

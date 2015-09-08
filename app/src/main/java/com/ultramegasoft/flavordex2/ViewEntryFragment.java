@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,14 +32,27 @@ public class ViewEntryFragment extends Fragment {
     public static final String ARG_ENTRY_CAT = "entry_cat";
 
     /**
+     * Keys for the saved state
+     */
+    private static final String STATE_ENTRY_TITLE = "entry_title";
+
+    /**
      * The database ID for this entry
      */
     private long mEntryId;
+
+    /**
+     * The title of this entry
+     */
+    private String mEntryTitle;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mEntryId = getArguments().getLong(ARG_ENTRY_ID);
+        if(savedInstanceState != null) {
+            setEntryTitle(savedInstanceState.getString(STATE_ENTRY_TITLE));
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -78,6 +93,12 @@ public class ViewEntryFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_ENTRY_TITLE, mEntryTitle);
+    }
+
     /**
      * Get the Fragment class to use for displaying the main details of the entry.
      *
@@ -100,5 +121,18 @@ public class ViewEntryFragment extends Fragment {
         }
 
         return ViewInfoFragment.class;
+    }
+
+    /**
+     * Set the title of this entry to be displayed as the ActionBar subtitle.
+     *
+     * @param title The title of the entry
+     */
+    public void setEntryTitle(String title) {
+        mEntryTitle = title;
+        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setSubtitle(title);
+        }
     }
 }
