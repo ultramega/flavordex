@@ -191,6 +191,11 @@ public class CatListAdapter extends BaseAdapter {
         }
 
         @Override
+        public String toString() {
+            return realName;
+        }
+
+        @Override
         public int compareTo(@NonNull Category another) {
             return realName.compareTo(another.realName);
         }
