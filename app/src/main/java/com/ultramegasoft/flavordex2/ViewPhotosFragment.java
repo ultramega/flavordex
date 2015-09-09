@@ -25,7 +25,6 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
@@ -62,7 +61,6 @@ public class ViewPhotosFragment extends AbsPhotosFragment
      */
     private ViewPager mPager;
     private LinearLayout mNoDataLayout;
-    private ProgressBar mProgressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,8 +76,6 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         }
 
         final View root = inflater.inflate(R.layout.fragment_entry_photos, container, false);
-
-        mProgressBar = (ProgressBar)root.findViewById(R.id.progress);
 
         mPager = (ViewPager)root.findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(2);
@@ -106,7 +102,6 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         super.onDestroyView();
         mPager = null;
         mNoDataLayout = null;
-        mProgressBar = null;
     }
 
     @Override
@@ -222,9 +217,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
             if(mNoDataLayout != null) {
                 mNoDataLayout.setVisibility(View.GONE);
             }
-            mProgressBar.setVisibility(View.VISIBLE);
         } else {
-            mProgressBar.setVisibility(View.INVISIBLE);
             showNoDataLayout();
         }
 
