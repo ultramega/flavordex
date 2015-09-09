@@ -78,7 +78,6 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         final View root = inflater.inflate(R.layout.fragment_entry_photos, container, false);
 
         mPager = (ViewPager)root.findViewById(R.id.pager);
-        mPager.setOffscreenPageLimit(2);
         mPager.setAdapter(new PagerAdapter());
 
         return root;
