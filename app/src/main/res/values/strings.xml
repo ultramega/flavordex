@@ -122,7 +122,7 @@
     <string name="message_select_import_file">Select a .csv file to import.</string>
     <string name="message_import_complete">Import complete.</string>
     <string name="message_export_complete">Export complete.</string>
-    <string name="message_duplicates_unchecked">%d possible duplicates were unchecked.</string>
+    <string name="message_duplicates_unchecked">%1$d possible %2$s %3$s unchecked.</string>
     <string name="message_confirm_delete_cat">Are you sure you want to delete the %s category?</string>
     <string name="message_delete_cat_entries">Delete &lt;b>%1$d %2$s&lt;/b> from this category.</string>
     <string name="message_request_storage">Flavordex requires external storage access to enable photo features.</string>
