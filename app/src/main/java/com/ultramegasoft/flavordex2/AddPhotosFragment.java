@@ -29,6 +29,11 @@ import java.util.ArrayList;
  */
 public class AddPhotosFragment extends AbsPhotosFragment {
     /**
+     * Keys for the saved state
+     */
+    private static final String STATE_CACHE = "cache";
+
+    /**
      * The Adapter backing the GridView
      */
     private ImageAdapter mAdapter;
@@ -36,13 +41,16 @@ public class AddPhotosFragment extends AbsPhotosFragment {
     /**
      * Memory cache for Bitmaps
      */
-    private final BitmapCache mCache = new BitmapCache();
+    private BitmapCache mCache = new BitmapCache();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(!isMediaReadable()) {
             return;
+        }
+        if(savedInstanceState != null) {
+            mCache = savedInstanceState.getParcelable(STATE_CACHE);
         }
         mAdapter = new ImageAdapter();
     }
@@ -57,6 +65,12 @@ public class AddPhotosFragment extends AbsPhotosFragment {
         final View root = inflater.inflate(R.layout.fragment_add_photos, container, false);
         ((GridView)root).setAdapter(mAdapter);
         return root;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(STATE_CACHE, mCache);
     }
 
     @Override
