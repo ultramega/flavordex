@@ -45,7 +45,6 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     /**
      * Keys for the saved state
      */
-    private static final String STATE_CURRENT_PAGE = "current_page";
     private static final String STATE_CAT_NAME = "cat_name";
 
     /**
@@ -68,11 +67,6 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
      */
     private Button mBtnSave;
 
-    /**
-     * The currently displayed page in the ViewPager
-     */
-    private int mCurrentPage;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +78,6 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState != null) {
-            mCurrentPage = savedInstanceState.getInt(STATE_CURRENT_PAGE);
             setCatName(savedInstanceState.getString(STATE_CAT_NAME));
         }
     }
@@ -115,15 +108,8 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        mCurrentPage = mPager.getCurrentItem();
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(STATE_CURRENT_PAGE, mCurrentPage);
         outState.putString(STATE_CAT_NAME, mCatName);
     }
 
