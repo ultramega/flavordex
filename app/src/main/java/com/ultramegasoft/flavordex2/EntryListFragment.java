@@ -175,12 +175,14 @@ public class EntryListFragment extends ListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-
+        setupToolbar();
         registerForContextMenu(getListView());
 
-        setListShown(false);
+        updateFilterToolbar();
+        updateEmptyText();
 
         mAdapter = new EntryListAdapter(getContext());
+        setListShown(false);
         setListAdapter(mAdapter);
 
         getLoaderManager().initLoader(0, null, this);
@@ -195,28 +197,7 @@ public class EntryListFragment extends ListFragment
         final FrameLayout list = (FrameLayout)root.findViewById(R.id.list);
         list.addView(super.onCreateView(inflater, container, savedInstanceState));
 
-        mToolbar = (Toolbar)root.findViewById(R.id.toolbar);
-        mToolbar.inflateMenu(R.menu.entry_list_menu);
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return onOptionsItemSelected(item);
-            }
-        });
-
-        final Menu menu = mToolbar.getMenu();
-        setupSearch(menu.findItem(R.id.menu_search));
-        if(mSortField.equals(Tables.Entries.TITLE)) {
-            menu.findItem(R.id.menu_sort_name).setChecked(true);
-        }
-        if(mSortField.equals(Tables.Entries.DATE)) {
-            menu.findItem(R.id.menu_sort_date).setChecked(true);
-        }
-        if(mSortField.equals(Tables.Entries.RATING)) {
-            menu.findItem(R.id.menu_sort_rating).setChecked(true);
-        }
-
-        mFilterToolbar = (Toolbar)root.findViewById(R.id.toolbar2);
+        mFilterToolbar = (Toolbar)root.findViewById(R.id.filter_toolbar);
         mFilterToolbar.inflateMenu(R.menu.filters_menu);
         mFilterToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -231,14 +212,6 @@ public class EntryListFragment extends ListFragment
         });
 
         return root;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        updateFilterToolbar();
-        updateEmptyText();
     }
 
     @Override
@@ -280,6 +253,10 @@ public class EntryListFragment extends ListFragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.main_menu, menu);
+        if(mToolbar == null) {
+            inflater.inflate(R.menu.entry_list_menu, menu);
+            setupMenu(menu);
+        }
     }
 
     @Override
@@ -344,6 +321,46 @@ public class EntryListFragment extends ListFragment
                     break;
             }
         }
+    }
+
+    /**
+     * Set up the list Toolbar if it exists.
+     */
+    private void setupToolbar() {
+        mToolbar = (Toolbar)getActivity().findViewById(R.id.list_toolbar);
+        if(mToolbar != null) {
+            mToolbar.inflateMenu(R.menu.entry_list_menu);
+            mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onOptionsItemSelected(item);
+                }
+            });
+            setupMenu(mToolbar.getMenu());
+        }
+    }
+
+    /**
+     * Set up the list menu.
+     *
+     * @param menu A Menu from the ActionBar or Toolbar
+     */
+    private void setupMenu(Menu menu) {
+        if(menu == null) {
+            return;
+        }
+
+        setupSearch(menu.findItem(R.id.menu_search));
+        if(mSortField.equals(Tables.Entries.TITLE)) {
+            menu.findItem(R.id.menu_sort_name).setChecked(true);
+        }
+        if(mSortField.equals(Tables.Entries.DATE)) {
+            menu.findItem(R.id.menu_sort_date).setChecked(true);
+        }
+        if(mSortField.equals(Tables.Entries.RATING)) {
+            menu.findItem(R.id.menu_sort_rating).setChecked(true);
+        }
+
     }
 
     /**
@@ -449,16 +466,34 @@ public class EntryListFragment extends ListFragment
      */
     private void updateFilterToolbar() {
         if(mFilters == null || mFilters.size() == 0) {
-            mToolbar.setTitle(R.string.title_all_entries);
+            setSubtitle(getString(R.string.title_all_entries));
             mFilterToolbar.setVisibility(View.GONE);
         } else {
             if(mFilters.containsKey(Tables.Entries.CAT)) {
-                mToolbar.setTitle(getString(R.string.title_cat_entries, mFilters.get(Tables.Entries.CAT)));
+                setSubtitle(getString(R.string.title_cat_entries,
+                        mFilters.get(Tables.Entries.CAT)));
             } else {
-                mToolbar.setTitle(R.string.title_all_entries);
+                setSubtitle(getString(R.string.title_all_entries));
             }
             mFilterToolbar.setTitle(getString(R.string.message_active_filters, mFilterText));
             mFilterToolbar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Set the subtitle. This will will display as the title of the list Toolbar or as the ActionBar
+     * subtitle.
+     *
+     * @param subtitle The subtitle string
+     */
+    private void setSubtitle(CharSequence subtitle) {
+        if(mToolbar != null) {
+            mToolbar.setTitle(subtitle);
+        } else {
+            final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+            if(actionBar != null) {
+                actionBar.setSubtitle(subtitle);
+            }
         }
     }
 
@@ -478,12 +513,7 @@ public class EntryListFragment extends ListFragment
      * @param position The index of the item to activate
      */
     public void setActivatedPosition(int position) {
-        if(position == ListView.INVALID_POSITION) {
-            final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-            if(actionBar != null) {
-                actionBar.setSubtitle(null);
-            }
-        } else {
+        if(position != ListView.INVALID_POSITION) {
             getListView().setItemChecked(position, true);
         }
     }

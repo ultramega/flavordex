@@ -24,7 +24,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -169,7 +168,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                     final EntryListFragment listFragment =
                             (EntryListFragment)fm.findFragmentById(R.id.entry_list);
                     if(listFragment != null) {
-                        listFragment.setActivatedPosition(ListView.INVALID_POSITION);
+                        ((ViewEntryFragment)getParentFragment()).setEntryTitle(null);
                         Fragment fragment = fm.findFragmentById(R.id.entry_detail_container);
                         if(fragment != null) {
                             setHasOptionsMenu(false);

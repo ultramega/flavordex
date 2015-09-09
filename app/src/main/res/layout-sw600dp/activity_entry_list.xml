@@ -9,13 +9,29 @@
     android:showDividers="middle"
     tools:context=".EntryListActivity">
 
-    <fragment
-        android:id="@+id/entry_list"
-        android:name="com.ultramegasoft.flavordex2.EntryListFragment"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        tools:layout="@android:layout/list_content" />
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/list_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:minHeight="?attr/actionBarSize"
+            tools:ignore="UnusedAttribute" />
+
+        <fragment
+            android:id="@+id/entry_list"
+            android:name="com.ultramegasoft.flavordex2.EntryListFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@android:layout/list_content" />
+
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/entry_detail_container"
