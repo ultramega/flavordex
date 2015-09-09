@@ -21,7 +21,6 @@ import com.ultramegasoft.flavordex2.widget.ImageLoader;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Fragment for adding photos to a new journal entry.
@@ -124,11 +123,6 @@ public class AddPhotosFragment extends AbsPhotosFragment {
         private final ArrayList<PhotoHolder> mData;
 
         /**
-         * List of reusable Views
-         */
-        private final HashMap<String, View> mViews = new HashMap<>();
-
-        /**
          * The layout for the add button
          */
         private RelativeLayout mAddLayout;
@@ -146,8 +140,6 @@ public class AddPhotosFragment extends AbsPhotosFragment {
 
         @Override
         public void notifyDataSetChanged() {
-            mViews.clear();
-
             mData.clear();
             mData.addAll(getPhotos());
             mData.add(mPlaceholder);
@@ -188,9 +180,7 @@ public class AddPhotosFragment extends AbsPhotosFragment {
                 return getAddLayout(parent);
             }
 
-            if(mViews.containsKey(path)) {
-                return mViews.get(path);
-            } else {
+            if(convertView == null) {
                 convertView = LayoutInflater.from(getContext())
                         .inflate(R.layout.photo_grid_item, parent, false);
             }
@@ -205,7 +195,6 @@ public class AddPhotosFragment extends AbsPhotosFragment {
                         }
                     });
 
-            mViews.put(path, convertView);
             return convertView;
         }
 
@@ -259,9 +248,8 @@ public class AddPhotosFragment extends AbsPhotosFragment {
          */
         private void loadImage(ImageView view, String path) {
             final Bitmap bitmap = mCache.get(path);
-            if(bitmap != null) {
-                view.setImageBitmap(bitmap);
-            } else {
+            view.setImageBitmap(bitmap);
+            if(bitmap == null) {
                 new ImageLoader(view, mFrameSize, mFrameSize, path, mCache).execute();
             }
         }
