@@ -6,11 +6,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.BitmapCache;
@@ -103,7 +106,18 @@ public class AddPhotosFragment extends AbsPhotosFragment {
     /**
      * Custom Adapter for loading images with remove buttons into the GridView.
      */
-    private class ImageAdapter extends BaseAdapter {
+    private class ImageAdapter extends BaseAdapter implements PopupMenu.OnMenuItemClickListener {
+        /**
+         * View types
+         */
+        public static final int NORMAL_VIEW_TYPE = 0;
+        public static final int ADD_BUTTON_VIEW_TYPE = 1;
+
+        /**
+         * Empty PhotoHolder to serve as a placeholder for the add button
+         */
+        private final PhotoHolder mPlaceholder = new PhotoHolder(null);
+
         /**
          * The data backing the Adapter
          */
@@ -115,18 +129,29 @@ public class AddPhotosFragment extends AbsPhotosFragment {
         private final HashMap<String, View> mViews = new HashMap<>();
 
         /**
+         * The layout for the add button
+         */
+        private RelativeLayout mAddLayout;
+
+        /**
          * The size of the cell containing the image
          */
         private final int mFrameSize;
 
         public ImageAdapter() {
-            mData = getPhotos();
+            mData = new ArrayList<>(getPhotos());
+            mData.add(mPlaceholder);
             mFrameSize = getResources().getDimensionPixelSize(R.dimen.photo_grid_size);
         }
 
         @Override
         public void notifyDataSetChanged() {
             mViews.clear();
+
+            mData.clear();
+            mData.addAll(getPhotos());
+            mData.add(mPlaceholder);
+
             super.notifyDataSetChanged();
         }
 
@@ -136,7 +161,7 @@ public class AddPhotosFragment extends AbsPhotosFragment {
         }
 
         @Override
-        public Object getItem(int position) {
+        public PhotoHolder getItem(int position) {
             return mData.get(position);
         }
 
@@ -146,21 +171,32 @@ public class AddPhotosFragment extends AbsPhotosFragment {
         }
 
         @Override
+        public int getViewTypeCount() {
+            return 2;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return mData.get(position) == mPlaceholder ? ADD_BUTTON_VIEW_TYPE : NORMAL_VIEW_TYPE;
+        }
+
+        @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            if(convertView == null) {
+            final String path = mData.get(position).path;
+
+            if(path == null) {
+                return getAddLayout(parent);
+            }
+
+            if(mViews.containsKey(path)) {
+                return mViews.get(path);
+            } else {
                 convertView = LayoutInflater.from(getContext())
                         .inflate(R.layout.photo_grid_item, parent, false);
             }
 
-            final String path = mData.get(position).path;
-
-            if(mViews.containsKey(path)) {
-                return mViews.get(path);
-            }
-
             final ImageView imageView = (ImageView)convertView.findViewById(R.id.image);
             loadImage(imageView, path);
-
             convertView.findViewById(R.id.button_remove_photo)
                     .setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -171,6 +207,44 @@ public class AddPhotosFragment extends AbsPhotosFragment {
 
             mViews.put(path, convertView);
             return convertView;
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            return onOptionsItemSelected(item);
+        }
+
+        /**
+         * Get the layout for the add button.
+         *
+         * @param parent The parent for this View
+         * @return The add button layout
+         */
+        private RelativeLayout getAddLayout(ViewGroup parent) {
+            if(mAddLayout == null) {
+                mAddLayout = (RelativeLayout)LayoutInflater.from(getContext())
+                        .inflate(R.layout.photo_add_grid_item, parent, false);
+                mAddLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openAddMenu(mAddLayout.findViewById(R.id.button_add_photo));
+                    }
+                });
+            }
+            return mAddLayout;
+        }
+
+        /**
+         * Open the add photo PopupMenu.
+         *
+         * @param anchor The View to anchor to
+         */
+        private void openAddMenu(View anchor) {
+            final PopupMenu popupMenu = new PopupMenu(getContext(), anchor);
+            popupMenu.inflate(R.menu.add_photos_menu);
+            popupMenu.setOnMenuItemClickListener(this);
+            popupMenu.getMenu().findItem(R.id.menu_take_photo).setEnabled(hasCamera());
+            popupMenu.show();
         }
 
         /**

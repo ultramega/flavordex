@@ -68,6 +68,7 @@
     <string name="button_forward">Forward</string>
     <string name="button_prev">Previous</string>
     <string name="button_next">Next</string>
+    <string name="button_add_photo">Add Photo</string>
     <string name="button_select_photo">From Gallery</string>
     <string name="button_take_photo">From Camera</string>
     <string name="button_remove_photo">Remove Photo</string>
