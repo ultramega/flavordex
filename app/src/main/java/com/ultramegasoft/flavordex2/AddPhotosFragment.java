@@ -227,7 +227,11 @@ public class AddPhotosFragment extends AbsPhotosFragment {
                 mAddLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        openAddMenu(mAddLayout.findViewById(R.id.button_add_photo));
+                        if(hasCamera()) {
+                            openAddMenu(mAddLayout.findViewById(R.id.button_add_photo));
+                        } else {
+                            addPhotoFromGallery();
+                        }
                     }
                 });
             }
