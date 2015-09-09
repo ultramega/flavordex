@@ -46,6 +46,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
      * Keys for the saved state
      */
     private static final String STATE_CURRENT_PAGE = "current_page";
+    private static final String STATE_CAT_NAME = "cat_name";
 
     /**
      * The category ID from the arguments
@@ -77,9 +78,14 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         super.onCreate(savedInstanceState);
         mCatId = getArguments().getLong(ARG_CAT_ID, 0);
         setHasOptionsMenu(true);
+    }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         if(savedInstanceState != null) {
             mCurrentPage = savedInstanceState.getInt(STATE_CURRENT_PAGE);
+            setCatName(savedInstanceState.getString(STATE_CAT_NAME));
         }
     }
 
@@ -103,7 +109,9 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(0, null, this);
+        if(mCatName == null) {
+            getLoaderManager().initLoader(0, null, this);
+        }
     }
 
     @Override
@@ -116,6 +124,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_CURRENT_PAGE, mCurrentPage);
+        outState.putString(STATE_CAT_NAME, mCatName);
     }
 
     @Override
@@ -200,27 +209,37 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         }
     }
 
+    /**
+     * Set the name of the category.
+     *
+     * @param catName The internal name of the category
+     */
+    private void setCatName(String catName) {
+        mCatName = catName;
+        mPager.setAdapter(new PagerAdapter());
+
+        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if(actionBar != null) {
+            final String name = FlavordexApp.getRealCatName(getContext(), catName);
+            final String title = getString(R.string.title_add_cat_entry, name);
+            actionBar.setTitle(title);
+            actionBar.setSubtitle(null);
+        }
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
-        return new CursorLoader(getContext(), uri, null, null, null, null);
+        final String[] projection = new String[] {
+                Tables.Cats.NAME
+        };
+        return new CursorLoader(getContext(), uri, projection, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if(data.moveToFirst()) {
-            mCatName = data.getString(data.getColumnIndex(Tables.Cats.NAME));
-
-            mPager.setAdapter(new PagerAdapter());
-            mPager.setCurrentItem(mCurrentPage);
-
-            final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-            if(actionBar != null) {
-                final String name = FlavordexApp.getRealCatName(getContext(), mCatName);
-                final String title = getString(R.string.title_add_cat_entry, name);
-                actionBar.setTitle(title);
-                actionBar.setSubtitle(null);
-            }
+            setCatName(data.getString(data.getColumnIndex(Tables.Cats.NAME)));
         }
     }
 
