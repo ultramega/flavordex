@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
@@ -76,7 +77,8 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case android.R.id.home:
-                getActivity().finish();
+                NavUtils.navigateUpTo(getActivity(),
+                        new Intent(getContext(), EntryListActivity.class));
                 return true;
             case R.id.menu_add_cat:
                 final Intent intent = new Intent(getContext(), EditCatActivity.class);

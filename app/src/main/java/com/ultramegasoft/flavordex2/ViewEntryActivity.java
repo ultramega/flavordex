@@ -51,10 +51,10 @@ public class ViewEntryActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if(id == android.R.id.home) {
-            NavUtils.navigateUpTo(this, new Intent(this, EntryListActivity.class));
-            return true;
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpTo(this, new Intent(this, EntryListActivity.class));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
