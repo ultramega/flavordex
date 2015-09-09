@@ -291,7 +291,7 @@ public class EntryListFragment extends ListFragment
                 return true;
             case R.id.menu_xport:
                 if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                    // TODO: 8/14/2015 Add import/export
+                    startActivity(new Intent(getContext(), XportActivity.class));
                 } else {
                     Toast.makeText(getContext(), R.string.message_no_media, Toast.LENGTH_LONG)
                             .show();

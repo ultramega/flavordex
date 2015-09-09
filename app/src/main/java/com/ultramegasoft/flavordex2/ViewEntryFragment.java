@@ -60,7 +60,7 @@ public class ViewEntryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final FragmentTabHost tabHost =
-                (FragmentTabHost)inflater.inflate(R.layout.fragment_view_entry, container, false);
+                (FragmentTabHost)inflater.inflate(R.layout.tab_layout, container, false);
         tabHost.setup(getContext(), getChildFragmentManager(), R.id.content);
 
         final Resources res = getResources();
