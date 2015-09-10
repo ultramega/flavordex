@@ -79,9 +79,9 @@
     <string name="button_clear_filter">Remove Filters</string>
     <string name="button_edit_filter">Edit Filters</string>
     <string name="button_select_file">Select File</string>
+    <string name="button_select_dir">Select Directory</string>
     <string name="button_import">Import Selected</string>
     <string name="button_export">Export Selected</string>
-    <string name="button_select">Select</string>
     <string name="button_add_extra">Add Field</string>
     <string name="button_add_flavor">Add Flavor</string>
     <string name="button_remove_extra">Remove Field</string>
