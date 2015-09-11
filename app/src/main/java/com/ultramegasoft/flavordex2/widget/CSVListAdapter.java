@@ -71,20 +71,33 @@ public class CSVListAdapter extends BaseAdapter {
         if(convertView == null) {
             convertView = LayoutInflater.from(mContext)
                     .inflate(R.layout.entry_list_item_multiple_choice, parent, false);
+
+            final Holder holder = new Holder();
+            holder.title = (TextView)convertView.findViewById(R.id.title);
+            holder.maker = (TextView)convertView.findViewById(R.id.maker);
+            holder.rating = (RatingBar)convertView.findViewById(R.id.rating);
+            holder.date = (TextView)convertView.findViewById(R.id.date);
+            convertView.setTag(holder);
         }
 
         final EntryHolder entry = getItem(position);
 
-        final TextView titleView = (TextView)convertView.findViewById(R.id.title);
-        final TextView makerView = (TextView)convertView.findViewById(R.id.maker);
-        final RatingBar ratingBar = (RatingBar)convertView.findViewById(R.id.rating);
-        final TextView dateView = (TextView)convertView.findViewById(R.id.date);
-
-        titleView.setText(entry.title);
-        makerView.setText(entry.maker);
-        ratingBar.setRating(entry.rating);
-        dateView.setText(mDateFormat.format(new Date(entry.date)));
+        final Holder holder = (Holder)convertView.getTag();
+        holder.title.setText(entry.title);
+        holder.maker.setText(entry.maker);
+        holder.rating.setRating(entry.rating);
+        holder.date.setText(mDateFormat.format(new Date(entry.date)));
 
         return convertView;
+    }
+
+    /**
+     * Holder for View references
+     */
+    private static class Holder {
+        TextView title;
+        TextView maker;
+        RatingBar rating;
+        TextView date;
     }
 }

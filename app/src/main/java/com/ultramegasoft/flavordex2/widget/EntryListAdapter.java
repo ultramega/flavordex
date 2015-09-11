@@ -75,16 +75,23 @@ public class EntryListAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return LayoutInflater.from(context).inflate(R.layout.entry_list_item, parent, false);
+        final View view =
+                LayoutInflater.from(context).inflate(R.layout.entry_list_item, parent, false);
+
+        final Holder holder = new Holder();
+        holder.thumb = (ImageView)view.findViewById(R.id.thumb);
+        holder.title = (TextView)view.findViewById(R.id.title);
+        holder.maker = (TextView)view.findViewById(R.id.maker);
+        holder.rating = (RatingBar)view.findViewById(R.id.rating);
+        holder.date = (TextView)view.findViewById(R.id.date);
+        view.setTag(holder);
+
+        return view;
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        final ImageView thumbView = (ImageView)view.findViewById(R.id.thumb);
-        final TextView titleView = (TextView)view.findViewById(R.id.title);
-        final TextView makerView = (TextView)view.findViewById(R.id.maker);
-        final RatingBar ratingBar = (RatingBar)view.findViewById(R.id.rating);
-        final TextView dateView = (TextView)view.findViewById(R.id.date);
+        final Holder holder = (Holder)view.getTag();
 
         final long id = cursor.getLong(cursor.getColumnIndex(Tables.Entries._ID));
         final String title = cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
@@ -92,14 +99,14 @@ public class EntryListAdapter extends CursorAdapter {
         final float rating = cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING));
         final long date = cursor.getLong(cursor.getColumnIndex(Tables.Entries.DATE));
 
-        sThumbLoader.load(thumbView, id);
-        titleView.setText(title);
-        makerView.setText(maker);
-        ratingBar.setRating(rating);
+        sThumbLoader.load(holder.thumb, id);
+        holder.title.setText(title);
+        holder.maker.setText(maker);
+        holder.rating.setRating(rating);
         if(date > 0) {
-            dateView.setText(mDateFormat.format(new Date(date)));
+            holder.date.setText(mDateFormat.format(new Date(date)));
         } else {
-            dateView.setText(null);
+            holder.date.setText(null);
         }
 
         mItemCats.put(id, cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT)));
@@ -128,5 +135,16 @@ public class EntryListAdapter extends CursorAdapter {
         } else {
             return index;
         }
+    }
+
+    /**
+     * Holder for View references
+     */
+    private static class Holder {
+        ImageView thumb;
+        TextView title;
+        TextView maker;
+        RatingBar rating;
+        TextView date;
     }
 }

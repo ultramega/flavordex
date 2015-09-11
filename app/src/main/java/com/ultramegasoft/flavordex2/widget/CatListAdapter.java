@@ -134,14 +134,18 @@ public class CatListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         if(convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(mLayoutId, parent, false);
+
+            final Holder holder = new Holder();
+            holder.textView = (TextView)convertView.findViewById(mTextViewId);
+            convertView.setTag(holder);
         }
 
         final Category cat = getItem(position);
         final String text =
                 mContext.getString(R.string.list_item_cat, cat.realName, cat.numEntries);
 
-        final TextView textView = (TextView)convertView.findViewById(mTextViewId);
-        textView.setText(text);
+        final Holder holder = (Holder)convertView.getTag();
+        holder.textView.setText(text);
 
         return convertView;
     }
@@ -199,5 +203,12 @@ public class CatListAdapter extends BaseAdapter {
         public int compareTo(@NonNull Category another) {
             return realName.compareTo(another.realName);
         }
+    }
+
+    /**
+     * Holder for View references
+     */
+    private static class Holder {
+        public TextView textView;
     }
 }

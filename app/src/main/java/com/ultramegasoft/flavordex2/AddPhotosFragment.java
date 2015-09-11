@@ -197,17 +197,22 @@ public class AddPhotosFragment extends AbsPhotosFragment {
             if(convertView == null) {
                 convertView = LayoutInflater.from(getContext())
                         .inflate(R.layout.photo_grid_item, parent, false);
+
+                final Holder holder = new Holder();
+                holder.image = (ImageView)convertView.findViewById(R.id.image);
+                holder.removeButton = convertView.findViewById(R.id.button_remove_photo);
+                convertView.setTag(holder);
             }
 
-            final ImageView imageView = (ImageView)convertView.findViewById(R.id.image);
-            loadImage(imageView, path);
-            convertView.findViewById(R.id.button_remove_photo)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            removePhoto(position);
-                        }
-                    });
+            final Holder holder = (Holder)convertView.getTag();
+            loadImage(holder.image, path);
+
+            holder.removeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removePhoto(position);
+                }
+            });
 
             return convertView;
         }
@@ -267,5 +272,13 @@ public class AddPhotosFragment extends AbsPhotosFragment {
                 new ImageLoader(view, mFrameSize, mFrameSize, path, mCache).execute();
             }
         }
+    }
+
+    /**
+     * Holder for View references
+     */
+    private class Holder {
+        public ImageView image;
+        public View removeButton;
     }
 }
