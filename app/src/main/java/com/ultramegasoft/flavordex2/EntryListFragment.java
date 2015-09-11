@@ -31,6 +31,7 @@ import android.widget.SearchView;
 
 import com.ultramegasoft.flavordex2.dialog.EntryFilterDialog;
 import com.ultramegasoft.flavordex2.dialog.FileSelectorDialog;
+import com.ultramegasoft.flavordex2.dialog.ImportDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
 
@@ -318,7 +319,7 @@ public class EntryListFragment extends ListFragment
                     }
                     break;
                 case REQUEST_IMPORT_FILE:
-                    ImportFragment.showDialog(getFragmentManager(),
+                    ImportDialog.showDialog(getFragmentManager(),
                             data.getStringExtra(FileSelectorDialog.EXTRA_PATH));
                     break;
             }

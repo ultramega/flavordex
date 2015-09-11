@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2;
+package com.ultramegasoft.flavordex2.dialog;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.CSVUtils;
 import com.ultramegasoft.flavordex2.widget.CSVListAdapter;
@@ -39,12 +40,12 @@ import java.util.ArrayList;
  *
  * @author Steve Guidetti
  */
-public class ImportFragment extends DialogFragment
+public class ImportDialog extends DialogFragment
         implements LoaderManager.LoaderCallbacks<CSVUtils.CSVHolder> {
     /**
      * Tag to identify the Fragment
      */
-    private static final String TAG = "ImportFragment";
+    private static final String TAG = "ImportDialog";
 
     /**
      * Keys for the Fragment arguments
@@ -77,7 +78,7 @@ public class ImportFragment extends DialogFragment
      * @param filePath The path to the selected file
      */
     public static void showDialog(FragmentManager fm, String filePath) {
-        final DialogFragment fragment = new ImportFragment();
+        final DialogFragment fragment = new ImportDialog();
 
         final Bundle args = new Bundle();
         args.putString(ARG_FILE_PATH, filePath);
