@@ -1,6 +1,5 @@
 package com.ultramegasoft.flavordex2;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -381,12 +380,11 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
      * @param deleted     The initial deleted status of the field
      * @param listener    The event listener for the field
      */
-    @SuppressLint("InflateParams")
     private void addTableRow(final TableLayout tableLayout, String text, int maxLength, int hint,
                              final int deleteHint, final boolean deleted,
                              final CatFieldListener listener) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
-        final View root = inflater.inflate(R.layout.cat_edit_field, null);
+        final View root = inflater.inflate(R.layout.cat_edit_field, tableLayout, false);
 
         final EditText editText = (EditText)root.findViewById(R.id.field_name);
         editText.setSaveEnabled(false);

@@ -1,6 +1,5 @@
 package com.ultramegasoft.flavordex2;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
@@ -245,7 +244,6 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      *
      * @param data A LinkedHashMap containing the extra values
      */
-    @SuppressLint("InflateParams")
     protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> data) {
         if(data.size() > 0) {
             final TableLayout table = (TableLayout)getActivity().findViewById(R.id.entry_info);
@@ -254,7 +252,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                 if(extra.preset) {
                     continue;
                 }
-                final View root = inflater.inflate(R.layout.view_info_extra, null);
+                final View root = inflater.inflate(R.layout.view_info_extra, table, false);
                 ((TextView)root.findViewById(R.id.label)).setText(extra.name + ": ");
                 ((TextView)root.findViewById(R.id.value)).setText(extra.value);
                 table.addView(root);
