@@ -1,39 +1,28 @@
 package com.ultramegasoft.flavordex2;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 
-import com.ultramegasoft.flavordex2.dialog.FileSelectorDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.CSVUtils;
 import com.ultramegasoft.flavordex2.widget.CSVListAdapter;
@@ -46,29 +35,31 @@ import java.io.File;
 import java.util.ArrayList;
 
 /**
- * Fragment for importing journal entries from CSV files.
+ * Dialog for importing journal entries from CSV files.
  *
  * @author Steve Guidetti
  */
-public class ImportFragment extends ListFragment
+public class ImportFragment extends DialogFragment
         implements LoaderManager.LoaderCallbacks<CSVUtils.CSVHolder> {
     /**
-     * Request codes for external Activities
+     * Tag to identify the Fragment
      */
-    private final int REQUEST_SELECT_FILE = 100;
-    private final int REQUEST_INSERT = 200;
+    private static final String TAG = "ImportFragment";
+
+    /**
+     * Keys for the Fragment arguments
+     */
+    private static final String ARG_FILE_PATH = "file_path";
 
     /**
      * Keys for the saved state
      */
     private static final String STATE_DATA = "date";
-    private static final String STATE_FILE_PATH = "file_path";
-    private static final String STATE_IN_PROGRESS = "in_progress";
 
     /**
      * Views from the layout
      */
-    private Button mBtnFile;
+    private ListView mListView;
 
     /**
      * The data loaded from the CSV file
@@ -80,179 +71,92 @@ public class ImportFragment extends ListFragment
      */
     private String mFilePath;
 
+
     /**
-     * Whether the insert operation is in progress
+     * @param fm       The FragmentManager to use
+     * @param filePath The path to the selected file
      */
-    private boolean mInProgress;
+    public static void showDialog(FragmentManager fm, String filePath) {
+        final DialogFragment fragment = new ImportFragment();
+
+        final Bundle args = new Bundle();
+        args.putString(ARG_FILE_PATH, filePath);
+        fragment.setArguments(args);
+
+        fragment.show(fm, TAG);
+    }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mFilePath = getArguments().getString(ARG_FILE_PATH);
+        if(savedInstanceState != null) {
+            mData = savedInstanceState.getParcelable(STATE_DATA);
+        }
+    }
 
-        getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        mListView = new ListView(getContext());
+        mListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ActivityCompat.invalidateOptionsMenu(getActivity());
+                invalidateButtons();
             }
         });
 
-        setEmptyText(getString(R.string.message_select_import_file));
-        setListShown(true);
-
-        if(savedInstanceState != null) {
-            mData = savedInstanceState.getParcelable(STATE_DATA);
-            mFilePath = savedInstanceState.getString(STATE_FILE_PATH);
-            mInProgress = savedInstanceState.getBoolean(STATE_IN_PROGRESS, mInProgress);
-        }
-
         if(mData != null) {
-            setEmptyText(getString(R.string.error_csv_parse));
-            setListAdapter(new CSVListAdapter(getContext(), mData));
+            mListView.setAdapter(new CSVListAdapter(getContext(), mData));
         } else if(mFilePath != null) {
             getLoaderManager().initLoader(0, null, this).forceLoad();
         }
 
-        if(mFilePath != null) {
-            mBtnFile.setText(mFilePath);
-        }
-
-        setUiEnabled(!mInProgress);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        final View root = inflater.inflate(R.layout.fragment_import, container, false);
-
-        final FrameLayout list = (FrameLayout)root.findViewById(R.id.list);
-        //noinspection ConstantConditions
-        list.addView(super.onCreateView(inflater, container, savedInstanceState));
-
-        mBtnFile = (Button)root.findViewById(R.id.file_path);
-        mBtnFile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFileSelector();
-            }
-        });
-
-        return root;
-    }
-
-    /**
-     * Open the file selection dialog.
-     */
-    private void openFileSelector() {
-        FileSelectorDialog.showDialog(getFragmentManager(), this, REQUEST_SELECT_FILE,
-                Environment.getExternalStorageDirectory().getPath(), false, ".csv");
+        return new AlertDialog.Builder(getContext())
+                .setTitle(R.string.title_import)
+                .setIcon(R.drawable.ic_import)
+                .setView(mListView)
+                .setPositiveButton(R.string.button_import, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        insertSelected();
+                    }
+                })
+                .setNegativeButton(R.string.button_cancel, null)
+                .create();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(STATE_DATA, mData);
-        outState.putString(STATE_FILE_PATH, mFilePath);
-        outState.putBoolean(STATE_IN_PROGRESS, mInProgress);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.import_menu, menu);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.menu_import).setVisible(mData != null)
-                .setEnabled(!mInProgress && anyItemSelected());
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.menu_import:
-                insertSelected();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == Activity.RESULT_OK) {
-            switch(requestCode) {
-                case REQUEST_SELECT_FILE:
-                    mData = null;
-                    mFilePath = data.getStringExtra(FileSelectorDialog.EXTRA_PATH);
-                    mBtnFile.setText(mFilePath);
-
-                    getLoaderManager().initLoader(0, null, this).forceLoad();
-                    break;
-                case REQUEST_INSERT:
-                    mInProgress = false;
-                    mData = null;
-                    mFilePath = null;
-
-                    setListAdapter(null);
-
-                    resetUi();
-                    Toast.makeText(getContext(), R.string.message_import_complete,
-                            Toast.LENGTH_LONG).show();
-                    break;
-            }
-        }
     }
 
     /**
-     * Set the enabled state of the interface.
-     *
-     * @param enabled Whether to enable the interface
+     * Update the status of the dialog buttons.
      */
-    private void setUiEnabled(boolean enabled) {
-        mBtnFile.setEnabled(enabled);
-        getListView().setEnabled(enabled);
-        ActivityCompat.invalidateOptionsMenu(getActivity());
-    }
-
-    /**
-     * Reset the interface to its initial state.
-     */
-    private void resetUi() {
-        setEmptyText(getString(R.string.message_select_import_file));
-        mBtnFile.setText(R.string.button_select_file);
-        setUiEnabled(true);
-    }
-
-    /**
-     * Are any list items selected?
-     *
-     * @return Whether any list items are selected
-     */
-    private boolean anyItemSelected() {
-        return getListView().getCheckedItemCount() > 0;
+    private void invalidateButtons() {
+        final AlertDialog dialog = (AlertDialog)getDialog();
+        final boolean itemSelected = mListView.getCheckedItemCount() > 0;
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(itemSelected);
     }
 
     /**
      * Insert the selected entries into the database.
      */
     private void insertSelected() {
-        mInProgress = true;
-        setUiEnabled(false);
-
-        final CSVListAdapter adapter = (CSVListAdapter)getListAdapter();
+        final CSVListAdapter adapter = (CSVListAdapter)mListView.getAdapter();
         final ArrayList<EntryHolder> entries = new ArrayList<>();
-        for(long i : getListView().getCheckedItemIds()) {
+        for(long i : mListView.getCheckedItemIds()) {
             entries.add(adapter.getItem((int)i));
         }
-        DataSaverFragment.init(getFragmentManager(), this, REQUEST_INSERT, entries);
+        DataSaverFragment.init(getFragmentManager(), entries);
     }
 
     @Override
     public Loader<CSVUtils.CSVHolder> onCreateLoader(int id, Bundle args) {
-        setListShown(false);
         return new AsyncTaskLoader<CSVUtils.CSVHolder>(getContext()) {
             @Override
             public CSVUtils.CSVHolder loadInBackground() {
@@ -264,10 +168,10 @@ public class ImportFragment extends ListFragment
     @Override
     public void onLoadFinished(Loader<CSVUtils.CSVHolder> loader, CSVUtils.CSVHolder data) {
         if(data != null) {
-            setListAdapter(new CSVListAdapter(getContext(), data));
+            mListView.setAdapter(new CSVListAdapter(getContext(), data));
 
             for(int i = 0; i < data.entries.size(); i++) {
-                getListView().setItemChecked(i, !data.duplicates.contains(data.entries.get(i)));
+                mListView.setItemChecked(i, !data.duplicates.contains(data.entries.get(i)));
             }
 
             final int numDuplicates = data.duplicates.size();
@@ -282,18 +186,14 @@ public class ImportFragment extends ListFragment
 
             mData = data;
         } else {
-            setEmptyText(getString(R.string.error_csv_parse));
+            dismiss();
         }
 
-        setListShown(true);
         getLoaderManager().destroyLoader(0);
     }
 
     @Override
     public void onLoaderReset(Loader<CSVUtils.CSVHolder> loader) {
-        setListAdapter(null);
-        mFilePath = null;
-        mBtnFile.setText(R.string.button_select_file);
     }
 
     /**
@@ -313,15 +213,11 @@ public class ImportFragment extends ListFragment
         /**
          * Start a new instance of this Fragment.
          *
-         * @param fm          The FragmentManager to use
-         * @param target      The Fragment to notify of the result
-         * @param requestCode A number to identify this request
-         * @param entries     The list of entries
+         * @param fm      The FragmentManager to use
+         * @param entries The list of entries
          */
-        public static void init(FragmentManager fm, Fragment target, int requestCode,
-                                ArrayList<EntryHolder> entries) {
+        public static void init(FragmentManager fm, ArrayList<EntryHolder> entries) {
             final DialogFragment fragment = new DataSaverFragment();
-            fragment.setTargetFragment(target, requestCode);
 
             final Bundle args = new Bundle();
             args.putParcelableArrayList(ARG_ENTRIES, entries);
@@ -369,10 +265,8 @@ public class ImportFragment extends ListFragment
          */
         private void onComplete() {
             setProgress(10000);
-            final Fragment target = getTargetFragment();
-            if(target != null) {
-                target.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, null);
-            }
+            Toast.makeText(getContext(), R.string.message_import_complete, Toast.LENGTH_LONG)
+                    .show();
             dismiss();
         }
 

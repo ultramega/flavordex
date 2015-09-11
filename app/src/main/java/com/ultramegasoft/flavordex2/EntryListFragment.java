@@ -28,9 +28,9 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.dialog.EntryFilterDialog;
+import com.ultramegasoft.flavordex2.dialog.FileSelectorDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
 
@@ -46,6 +46,7 @@ public class EntryListFragment extends ListFragment
      */
     private static final int REQUEST_SET_FILTERS = 100;
     private static final int REQUEST_ADD_ENTRY = 200;
+    private static final int REQUEST_IMPORT_FILE = 300;
 
     /**
      * Keys for the saved state
@@ -289,13 +290,10 @@ public class EntryListFragment extends ListFragment
                 startActivityForResult(new Intent(getContext(), AddEntryActivity.class),
                         REQUEST_ADD_ENTRY);
                 return true;
-            case R.id.menu_xport:
-                if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                    startActivity(new Intent(getContext(), XportActivity.class));
-                } else {
-                    Toast.makeText(getContext(), R.string.message_no_media, Toast.LENGTH_LONG)
-                            .show();
-                }
+            case R.id.menu_import:
+                final String rootPath = Environment.getExternalStorageDirectory().getPath();
+                FileSelectorDialog.showDialog(getFragmentManager(), this, REQUEST_IMPORT_FILE,
+                        rootPath, false);
                 return true;
             case R.id.menu_settings:
                 startActivity(new Intent(getContext(), SettingsActivity.class));
@@ -318,6 +316,10 @@ public class EntryListFragment extends ListFragment
                         mCallbacks.onItemSelected(entryId,
                                 data.getStringExtra(AddEntryActivity.EXTRA_ENTRY_CAT));
                     }
+                    break;
+                case REQUEST_IMPORT_FILE:
+                    ImportFragment.showDialog(getFragmentManager(),
+                            data.getStringExtra(FileSelectorDialog.EXTRA_PATH));
                     break;
             }
         }
