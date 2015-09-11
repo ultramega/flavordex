@@ -30,6 +30,7 @@
     <string name="title_cat_entries">%s Entries</string>
     <string name="title_xport">Import/Export</string>
     <string name="title_select_file">Select File</string>
+    <string name="title_importing">Importing…</string>
     <string name="title_permission">Permission Requested</string>
 
     <string name="header_details">Details</string>
@@ -59,6 +60,8 @@
     <string name="menu_remove_photo">Remove Photo</string>
     <string name="menu_edit_flavor">Edit Flavors</string>
     <string name="menu_xport">Import/Export</string>
+    <string name="menu_import">Import Selected</string>
+    <string name="menu_export">Export Selected</string>
     <string name="menu_save_cat">Save Category</string>
     <string name="menu_edit_cat">Edit Category</string>
     <string name="menu_delete_cat">Delete Category</string>
@@ -80,8 +83,6 @@
     <string name="button_edit_filter">Edit Filters</string>
     <string name="button_select_file">Select File</string>
     <string name="button_select_dir">Select Directory</string>
-    <string name="button_import">Import Selected</string>
-    <string name="button_export">Export Selected</string>
     <string name="button_add_extra">Add Field</string>
     <string name="button_add_flavor">Add Flavor</string>
     <string name="button_remove_extra">Remove Field</string>

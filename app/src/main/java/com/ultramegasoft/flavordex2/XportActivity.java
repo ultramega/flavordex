@@ -11,12 +11,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TabHost;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.TimeZone;
+
 /**
  * Activity for importing and exporting journal entries from and to CSV files.
  *
  * @author Steve Guidetti
  */
 public class XportActivity extends AppCompatActivity {
+    /**
+     * Formatter for dates in CSV files
+     */
+    public static final SimpleDateFormat sDateFormatter =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'", Locale.US) {
+                {
+                    setTimeZone(TimeZone.getTimeZone("UTC"));
+                }
+            };
+
     @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
