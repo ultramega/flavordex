@@ -294,7 +294,7 @@ public class EntryListFragment extends ListFragment
             case R.id.menu_import:
                 final String rootPath = Environment.getExternalStorageDirectory().getPath();
                 FileSelectorDialog.showDialog(getFragmentManager(), this, REQUEST_IMPORT_FILE,
-                        rootPath, false);
+                        rootPath, false, ".csv");
                 return true;
             case R.id.menu_settings:
                 startActivity(new Intent(getContext(), SettingsActivity.class));
