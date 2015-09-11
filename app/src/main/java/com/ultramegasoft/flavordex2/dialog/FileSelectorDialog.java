@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -160,13 +161,10 @@ public class FileSelectorDialog extends DialogFragment {
 
     @NonNull
     @Override
+    @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final int padding = getResources().getDimensionPixelSize(R.dimen.file_list_padding);
-        final ListView listView = new ListView(getContext());
-        listView.setPadding(padding, padding, padding, padding);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            listView.setPaddingRelative(padding, padding, padding, padding);
-        }
+        final ListView listView =
+                (ListView)LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

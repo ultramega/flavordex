@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -17,6 +18,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -98,8 +100,9 @@ public class ImportDialog extends DialogFragment
 
     @NonNull
     @Override
+    @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mListView = new ListView(getContext());
+        mListView = (ListView)LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
         mListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
