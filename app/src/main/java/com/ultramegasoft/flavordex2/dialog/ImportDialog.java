@@ -74,8 +74,9 @@ public class ImportDialog extends DialogFragment
      */
     private String mFilePath;
 
-
     /**
+     * Show the dialog.
+     *
      * @param fm       The FragmentManager to use
      * @param filePath The path to the selected file
      */
