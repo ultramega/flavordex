@@ -31,9 +31,9 @@ public class EntryHolder implements Parcelable {
     public long makerId;
     public String maker;
     public String origin;
+    public String price;
     public String location;
     public long date;
-    public String price;
     public float rating;
     public String notes;
 
@@ -66,9 +66,9 @@ public class EntryHolder implements Parcelable {
         makerId = in.readLong();
         maker = in.readString();
         origin = in.readString();
+        price = in.readString();
         location = in.readString();
         date = in.readLong();
-        price = in.readString();
         rating = in.readFloat();
         notes = in.readString();
 
@@ -151,9 +151,9 @@ public class EntryHolder implements Parcelable {
         dest.writeLong(makerId);
         dest.writeString(maker);
         dest.writeString(origin);
+        dest.writeString(price);
         dest.writeString(location);
         dest.writeLong(date);
-        dest.writeString(price);
         dest.writeFloat(rating);
         dest.writeString(notes);
 

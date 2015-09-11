@@ -3,9 +3,9 @@ CREATE TABLE `entries` (
   `cat` INTEGER,
   `title` TEXT COLLATE NOCASE,
   `maker` INTEGER,
+  `price` TEXT COLLATE NOCASE,
   `location` TEXT COLLATE NOCASE,
   `date` INTEGER,
-  `price` TEXT COLLATE NOCASE,
   `rating` REAL,
   `notes` TEXT COLLATE NOCASE
 );

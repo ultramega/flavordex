@@ -71,9 +71,9 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     private RatingBar mRatingBar;
     private TextView mTxtMaker;
     private TextView mTxtOrigin;
+    private TextView mTxtPrice;
     private TextView mTxtLocation;
     private TextView mTxtDate;
-    private TextView mTxtPrice;
     private TextView mTxtNotes;
 
     /**
@@ -110,9 +110,9 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
         mRatingBar = (RatingBar)rootView.findViewById(R.id.entry_rating);
         mTxtMaker = (TextView)rootView.findViewById(R.id.entry_maker);
         mTxtOrigin = (TextView)rootView.findViewById(R.id.entry_origin);
+        mTxtPrice = (TextView)rootView.findViewById(R.id.entry_price);
         mTxtLocation = (TextView)rootView.findViewById(R.id.entry_location);
         mTxtDate = (TextView)rootView.findViewById(R.id.entry_date);
-        mTxtPrice = (TextView)rootView.findViewById(R.id.entry_price);
         mTxtNotes = (TextView)rootView.findViewById(R.id.entry_notes);
 
         return rootView;
@@ -199,7 +199,6 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
         ((ViewEntryFragment)getParentFragment()).setEntryTitle(mTitle);
 
         mTxtTitle.setText(mTitle);
-        mRatingBar.setRating(mRating);
 
         final String maker = data.getString(data.getColumnIndex(Tables.Entries.MAKER));
         final String origin = data.getString(data.getColumnIndex(Tables.Entries.ORIGIN));
@@ -214,6 +213,8 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
             setViewText(mTxtOrigin, origin);
             mTxtOrigin.setVisibility(View.VISIBLE);
         }
+
+        setViewText(mTxtPrice, data.getString(data.getColumnIndex(Tables.Entries.PRICE)));
 
         String date = null;
         final long timestamp = data.getLong(data.getColumnIndex(Tables.Entries.DATE));
@@ -232,8 +233,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
             mTxtDate.setVisibility(View.VISIBLE);
         }
 
-        setViewText(mTxtPrice, data.getString(data.getColumnIndex(Tables.Entries.PRICE)));
-
+        mRatingBar.setRating(mRating);
         mTxtNotes.setText(data.getString(data.getColumnIndex(Tables.Entries.NOTES)));
 
         getActivity().invalidateOptionsMenu();

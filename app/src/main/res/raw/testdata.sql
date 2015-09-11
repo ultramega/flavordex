@@ -214,12 +214,12 @@ INSERT INTO `entries_extras` VALUES (23,5,23,'A Value');
 --
 INSERT INTO `entries_extras` VALUES (24,5,24,'8');
 --
-INSERT INTO `entries` VALUES (1,3,'Jefferson’s Straight Rye Whiskey',1,'Home',1354137274000,'$36/bottle',4.0,'Quick burst of fruit followed by mellow rye spice & dryness, has a grassy linger. There is a certain funk to it that’s VERY subtle, and almost grappa like - very faint and not unpleasant. Makes an above average old fashioned and Manhattan and good neat but not my preferred rye for a session but definitely a dynamic tasting. Chewy linger w/ the grass and leather.');
+INSERT INTO `entries` VALUES (1,3,'Jefferson’s Straight Rye Whiskey',1,'$36/bottle','Home',1354137274000,4.0,'Quick burst of fruit followed by mellow rye spice & dryness, has a grassy linger. There is a certain funk to it that’s VERY subtle, and almost grappa like - very faint and not unpleasant. Makes an above average old fashioned and Manhattan and good neat but not my preferred rye for a session but definitely a dynamic tasting. Chewy linger w/ the grass and leather.');
 --
-INSERT INTO `entries` VALUES (2,1,'Pliney The Elder',2,'Bottleworks',1372219156000,'$5',4.5,'Profoundly balanced given the alcohol content, hops, and light body. All the characteristics of an imperial but the sum is greater than the parts.');
+INSERT INTO `entries` VALUES (2,1,'Pliney The Elder',2,'$5','Bottleworks',1372219156000,4.5,'Profoundly balanced given the alcohol content, hops, and light body. All the characteristics of an imperial but the sum is greater than the parts.');
 --
-INSERT INTO `entries` VALUES (3,2,'2009 Old Vine Cuvee',3,'',1337526402000,'$9',3.5,'Rich & mineral heavy but with a brightness & heat bursting through to prevent it from lingering metallic, instead leaving behind rich, concentrated cherry and pleasant warmth.');
+INSERT INTO `entries` VALUES (3,2,'2009 Old Vine Cuvee',3,'$9','',1337526402000,3.5,'Rich & mineral heavy but with a brightness & heat bursting through to prevent it from lingering metallic, instead leaving behind rich, concentrated cherry and pleasant warmth.');
 --
-INSERT INTO `entries` VALUES (4,4,'Ethiopia Gedeo',4,'Herkimer',1337526009000,'$2',4.0,'Strong smell and taste of blueberry, balanced, medium body doesn''t overexpose the dark berry flavor - easy. I like turtles.');
+INSERT INTO `entries` VALUES (4,4,'Ethiopia Gedeo',4,'$2','Herkimer',1337526009000,4.0,'Strong smell and taste of blueberry, balanced, medium body doesn''t overexpose the dark berry flavor - easy. I like turtles.');
 --
-INSERT INTO `entries` VALUES (5,5,'Sample Entry',5,'Nowhere',1440701993000,'$6',3.0,'This is just a sample...');
+INSERT INTO `entries` VALUES (5,5,'Sample Entry',5,'$6','Nowhere',1440701993000,3.0,'This is just a sample...');

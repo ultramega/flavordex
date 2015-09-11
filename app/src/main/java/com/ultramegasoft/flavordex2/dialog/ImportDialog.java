@@ -333,9 +333,9 @@ public class ImportDialog extends DialogFragment
                 values.put(Tables.Entries.CAT, entry.catId);
                 values.put(Tables.Entries.MAKER, entry.maker);
                 values.put(Tables.Entries.ORIGIN, entry.origin);
+                values.put(Tables.Entries.PRICE, entry.price);
                 values.put(Tables.Entries.LOCATION, entry.location);
                 values.put(Tables.Entries.DATE, entry.date);
-                values.put(Tables.Entries.PRICE, entry.price);
                 values.put(Tables.Entries.RATING, entry.rating);
                 values.put(Tables.Entries.NOTES, entry.notes);
 

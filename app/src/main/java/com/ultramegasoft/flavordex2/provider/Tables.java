@@ -42,9 +42,9 @@ public class Tables {
         public static final String MAKER_ID = "maker_id";
         public static final String MAKER = "maker";
         public static final String ORIGIN = "origin";
+        public static final String PRICE = "price";
         public static final String LOCATION = "location";
         public static final String DATE = "date";
-        public static final String PRICE = "price";
         public static final String RATING = "rating";
         public static final String NOTES = "notes";
 
