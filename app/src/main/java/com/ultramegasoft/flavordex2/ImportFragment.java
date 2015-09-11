@@ -6,15 +6,12 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -24,8 +21,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,33 +29,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.RatingBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.dialog.FileSelectorDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.CSVUtils;
+import com.ultramegasoft.flavordex2.widget.CSVListAdapter;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-
-import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * Fragment for importing journal entries from CSV files.
@@ -68,7 +51,7 @@ import au.com.bytecode.opencsv.CSVReader;
  * @author Steve Guidetti
  */
 public class ImportFragment extends ListFragment
-        implements LoaderManager.LoaderCallbacks<ImportFragment.CSVHolder> {
+        implements LoaderManager.LoaderCallbacks<CSVUtils.CSVHolder> {
     /**
      * Request codes for external Activities
      */
@@ -90,7 +73,7 @@ public class ImportFragment extends ListFragment
     /**
      * The data loaded from the CSV file
      */
-    private CSVHolder mData;
+    private CSVUtils.CSVHolder mData;
 
     /**
      * The path to the selected file
@@ -267,197 +250,19 @@ public class ImportFragment extends ListFragment
         DataSaverFragment.init(getFragmentManager(), this, REQUEST_INSERT, entries);
     }
 
-    /**
-     * Load and parse a CSV file.
-     *
-     * @param context The Context
-     * @param file    The CSV File
-     * @return The data from the CSV file
-     */
-    private static CSVHolder importCSV(Context context, File file) {
-        try {
-            String[] line;
-            final CSVReader reader = new CSVReader(new FileReader(file));
-
-            if((line = reader.readNext()) != null) {
-                final List<String> fields = Arrays.asList(line);
-                if(!fields.contains(Tables.Entries.TITLE)) {
-                    return null;
-                }
-
-                final ContentResolver cr = context.getContentResolver();
-                final CSVHolder data = new CSVHolder();
-
-                final HashMap<String, String> rowMap = new HashMap<>();
-                EntryHolder entry;
-                while((line = reader.readNext()) != null) {
-                    rowMap.clear();
-                    for(int i = 0; i < line.length; i++) {
-                        rowMap.put(fields.get(i), line[i]);
-                    }
-                    entry = readCSVRow(rowMap);
-
-                    if(TextUtils.isEmpty(entry.title)) {
-                        continue;
-                    }
-
-                    data.addEntry(entry, isDuplicate(cr, entry));
-                }
-
-                return data;
-            }
-        } catch(IOException e) {
-            Log.e(ImportFragment.class.getSimpleName(), e.getMessage());
-        }
-        return null;
-    }
-
-    /**
-     * Read a row from a CSV file into an EntryHolder object.
-     *
-     * @param rowMap A map of column names to values
-     * @return The entry
-     */
-    private static EntryHolder readCSVRow(HashMap<String, String> rowMap) {
-        final EntryHolder entry = new EntryHolder();
-        entry.title = rowMap.get(Tables.Entries.TITLE);
-        entry.catName = rowMap.get(Tables.Entries.CAT);
-        entry.maker = rowMap.get(Tables.Entries.MAKER);
-        entry.origin = rowMap.get(Tables.Entries.ORIGIN);
-        entry.location = rowMap.get(Tables.Entries.LOCATION);
-
-        final String dateString = rowMap.get(Tables.Entries.DATE);
-        if(dateString != null) {
-            try {
-                entry.date = XportActivity.sDateFormatter.parse(dateString).getTime();
-            } catch(ParseException e) {
-                entry.date = System.currentTimeMillis();
-            }
-        }
-
-        entry.price = rowMap.get(Tables.Entries.PRICE);
-
-        final String ratingString = rowMap.get(Tables.Entries.RATING);
-        if(ratingString != null) {
-            try {
-                entry.rating = Float.valueOf(ratingString);
-                entry.rating = entry.rating < 0 ? 0 : entry.rating;
-                entry.rating = entry.rating > 5 ? 5 : entry.rating;
-            } catch(NumberFormatException ignored) {
-            }
-        }
-
-        entry.notes = rowMap.get(Tables.Entries.NOTES);
-
-        readExtras(entry, rowMap);
-        readFlavors(entry, rowMap);
-        readPhotos(entry, rowMap);
-
-        return entry;
-    }
-
-    /**
-     * Parse the extras field from the CSV row.
-     *
-     * @param entry  The entry
-     * @param rowMap The map of fields from the row
-     */
-    private static void readExtras(EntryHolder entry, HashMap<String, String> rowMap) {
-        final String extraField = rowMap.get(Tables.Extras.TABLE_NAME);
-        if(TextUtils.isEmpty(extraField)) {
-            return;
-        }
-
-        String[] pair;
-        for(String extra : extraField.split(",")) {
-            pair = extra.split(":", 2);
-            if(pair.length == 2) {
-                entry.addExtra(0, pair[0], false, pair[1]);
-            }
-        }
-    }
-
-    /**
-     * Parse the flavors field from the CSV row.
-     *
-     * @param entry  The entry
-     * @param rowMap The map of fields from the row
-     */
-    private static void readFlavors(EntryHolder entry, HashMap<String, String> rowMap) {
-        final String flavorsField = rowMap.get(Tables.Flavors.TABLE_NAME);
-        if(TextUtils.isEmpty(flavorsField)) {
-            return;
-        }
-
-        String[] pair;
-        int value;
-        for(String flavor : flavorsField.split(",")) {
-            pair = flavor.split(":", 2);
-            if(pair.length != 2) {
-                continue;
-            }
-            try {
-                value = Integer.valueOf(pair[1]);
-                value = value < 0 ? 0 : value;
-                value = value > 5 ? 5 : value;
-            } catch(NumberFormatException e) {
-                continue;
-            }
-            entry.addFlavor(0, pair[0], value);
-        }
-    }
-
-    /**
-     * Parse the photos field from the CSV row.
-     *
-     * @param entry  The entry
-     * @param rowMap The map of fields from the row
-     */
-    private static void readPhotos(EntryHolder entry, HashMap<String, String> rowMap) {
-        final String photosField = rowMap.get(Tables.Photos.TABLE_NAME);
-        if(TextUtils.isEmpty(photosField)) {
-            return;
-        }
-
-        for(String photo : photosField.split(",")) {
-            if(new File(photo).canRead()) {
-                entry.addPhoto(0, photo);
-            }
-        }
-    }
-
-    /**
-     * Is the item a duplicate? Checks the database for an entry with the same name.
-     *
-     * @param cr    The ContentResolver to use
-     * @param entry The entry
-     * @return Whether the entry is a possible duplicate
-     */
-    private static boolean isDuplicate(ContentResolver cr, EntryHolder entry) {
-        final String[] projection = new String[] {Tables.Entries._ID};
-        final String where = Tables.Entries.TITLE + " = ?";
-        final String[] whereArgs = new String[] {entry.title};
-        final Cursor cursor = cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs, null);
-        try {
-            return cursor.moveToFirst();
-        } finally {
-            cursor.close();
-        }
-    }
-
     @Override
-    public Loader<CSVHolder> onCreateLoader(int id, Bundle args) {
+    public Loader<CSVUtils.CSVHolder> onCreateLoader(int id, Bundle args) {
         setListShown(false);
-        return new AsyncTaskLoader<CSVHolder>(getContext()) {
+        return new AsyncTaskLoader<CSVUtils.CSVHolder>(getContext()) {
             @Override
-            public CSVHolder loadInBackground() {
-                return importCSV(getContext(), new File(mFilePath));
+            public CSVUtils.CSVHolder loadInBackground() {
+                return CSVUtils.importCSV(getContext(), new File(mFilePath));
             }
         };
     }
 
     @Override
-    public void onLoadFinished(Loader<CSVHolder> loader, CSVHolder data) {
+    public void onLoadFinished(Loader<CSVUtils.CSVHolder> loader, CSVUtils.CSVHolder data) {
         if(data != null) {
             setListAdapter(new CSVListAdapter(getContext(), data));
 
@@ -485,138 +290,10 @@ public class ImportFragment extends ListFragment
     }
 
     @Override
-    public void onLoaderReset(Loader<CSVHolder> loader) {
+    public void onLoaderReset(Loader<CSVUtils.CSVHolder> loader) {
         setListAdapter(null);
         mFilePath = null;
         mBtnFile.setText(R.string.button_select_file);
-    }
-
-    /**
-     * Holds data for a CSV file.
-     */
-    public static class CSVHolder implements Parcelable {
-        public static final Creator<CSVHolder> CREATOR = new Creator<CSVHolder>() {
-            @Override
-            public CSVHolder createFromParcel(Parcel in) {
-                return new CSVHolder(in);
-            }
-
-            @Override
-            public CSVHolder[] newArray(int size) {
-                return new CSVHolder[size];
-            }
-        };
-
-        /**
-         * The list of entries
-         */
-        public final ArrayList<EntryHolder> entries;
-
-        /**
-         * List of entries that are possible duplicate
-         */
-        public final ArrayList<EntryHolder> duplicates;
-
-        public CSVHolder() {
-            entries = new ArrayList<>();
-            duplicates = new ArrayList<>();
-        }
-
-        private CSVHolder(Parcel in) {
-            entries = in.createTypedArrayList(EntryHolder.CREATOR);
-            duplicates = in.createTypedArrayList(EntryHolder.CREATOR);
-        }
-
-        /**
-         * Add an entry to the list.
-         *
-         * @param entry     The entry
-         * @param duplicate Whether this is a possible duplicate
-         */
-        public void addEntry(EntryHolder entry, boolean duplicate) {
-            entries.add(entry);
-            if(duplicate) {
-                duplicates.add(entry);
-            }
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeTypedList(entries);
-            dest.writeTypedList(duplicates);
-        }
-    }
-
-    /**
-     * Custom Adapter for listing entries from a CSV file as checkable items.
-     */
-    private static class CSVListAdapter extends BaseAdapter {
-        /**
-         * The Context
-         */
-        private final Context mContext;
-
-        /**
-         * The data backing this Adapter
-         */
-        private final CSVHolder mData;
-
-        /**
-         * Formatter for dates
-         */
-        private final SimpleDateFormat mDateFormat;
-
-        /**
-         * @param context The Context
-         * @param data    The data backing this Adapter
-         */
-        public CSVListAdapter(Context context, CSVHolder data) {
-            mContext = context;
-            mData = data;
-            mDateFormat = new SimpleDateFormat(context.getString(R.string.date_format), Locale.US);
-        }
-
-        @Override
-        public int getCount() {
-            return mData.entries.size();
-        }
-
-        @Override
-        public EntryHolder getItem(int position) {
-            return mData.entries.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if(convertView == null) {
-                convertView = LayoutInflater.from(mContext)
-                        .inflate(R.layout.entry_list_item_multiple_choice, parent, false);
-            }
-
-            final EntryHolder entry = getItem(position);
-
-            final TextView titleView = (TextView)convertView.findViewById(R.id.title);
-            final TextView makerView = (TextView)convertView.findViewById(R.id.maker);
-            final RatingBar ratingBar = (RatingBar)convertView.findViewById(R.id.rating);
-            final TextView dateView = (TextView)convertView.findViewById(R.id.date);
-
-            titleView.setText(entry.title);
-            makerView.setText(entry.maker);
-            ratingBar.setRating(entry.rating);
-            dateView.setText(mDateFormat.format(new Date(entry.date)));
-
-            return convertView;
-        }
     }
 
     /**
