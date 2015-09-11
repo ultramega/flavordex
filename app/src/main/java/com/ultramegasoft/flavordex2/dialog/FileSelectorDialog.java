@@ -54,6 +54,11 @@ public class FileSelectorDialog extends DialogFragment {
     public static final String EXTRA_PATH = "path";
 
     /**
+     * Keys for the saved state
+     */
+    private static final String STATE_PATH = "path";
+
+    /**
      * The current path
      */
     private String mPath;
@@ -113,8 +118,8 @@ public class FileSelectorDialog extends DialogFragment {
      * @param path             The current path
      */
     public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
-                                   String rootPath, boolean allowDirectories, String nameFilter,
-                                   String path) {
+                                  String rootPath, boolean allowDirectories, String nameFilter,
+                                  String path) {
         final DialogFragment fragment = new FileSelectorDialog();
         fragment.setTargetFragment(target, requestCode);
 
@@ -136,6 +141,10 @@ public class FileSelectorDialog extends DialogFragment {
         mRootPath = args.getString(ARG_ROOT_PATH);
         mAllowDirectories = args.getBoolean(ARG_ALLOW_DIRECTORIES, false);
         mNameFilter = args.getString(ARG_NAME_FILTER);
+
+        if(savedInstanceState != null) {
+            mPath = savedInstanceState.getString(STATE_PATH, mPath);
+        }
 
         if(mRootPath == null) {
             mRootPath = Environment.getExternalStorageDirectory().getPath();
@@ -181,6 +190,12 @@ public class FileSelectorDialog extends DialogFragment {
         }
 
         return builder.create();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_PATH, mPath);
     }
 
     /**
