@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    style="@style/Base.TextAppearance.AppCompat.Medium"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:drawableLeft="@drawable/ic_file"
+    android:drawablePadding="4dp"
+    android:drawableStart="@drawable/ic_file"
+    android:padding="@dimen/file_padding" />
