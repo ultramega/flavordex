@@ -211,6 +211,11 @@ public class ImportFragment extends DialogFragment
         private static final String ARG_ENTRIES = "entries";
 
         /**
+         * The list of entries
+         */
+        private ArrayList<EntryHolder> mEntries;
+
+        /**
          * Start a new instance of this Fragment.
          *
          * @param fm      The FragmentManager to use
@@ -234,9 +239,9 @@ public class ImportFragment extends DialogFragment
             setCancelable(false);
 
             final Bundle args = getArguments();
-            final ArrayList<EntryHolder> entries = args.getParcelableArrayList(ARG_ENTRIES);
+            mEntries = args.getParcelableArrayList(ARG_ENTRIES);
 
-            new SaveTask(entries).execute();
+            new SaveTask().execute();
         }
 
         @NonNull
@@ -247,6 +252,8 @@ public class ImportFragment extends DialogFragment
             dialog.setIcon(R.drawable.ic_import);
             dialog.setTitle(R.string.title_importing);
             dialog.setIndeterminate(false);
+            dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            dialog.setMax(mEntries.size());
 
             return dialog;
         }
@@ -254,7 +261,7 @@ public class ImportFragment extends DialogFragment
         /**
          * Set the progress bar progress.
          *
-         * @param progress The progress on a scale of 0 to 10000
+         * @param progress The progress on a scale of 0 to the number of items
          */
         private void setProgress(int progress) {
             ((ProgressDialog)getDialog()).setProgress(progress);
@@ -264,7 +271,6 @@ public class ImportFragment extends DialogFragment
          * Notify the target fragment that the task is complete.
          */
         private void onComplete() {
-            setProgress(10000);
             Toast.makeText(getContext(), R.string.message_import_complete, Toast.LENGTH_LONG)
                     .show();
             dismiss();
@@ -280,11 +286,6 @@ public class ImportFragment extends DialogFragment
             private final ContentResolver mResolver;
 
             /**
-             * The list of entries
-             */
-            private final ArrayList<EntryHolder> mEntries;
-
-            /**
              * The Uri for the entry category
              */
             private Uri mCatUri;
@@ -294,12 +295,8 @@ public class ImportFragment extends DialogFragment
              */
             private boolean mIsCatNew;
 
-            /**
-             * @param entries The list of entries
-             */
-            public SaveTask(ArrayList<EntryHolder> entries) {
+            public SaveTask() {
                 mResolver = getContext().getContentResolver();
-                mEntries = entries;
             }
 
             @Override
@@ -315,7 +312,7 @@ public class ImportFragment extends DialogFragment
                     insertExtras(entryUri, entry);
                     insertFlavors(entryUri, entry);
                     insertPhotos(entryUri, entry);
-                    publishProgress(++i * 10000 / mEntries.size());
+                    publishProgress(++i);
                 }
                 return null;
             }
