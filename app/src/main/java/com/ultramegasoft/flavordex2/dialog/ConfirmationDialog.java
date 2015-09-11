@@ -74,7 +74,7 @@ public class ConfirmationDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Bundle args = getArguments();
         return new AlertDialog.Builder(getContext())
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.ic_warning)
                 .setTitle(args.getString(ARG_TITLE))
                 .setMessage(args.getString(ARG_MESSAGE))
                 .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {

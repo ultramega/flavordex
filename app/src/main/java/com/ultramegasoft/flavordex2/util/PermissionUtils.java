@@ -154,7 +154,7 @@ public class PermissionUtils {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return new AlertDialog.Builder(getContext())
-                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .setIcon(R.drawable.ic_info)
                     .setTitle(R.string.title_permission)
                     .setMessage(getArguments().getCharSequence(ARG_MESSAGE))
                     .setPositiveButton(R.string.button_ok, null)

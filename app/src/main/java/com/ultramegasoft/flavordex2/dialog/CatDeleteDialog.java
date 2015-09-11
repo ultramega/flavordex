@@ -102,7 +102,7 @@ public class CatDeleteDialog extends DialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mCatId = getArguments().getLong(ARG_CAT_ID);
         return new AlertDialog.Builder(getContext())
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.ic_warning)
                 .setTitle(R.string.title_delete_cat)
                 .setView(getLayout(savedInstanceState))
                 .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
