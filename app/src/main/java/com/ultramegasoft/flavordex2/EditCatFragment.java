@@ -556,6 +556,8 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
                 mRadarView.setVisibility(View.VISIBLE);
                 break;
         }
+
+        getLoaderManager().destroyLoader(loader.getId());
     }
 
     @Override
