@@ -120,11 +120,15 @@ public class ExportDialog extends DialogFragment {
      * @return The path to the directory where we will save the file
      */
     private static String getBasePath() {
+        final File file;
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-                    .getPath();
+            file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        } else {
+            file = Environment.getExternalStorageDirectory();
         }
-        return Environment.getExternalStorageDirectory().getPath();
+        //noinspection ResultOfMethodCallIgnored
+        file.mkdirs();
+        return file.getPath();
     }
 
     /**
@@ -261,7 +265,7 @@ public class ExportDialog extends DialogFragment {
          * @param filePath The path to the CSV file to save to
          */
         public static void init(FragmentManager fm, long[] entryIds, String filePath) {
-            final DialogFragment fragment = new ExportDialog();
+            final DialogFragment fragment = new ExporterFragment();
 
             final Bundle args = new Bundle();
             args.putLongArray(ARG_ENTRY_IDS, entryIds);
