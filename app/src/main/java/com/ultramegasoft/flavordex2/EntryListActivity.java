@@ -16,7 +16,6 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
  * @author Steve Guidetti
  */
 public class EntryListActivity extends AppCompatActivity {
-
     /**
      * Whether the Activity is in two-pane mode
      */
@@ -31,7 +30,7 @@ public class EntryListActivity extends AppCompatActivity {
             mTwoPane = true;
 
             ((EntryListFragment)getSupportFragmentManager().findFragmentById(R.id.entry_list))
-                    .setActivateOnItemClick(true);
+                    .setTwoPane(true);
         }
 
         if(savedInstanceState == null) {

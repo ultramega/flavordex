@@ -21,5 +21,17 @@
     <FrameLayout
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/export_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        android:visibility="gone"
+        tools:ignore="UnusedAttribute" />
+
 </LinearLayout>

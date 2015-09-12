@@ -54,6 +54,11 @@ public class EntryListAdapter extends CursorAdapter {
     private final HashMap<Long, Integer> mItemPositions = new HashMap<>();
 
     /**
+     * Whether multiple choice mode is enabled
+     */
+    private boolean mMultiChoice = false;
+
+    /**
      * @param context The Context
      */
     public EntryListAdapter(Context context) {
@@ -74,9 +79,20 @@ public class EntryListAdapter extends CursorAdapter {
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return mMultiChoice ? 1 : 0;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
+
+    @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        final View view =
-                LayoutInflater.from(context).inflate(R.layout.entry_list_item, parent, false);
+        final int viewId =
+                mMultiChoice ? R.layout.entry_list_item_multiple_choice : R.layout.entry_list_item;
+        final View view = LayoutInflater.from(context).inflate(viewId, parent, false);
 
         final Holder holder = new Holder();
         holder.thumb = (ImageView)view.findViewById(R.id.thumb);
@@ -99,7 +115,9 @@ public class EntryListAdapter extends CursorAdapter {
         final float rating = cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING));
         final long date = cursor.getLong(cursor.getColumnIndex(Tables.Entries.DATE));
 
-        sThumbLoader.load(holder.thumb, id);
+        if(holder.thumb != null) {
+            sThumbLoader.load(holder.thumb, id);
+        }
         holder.title.setText(title);
         holder.maker.setText(maker);
         holder.rating.setRating(rating);
@@ -110,6 +128,27 @@ public class EntryListAdapter extends CursorAdapter {
         }
 
         mItemCats.put(id, cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT)));
+    }
+
+    /**
+     * Is the Adapter in multiple choice mode?
+     *
+     * @return Whether the Adapter is in multiple choice mode
+     */
+    public boolean getMultiChoiceMode() {
+        return mMultiChoice;
+    }
+
+    /**
+     * Set multiple choice mode for the Adapter.
+     *
+     * @param multiChoice Whether to allow multiple selections
+     */
+    public void setMultiChoiceMode(boolean multiChoice) {
+        if(mMultiChoice != multiChoice) {
+            mMultiChoice = multiChoice;
+            notifyDataSetChanged();
+        }
     }
 
     /**

@@ -24,6 +24,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -58,6 +59,7 @@ public class EntryListFragment extends ListFragment
     private static final String STATE_FILTER_TEXT = "filter_text";
     private static final String STATE_WHERE = "where";
     private static final String STATE_WHERE_ARGS = "where_args";
+    private static final String STATE_EXPORT_MODE = "export_mode";
 
     /**
      * The fields to query from the database
@@ -72,6 +74,11 @@ public class EntryListFragment extends ListFragment
     };
 
     /**
+     * Whether the Activity is in two-pane mode
+     */
+    private boolean mTwoPane;
+
+    /**
      * The main list Toolbar
      */
     private Toolbar mToolbar;
@@ -80,6 +87,11 @@ public class EntryListFragment extends ListFragment
      * The Toolbar for displaying filter settings
      */
     private Toolbar mFilterToolbar;
+
+    /**
+     * The Toolbar for export selection mode
+     */
+    private Toolbar mExportToolbar;
 
     /**
      * The current activated item if in two-pane mode
@@ -122,6 +134,11 @@ public class EntryListFragment extends ListFragment
     private boolean mSortReversed = false;
 
     /**
+     * Whether the list is in export selection mode
+     */
+    private boolean mExportMode = false;
+
+    /**
      * The Adapter for the ListView
      */
     private EntryListAdapter mAdapter;
@@ -136,6 +153,7 @@ public class EntryListFragment extends ListFragment
             mFilterText = savedInstanceState.getString(STATE_FILTER_TEXT);
             mWhere = savedInstanceState.getString(STATE_WHERE);
             mWhereArgs = savedInstanceState.getStringArray(STATE_WHERE_ARGS);
+            mExportMode = savedInstanceState.getBoolean(STATE_EXPORT_MODE, mExportMode);
         }
 
         final SharedPreferences prefs = PreferenceManager
@@ -157,6 +175,8 @@ public class EntryListFragment extends ListFragment
         mAdapter = new EntryListAdapter(getContext());
         setListShown(false);
         setListAdapter(mAdapter);
+
+        setExportMode(mExportMode);
 
         getLoaderManager().initLoader(0, null, this);
     }
@@ -190,6 +210,9 @@ public class EntryListFragment extends ListFragment
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
+        if(mExportMode) {
+            return;
+        }
         mActivatedItem = id;
         ((EntryListActivity)getActivity()).onItemSelected(id, mAdapter.getItemCat(id));
     }
@@ -203,6 +226,7 @@ public class EntryListFragment extends ListFragment
         outState.putString(STATE_FILTER_TEXT, mFilterText);
         outState.putString(STATE_WHERE, mWhere);
         outState.putStringArray(STATE_WHERE_ARGS, mWhereArgs);
+        outState.putBoolean(STATE_EXPORT_MODE, mExportMode);
     }
 
     @Override
@@ -251,10 +275,17 @@ public class EntryListFragment extends ListFragment
                         rootPath, false, ".csv");
                 return true;
             case R.id.menu_export:
+                setExportMode(true);
+                return true;
+            case R.id.menu_export_selected:
                 ExportDialog.showDialog(getFragmentManager(), getListView().getCheckedItemIds());
+                setExportMode(false);
                 return true;
             case R.id.menu_settings:
                 startActivity(new Intent(getContext(), SettingsActivity.class));
+                return true;
+            case R.id.menu_cancel:
+                setExportMode(false);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -409,6 +440,47 @@ public class EntryListFragment extends ListFragment
     }
 
     /**
+     * Enable or disable export mode.
+     *
+     * @param exportMode Whether to enable export mode
+     */
+    private void setExportMode(boolean exportMode) {
+        final ListView listView = getListView();
+        if(exportMode) {
+            listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+        } else {
+            setActivateOnItemClick(mTwoPane);
+            for(long id : getListView().getCheckedItemIds()) {
+                listView.setItemChecked(mAdapter.getItemIndex(id), false);
+            }
+        }
+        mAdapter.setMultiChoiceMode(exportMode);
+        listView.setItemChecked(mAdapter.getItemIndex(mActivatedItem), !exportMode && mTwoPane);
+        showExportToolbar(exportMode);
+
+        mExportMode = exportMode;
+    }
+
+    /**
+     * Show or hide the export Toolbar.
+     *
+     * @param show Whether to show the export Toolbar
+     */
+    private void showExportToolbar(boolean show) {
+        if(mExportToolbar == null) {
+            mExportToolbar = (Toolbar)getActivity().findViewById(R.id.export_toolbar);
+            mExportToolbar.inflateMenu(R.menu.export_menu);
+            mExportToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onOptionsItemSelected(item);
+                }
+            });
+        }
+        mExportToolbar.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    /**
      * Set the text shown when the list is empty based on any filters that are set.
      */
     private void updateEmptyText() {
@@ -458,10 +530,20 @@ public class EntryListFragment extends ListFragment
     }
 
     /**
+     * Enable or disable two-pane mode.
+     *
+     * @param twoPane Whether the Activity is in two-pane mode
+     */
+    public void setTwoPane(boolean twoPane) {
+        mTwoPane = twoPane;
+        setActivateOnItemClick(twoPane);
+    }
+
+    /**
      * Turn on activate-on-click mode. When this mode is on, list items will be given the activated
      * state when touched.
      */
-    public void setActivateOnItemClick(boolean activateOnItemClick) {
+    private void setActivateOnItemClick(boolean activateOnItemClick) {
         getListView().setChoiceMode(activateOnItemClick
                 ? ListView.CHOICE_MODE_SINGLE
                 : ListView.CHOICE_MODE_NONE);
@@ -492,9 +574,8 @@ public class EntryListFragment extends ListFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        final EntryListAdapter adapter = (EntryListAdapter)getListAdapter();
-        adapter.changeCursor(data);
-        setActivatedPosition(adapter.getItemIndex(mActivatedItem));
+        mAdapter.changeCursor(data);
+        setActivatedPosition(mAdapter.getItemIndex(mActivatedItem));
         setListShown(true);
     }
 
