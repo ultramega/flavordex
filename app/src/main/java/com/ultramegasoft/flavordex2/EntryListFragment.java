@@ -2,7 +2,6 @@ package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -73,11 +72,6 @@ public class EntryListFragment extends ListFragment
     };
 
     /**
-     * The Fragment's current callback object, which is notified of list item clicks
-     */
-    private Callbacks mCallbacks = sDummyCallbacks;
-
-    /**
      * The main list Toolbar
      */
     private Toolbar mToolbar;
@@ -131,30 +125,6 @@ public class EntryListFragment extends ListFragment
      * The Adapter for the ListView
      */
     private EntryListAdapter mAdapter;
-
-    /**
-     * A callback interface that all Activities containing this Fragment must implement. This
-     * mechanism allows Activities to be notified of item selections.
-     */
-    public interface Callbacks {
-        /**
-         * Callback for when an item has been selected.
-         *
-         * @param id  The row ID of the selected item
-         * @param cat The category of item selected
-         */
-        void onItemSelected(long id, String cat);
-    }
-
-    /**
-     * A dummy implementation of the Callbacks interface that does nothing. Used only when this
-     * Fragment is not attached to an Activity.
-     */
-    private static final Callbacks sDummyCallbacks = new Callbacks() {
-        @Override
-        public void onItemSelected(long id, String cat) {
-        }
-    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -218,27 +188,10 @@ public class EntryListFragment extends ListFragment
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if(!(context instanceof Callbacks)) {
-            throw new IllegalStateException("Activity must implement fragment's callbacks.");
-        }
-
-        mCallbacks = (Callbacks)context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallbacks = sDummyCallbacks;
-    }
-
-    @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
         mActivatedItem = id;
-        mCallbacks.onItemSelected(id, mAdapter.getItemCat(id));
+        ((EntryListActivity)getActivity()).onItemSelected(id, mAdapter.getItemCat(id));
     }
 
     @Override
@@ -318,7 +271,7 @@ public class EntryListFragment extends ListFragment
                     final long entryId = data.getLongExtra(AddEntryActivity.EXTRA_ENTRY_ID, 0);
                     if(entryId > 0) {
                         mActivatedItem = entryId;
-                        mCallbacks.onItemSelected(entryId,
+                        ((EntryListActivity)getActivity()).onItemSelected(entryId,
                                 data.getStringExtra(AddEntryActivity.EXTRA_ENTRY_CAT));
                     }
                     break;

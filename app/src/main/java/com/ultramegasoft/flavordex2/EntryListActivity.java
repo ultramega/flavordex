@@ -15,7 +15,7 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
  *
  * @author Steve Guidetti
  */
-public class EntryListActivity extends AppCompatActivity implements EntryListFragment.Callbacks {
+public class EntryListActivity extends AppCompatActivity {
 
     /**
      * Whether the Activity is in two-pane mode
@@ -46,7 +46,6 @@ public class EntryListActivity extends AppCompatActivity implements EntryListFra
         PermissionUtils.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
-    @Override
     public void onItemSelected(long id, String cat) {
         if(mTwoPane) {
             final Bundle arguments = new Bundle();
