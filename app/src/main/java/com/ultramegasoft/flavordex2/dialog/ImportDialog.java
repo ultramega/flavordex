@@ -245,8 +245,6 @@ public class ImportDialog extends DialogFragment
 
             final Bundle args = getArguments();
             mEntries = args.getParcelableArrayList(ARG_ENTRIES);
-
-            new SaveTask().execute();
         }
 
         @NonNull
@@ -261,6 +259,12 @@ public class ImportDialog extends DialogFragment
             dialog.setMax(mEntries.size());
 
             return dialog;
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            new SaveTask().execute();
         }
 
         /**
