@@ -405,10 +405,12 @@ public class ExportDialog extends DialogFragment {
                 try {
                     String name;
                     String value;
+                    boolean preset;
                     while(cursor.moveToNext()) {
                         name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
                         value = cursor.getString(cursor.getColumnIndex(Tables.EntriesExtras.VALUE));
-                        entry.addExtra(0, name, false, value);
+                        preset = cursor.getInt(cursor.getColumnIndex(Tables.Extras.PRESET)) == 1;
+                        entry.addExtra(0, name, preset, value);
                     }
                 } finally {
                     cursor.close();

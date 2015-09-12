@@ -111,7 +111,9 @@ public class CSVUtils {
     private static void addExtras(ArrayList<String> fields, EntryHolder entry) {
         final ArrayList<String> extras = new ArrayList<>();
         for(ExtraFieldHolder extra : entry.getExtras()) {
-            extras.add(extra.name + PAIR_DELIM + extra.value);
+            if(extra.preset || !TextUtils.isEmpty(extra.value)) {
+                extras.add(extra.name + PAIR_DELIM + extra.value);
+            }
         }
         fields.add(TextUtils.join(FIELD_DELIM, extras));
     }
