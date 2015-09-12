@@ -245,7 +245,7 @@ public class CSVUtils {
         }
 
         String[] pair;
-        for(String extra : extraField.split(FIELD_DELIM)) {
+        for(String extra : extraField.split("\\" + FIELD_DELIM)) {
             pair = extra.split(PAIR_DELIM, 2);
             if(pair.length == 2) {
                 entry.addExtra(0, pair[0], false, pair[1]);
@@ -267,7 +267,7 @@ public class CSVUtils {
 
         String[] pair;
         int value;
-        for(String flavor : flavorsField.split(FIELD_DELIM)) {
+        for(String flavor : flavorsField.split("\\" + FIELD_DELIM)) {
             pair = flavor.split(PAIR_DELIM, 2);
             if(pair.length != 2) {
                 continue;
@@ -295,7 +295,7 @@ public class CSVUtils {
             return;
         }
 
-        for(String photo : photosField.split(PHOTO_DELIM)) {
+        for(String photo : photosField.split("\\" + PHOTO_DELIM)) {
             if(new File(photo).canRead()) {
                 entry.addPhoto(0, photo);
             }
