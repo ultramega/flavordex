@@ -264,24 +264,6 @@ public class ImportDialog extends DialogFragment
         }
 
         /**
-         * Set the progress bar progress.
-         *
-         * @param progress The progress on a scale of 0 to the number of items
-         */
-        private void setProgress(int progress) {
-            ((ProgressDialog)getDialog()).setProgress(progress);
-        }
-
-        /**
-         * Notify the target fragment that the task is complete.
-         */
-        private void onComplete() {
-            Toast.makeText(getContext(), R.string.message_import_complete, Toast.LENGTH_LONG)
-                    .show();
-            dismiss();
-        }
-
-        /**
          * Task for saving entries in the background.
          */
         private class SaveTask extends AsyncTask<Void, Integer, Void> {
@@ -470,12 +452,14 @@ public class ImportDialog extends DialogFragment
 
             @Override
             protected void onProgressUpdate(Integer... values) {
-                setProgress(values[0]);
+                ((ProgressDialog)getDialog()).setProgress(values[0]);
             }
 
             @Override
             protected void onPostExecute(Void result) {
-                onComplete();
+                Toast.makeText(getContext(), R.string.message_import_complete, Toast.LENGTH_LONG)
+                        .show();
+                dismiss();
             }
         }
     }
