@@ -29,8 +29,10 @@
     <string name="title_all_entries">All Entries</string>
     <string name="title_cat_entries">%s Entries</string>
     <string name="title_import">Import Entries</string>
+    <string name="title_export">Export Entries</string>
     <string name="title_select_file">Select File</string>
     <string name="title_importing">Importing…</string>
+    <string name="title_exporting">Exporting…</string>
     <string name="title_permission">Permission Requested</string>
 
     <string name="header_details">Details</string>
@@ -87,6 +89,7 @@
     <string name="button_remove_flavor">Remove Flavor</string>
     <string name="button_grant_permission">Grant Permission</string>
     <string name="button_import">Import Selected</string>
+    <string name="button_export">Export</string>
 
     <string name="hint_empty" translatable="false">\?</string>
     <string name="hint_entry_title">Entry Title</string>
@@ -136,7 +139,7 @@
     <string name="pref_summary_detect_location">Auto-fill location name based on previous entries</string>
 
     <string name="error_camera">Error: Unable to launch camera</string>
-    <string name="error_invalid_file">invalid file name</string>
+    <string name="error_csv_export">Error: Export failed</string>
     <string name="error_csv_parse">Unable to parse the .csv file\n\nMake sure the first row is column names, and contains a \'title\' field.</string>
     <string name="error_required">required</string>
 

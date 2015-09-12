@@ -30,6 +30,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.ultramegasoft.flavordex2.dialog.EntryFilterDialog;
+import com.ultramegasoft.flavordex2.dialog.ExportDialog;
 import com.ultramegasoft.flavordex2.dialog.FileSelectorDialog;
 import com.ultramegasoft.flavordex2.dialog.ImportDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
@@ -295,6 +296,9 @@ public class EntryListFragment extends ListFragment
                 final String rootPath = Environment.getExternalStorageDirectory().getPath();
                 FileSelectorDialog.showDialog(getFragmentManager(), this, REQUEST_IMPORT_FILE,
                         rootPath, false, ".csv");
+                return true;
+            case R.id.menu_export:
+                ExportDialog.showDialog(getFragmentManager(), getListView().getCheckedItemIds());
                 return true;
             case R.id.menu_settings:
                 startActivity(new Intent(getContext(), SettingsActivity.class));
