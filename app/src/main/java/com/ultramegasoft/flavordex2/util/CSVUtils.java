@@ -11,6 +11,7 @@ import android.util.Log;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
+import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 
 import java.io.File;
@@ -136,7 +137,11 @@ public class CSVUtils {
      * @param entry  The entry
      */
     private static void addPhotos(ArrayList<String> fields, EntryHolder entry) {
-        fields.add(TextUtils.join(PHOTO_DELIM, entry.getPhotos()));
+        final ArrayList<String> photos = new ArrayList<>();
+        for(PhotoHolder photo : entry.getPhotos()) {
+            photos.add(photo.path);
+        }
+        fields.add(TextUtils.join(FIELD_DELIM, photos));
     }
 
     /**
