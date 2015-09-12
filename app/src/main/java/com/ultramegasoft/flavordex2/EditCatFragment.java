@@ -173,7 +173,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         root.findViewById(R.id.button_add_extra).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addExtra(0, null);
+                addExtra(0, null, false);
             }
         });
 
@@ -253,15 +253,16 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
     /**
      * Add an extra field.
      *
-     * @param id   The database ID, if any
-     * @param name The name of the field
+     * @param id      The database ID, if any
+     * @param name    The name of the field
+     * @param deleted Whether to show the field as deleted
      */
-    private void addExtra(long id, String name) {
+    private void addExtra(long id, String name, boolean deleted) {
         final int count = mExtraFields.size();
         if(count > 0 && TextUtils.isEmpty(mExtraFields.get(count - 1).name)) {
             return;
         }
-        if(mExtraFields.add(new Field(id, name))) {
+        if(mExtraFields.add(new Field(id, name, deleted))) {
             addExtraField(count);
         }
     }
@@ -442,6 +443,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         });
 
         if(deleted) {
+            editText.setEnabled(false);
             deleteButton.setImageResource(R.drawable.ic_undo);
             deleteButton.setContentDescription(getString(R.string.button_undo));
             editText.setPaintFlags(editText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -522,7 +524,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
                         Tables.Extras.PRESET + " = 0", null, Tables.Extras._ID + " ASC");
             case LOADER_FLAVOR:
                 return new CursorLoader(getContext(), Uri.withAppendedPath(uri, "flavor"), null,
-                        null, null, Tables.Flavors._ID + " ASC");
+                        Tables.Flavors.DELETED + " = 0", null, Tables.Flavors._ID + " ASC");
         }
         return null;
     }
@@ -541,7 +543,8 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
             case LOADER_EXTRAS:
                 while(data.moveToNext()) {
                     addExtra(data.getLong(data.getColumnIndex(Tables.Extras._ID)),
-                            data.getString(data.getColumnIndex(Tables.Extras.NAME)));
+                            data.getString(data.getColumnIndex(Tables.Extras.NAME)),
+                            data.getInt(data.getColumnIndex(Tables.Extras.DELETED)) == 1);
                 }
                 break;
             case LOADER_FLAVOR:
@@ -650,6 +653,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
                         mResolver.delete(uri, null, null);
                     } else {
                         values.put(Tables.Extras.NAME, field.name);
+                        values.put(Tables.Extras.DELETED, false);
                         mResolver.update(uri, values, null, null);
                     }
                 } else if(!field.isEmpty()) {
@@ -721,8 +725,18 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
          * @param name The name of this field
          */
         public Field(long id, String name) {
+            this(id, name, false);
+        }
+
+        /**
+         * @param id     The database ID for this field, or 0 if new
+         * @param name   The name of this field
+         * @param delete The initial deleted status of the field
+         */
+        public Field(long id, String name, boolean delete) {
             this.id = id;
             this.name = name;
+            this.delete = delete;
         }
 
         Field(Parcel in) {
