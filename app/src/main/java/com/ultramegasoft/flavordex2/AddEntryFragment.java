@@ -29,6 +29,8 @@ import com.ultramegasoft.flavordex2.beer.EditBeerInfoFragment;
 import com.ultramegasoft.flavordex2.coffee.EditCoffeeInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.whiskey.EditWhiskeyInfoFragment;
+import com.ultramegasoft.flavordex2.widget.EntryHolder;
+import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.wine.EditWineInfoFragment;
 
 /**
@@ -164,8 +166,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         final FragmentManager fm = getChildFragmentManager();
 
         boolean isValid = false;
-        ContentValues entryInfo = null;
-        ContentValues[] entryExtras = null;
+        EntryHolder entry = null;
         ContentValues[] entryFlavors = null;
         ContentValues[] entryPhotos = null;
         for(Fragment fragment : fm.getFragments()) {
@@ -174,8 +175,8 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
                 if(!isValid) {
                     break;
                 }
-                entryInfo = ((EditInfoFragment)fragment).getData();
-                entryExtras = ((EditInfoFragment)fragment).getExtras();
+                entry = ((EditInfoFragment)fragment).getData();
+                entry.catName = mCatName;
                 continue;
             }
             if(fragment instanceof AddFlavorsFragment) {
@@ -187,9 +188,8 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             }
         }
 
-        if(isValid && entryInfo != null) {
-            DataSaverFragment.init(getFragmentManager(), mCatId, mCatName, entryInfo, entryExtras,
-                    entryFlavors, entryPhotos);
+        if(isValid) {
+            DataSaverFragment.init(getFragmentManager(), entry, entryFlavors, entryPhotos);
         } else {
             mBtnSave.setEnabled(true);
         }
@@ -291,32 +291,14 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         /**
          * Keys for the Fragment arguments
          */
-        public static final String ARG_CAT_ID = "cat_id";
-        public static final String ARG_ENTRY_CAT = "entry_cat";
-        public static final String ARG_ENTRY_INFO = "entry_info";
-        public static final String ARG_ENTRY_EXTRAS = "entry_extras";
+        public static final String ARG_ENTRY = "entry";
         public static final String ARG_ENTRY_FLAVORS = "entry_flavors";
         public static final String ARG_ENTRY_PHOTOS = "entry_photos";
 
         /**
-         * The category ID of the entry
+         * The entry to insert
          */
-        private long mCatId;
-
-        /**
-         * The name of the entry category
-         */
-        private String mEntryCat;
-
-        /**
-         * Values for the entries table row
-         */
-        private ContentValues mEntryInfo;
-
-        /**
-         * Values for the entries_extras table rows
-         */
-        private ContentValues[] mEntryExtras;
+        private EntryHolder mEntry;
 
         /**
          * Values for the entries_flavors table rows
@@ -338,21 +320,14 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
          * Start a new instance of this Fragment.
          *
          * @param fm           The FragmentManager to use
-         * @param catId        The category ID of the entry
-         * @param entryCat     The name of the entry category
-         * @param entryInfo    Values for the entries table row
-         * @param entryExtras  Values for the entries_extras table rows
+         * @param entry        The entry to insert
          * @param entryFlavors Values for the entries_flavors table rows
          * @param entryPhotos  Values for the photos table rows
          */
-        public static void init(FragmentManager fm, long catId, String entryCat,
-                                ContentValues entryInfo, ContentValues[] entryExtras,
-                                ContentValues[] entryFlavors, ContentValues[] entryPhotos) {
+        public static void init(FragmentManager fm, EntryHolder entry, ContentValues[] entryFlavors,
+                                ContentValues[] entryPhotos) {
             final Bundle args = new Bundle();
-            args.putLong(ARG_CAT_ID, catId);
-            args.putString(ARG_ENTRY_CAT, entryCat);
-            args.putParcelable(ARG_ENTRY_INFO, entryInfo);
-            args.putParcelableArray(ARG_ENTRY_EXTRAS, entryExtras);
+            args.putParcelable(ARG_ENTRY, entry);
             args.putParcelableArray(ARG_ENTRY_FLAVORS, entryFlavors);
             args.putParcelableArray(ARG_ENTRY_PHOTOS, entryPhotos);
 
@@ -368,10 +343,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             setRetainInstance(true);
 
             final Bundle args = getArguments();
-            mCatId = args.getLong(ARG_CAT_ID);
-            mEntryCat = args.getString(ARG_ENTRY_CAT);
-            mEntryInfo = args.getParcelable(ARG_ENTRY_INFO);
-            mEntryExtras = (ContentValues[])args.getParcelableArray(ARG_ENTRY_EXTRAS);
+            mEntry = args.getParcelable(ARG_ENTRY);
             mEntryFlavors = (ContentValues[])args.getParcelableArray(ARG_ENTRY_FLAVORS);
             mEntryPhotos = (ContentValues[])args.getParcelableArray(ARG_ENTRY_PHOTOS);
 
@@ -396,7 +368,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             if(activity == null) {
                 mEntryId = entryId;
             } else {
-                activity.publishResult(entryId, mEntryCat);
+                activity.publishResult(entryId, mEntry.catName);
             }
         }
 
@@ -418,20 +390,20 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
 
             @Override
             protected Long doInBackground(Void... params) {
-                final Uri entryUri = mResolver.insert(Tables.Entries.CONTENT_URI, mEntryInfo);
-                if(mEntryExtras != null) {
-                    mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "/extras"), mEntryExtras);
-                }
+                final Uri entryUri = mResolver.insert(Tables.Entries.CONTENT_URI, getInfo());
+                insertExtras(entryUri);
+
                 if(mEntryFlavors != null) {
-                    mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "/flavor"), mEntryFlavors);
+                    mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "flavor"), mEntryFlavors);
                 } else {
                     insertDefaultFlavors(entryUri);
                 }
+
                 if(mEntryPhotos != null) {
-                    mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "/photos"), mEntryPhotos);
+                    mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "photos"), mEntryPhotos);
                 }
 
-                checkLocation(mEntryInfo.getAsString(Tables.Entries.LOCATION));
+                checkLocation(mEntry.location);
 
                 return Long.valueOf(entryUri.getLastPathSegment());
             }
@@ -439,6 +411,43 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             @Override
             protected void onPostExecute(Long entryId) {
                 onComplete(entryId);
+            }
+
+            /**
+             * Get the data for the entries table.
+             *
+             * @return ContentValues ready to be inserted into the entries table
+             */
+            private ContentValues getInfo() {
+                final ContentValues values = new ContentValues();
+                values.put(Tables.Entries.TITLE, mEntry.title);
+                values.put(Tables.Entries.CAT, mEntry.catId);
+                values.put(Tables.Entries.MAKER, mEntry.maker);
+                values.put(Tables.Entries.ORIGIN, mEntry.origin);
+                values.put(Tables.Entries.LOCATION, mEntry.location);
+                values.put(Tables.Entries.DATE, mEntry.date);
+                values.put(Tables.Entries.PRICE, mEntry.price);
+                values.put(Tables.Entries.RATING, mEntry.rating);
+                values.put(Tables.Entries.NOTES, mEntry.notes);
+                return values;
+            }
+
+            /**
+             * Insert the extra fields for the new entry.
+             *
+             * @param entryUri The Uri for the new entry
+             */
+            private void insertExtras(Uri entryUri) {
+                final Uri uri = Uri.withAppendedPath(entryUri, "extras");
+                final ContentValues values = new ContentValues();
+                for(ExtraFieldHolder extra : mEntry.getExtras()) {
+                    if(!extra.preset && TextUtils.isEmpty(extra.value)) {
+                        continue;
+                    }
+                    values.put(Tables.EntriesExtras.EXTRA, extra.id);
+                    values.put(Tables.EntriesExtras.VALUE, extra.value);
+                    mResolver.insert(uri, values);
+                }
             }
 
             /**
@@ -470,7 +479,8 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
              * @param entryUri The Uri of the newly inserted entry
              */
             private void insertDefaultFlavors(Uri entryUri) {
-                final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
+                final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE,
+                        mEntry.catId);
                 final Cursor cursor = mResolver.query(Uri.withAppendedPath(uri, "flavor"), null,
                         null, null, Tables.Flavors._ID + " ASC");
                 try {

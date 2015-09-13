@@ -2,7 +2,6 @@ package com.ultramegasoft.flavordex2;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -32,7 +31,6 @@ import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 /**
@@ -286,48 +284,30 @@ public class EditInfoFragment extends Fragment
     }
 
     /**
-     * Read the primary fields into a ContentValues object ready to be inserted into the entries
-     * database table.
+     * Get the data for this entry, including the main info fields and extra fields.
      *
-     * @return ContentValues containing the data for the entries table
+     * @return EntryHolder containing the main fields and extra fields
      */
-    public final ContentValues getData() {
-        final ContentValues values = new ContentValues();
+    public final EntryHolder getData() {
+        final EntryHolder entry = new EntryHolder();
+        entry.id = mEntryId;
 
-        if(mEntryId == 0) {
-            values.put(Tables.Entries.CAT, mCatId);
-            values.put(Tables.Entries.DATE, System.currentTimeMillis());
+        if(entry.id == 0) {
+            entry.catId = mCatId;
+            entry.date = System.currentTimeMillis();
         }
 
-        values.put(Tables.Entries.TITLE, mTxtTitle.getText().toString());
-        values.put(Tables.Entries.MAKER, mTxtMaker.getText().toString());
-        values.put(Tables.Entries.ORIGIN, mTxtOrigin.getText().toString());
-        values.put(Tables.Entries.LOCATION, mTxtLocation.getText().toString());
-        values.put(Tables.Entries.PRICE, mTxtPrice.getText().toString());
-        values.put(Tables.Entries.RATING, mRatingBar.getRating());
-        values.put(Tables.Entries.NOTES, mTxtNotes.getText().toString());
+        entry.title = mTxtTitle.getText().toString();
+        entry.maker = mTxtMaker.getText().toString();
+        entry.origin = mTxtOrigin.getText().toString();
+        entry.location = mTxtLocation.getText().toString();
+        entry.price = mTxtPrice.getText().toString();
+        entry.rating = mRatingBar.getRating();
+        entry.notes = mTxtNotes.getText().toString();
 
-        return values;
-    }
+        entry.getExtras().addAll(mExtras.values());
 
-    /**
-     * Get the values of the extra fields as an array of ContentValues objects ready to be bulk
-     * inserted into the entries_extras database table.
-     *
-     * @return Array of ContentValues containing data for the entries_extras table
-     */
-    public final ContentValues[] getExtras() {
-        final ArrayList<ContentValues> values = new ArrayList<>();
-        ContentValues rowValues;
-        for(ExtraFieldHolder extra : mExtras.values()) {
-            rowValues = new ContentValues();
-            rowValues.put(Tables.EntriesExtras.EXTRA, extra.id);
-            rowValues.put(Tables.EntriesExtras.VALUE, extra.value);
-
-            values.add(rowValues);
-        }
-
-        return values.toArray(new ContentValues[values.size()]);
+        return entry;
     }
 
     @Override
