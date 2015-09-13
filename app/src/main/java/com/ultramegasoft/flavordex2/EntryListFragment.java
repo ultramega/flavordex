@@ -555,7 +555,7 @@ public class EntryListFragment extends ListFragment
      * @param position The index of the item to activate
      */
     public void setActivatedPosition(int position) {
-        if(position != ListView.INVALID_POSITION) {
+        if(position != ListView.INVALID_POSITION && !mExportMode) {
             getListView().setItemChecked(position, true);
         }
     }
