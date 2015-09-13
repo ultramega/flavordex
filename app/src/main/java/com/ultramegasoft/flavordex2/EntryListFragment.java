@@ -277,15 +277,8 @@ public class EntryListFragment extends ListFragment
             case R.id.menu_export:
                 setExportMode(true);
                 return true;
-            case R.id.menu_export_selected:
-                ExportDialog.showDialog(getFragmentManager(), getListView().getCheckedItemIds());
-                setExportMode(false);
-                return true;
             case R.id.menu_settings:
                 startActivity(new Intent(getContext(), SettingsActivity.class));
-                return true;
-            case R.id.menu_cancel:
-                setExportMode(false);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -473,7 +466,25 @@ public class EntryListFragment extends ListFragment
             mExportToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    return onOptionsItemSelected(item);
+                    switch(item.getItemId()) {
+                        case R.id.menu_export_selected:
+                            ExportDialog.showDialog(getFragmentManager(),
+                                    getListView().getCheckedItemIds());
+                            setExportMode(false);
+                            return true;
+                        case R.id.menu_cancel:
+                            setExportMode(false);
+                            return true;
+                        case R.id.menu_check_all:
+                        case R.id.menu_uncheck_all:
+                            final ListView listView = getListView();
+                            final boolean check = item.getItemId() == R.id.menu_check_all;
+                            for(int i = 0; i < mAdapter.getCount(); i++) {
+                                listView.setItemChecked(i, check);
+                            }
+                            return true;
+                    }
+                    return false;
                 }
             });
         }

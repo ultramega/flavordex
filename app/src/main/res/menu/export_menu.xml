@@ -2,13 +2,24 @@
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="AlwaysShowAction">
+    <item
+        android:id="@+id/menu_check_all"
+        android:icon="@drawable/ic_check_box"
+        android:title="@string/menu_check_all"
+        app:showAsAction="always|withText"
+        />
+    <item
+        android:id="@+id/menu_uncheck_all"
+        android:icon="@drawable/ic_check_box_outline"
+        android:title="@string/menu_uncheck_all"
+        app:showAsAction="always|withText" />
     <item
         android:id="@+id/menu_export_selected"
         android:icon="@drawable/ic_export"
         android:title="@string/menu_export"
-        app:showAsAction="always|withText"
-        tools:ignore="AlwaysShowAction" />
+        app:showAsAction="always|withText" />
     <item
         android:id="@+id/menu_cancel"
         android:icon="@drawable/ic_clear"

@@ -66,6 +66,8 @@
     <string name="menu_edit_cat">Edit Category</string>
     <string name="menu_delete_cat">Delete Category</string>
     <string name="menu_cancel">Cancel</string>
+    <string name="menu_check_all">All</string>
+    <string name="menu_uncheck_all">None</string>
 
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
