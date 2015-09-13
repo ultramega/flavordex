@@ -57,7 +57,7 @@ public class ImportDialog extends DialogFragment
     /**
      * Keys for the saved state
      */
-    private static final String STATE_DATA = "date";
+    private static final String STATE_DATA = "data";
 
     /**
      * Views from the layout
