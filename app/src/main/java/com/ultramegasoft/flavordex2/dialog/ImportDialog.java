@@ -106,9 +106,9 @@ public class ImportDialog extends DialogFragment
     @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final View root = LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
+
         mListView = (ListView)root.findViewById(R.id.list);
         mListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -137,6 +137,12 @@ public class ImportDialog extends DialogFragment
                 })
                 .setNegativeButton(R.string.button_cancel, null)
                 .create();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        invalidateButtons();
     }
 
     @Override
@@ -197,6 +203,7 @@ public class ImportDialog extends DialogFragment
             }
 
             mData = data;
+            invalidateButtons();
         } else {
             dismiss();
         }
