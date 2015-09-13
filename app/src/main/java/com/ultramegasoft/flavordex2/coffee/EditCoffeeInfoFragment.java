@@ -17,7 +17,7 @@ import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Fragment for editing details for a new or existing coffee entry.
@@ -88,7 +88,7 @@ public class EditCoffeeInfoFragment extends EditInfoFragment {
     }
 
     @Override
-    protected void populateExtras(HashMap<String, ExtraFieldHolder> extras) {
+    protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> extras) {
         super.populateExtras(extras);
         initSpinner(mSpnBrewMethod, extras.get(Tables.Extras.Coffee.BREW_METHOD));
 

@@ -33,7 +33,7 @@ import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Fragment for editing details for a new or existing journal entry.
@@ -81,7 +81,7 @@ public class EditInfoFragment extends Fragment
     /**
      * Map of extra field names to their data
      */
-    private HashMap<String, ExtraFieldHolder> mExtras = new HashMap<>();
+    private LinkedHashMap<String, ExtraFieldHolder> mExtras;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,7 +97,7 @@ public class EditInfoFragment extends Fragment
             getLoaderManager().initLoader(0, null, this).forceLoad();
         } else {
             //noinspection unchecked
-            mExtras = (HashMap<String, ExtraFieldHolder>)savedInstanceState
+            mExtras = (LinkedHashMap<String, ExtraFieldHolder>)savedInstanceState
                     .getSerializable(STATE_EXTRAS);
             populateExtras(mExtras);
         }
@@ -212,7 +212,7 @@ public class EditInfoFragment extends Fragment
      *
      * @param extras A map of extra names to the extra field
      */
-    protected void populateExtras(HashMap<String, ExtraFieldHolder> extras) {
+    protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> extras) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
         for(ExtraFieldHolder extra : extras.values()) {
             if(!extra.preset) {
@@ -426,7 +426,8 @@ public class EditInfoFragment extends Fragment
          */
         private void loadExtras(Holder holder) {
             final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
-            final Cursor cursor = mResolver.query(Uri.withAppendedPath(uri, "extras"), null, null, null, null);
+            final Cursor cursor = mResolver.query(Uri.withAppendedPath(uri, "extras"), null, null,
+                    null, Tables.Extras._ID + " ASC");
             long id;
             String name;
             boolean preset;
@@ -476,7 +477,7 @@ public class EditInfoFragment extends Fragment
             /**
              * Map of extra field names to their data
              */
-            public final HashMap<String, ExtraFieldHolder> extras = new HashMap<>();
+            public final LinkedHashMap<String, ExtraFieldHolder> extras = new LinkedHashMap<>();
         }
     }
 }

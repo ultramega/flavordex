@@ -15,7 +15,7 @@ import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Fragment for editing details for a new or existing whiskey entry.
@@ -55,7 +55,7 @@ public class EditWhiskeyInfoFragment extends EditInfoFragment {
     }
 
     @Override
-    protected void populateExtras(HashMap<String, ExtraFieldHolder> extras) {
+    protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> extras) {
         super.populateExtras(extras);
         initEditText(mTxtType, extras.get(Tables.Extras.Whiskey.TYPE));
         initEditText(mTxtAge, extras.get(Tables.Extras.Whiskey.STATS_AGE));

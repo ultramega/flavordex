@@ -15,7 +15,7 @@ import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.widget.SpecialArrayAdapter;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Fragment for editing details for a new or existing beer entry.
@@ -62,7 +62,7 @@ public class EditBeerInfoFragment extends EditInfoFragment {
     }
 
     @Override
-    protected void populateExtras(final HashMap<String, ExtraFieldHolder> extras) {
+    protected void populateExtras(final LinkedHashMap<String, ExtraFieldHolder> extras) {
         super.populateExtras(extras);
         initEditText(mTxtStyle, extras.get(Tables.Extras.Beer.STYLE));
         initSpinner(mSpnServing, extras.get(Tables.Extras.Beer.SERVING));

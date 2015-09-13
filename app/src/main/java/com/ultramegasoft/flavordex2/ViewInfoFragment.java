@@ -317,9 +317,9 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
             case LOADER_MAIN:
                 return new CursorLoader(getContext(), uri, null, null, null, null);
             case LOADER_EXTRAS:
-                uri = Uri.withAppendedPath(uri, "/extras");
+                uri = Uri.withAppendedPath(uri, "extras");
                 return new CursorLoader(getContext(), uri, null, null, null,
-                        Tables.Extras._ID + " ASC");
+                        Tables.EntriesExtras.EXTRA + " ASC");
         }
 
         return null;

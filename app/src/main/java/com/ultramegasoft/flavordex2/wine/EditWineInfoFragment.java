@@ -14,7 +14,7 @@ import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.widget.SpecialArrayAdapter;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Fragment for adding details for a new wine entry.
@@ -53,7 +53,7 @@ public class EditWineInfoFragment extends EditInfoFragment {
     }
 
     @Override
-    protected void populateExtras(HashMap<String, ExtraFieldHolder> extras) {
+    protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> extras) {
         super.populateExtras(extras);
         initEditText(mTxtVarietal, extras.get(Tables.Extras.Wine.VARIETAL));
         initEditText(mTxtVintage, extras.get(Tables.Extras.Wine.STATS_VINTAGE));
