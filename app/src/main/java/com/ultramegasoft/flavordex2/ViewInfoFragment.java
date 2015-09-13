@@ -33,6 +33,7 @@ import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -85,6 +86,11 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * The entry rating
      */
     private float mRating;
+
+    /**
+     * List of extra field TableRows
+     */
+    private ArrayList<View> mExtraRows = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -245,8 +251,14 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param data A LinkedHashMap containing the extra values
      */
     protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> data) {
+        final TableLayout table = (TableLayout)getActivity().findViewById(R.id.entry_info);
+        if(!mExtraRows.isEmpty()) {
+            for(View tableRow : mExtraRows) {
+                table.removeView(tableRow);
+            }
+            mExtraRows.clear();
+        }
         if(data.size() > 0) {
-            final TableLayout table = (TableLayout)getActivity().findViewById(R.id.entry_info);
             final LayoutInflater inflater = LayoutInflater.from(getContext());
             for(ExtraFieldHolder extra : data.values()) {
                 if(extra.preset) {
@@ -256,9 +268,8 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                 ((TextView)root.findViewById(R.id.label)).setText(extra.name + ": ");
                 ((TextView)root.findViewById(R.id.value)).setText(extra.value);
                 table.addView(root);
+                mExtraRows.add(root);
             }
-
-            table.setVisibility(View.VISIBLE);
         }
     }
 
@@ -349,10 +360,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                     extras.put(name, new ExtraFieldHolder(0, name, preset, value));
                 }
                 populateExtras(extras);
-                getLoaderManager().destroyLoader(LOADER_EXTRAS);
         }
-
-        getLoaderManager().destroyLoader(id);
     }
 
     @Override
