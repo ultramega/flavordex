@@ -163,8 +163,8 @@ public class FileSelectorDialog extends DialogFragment {
     @Override
     @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final ListView listView =
-                (ListView)LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
+        final View root = LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
+        final ListView listView = (ListView)root.findViewById(R.id.list);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -175,7 +175,7 @@ public class FileSelectorDialog extends DialogFragment {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.title_select_file)
-                .setView(listView)
+                .setView(root)
                 .setNegativeButton(R.string.button_cancel, null);
 
         if(mAllowDirectories) {

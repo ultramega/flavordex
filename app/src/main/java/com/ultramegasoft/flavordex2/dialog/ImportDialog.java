@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.R;
@@ -63,6 +64,7 @@ public class ImportDialog extends DialogFragment
      * Views from the layout
      */
     private ListView mListView;
+    private ProgressBar mProgressBar;
 
     /**
      * The data loaded from the CSV file
@@ -103,7 +105,8 @@ public class ImportDialog extends DialogFragment
     @Override
     @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mListView = (ListView)LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
+        final View root = LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
+        mListView = (ListView)root.findViewById(R.id.list);
         mListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -113,16 +116,19 @@ public class ImportDialog extends DialogFragment
             }
         });
 
+        mProgressBar = (ProgressBar)root.findViewById(R.id.progress);
+
         if(mData != null) {
             mListView.setAdapter(new CSVListAdapter(getContext(), mData));
         } else if(mFilePath != null) {
+            mProgressBar.setVisibility(View.VISIBLE);
             getLoaderManager().initLoader(0, null, this).forceLoad();
         }
 
         return new AlertDialog.Builder(getContext())
                 .setTitle(R.string.title_import)
                 .setIcon(R.drawable.ic_import)
-                .setView(mListView)
+                .setView(root)
                 .setPositiveButton(R.string.button_import, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -173,6 +179,7 @@ public class ImportDialog extends DialogFragment
     @Override
     public void onLoadFinished(Loader<CSVUtils.CSVHolder> loader, CSVUtils.CSVHolder data) {
         if(data != null) {
+            mProgressBar.setVisibility(View.GONE);
             mListView.setAdapter(new CSVListAdapter(getContext(), data));
 
             for(int i = 0; i < data.entries.size(); i++) {
