@@ -1,14 +1,16 @@
 package com.ultramegasoft.flavordex2;
 
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -27,6 +29,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
 import java.util.ArrayList;
@@ -37,17 +40,12 @@ import java.util.HashMap;
  *
  * @author Steve Guidetti
  */
-public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class EditInfoFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<EditInfoFragment.DataLoader.Holder> {
     /**
      * Keys for the Fragment arguments
      */
     public static final String ARG_ENTRY_ID = "entry_id";
-
-    /**
-     * Loader IDs
-     */
-    private static final int LOADER_ENTRY = 0;
-    private static final int LOADER_EXTRAS = 1;
 
     /**
      * Keys for the saved state
@@ -96,10 +94,7 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState == null) {
-            if(mEntryId > 0) {
-                getLoaderManager().initLoader(LOADER_ENTRY, null, this);
-            }
-            getLoaderManager().initLoader(LOADER_EXTRAS, null, this);
+            getLoaderManager().initLoader(0, null, this).forceLoad();
         } else {
             //noinspection unchecked
             mExtras = (HashMap<String, ExtraFieldHolder>)savedInstanceState
@@ -196,55 +191,20 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     /**
-     * Load the main details of the entry being edited.
+     * Load the values for the main entry fields.
      *
-     * @param cursor The Cursor returned from the database query
+     * @param entry Te entry
      */
-    private void loadEntry(Cursor cursor) {
-        if(cursor == null) {
-            return;
+    private void populateFields(EntryHolder entry) {
+        if(entry != null) {
+            mTxtTitle.setText(entry.title);
+            mTxtMaker.setText(entry.maker);
+            mTxtOrigin.setText(entry.origin);
+            mTxtPrice.setText(entry.price);
+            mTxtLocation.setText(entry.location);
+            mRatingBar.setRating(entry.rating);
+            mTxtNotes.setText(entry.notes);
         }
-
-        if(cursor.moveToFirst()) {
-            mTxtTitle.setText(cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE)));
-            mTxtMaker.setText(cursor.getString(cursor.getColumnIndex(Tables.Entries.MAKER)));
-            mTxtOrigin.setText(cursor.getString(cursor.getColumnIndex(Tables.Entries.ORIGIN)));
-            mTxtPrice.setText(cursor.getString(cursor.getColumnIndex(Tables.Entries.PRICE)));
-            mTxtLocation.setText(cursor.getString(cursor.getColumnIndex(Tables.Entries.LOCATION)));
-            mRatingBar.setRating(cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING)));
-            mTxtNotes.setText(cursor.getString(cursor.getColumnIndex(Tables.Entries.NOTES)));
-        }
-    }
-
-    /**
-     * Load the extra fields from the database.
-     *
-     * @param cursor The Cursor returned from the database query
-     */
-    private void loadExtras(Cursor cursor) {
-        if(cursor == null) {
-            return;
-        }
-
-        long id;
-        String name;
-        boolean preset;
-        while(cursor.moveToNext()) {
-            id = cursor.getLong(cursor.getColumnIndex(
-                    mEntryId > 0 ? Tables.EntriesExtras.EXTRA : Tables.Extras._ID));
-            name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
-            preset = cursor.getInt(cursor.getColumnIndex(Tables.Extras.PRESET)) == 1;
-
-            final ExtraFieldHolder extra = new ExtraFieldHolder(id, name, preset);
-
-            if(mEntryId > 0) {
-                extra.value = cursor.getString(cursor.getColumnIndex(Tables.EntriesExtras.VALUE));
-            }
-
-            mExtras.put(extra.name, extra);
-        }
-
-        populateExtras(mExtras);
     }
 
     /**
@@ -371,42 +331,152 @@ public class EditInfoFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final Uri baseUri;
-        if(mCatId > 0) {
-            baseUri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
-        } else {
-            baseUri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId);
+    public Loader<DataLoader.Holder> onCreateLoader(int id, Bundle args) {
+        return new DataLoader(getContext(), mCatId, mEntryId);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<DataLoader.Holder> loader, DataLoader.Holder data) {
+        populateFields(data.entry);
+        mExtras = data.extras;
+        populateExtras(data.extras);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<DataLoader.Holder> loader) {
+    }
+
+    /**
+     * Custom Loader to load everything in one task.
+     */
+    public static class DataLoader extends AsyncTaskLoader<DataLoader.Holder> {
+        /**
+         * The ContentResolver to use
+         */
+        private final ContentResolver mResolver;
+
+        /**
+         * The category ID
+         */
+        private long mCatId;
+
+        /**
+         * The entry ID, if editing
+         */
+        private final long mEntryId;
+
+        /**
+         * @param context The Context
+         * @param catId   The category ID
+         * @param entryId The entry ID, if editing
+         */
+        public DataLoader(Context context, long catId, long entryId) {
+            super(context);
+            mResolver = context.getContentResolver();
+            mCatId = catId;
+            mEntryId = entryId;
         }
-        switch(id) {
-            case LOADER_ENTRY:
-                return new CursorLoader(getContext(), baseUri, null, null, null, null);
-            case LOADER_EXTRAS:
-                final String sort;
-                if(mCatId > 0) {
-                    sort = Tables.Extras._ID + " ASC";
-                } else {
-                    sort = Tables.EntriesExtras.EXTRA + " ASC";
+
+        @Override
+        public Holder loadInBackground() {
+            final Holder holder = new Holder();
+            if(mEntryId > 0) {
+                final Uri uri =
+                        ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId);
+                holder.entry = loadEntry(uri);
+                loadExtras(holder);
+                loadExtrasValues(holder, uri);
+            } else {
+                loadExtras(holder);
+            }
+            return holder;
+        }
+
+        /**
+         * Load the entry from the database.
+         *
+         * @param entryUri The Uri for the entry
+         * @return The entry
+         */
+        private EntryHolder loadEntry(Uri entryUri) {
+            final EntryHolder entry = new EntryHolder();
+            final Cursor cursor = getContext().getContentResolver().query(entryUri, null, null, null, null);
+            try {
+                if(cursor.moveToFirst()) {
+                    entry.title = cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
+                    entry.maker = cursor.getString(cursor.getColumnIndex(Tables.Entries.MAKER));
+                    entry.origin = cursor.getString(cursor.getColumnIndex(Tables.Entries.ORIGIN));
+                    entry.price = cursor.getString(cursor.getColumnIndex(Tables.Entries.PRICE));
+                    entry.location = cursor.getString(cursor.getColumnIndex(Tables.Entries.LOCATION));
+                    entry.rating = cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING));
+                    entry.notes = cursor.getString(cursor.getColumnIndex(Tables.Entries.NOTES));
+
+                    mCatId = cursor.getLong(cursor.getColumnIndex(Tables.Entries.CAT_ID));
                 }
-                return new CursorLoader(getContext(), Uri.withAppendedPath(baseUri, "/extras"),
-                        null, null, null, sort);
+            } finally {
+                cursor.close();
+            }
+            return entry;
         }
-        return null;
-    }
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        switch(loader.getId()) {
-            case LOADER_ENTRY:
-                loadEntry(data);
-                break;
-            case LOADER_EXTRAS:
-                loadExtras(data);
-                break;
+        /**
+         * Load the extra fields from the database.
+         *
+         * @param holder The Holder
+         */
+        private void loadExtras(Holder holder) {
+            final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
+            final Cursor cursor = mResolver.query(Uri.withAppendedPath(uri, "extras"), null, null, null, null);
+            long id;
+            String name;
+            boolean preset;
+            try {
+                while(cursor.moveToNext()) {
+                    id = cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
+                    name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
+                    preset = cursor.getInt(cursor.getColumnIndex(Tables.Extras.PRESET)) == 1;
+                    holder.extras.put(name, new ExtraFieldHolder(id, name, preset));
+                }
+            } finally {
+                cursor.close();
+            }
         }
-    }
 
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+        /**
+         * Load the extra field values from the database.
+         *
+         * @param holder   The Holder
+         * @param entryUri The Uri for the entry
+         */
+        private void loadExtrasValues(Holder holder, Uri entryUri) {
+            final Cursor cursor = mResolver.query(Uri.withAppendedPath(entryUri, "extras"), null,
+                    null, null, null);
+            String name;
+            String value;
+            try {
+                while(cursor.moveToNext()) {
+                    name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
+                    value = cursor.getString(cursor.getColumnIndex(Tables.EntriesExtras.VALUE));
+                    holder.extras.get(name).value = value;
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+
+        /**
+         * The holder for return data.
+         */
+        public static class Holder {
+            /**
+             * The entry
+             */
+            public EntryHolder entry;
+
+            /**
+             * Map of extra field names to their data
+             */
+            public final HashMap<String, ExtraFieldHolder> extras = new HashMap<>();
+        }
     }
 }
