@@ -3,6 +3,7 @@ package com.ultramegasoft.flavordex2.coffee;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -114,7 +115,7 @@ public class EditCoffeeInfoFragment extends EditInfoFragment {
      */
     private static void initExtractionTime(final EditText min, final EditText sec,
                                            final ExtraFieldHolder extra) {
-        if(extra.value != null) {
+        if(!TextUtils.isEmpty(extra.value)) {
             final int extTime = Integer.valueOf(extra.value);
             min.setText(String.valueOf(extTime / 60));
             sec.setText(String.format("%02d", extTime % 60));
