@@ -349,6 +349,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                 }
                 break;
             case LOADER_EXTRAS:
+                data.moveToPosition(-1);
                 final LinkedHashMap<String, ExtraFieldHolder> extras = new LinkedHashMap<>();
                 String name;
                 String value;
