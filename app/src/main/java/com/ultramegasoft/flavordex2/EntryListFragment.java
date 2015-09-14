@@ -27,6 +27,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
@@ -102,9 +104,22 @@ public class EntryListFragment extends ListFragment
     private Toolbar mFilterToolbar;
 
     /**
+     * Whether the filter Toolbar is showing
+     */
+    private boolean mFilterToolbarShowing;
+
+    /**
      * The Toolbar for export selection mode
      */
     private Toolbar mExportToolbar;
+
+    /**
+     * Toolbar Animations
+     */
+    private Animation mFilterInAnimation;
+    private Animation mFilterOutAnimation;
+    private Animation mExportInAnimation;
+    private Animation mExportOutAnimation;
 
     /**
      * The current activated item if in two-pane mode
@@ -182,14 +197,14 @@ public class EntryListFragment extends ListFragment
         setupToolbar();
         registerForContextMenu(getListView());
 
-        updateFilterToolbar();
+        updateFilterToolbar(false);
         updateEmptyText();
 
         mAdapter = new EntryListAdapter(getContext());
         setListShown(false);
         setListAdapter(mAdapter);
 
-        setExportMode(mExportMode);
+        setExportMode(mExportMode, false);
 
         getLoaderManager().initLoader(0, null, this);
     }
@@ -202,20 +217,6 @@ public class EntryListFragment extends ListFragment
 
         final FrameLayout list = (FrameLayout)root.findViewById(R.id.list);
         list.addView(super.onCreateView(inflater, container, savedInstanceState));
-
-        mFilterToolbar = (Toolbar)root.findViewById(R.id.filter_toolbar);
-        mFilterToolbar.inflateMenu(R.menu.filters_menu);
-        mFilterToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch(item.getItemId()) {
-                    case R.id.menu_clear:
-                        setFilters(null);
-                        return true;
-                }
-                return false;
-            }
-        });
 
         return root;
     }
@@ -288,7 +289,9 @@ public class EntryListFragment extends ListFragment
                         rootPath, false, ".csv");
                 return true;
             case R.id.menu_export:
-                setExportMode(true);
+                if(!mExportMode) {
+                    setExportMode(true, true);
+                }
                 return true;
             case R.id.menu_settings:
                 startActivity(new Intent(getContext(), SettingsActivity.class));
@@ -484,7 +487,7 @@ public class EntryListFragment extends ListFragment
             mWhere = filterData.getStringExtra(EntryFilterDialog.EXTRA_SQL_WHERE);
             mWhereArgs = filterData.getStringArrayExtra(EntryFilterDialog.EXTRA_SQL_ARGS);
         }
-        updateFilterToolbar();
+        updateFilterToolbar(true);
         updateEmptyText();
         getLoaderManager().restartLoader(0, null, this);
     }
@@ -514,7 +517,7 @@ public class EntryListFragment extends ListFragment
      *
      * @param exportMode Whether to enable export mode
      */
-    private void setExportMode(boolean exportMode) {
+    private void setExportMode(boolean exportMode, boolean animate) {
         final ListView listView = getListView();
         if(exportMode) {
             listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
@@ -526,7 +529,7 @@ public class EntryListFragment extends ListFragment
         }
         mAdapter.setMultiChoiceMode(exportMode);
         listView.setItemChecked(mAdapter.getItemIndex(mActivatedItem), !exportMode && mTwoPane);
-        showExportToolbar(exportMode);
+        showExportToolbar(exportMode, animate);
 
         mExportMode = exportMode;
     }
@@ -536,7 +539,7 @@ public class EntryListFragment extends ListFragment
      *
      * @param show Whether to show the export Toolbar
      */
-    private void showExportToolbar(boolean show) {
+    private void showExportToolbar(boolean show, boolean animate) {
         if(mExportToolbar == null) {
             mExportToolbar = (Toolbar)getActivity().findViewById(R.id.export_toolbar);
             mExportToolbar.inflateMenu(R.menu.export_menu);
@@ -547,10 +550,10 @@ public class EntryListFragment extends ListFragment
                         case R.id.menu_export_selected:
                             ExportDialog.showDialog(getFragmentManager(),
                                     getListView().getCheckedItemIds());
-                            setExportMode(false);
+                            setExportMode(false, true);
                             return true;
                         case R.id.menu_cancel:
-                            setExportMode(false);
+                            setExportMode(false, true);
                             return true;
                         case R.id.menu_check_all:
                         case R.id.menu_uncheck_all:
@@ -564,8 +567,75 @@ public class EntryListFragment extends ListFragment
                     return false;
                 }
             });
+
+            mExportInAnimation = AnimationUtils.loadAnimation(getContext(),
+                    android.support.v7.appcompat.R.anim.abc_slide_in_bottom);
+            mExportOutAnimation = AnimationUtils.loadAnimation(getContext(),
+                    android.support.v7.appcompat.R.anim.abc_slide_out_bottom);
         }
+
         mExportToolbar.setVisibility(show ? View.VISIBLE : View.GONE);
+        if(animate) {
+            mExportToolbar.startAnimation(show ? mExportInAnimation : mExportOutAnimation);
+        }
+    }
+
+    /**
+     * Update the state of the filter Toolbar.
+     */
+    private void updateFilterToolbar(boolean animate) {
+        if(mFilters == null || mFilters.size() == 0) {
+            showFilterToolbar(false, animate);
+            setSubtitle(getString(R.string.title_all_entries));
+        } else {
+            if(mFilters.containsKey(Tables.Entries.CAT)) {
+                setSubtitle(getString(R.string.title_cat_entries,
+                        mFilters.get(Tables.Entries.CAT)));
+            } else {
+                setSubtitle(getString(R.string.title_all_entries));
+            }
+            showFilterToolbar(true, animate);
+            mFilterToolbar.setTitle(getString(R.string.message_active_filters, mFilterText));
+        }
+    }
+
+    /**
+     * Show or hide the filter Toolbar.
+     *
+     * @param show Whether to show the filter Toolbar
+     */
+    private void showFilterToolbar(boolean show, boolean animate) {
+        if(mFilterToolbarShowing == show) {
+            return;
+        }
+
+        if(mFilterToolbar == null) {
+            mFilterToolbar = (Toolbar)getActivity().findViewById(R.id.filter_toolbar);
+            mFilterToolbar.inflateMenu(R.menu.filters_menu);
+            mFilterToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch(item.getItemId()) {
+                        case R.id.menu_clear:
+                            setFilters(null);
+                            return true;
+                    }
+                    return false;
+                }
+            });
+
+            mFilterInAnimation = AnimationUtils.loadAnimation(getContext(),
+                    android.support.v7.appcompat.R.anim.abc_slide_in_top);
+            mFilterOutAnimation = AnimationUtils.loadAnimation(getContext(),
+                    android.support.v7.appcompat.R.anim.abc_slide_out_top);
+        }
+
+        mFilterToolbar.setVisibility(show ? View.VISIBLE : View.GONE);
+        if(animate) {
+            mFilterToolbar.startAnimation(show ? mFilterInAnimation : mFilterOutAnimation);
+        }
+
+        mFilterToolbarShowing = show;
     }
 
     /**
@@ -579,25 +649,6 @@ public class EntryListFragment extends ListFragment
             emptyText = Html.fromHtml(getString(R.string.message_no_data_filter, mSearchQuery));
         }
         setEmptyText(emptyText);
-    }
-
-    /**
-     * Update the state of the filter Toolbar.
-     */
-    private void updateFilterToolbar() {
-        if(mFilters == null || mFilters.size() == 0) {
-            setSubtitle(getString(R.string.title_all_entries));
-            mFilterToolbar.setVisibility(View.GONE);
-        } else {
-            if(mFilters.containsKey(Tables.Entries.CAT)) {
-                setSubtitle(getString(R.string.title_cat_entries,
-                        mFilters.get(Tables.Entries.CAT)));
-            } else {
-                setSubtitle(getString(R.string.title_all_entries));
-            }
-            mFilterToolbar.setTitle(getString(R.string.message_active_filters, mFilterText));
-            mFilterToolbar.setVisibility(View.VISIBLE);
-        }
     }
 
     /**
