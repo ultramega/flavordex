@@ -286,7 +286,12 @@ public class EditInfoFragment extends Fragment
      * @return Whether the form is valid
      */
     public boolean isValid() {
-        return !TextUtils.isEmpty(mTxtTitle.getText().toString());
+        if(TextUtils.isEmpty(mTxtTitle.getText().toString())) {
+            mTxtTitle.setError(getString(R.string.error_required));
+            mTxtTitle.requestFocus();
+            return false;
+        }
+        return true;
     }
 
     /**

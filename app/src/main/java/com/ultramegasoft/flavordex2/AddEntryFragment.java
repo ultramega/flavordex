@@ -89,6 +89,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
                              Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_add_entry, container, false);
         mPager = (ViewPager)root.findViewById(R.id.pager);
+        mPager.setOffscreenPageLimit(2);
 
         mBtnSave = (Button)root.findViewById(R.id.button_save);
         mBtnSave.setOnClickListener(new View.OnClickListener() {
@@ -192,6 +193,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             DataSaverFragment.init(getFragmentManager(), entry, entryFlavors, entryPhotos);
         } else {
             mBtnSave.setEnabled(true);
+            mPager.setCurrentItem(0);
         }
     }
 
