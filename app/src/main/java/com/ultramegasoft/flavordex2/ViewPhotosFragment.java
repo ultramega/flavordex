@@ -104,6 +104,12 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        setHasOptionsMenu(false);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.view_photos_menu, menu);

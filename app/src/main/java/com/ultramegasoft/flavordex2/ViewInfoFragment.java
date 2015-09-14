@@ -2,11 +2,9 @@ package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
 import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -29,6 +27,7 @@ import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.EntryDeleter;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
@@ -125,6 +124,12 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        setHasOptionsMenu(false);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.view_entry_menu, menu);
@@ -170,9 +175,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                 case REQUEST_DELETE_ENTRY:
                     new EntryDeleter(getContext(), mEntryId).execute();
                     final FragmentManager fm = getParentFragment().getFragmentManager();
-                    final EntryListFragment listFragment =
-                            (EntryListFragment)fm.findFragmentById(R.id.entry_list);
-                    if(listFragment != null) {
+                    if(fm.findFragmentById(R.id.entry_list) != null) {
                         ((ViewEntryFragment)getParentFragment()).setEntryTitle(null);
                         Fragment fragment = fm.findFragmentById(R.id.entry_detail_container);
                         if(fragment != null) {
@@ -366,35 +369,5 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-    }
-
-    /**
-     * Task for deleting an entry in the background.
-     */
-    private static class EntryDeleter extends AsyncTask<Void, Void, Void> {
-        /**
-         * The Context
-         */
-        private final Context mContext;
-
-        /**
-         * The entry ID
-         */
-        private final long mEntryId;
-
-        /**
-         * @param context The Context
-         * @param entryId The entry ID
-         */
-        public EntryDeleter(Context context, long entryId) {
-            mContext = context.getApplicationContext();
-            mEntryId = entryId;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            EntryUtils.delete(mContext, mEntryId);
-            return null;
-        }
     }
 }

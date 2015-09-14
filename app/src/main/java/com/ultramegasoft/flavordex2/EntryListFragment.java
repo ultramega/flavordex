@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -18,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,15 +28,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.dialog.EntryFilterDialog;
 import com.ultramegasoft.flavordex2.dialog.ExportDialog;
 import com.ultramegasoft.flavordex2.dialog.FileSelectorDialog;
 import com.ultramegasoft.flavordex2.dialog.ImportDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.EntryDeleter;
+import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
 
 /**
@@ -49,6 +56,12 @@ public class EntryListFragment extends ListFragment
     private static final int REQUEST_SET_FILTERS = 100;
     private static final int REQUEST_ADD_ENTRY = 200;
     private static final int REQUEST_IMPORT_FILE = 300;
+    private static final int REQUEST_DELETE_ENTRY = 400;
+
+    /**
+     * Extras for Activity results
+     */
+    private static final String EXTRA_ENTRY_ID = "entry_id";
 
     /**
      * Keys for the saved state
@@ -285,6 +298,54 @@ public class EntryListFragment extends ListFragment
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getActivity().getMenuInflater().inflate(R.menu.view_entry_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        final AdapterView.AdapterContextMenuInfo info =
+                (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        final Cursor cursor = (Cursor)mAdapter.getItem(info.position);
+        switch(item.getItemId()) {
+            case R.id.menu_share:
+                if(cursor != null) {
+                    final String title =
+                            cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
+                    final float rating =
+                            cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING));
+                    final Intent shareIntent =
+                            EntryUtils.getShareIntent(getContext(), title, rating);
+                    if(shareIntent != null) {
+                        startActivity(shareIntent);
+                    }
+                }
+                return true;
+            case R.id.menu_edit_entry:
+                final Intent editIntent = new Intent(getContext(), EditEntryActivity.class);
+                editIntent.putExtra(EditEntryActivity.EXTRA_ENTRY_ID, info.id);
+                editIntent.putExtra(EditEntryActivity.EXTRA_ENTRY_CAT,
+                        mAdapter.getItemCat(info.id));
+                startActivity(editIntent);
+                return true;
+            case R.id.menu_delete_entry:
+                if(cursor != null) {
+                    final String title =
+                            cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
+                    final Intent deleteIntent = new Intent();
+                    deleteIntent.putExtra(EXTRA_ENTRY_ID, info.id);
+                    ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_ENTRY,
+                            getString(R.string.title_delete_entry),
+                            getString(R.string.message_confirm_delete, title), deleteIntent);
+                }
+                return true;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
@@ -302,6 +363,22 @@ public class EntryListFragment extends ListFragment
                 case REQUEST_IMPORT_FILE:
                     ImportDialog.showDialog(getFragmentManager(),
                             data.getStringExtra(FileSelectorDialog.EXTRA_PATH));
+                    break;
+                case REQUEST_DELETE_ENTRY:
+                    final long id = data.getLongExtra(EXTRA_ENTRY_ID, 0);
+                    if(mTwoPane && id == mActivatedItem) {
+                        final FragmentManager fm = getFragmentManager();
+                        final Fragment fragment = fm.findFragmentById(R.id.entry_detail_container);
+                        if(fragment != null) {
+                            fm.beginTransaction().remove(fragment).commit();
+                            final ActionBar actionBar =
+                                    ((AppCompatActivity)getActivity()).getSupportActionBar();
+                            if(actionBar != null) {
+                                actionBar.setSubtitle(null);
+                            }
+                        }
+                    }
+                    new EntryDeleter(getContext(), id).execute();
                     break;
             }
         }

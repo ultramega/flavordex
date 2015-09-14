@@ -141,6 +141,12 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        setHasOptionsMenu(false);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.view_flavor_menu, menu);
