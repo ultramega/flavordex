@@ -50,9 +50,9 @@ public class ViewWhiskeyInfoFragment extends ViewInfoFragment {
     @Override
     protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> data) {
         super.populateExtras(data);
-        setViewText(mTxtType, data.get(Tables.Extras.Whiskey.TYPE).value);
+        setViewText(mTxtType, getExtraValue(data.get(Tables.Extras.Whiskey.TYPE)));
 
-        mTxtAge.setText(data.get(Tables.Extras.Whiskey.STATS_AGE).value);
-        mTxtABV.setText(data.get(Tables.Extras.Whiskey.STATS_ABV).value);
+        mTxtAge.setText(getExtraValue(data.get(Tables.Extras.Whiskey.STATS_AGE)));
+        mTxtABV.setText(getExtraValue(data.get(Tables.Extras.Whiskey.STATS_ABV)));
     }
 }

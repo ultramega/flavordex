@@ -58,9 +58,9 @@ public class ViewBeerInfoFragment extends ViewInfoFragment {
     @Override
     protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> data) {
         super.populateExtras(data);
-        setViewText(mTxtStyle, data.get(Tables.Extras.Beer.STYLE).value);
+        setViewText(mTxtStyle, getExtraValue(data.get(Tables.Extras.Beer.STYLE)));
 
-        final int servingType = stringToInt(data.get(Tables.Extras.Beer.SERVING).value);
+        final int servingType = stringToInt(getExtraValue(data.get(Tables.Extras.Beer.SERVING)));
         if(servingType > 0) {
             final Resources res = getResources();
             final String[] servingTypes = res.getStringArray(R.array.beer_serving_types);
@@ -69,9 +69,9 @@ public class ViewBeerInfoFragment extends ViewInfoFragment {
             mTxtServingType.setText(R.string.hint_empty);
         }
 
-        mTxtIBU.setText(data.get(Tables.Extras.Beer.STATS_IBU).value);
-        mTxtABV.setText(data.get(Tables.Extras.Beer.STATS_ABV).value);
-        mTxtOG.setText(data.get(Tables.Extras.Beer.STATS_OG).value);
-        mTxtFG.setText(data.get(Tables.Extras.Beer.STATS_FG).value);
+        mTxtIBU.setText(getExtraValue(data.get(Tables.Extras.Beer.STATS_IBU)));
+        mTxtABV.setText(getExtraValue(data.get(Tables.Extras.Beer.STATS_ABV)));
+        mTxtOG.setText(getExtraValue(data.get(Tables.Extras.Beer.STATS_OG)));
+        mTxtFG.setText(getExtraValue(data.get(Tables.Extras.Beer.STATS_FG)));
     }
 }

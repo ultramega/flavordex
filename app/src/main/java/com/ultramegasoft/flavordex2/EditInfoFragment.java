@@ -229,6 +229,9 @@ public class EditInfoFragment extends Fragment
      * @param extra    The extra field to associate with the View
      */
     protected static void initEditText(EditText editText, final ExtraFieldHolder extra) {
+        if(extra == null) {
+            return;
+        }
         if(!extra.preset) {
             editText.setHint(extra.name);
         }
@@ -257,6 +260,9 @@ public class EditInfoFragment extends Fragment
      * @param extra   The extra field to associate with the View
      */
     protected static void initSpinner(Spinner spinner, final ExtraFieldHolder extra) {
+        if(extra == null) {
+            return;
+        }
         if(extra.value != null) {
             spinner.setSelection(Integer.valueOf(extra.value));
         }

@@ -49,9 +49,9 @@ public class ViewWineInfoFragment extends ViewInfoFragment {
     @Override
     protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> data) {
         super.populateExtras(data);
-        setViewText(mTxtVarietal, data.get(Tables.Extras.Wine.VARIETAL).value);
+        setViewText(mTxtVarietal, getExtraValue(data.get(Tables.Extras.Wine.VARIETAL)));
 
-        mTxtVintage.setText(data.get(Tables.Extras.Wine.STATS_VINTAGE).value);
-        mTxtABV.setText(data.get(Tables.Extras.Wine.STATS_ABV).value);
+        mTxtVintage.setText(getExtraValue(data.get(Tables.Extras.Wine.STATS_VINTAGE)));
+        mTxtABV.setText(getExtraValue(data.get(Tables.Extras.Wine.STATS_ABV)));
     }
 }

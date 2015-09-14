@@ -115,6 +115,9 @@ public class EditCoffeeInfoFragment extends EditInfoFragment {
      */
     private static void initExtractionTime(final EditText min, final EditText sec,
                                            final ExtraFieldHolder extra) {
+        if(extra == null) {
+            return;
+        }
         if(!TextUtils.isEmpty(extra.value)) {
             final int extTime = Integer.valueOf(extra.value);
             min.setText(String.valueOf(extTime / 60));

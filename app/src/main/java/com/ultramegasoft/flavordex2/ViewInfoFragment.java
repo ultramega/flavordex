@@ -324,6 +324,19 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
         }
     }
 
+    /**
+     * Get the value from an extra field with a null check.
+     *
+     * @param extra The extra field
+     * @return The value or null if extra is null
+     */
+    protected static String getExtraValue(ExtraFieldHolder extra) {
+        if(extra == null) {
+            return null;
+        }
+        return extra.value;
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId);
