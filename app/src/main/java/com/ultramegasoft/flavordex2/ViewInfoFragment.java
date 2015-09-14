@@ -173,18 +173,18 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
                 case REQUEST_DELETE_ENTRY:
-                    new EntryDeleter(getContext(), mEntryId).execute();
                     final FragmentManager fm = getParentFragment().getFragmentManager();
                     if(fm.findFragmentById(R.id.entry_list) != null) {
                         ((ViewEntryFragment)getParentFragment()).setEntryTitle(null);
                         Fragment fragment = fm.findFragmentById(R.id.entry_detail_container);
                         if(fragment != null) {
-                            setHasOptionsMenu(false);
                             fm.beginTransaction().remove(fragment).commit();
                         }
                     } else {
+                        fm.beginTransaction().remove(this.getParentFragment()).commit();
                         getActivity().finish();
                     }
+                    new EntryDeleter(getContext(), mEntryId).execute();
                     break;
             }
         }
