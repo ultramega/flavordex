@@ -136,7 +136,7 @@ public class ExportDialog extends DialogFragment {
      *
      * @param editText The EditText
      */
-    private void setupFileField(final EditText editText) {
+    private void setupFileField(EditText editText) {
         editText.setText(getDefaultFileString());
 
         final InputFilter[] filters = new InputFilter[] {
@@ -176,15 +176,6 @@ public class ExportDialog extends DialogFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 invalidateButtons();
-            }
-        });
-
-        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
-                    editText.setSelection(0, editText.getText().length());
-                }
             }
         });
 
