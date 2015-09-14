@@ -11,7 +11,6 @@
         tools:ignore="AlwaysShowAction" />
     <item
         android:id="@+id/menu_delete"
-        android:icon="@drawable/ic_delete"
         android:title="@string/menu_delete_cat"
         app:showAsAction="never" />
 </menu>
