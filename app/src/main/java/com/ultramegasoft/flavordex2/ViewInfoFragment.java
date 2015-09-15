@@ -1,6 +1,5 @@
 package com.ultramegasoft.flavordex2;
 
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
@@ -8,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -25,9 +23,7 @@ import android.widget.RatingBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.util.EntryDeleter;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
@@ -43,11 +39,6 @@ import java.util.Locale;
  * @author Steve Guidetti
  */
 public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    /**
-     * Request code for deleting an entry
-     */
-    private static final int REQUEST_DELETE_ENTRY = 100;
-
     /**
      * Loader IDs
      */
@@ -132,7 +123,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.view_entry_menu, menu);
+        inflater.inflate(R.menu.view_info_menu, menu);
     }
 
     @Override
@@ -159,35 +150,8 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                 intent.putExtra(EditEntryActivity.EXTRA_ENTRY_CAT, mEntryCat);
                 startActivity(intent);
                 return true;
-            case R.id.menu_delete_entry:
-                ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_ENTRY,
-                        getString(R.string.title_delete_entry),
-                        getString(R.string.message_confirm_delete, mTitle));
-                return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == Activity.RESULT_OK) {
-            switch(requestCode) {
-                case REQUEST_DELETE_ENTRY:
-                    final FragmentManager fm = getParentFragment().getFragmentManager();
-                    if(fm.findFragmentById(R.id.entry_list) != null) {
-                        ((ViewEntryFragment)getParentFragment()).setEntryTitle(null);
-                        Fragment fragment = fm.findFragmentById(R.id.entry_detail_container);
-                        if(fragment != null) {
-                            fm.beginTransaction().remove(fragment).commit();
-                        }
-                    } else {
-                        fm.beginTransaction().remove(this.getParentFragment()).commit();
-                        getActivity().finish();
-                    }
-                    new EntryDeleter(getContext(), mEntryId).execute();
-                    break;
-            }
-        }
     }
 
     /**
