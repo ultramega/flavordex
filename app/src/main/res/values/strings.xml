@@ -42,10 +42,10 @@
     <string name="header_cat_fields">Category Fields</string>
     <string name="header_cat_flavors">Category Flavors</string>
 
-    <string name="menu_settings">Settings</string>
-    <string name="menu_filter">Filter</string>
-    <string name="menu_search">Search</string>
-    <string name="menu_sort">Sort</string>
+    <string name="menu_settings">Application Settings</string>
+    <string name="menu_filter">Filter List</string>
+    <string name="menu_search">Search Entries</string>
+    <string name="menu_sort">Sort List</string>
     <string name="menu_sort_name">Name</string>
     <string name="menu_sort_date">Date</string>
     <string name="menu_sort_rating">Rating</string>
