@@ -8,7 +8,6 @@
         app:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/menu_search"
-        android:icon="@drawable/ic_search"
         android:title="@string/menu_search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom" />
