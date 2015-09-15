@@ -22,7 +22,7 @@
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
             android:minHeight="?attr/actionBarSize"
-            tools:ignore="UnusedAttribute" />
+            tools:ignore="InconsistentLayout,UnusedAttribute" />
 
         <fragment
             android:id="@+id/entry_list"

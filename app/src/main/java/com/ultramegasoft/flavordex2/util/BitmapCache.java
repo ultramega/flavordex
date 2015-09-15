@@ -42,7 +42,7 @@ public class BitmapCache implements Parcelable {
         };
     }
 
-    protected BitmapCache(Parcel in) {
+    private BitmapCache(Parcel in) {
         this();
         final Bundle bundle = in.readBundle();
         for(String key : bundle.keySet()) {

@@ -24,7 +24,7 @@ public class PermissionUtils {
     /**
      * Request codes
      */
-    public static final int REQUEST_STORAGE = 100;
+    private static final int REQUEST_STORAGE = 100;
 
     /**
      * Check whether we have permission to read and write external storage.

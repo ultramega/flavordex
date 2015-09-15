@@ -58,7 +58,7 @@ public class EntryHolder implements Parcelable {
         mPhotos = new ArrayList<>();
     }
 
-    protected EntryHolder(Parcel in) {
+    private EntryHolder(Parcel in) {
         id = in.readLong();
         title = in.readString();
         catId = in.readLong();

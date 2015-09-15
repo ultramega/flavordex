@@ -147,6 +147,7 @@ public class ExportDialog extends DialogFragment {
                      */
                     private static final String mAllowed = "_-.";
 
+                    @SuppressWarnings("SimplifiableIfStatement")
                     @Override
                     public boolean isAllowed(char c) {
                         if('0' <= c && c <= '9') {

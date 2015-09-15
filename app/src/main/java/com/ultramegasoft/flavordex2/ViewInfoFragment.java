@@ -80,7 +80,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     /**
      * List of extra field TableRows
      */
-    private ArrayList<View> mExtraRows = new ArrayList<>();
+    private final ArrayList<View> mExtraRows = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
