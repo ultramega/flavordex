@@ -16,6 +16,7 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_export_selected"
+        android:enabled="false"
         android:icon="@drawable/ic_export"
         android:title="@string/menu_export_selected"
         app:showAsAction="always|withText" />

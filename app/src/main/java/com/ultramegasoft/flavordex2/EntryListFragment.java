@@ -226,6 +226,7 @@ public class EntryListFragment extends ListFragment
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
         if(mExportMode) {
+            invalidateExportMenu();
             return;
         }
         mActivatedItem = id;
@@ -575,6 +576,7 @@ public class EntryListFragment extends ListFragment
                             for(int i = 0; i < mAdapter.getCount(); i++) {
                                 listView.setItemChecked(i, check);
                             }
+                            invalidateExportMenu();
                             return true;
                     }
                     return false;
@@ -587,9 +589,21 @@ public class EntryListFragment extends ListFragment
                     android.support.v7.appcompat.R.anim.abc_slide_out_bottom);
         }
 
+        invalidateExportMenu();
+
         mExportToolbar.setVisibility(show ? View.VISIBLE : View.GONE);
         if(animate) {
             mExportToolbar.startAnimation(show ? mExportInAnimation : mExportOutAnimation);
+        }
+    }
+
+    /**
+     * Update the enabled state of the export button based on whether any items are checked.
+     */
+    private void invalidateExportMenu() {
+        if(mExportToolbar != null) {
+            mExportToolbar.getMenu().findItem(R.id.menu_export_selected)
+                    .setEnabled(getListView().getCheckedItemCount() > 0);
         }
     }
 
@@ -726,8 +740,27 @@ public class EntryListFragment extends ListFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter.changeCursor(data);
-        setActivatedPosition(mAdapter.getItemIndex(mActivatedItem));
+        if(mExportMode) {
+            final ListView listView = getListView();
+            final long[] checkedItems = listView.getCheckedItemIds();
+            for(int i = 0; i < mAdapter.getCount(); i++) {
+                listView.setItemChecked(i, false);
+            }
+
+            mAdapter.changeCursor(data);
+            int pos;
+            for(long checked : checkedItems) {
+                pos = mAdapter.getItemIndex(checked);
+                if(pos != ListView.INVALID_POSITION) {
+                    listView.setItemChecked(pos, true);
+                }
+            }
+
+            invalidateExportMenu();
+        } else {
+            mAdapter.changeCursor(data);
+            setActivatedPosition(mAdapter.getItemIndex(mActivatedItem));
+        }
         setListShown(true);
     }
 
