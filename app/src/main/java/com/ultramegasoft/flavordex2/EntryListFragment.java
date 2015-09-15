@@ -439,7 +439,7 @@ public class EntryListFragment extends ListFragment
         }
 
         final SearchView searchView = (SearchView)searchItem.getActionView();
-        searchView.setQueryHint(getText(R.string.menu_filter));
+        searchView.setQueryHint(getText(R.string.menu_search));
 
         if(!TextUtils.isEmpty(mSearchQuery)) {
             searchItem.expandActionView();
