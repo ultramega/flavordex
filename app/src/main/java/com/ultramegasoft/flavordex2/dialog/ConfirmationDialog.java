@@ -10,6 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 
 import com.ultramegasoft.flavordex2.R;
 
@@ -109,7 +110,7 @@ public class ConfirmationDialog extends DialogFragment {
         return new AlertDialog.Builder(getContext())
                 .setIcon(args.getInt(ARG_ICON))
                 .setTitle(args.getString(ARG_TITLE))
-                .setMessage(args.getString(ARG_MESSAGE))
+                .setMessage(Html.fromHtml(args.getString(ARG_MESSAGE)))
                 .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         final Fragment target = getTargetFragment();

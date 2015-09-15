@@ -212,9 +212,10 @@ public class CatDeleteDialog extends DialogFragment
             case LOADER_CAT:
                 if(data.moveToFirst()) {
                     final String name = data.getString(data.getColumnIndex(Tables.Cats.NAME));
+                    final String message = getString(R.string.message_confirm_delete_cat, name);
                     final int count = data.getInt(data.getColumnIndex(Tables.Cats.NUM_ENTRIES));
 
-                    mTxtMessage.setText(getString(R.string.message_confirm_delete_cat, name));
+                    mTxtMessage.setText(Html.fromHtml(message));
                     if(count > 0) {
                         final String entries =
                                 getResources().getQuantityString(R.plurals.entries, count);
