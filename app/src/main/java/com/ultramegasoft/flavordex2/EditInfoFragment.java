@@ -28,6 +28,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.InputUtils;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
@@ -114,6 +115,11 @@ public class EditInfoFragment extends Fragment
         mTxtLocation = (EditText)root.findViewById(R.id.entry_location);
         mRatingBar = (RatingBar)root.findViewById(R.id.entry_rating);
         mTxtNotes = (EditText)root.findViewById(R.id.entry_notes);
+
+        InputUtils.addFilter(mTxtMaker, InputUtils.VALUE_FILTER);
+        InputUtils.addFilter(mTxtOrigin, InputUtils.VALUE_FILTER);
+        InputUtils.addFilter(mTxtPrice, InputUtils.VALUE_FILTER);
+        InputUtils.addFilter(mTxtLocation, InputUtils.VALUE_FILTER);
 
         mInfoTable = (TableLayout)root.findViewById(R.id.entry_info);
 
@@ -236,6 +242,7 @@ public class EditInfoFragment extends Fragment
             editText.setHint(extra.name);
         }
         editText.setText(extra.value);
+        InputUtils.addFilter(editText, InputUtils.VALUE_FILTER);
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override

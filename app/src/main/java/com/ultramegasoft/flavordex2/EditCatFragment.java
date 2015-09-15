@@ -32,6 +32,7 @@ import android.widget.TableLayout;
 
 import com.ultramegasoft.flavordex2.dialog.CatDeleteDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.InputUtils;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 import com.ultramegasoft.flavordex2.widget.RadarView;
 
@@ -166,6 +167,8 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         final View root = inflater.inflate(getLayoutId(), container, false);
 
         mTxtTitle = (EditText)root.findViewById(R.id.cat_name);
+        InputUtils.addFilter(mTxtTitle, InputUtils.NAME_FILTER);
+
         mTableExtras = (TableLayout)root.findViewById(R.id.cat_extras);
         mTableFlavors = (TableLayout)root.findViewById(R.id.cat_flavor);
         mRadarView = (RadarView)root.findViewById(R.id.radar);
@@ -387,9 +390,13 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         final LayoutInflater inflater = LayoutInflater.from(getContext());
         final View root = inflater.inflate(R.layout.cat_edit_field, tableLayout, false);
 
+        final InputFilter[] filters = new InputFilter[] {
+                InputUtils.NAME_FILTER,
+                new InputFilter.LengthFilter(maxLength)
+        };
         final EditText editText = (EditText)root.findViewById(R.id.field_name);
         editText.setSaveEnabled(false);
-        editText.setFilters(new InputFilter[] {new InputFilter.LengthFilter(maxLength)});
+        editText.setFilters(filters);
         editText.setHint(hint);
         editText.setText(text);
         editText.addTextChangedListener(new TextWatcher() {
