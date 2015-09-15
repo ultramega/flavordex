@@ -317,7 +317,7 @@ public class EntryListFragment extends ListFragment
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getActivity().getMenuInflater().inflate(R.menu.view_entry_menu, menu);
+        getActivity().getMenuInflater().inflate(R.menu.entry_context_menu, menu);
     }
 
     @Override
