@@ -220,13 +220,8 @@ public class ExportDialog extends DialogFragment {
      */
     private void export() {
         final String fileName = mTxtFileName.getText().toString();
-        try {
-            final File file = File.createTempFile(mBasePath, fileName + ".csv");
-            ExporterFragment.init(getFragmentManager(), mEntryIDs, file.getPath());
-        } catch(IOException e) {
-            MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
-                    getString(R.string.error_csv_export_file), R.drawable.ic_warning);
-        }
+        final File file = new File(mBasePath, fileName + ".csv");
+        ExporterFragment.init(getFragmentManager(), mEntryIDs, file.getPath());
     }
 
     /**
@@ -306,7 +301,7 @@ public class ExportDialog extends DialogFragment {
             } catch(IOException e) {
                 Log.e(getClass().getSimpleName(), e.getMessage());
                 MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
-                        getString(R.string.error_csv_export), R.drawable.ic_warning);
+                        getString(R.string.error_csv_export_file), R.drawable.ic_warning);
                 dismiss();
             }
         }
@@ -462,9 +457,13 @@ public class ExportDialog extends DialogFragment {
 
             @Override
             protected void onPostExecute(Boolean result) {
-                Toast.makeText(getContext(),
-                        result ? R.string.message_export_complete : R.string.error_csv_export,
-                        Toast.LENGTH_LONG).show();
+                if(result) {
+                    Toast.makeText(getContext(), R.string.message_export_complete,
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
+                            getString(R.string.error_csv_export_file), R.drawable.ic_warning);
+                }
                 dismiss();
             }
         }
