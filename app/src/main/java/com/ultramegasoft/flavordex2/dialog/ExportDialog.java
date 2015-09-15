@@ -220,8 +220,13 @@ public class ExportDialog extends DialogFragment {
      */
     private void export() {
         final String fileName = mTxtFileName.getText().toString();
-        final String path = new File(mBasePath, fileName + ".csv").getPath();
-        ExporterFragment.init(getFragmentManager(), mEntryIDs, path);
+        try {
+            final File file = File.createTempFile(mBasePath, fileName + ".csv");
+            ExporterFragment.init(getFragmentManager(), mEntryIDs, file.getPath());
+        } catch(IOException e) {
+            MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
+                    getString(R.string.error_csv_export_file), R.drawable.ic_warning);
+        }
     }
 
     /**
@@ -300,7 +305,8 @@ public class ExportDialog extends DialogFragment {
                 new DataExporter(new CSVWriter(new FileWriter(mFilePath))).execute();
             } catch(IOException e) {
                 Log.e(getClass().getSimpleName(), e.getMessage());
-                Toast.makeText(getContext(), R.string.error_csv_export, Toast.LENGTH_LONG).show();
+                MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
+                        getString(R.string.error_csv_export), R.drawable.ic_warning);
                 dismiss();
             }
         }

@@ -142,8 +142,9 @@
 
     <string name="error_camera">Error: Unable to launch camera</string>
     <string name="error_read_dir">Error: Unable to open directory for reading</string>
-    <string name="error_csv_import">Error: Import failed</string>
-    <string name="error_csv_export">Error: Export failed</string>
+    <string name="error_csv_import">Import failed</string>
+    <string name="error_csv_export">Export failed</string>
+    <string name="error_csv_export_file">Unable to create destination file.</string>
     <string name="error_csv_parse">Unable to parse the .csv file\n\nMake sure the first row is column names, and contains a \'title\' field.</string>
     <string name="error_required">required</string>
 
