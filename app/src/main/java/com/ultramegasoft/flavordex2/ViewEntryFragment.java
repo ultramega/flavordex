@@ -2,9 +2,9 @@ package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
@@ -68,7 +68,6 @@ public class ViewEntryFragment extends Fragment {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,22 +75,21 @@ public class ViewEntryFragment extends Fragment {
                 (FragmentTabHost)inflater.inflate(R.layout.tab_layout, container, false);
         tabHost.setup(getContext(), getChildFragmentManager(), R.id.content);
 
-        final Resources res = getResources();
         final Bundle args = new Bundle();
         args.putLong(ARG_ENTRY_ID, mEntryId);
 
         Drawable icon;
         TabHost.TabSpec tab;
 
-        icon = res.getDrawable(R.drawable.ic_description);
+        icon = ActivityCompat.getDrawable(getContext(), R.drawable.ic_description);
         tab = tabHost.newTabSpec("info_" + mEntryId).setIndicator(null, icon);
         tabHost.addTab(tab, getEntryInfoClass(), args);
 
-        icon = res.getDrawable(R.drawable.ic_radar);
+        icon = ActivityCompat.getDrawable(getContext(), R.drawable.ic_radar);
         tab = tabHost.newTabSpec("flavors_" + mEntryId).setIndicator(null, icon);
         tabHost.addTab(tab, ViewFlavorsFragment.class, args);
 
-        icon = res.getDrawable(R.drawable.ic_photo);
+        icon = ActivityCompat.getDrawable(getContext(), R.drawable.ic_photo);
         tab = tabHost.newTabSpec("photos_" + mEntryId).setIndicator(null, icon);
         tabHost.addTab(tab, ViewPhotosFragment.class, args);
 
