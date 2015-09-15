@@ -84,8 +84,6 @@
     <string name="button_take_photo">From Camera</string>
     <string name="button_remove_photo">Remove Photo</string>
     <string name="button_clear_filter">Remove Filters</string>
-    <string name="button_edit_filter">Edit Filters</string>
-    <string name="button_select_file">Select File</string>
     <string name="button_select_dir">Select Directory</string>
     <string name="button_add_extra">Add Field</string>
     <string name="button_add_flavor">Add Flavor</string>
@@ -130,7 +128,6 @@
     <string name="message_no_photos">No Photos</string>
     <string name="message_no_media">External storage not available</string>
     <string name="message_active_filters">Filtered by %s.</string>
-    <string name="message_select_import_file">Select a .csv file to import.</string>
     <string name="message_import_complete">Import complete.</string>
     <string name="message_export_complete">Export complete.</string>
     <string name="message_duplicates_unchecked">%1$d possible %2$s %3$s unchecked.</string>
