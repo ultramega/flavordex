@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.R;
 
@@ -153,6 +154,12 @@ public class FileSelectorDialog extends DialogFragment {
 
         if(mPath == null) {
             mPath = mRootPath;
+        }
+
+        if(!new File(mPath).canRead()) {
+            Toast.makeText(getContext(), R.string.error_read_dir, Toast.LENGTH_LONG).show();
+            dismiss();
+            return;
         }
 
         mAdapter = new FileListAdapter(getContext());

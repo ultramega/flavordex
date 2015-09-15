@@ -98,13 +98,11 @@ public class PermissionUtils {
      * restart the application. If the user checks 'Never ask again' this will restart the
      * Activity.
      *
-     * @param activity     The Activity making the request
      * @param requestCode  The request code
      * @param permissions  Array of permissions requested
      * @param grantResults Array of results of the permission requests
      */
-    public static void onRequestPermissionsResult(Activity activity, int requestCode,
-                                                  @NonNull String[] permissions,
+    public static void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                                   @NonNull int[] grantResults) {
         if(requestCode == REQUEST_STORAGE) {
             for(int i = 0; i < grantResults.length; i++) {
@@ -113,8 +111,6 @@ public class PermissionUtils {
                 }
                 if(grantResults[i] == PermissionChecker.PERMISSION_GRANTED) {
                     Runtime.getRuntime().exit(0);
-                } else if(!shouldAskExternalStoragePerm(activity)) {
-                    activity.recreate();
                 }
             }
         }

@@ -43,6 +43,7 @@ import com.ultramegasoft.flavordex2.dialog.ImportDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryDeleter;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
+import com.ultramegasoft.flavordex2.util.PermissionUtils;
 import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
 
 /**
@@ -256,8 +257,15 @@ public class EntryListFragment extends ListFragment
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.menu_xport).setVisible(Environment.getExternalStorageState()
-                .equals(Environment.MEDIA_MOUNTED));
+        if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            menu.findItem(R.id.menu_xport).setVisible(false);
+        } else {
+            final boolean showXport = Environment.getExternalStorageDirectory().canWrite();
+            menu.findItem(R.id.menu_xport).setVisible(showXport
+                    || PermissionUtils.shouldAskExternalStoragePerm(getActivity()));
+            menu.findItem(R.id.menu_import).setVisible(showXport);
+            menu.findItem(R.id.menu_export).setVisible(showXport);
+        }
     }
 
     @Override
@@ -282,6 +290,10 @@ public class EntryListFragment extends ListFragment
             case R.id.menu_add_entry:
                 startActivityForResult(new Intent(getContext(), AddEntryActivity.class),
                         REQUEST_ADD_ENTRY);
+                return true;
+            case R.id.menu_xport:
+                PermissionUtils.checkExternalStoragePerm(getActivity(),
+                        R.string.message_request_storage_xport);
                 return true;
             case R.id.menu_import:
                 final String rootPath = Environment.getExternalStorageDirectory().getPath();

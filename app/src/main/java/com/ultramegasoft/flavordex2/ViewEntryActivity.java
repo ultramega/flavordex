@@ -46,7 +46,7 @@ public class ViewEntryActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        PermissionUtils.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+        PermissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override

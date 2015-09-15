@@ -205,6 +205,7 @@ public class ImportDialog extends DialogFragment
             mData = data;
             invalidateButtons();
         } else {
+            Toast.makeText(getContext(), R.string.error_csv_import, Toast.LENGTH_LONG).show();
             dismiss();
         }
 
