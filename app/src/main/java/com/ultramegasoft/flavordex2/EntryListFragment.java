@@ -341,7 +341,8 @@ public class EntryListFragment extends ListFragment
                     deleteIntent.putExtra(EXTRA_ENTRY_ID, info.id);
                     ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_ENTRY,
                             getString(R.string.title_delete_entry),
-                            getString(R.string.message_confirm_delete, title), deleteIntent);
+                            getString(R.string.message_confirm_delete, title), R.drawable.ic_delete,
+                            deleteIntent);
                 }
                 return true;
         }

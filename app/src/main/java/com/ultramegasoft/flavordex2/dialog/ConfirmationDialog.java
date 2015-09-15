@@ -29,6 +29,7 @@ public class ConfirmationDialog extends DialogFragment {
      */
     private static final String ARG_TITLE = "title";
     private static final String ARG_MESSAGE = "message";
+    private static final String ARG_ICON = "icon";
     private static final String ARG_DATA = "data";
 
     /**
@@ -42,7 +43,22 @@ public class ConfirmationDialog extends DialogFragment {
      */
     public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
                                   String title, String message) {
-        showDialog(fm, target, requestCode, title, message, null);
+        showDialog(fm, target, requestCode, title, message, R.drawable.ic_warning, null);
+    }
+
+    /**
+     * Show a confirmation dialog.
+     *
+     * @param fm          The FragmentManager to use
+     * @param target      The Fragment to notify of the result
+     * @param requestCode A number to identify this request
+     * @param title       The dialog title
+     * @param message     The dialog message
+     * @param icon        Resource ID for the dialog icon
+     */
+    public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
+                                  String title, String message, int icon) {
+        showDialog(fm, target, requestCode, title, message, icon, null);
     }
 
     /**
@@ -57,12 +73,29 @@ public class ConfirmationDialog extends DialogFragment {
      */
     public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
                                   String title, String message, Intent data) {
+        showDialog(fm, target, requestCode, title, message, R.drawable.ic_warning, data);
+    }
+
+    /**
+     * Show a confirmation dialog.
+     *
+     * @param fm          The FragmentManager to use
+     * @param target      The Fragment to notify of the result
+     * @param requestCode A number to identify this request
+     * @param title       The dialog title
+     * @param message     The dialog message
+     * @param icon        Resource ID for the dialog icon
+     * @param data        An Intent to store additional data
+     */
+    public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
+                                  String title, String message, int icon, Intent data) {
         final DialogFragment fragment = new ConfirmationDialog();
         fragment.setTargetFragment(target, requestCode);
 
         final Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
         args.putString(ARG_MESSAGE, message);
+        args.putInt(ARG_ICON, icon);
         args.putParcelable(ARG_DATA, data);
         fragment.setArguments(args);
 
@@ -74,7 +107,7 @@ public class ConfirmationDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Bundle args = getArguments();
         return new AlertDialog.Builder(getContext())
-                .setIcon(R.drawable.ic_warning)
+                .setIcon(args.getInt(ARG_ICON))
                 .setTitle(args.getString(ARG_TITLE))
                 .setMessage(args.getString(ARG_MESSAGE))
                 .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {

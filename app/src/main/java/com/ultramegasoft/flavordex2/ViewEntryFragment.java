@@ -110,7 +110,8 @@ public class ViewEntryFragment extends Fragment {
             case R.id.menu_delete_entry:
                 ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_ENTRY,
                         getString(R.string.title_delete_entry),
-                        getString(R.string.message_confirm_delete, mEntryTitle));
+                        getString(R.string.message_confirm_delete, mEntryTitle),
+                        R.drawable.ic_delete);
                 return true;
         }
         return super.onOptionsItemSelected(item);

@@ -206,7 +206,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
 
         ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_IMAGE,
                 getString(R.string.title_remove_photo),
-                getString(R.string.message_confirm_remove_photo), intent);
+                getString(R.string.message_confirm_remove_photo), R.drawable.ic_delete, intent);
     }
 
     /**
