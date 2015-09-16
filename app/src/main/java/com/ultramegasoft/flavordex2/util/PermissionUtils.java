@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -13,6 +14,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AlertDialog;
 
+import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 
 /**
@@ -24,7 +26,8 @@ public class PermissionUtils {
     /**
      * Request codes
      */
-    private static final int REQUEST_STORAGE = 100;
+    private static final int REQUEST_STORAGE = 10;
+    private static final int REQUEST_LOCATION = 20;
 
     /**
      * Check whether we have permission to read and write external storage.
@@ -57,7 +60,8 @@ public class PermissionUtils {
      * @param rationale Rationale for requesting external storage permissions
      * @return Whether we already have external storage permissions
      */
-    public static boolean checkExternalStoragePerm(final FragmentActivity activity, CharSequence rationale) {
+    public static boolean checkExternalStoragePerm(final FragmentActivity activity,
+                                                   CharSequence rationale) {
         if(hasExternalStoragePerm(activity)) {
             return true;
         }
@@ -94,6 +98,43 @@ public class PermissionUtils {
     }
 
     /**
+     * Check whether we have permission to access the device's location.
+     *
+     * @param context The Context
+     * @return Whether we have permission to access the device's location
+     */
+    public static boolean hasLocationPerm(Context context) {
+        return PermissionChecker.checkSelfPermission(context,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PermissionChecker.PERMISSION_GRANTED;
+    }
+
+    /**
+     * Make a request for location permissions from the user if they are not already granted.
+     *
+     * @param activity The Activity making the request
+     * @return Whether we already have location permissions
+     */
+    public static boolean checkLocationPerm(final FragmentActivity activity) {
+        if(hasLocationPerm(activity)) {
+            return true;
+        }
+
+        requestLocationPerm(activity);
+
+        return false;
+    }
+
+    /**
+     * Make the actual request from the user for location permissions.
+     *
+     * @param activity The Activity making the request
+     */
+    public static void requestLocationPerm(Activity activity) {
+        ActivityCompat.requestPermissions(activity,
+                new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+    }
+
+    /**
      * Callback for permission requests. If external storage permissions are granted, this will
      * restart the application. If the user checks 'Never ask again' this will restart the
      * Activity.
@@ -102,17 +143,31 @@ public class PermissionUtils {
      * @param permissions  Array of permissions requested
      * @param grantResults Array of results of the permission requests
      */
-    public static void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+    public static void onRequestPermissionsResult(Activity activity, int requestCode, @NonNull String[] permissions,
                                                   @NonNull int[] grantResults) {
-        if(requestCode == REQUEST_STORAGE) {
-            for(int i = 0; i < grantResults.length; i++) {
-                if(!Manifest.permission.WRITE_EXTERNAL_STORAGE.equals(permissions[i])) {
-                    continue;
+        switch(requestCode) {
+            case REQUEST_STORAGE:
+                for(int i = 0; i < grantResults.length; i++) {
+                    if(!Manifest.permission.WRITE_EXTERNAL_STORAGE.equals(permissions[i])) {
+                        continue;
+                    }
+                    if(grantResults[i] == PermissionChecker.PERMISSION_GRANTED) {
+                        Runtime.getRuntime().exit(0);
+                    }
                 }
-                if(grantResults[i] == PermissionChecker.PERMISSION_GRANTED) {
-                    Runtime.getRuntime().exit(0);
+                break;
+            case REQUEST_LOCATION:
+                for(int i = 0; i < grantResults.length; i++) {
+                    if(!Manifest.permission.ACCESS_COARSE_LOCATION.equals(permissions[i])) {
+                        continue;
+                    }
+                    if(grantResults[i] == PermissionChecker.PERMISSION_GRANTED) {
+                        PreferenceManager.getDefaultSharedPreferences(activity).edit()
+                                .putBoolean(FlavordexApp.PREF_DETECT_LOCATION, true).commit();
+                        activity.recreate();
+                    }
                 }
-            }
+                break;
         }
     }
 

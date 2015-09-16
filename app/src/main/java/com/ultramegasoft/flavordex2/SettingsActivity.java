@@ -1,13 +1,18 @@
 package com.ultramegasoft.flavordex2;
 
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.MenuItem;
+
+import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 /**
  * Activity for changing user preferences.
@@ -41,6 +46,12 @@ public class SettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        PermissionUtils.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+
     /**
      * The Fragment handling the preferences interface.
      */
@@ -48,6 +59,20 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
             addPreferencesFromResource(R.xml.preferences);
+
+            setupLocationPref(findPreference(FlavordexApp.PREF_DETECT_LOCATION));
+        }
+
+        private void setupLocationPref(Preference locationPref) {
+            final LocationManager lm = (LocationManager)getActivity().getSystemService(LOCATION_SERVICE);
+            locationPref.setEnabled(lm.getProviders(true).contains(LocationManager.NETWORK_PROVIDER));
+
+            locationPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object o) {
+                    return !((boolean)o) || PermissionUtils.checkLocationPerm(getActivity());
+                }
+            });
         }
     }
 }

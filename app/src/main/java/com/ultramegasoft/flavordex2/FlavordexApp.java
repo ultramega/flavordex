@@ -172,7 +172,9 @@ public class FlavordexApp extends Application implements
                 setLocation(null);
                 lm.removeUpdates(mLocationListener);
             }
-        } catch(SecurityException ignored) {
+        } catch(SecurityException e) {
+            PreferenceManager.getDefaultSharedPreferences(this).edit()
+                    .putBoolean(PREF_DETECT_LOCATION, false).commit();
         }
     }
 
