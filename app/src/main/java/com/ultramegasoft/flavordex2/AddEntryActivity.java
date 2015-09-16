@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,9 +17,10 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
  */
 public class AddEntryActivity extends AppCompatActivity {
     /**
-     * Intent extra for the category ID parameter
+     * Intent extras
      */
-    public static final String EXTRA_CAT_ID = "cat_id";
+    private static final String EXTRA_CAT_ID = "cat_id";
+    private static final String EXTRA_CAT_NAME = "cat_name";
 
     /**
      * Intent extras for the resulting entry to send to the calling Activity
@@ -26,10 +28,24 @@ public class AddEntryActivity extends AppCompatActivity {
     public static final String EXTRA_ENTRY_ID = "entry_id";
     public static final String EXTRA_ENTRY_CAT = "entry_cat";
 
+    /**
+     * Get an Intent to start this Activity.
+     *
+     * @param context The Context
+     * @param catId   The category ID
+     * @param catName The category name
+     * @return An Intent to start the Activity
+     */
+    public static Intent getIntent(Context context, long catId, String catName) {
+        final Intent intent = new Intent(context, AddEntryActivity.class);
+        intent.putExtra(EXTRA_CAT_ID, catId);
+        intent.putExtra(EXTRA_CAT_NAME, catName);
+        return intent;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final long catId = getIntent().getLongExtra(EXTRA_CAT_ID, 0);
 
         final ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) {
@@ -37,10 +53,14 @@ public class AddEntryActivity extends AppCompatActivity {
         }
 
         if(savedInstanceState == null) {
-            final Fragment fragment = new AddEntryFragment();
+            final Intent intent = getIntent();
             final Bundle args = new Bundle();
-            args.putLong(AddEntryFragment.ARG_CAT_ID, catId);
+            args.putLong(AddEntryFragment.ARG_CAT_ID, intent.getLongExtra(EXTRA_CAT_ID, 0));
+            args.putString(AddEntryFragment.ARG_CAT_NAME, intent.getStringExtra(EXTRA_CAT_NAME));
+
+            final Fragment fragment = new AddEntryFragment();
             fragment.setArguments(args);
+
             getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment)
                     .commit();
         }
@@ -56,7 +76,8 @@ public class AddEntryActivity extends AppCompatActivity {
     /**
      * Send the ID of the new entry to the calling Activity.
      *
-     * @param entryId The ID of the newly created entry
+     * @param entryId  The ID of the newly created entry
+     * @param entryCat The name of the entry category
      */
     public void publishResult(long entryId, String entryCat) {
         final Intent data = new Intent();

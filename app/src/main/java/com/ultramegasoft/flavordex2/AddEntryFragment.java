@@ -12,9 +12,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -37,24 +34,20 @@ import com.ultramegasoft.flavordex2.wine.EditWineInfoFragment;
  *
  * @author Steve Guidetti
  */
-public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class AddEntryFragment extends Fragment {
     /**
      * Keys for the Fragment arguments
      */
     public static final String ARG_CAT_ID = "cat_id";
+    public static final String ARG_CAT_NAME = "cat_name";
 
     /**
-     * Keys for the saved state
-     */
-    private static final String STATE_CAT_NAME = "cat_name";
-
-    /**
-     * The category ID from the arguments
+     * The category ID
      */
     private long mCatId;
 
     /**
-     * The name of the entry category
+     * The name of the category
      */
     private String mCatName;
 
@@ -71,14 +64,15 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCatId = getArguments().getLong(ARG_CAT_ID, 0);
-    }
+        final Bundle args = getArguments();
+        mCatId = args.getLong(ARG_CAT_ID);
+        mCatName = args.getString(ARG_CAT_NAME);
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if(savedInstanceState != null) {
-            setCatName(savedInstanceState.getString(STATE_CAT_NAME));
+        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if(actionBar != null) {
+            final String name = FlavordexApp.getRealCatName(getContext(), mCatName);
+            final String title = getString(R.string.title_add_cat_entry, name);
+            actionBar.setTitle(title);
         }
     }
 
@@ -88,6 +82,7 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         final View root = inflater.inflate(R.layout.fragment_add_entry, container, false);
         mPager = (ViewPager)root.findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(2);
+        mPager.setAdapter(new PagerAdapter());
 
         mBtnSave = (Button)root.findViewById(R.id.button_save);
         mBtnSave.setOnClickListener(new View.OnClickListener() {
@@ -98,20 +93,6 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
         });
 
         return root;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(mCatName == null) {
-            getLoaderManager().initLoader(0, null, this);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(STATE_CAT_NAME, mCatName);
     }
 
     @Override
@@ -181,44 +162,6 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
             mBtnSave.setEnabled(true);
             mPager.setCurrentItem(0);
         }
-    }
-
-    /**
-     * Set the name of the category.
-     *
-     * @param catName The internal name of the category
-     */
-    private void setCatName(String catName) {
-        mCatName = catName;
-        mPager.setAdapter(new PagerAdapter());
-
-        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        if(actionBar != null) {
-            final String name = FlavordexApp.getRealCatName(getContext(), catName);
-            final String title = getString(R.string.title_add_cat_entry, name);
-            actionBar.setTitle(title);
-            actionBar.setSubtitle(null);
-        }
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
-        final String[] projection = new String[] {
-                Tables.Cats.NAME
-        };
-        return new CursorLoader(getContext(), uri, projection, null, null, null);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(data.moveToFirst()) {
-            setCatName(data.getString(data.getColumnIndex(Tables.Cats.NAME)));
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
     }
 
     /**

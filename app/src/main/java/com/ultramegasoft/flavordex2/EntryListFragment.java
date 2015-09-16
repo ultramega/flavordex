@@ -371,9 +371,9 @@ public class EntryListFragment extends ListFragment
                     setFilters(data);
                     break;
                 case REQUEST_SELECT_CAT:
-                    final Intent addIntent = new Intent(getContext(), AddEntryActivity.class);
-                    addIntent.putExtra(AddEntryActivity.EXTRA_CAT_ID,
-                            data.getLongExtra(CatListDialog.EXTRA_CAT_ID, 0));
+                    final Intent addIntent = AddEntryActivity.getIntent(getContext(),
+                            data.getLongExtra(CatListDialog.EXTRA_CAT_ID, 0),
+                            data.getStringExtra(CatListDialog.EXTRA_CAT_NAME));
                     startActivityForResult(addIntent, REQUEST_ADD_ENTRY);
                     break;
                 case REQUEST_ADD_ENTRY:
