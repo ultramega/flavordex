@@ -169,11 +169,8 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
                 (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         switch(item.getItemId()) {
             case R.id.menu_edit:
-                final Intent intent = new Intent(getContext(), EditCatActivity.class);
-                intent.putExtra(EditCatActivity.EXTRA_CAT_ID, info.id);
-                intent.putExtra(EditCatActivity.EXTRA_CAT_NAME,
+                EditCatActivity.startActivity(getContext(), info.id,
                         mAdapter.getItem(info.position).name);
-                startActivity(intent);
                 return true;
             case R.id.menu_delete:
                 CatDeleteDialog.showDialog(getFragmentManager(), null, 0, info.id);

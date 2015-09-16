@@ -341,11 +341,8 @@ public class EntryListFragment extends ListFragment
                 }
                 return true;
             case R.id.menu_edit_entry:
-                final Intent editIntent = new Intent(getContext(), EditEntryActivity.class);
-                editIntent.putExtra(EditEntryActivity.EXTRA_ENTRY_ID, info.id);
-                editIntent.putExtra(EditEntryActivity.EXTRA_ENTRY_CAT,
+                EditEntryActivity.startActivity(getContext(), info.id,
                         mAdapter.getItemCat(info.id));
-                startActivity(editIntent);
                 return true;
             case R.id.menu_delete_entry:
                 if(cursor != null) {

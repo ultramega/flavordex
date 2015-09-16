@@ -145,10 +145,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_edit_entry:
-                final Intent intent = new Intent(getContext(), EditEntryActivity.class);
-                intent.putExtra(EditEntryActivity.EXTRA_ENTRY_ID, mEntryId);
-                intent.putExtra(EditEntryActivity.EXTRA_ENTRY_CAT, mEntryCat);
-                startActivity(intent);
+                EditEntryActivity.startActivity(getContext(), mEntryId, mEntryCat);
                 return true;
         }
         return super.onOptionsItemSelected(item);

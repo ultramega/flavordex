@@ -17,7 +17,7 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
  */
 public class AddEntryActivity extends AppCompatActivity {
     /**
-     * Intent extras
+     * Keys for the Intent extras
      */
     private static final String EXTRA_CAT_ID = "cat_id";
     private static final String EXTRA_CAT_NAME = "cat_name";

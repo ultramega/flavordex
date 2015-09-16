@@ -3,6 +3,8 @@ package com.ultramegasoft.flavordex2;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,13 +32,27 @@ public class EditEntryActivity extends AppCompatActivity {
     /**
      * Keys for the Intent extras
      */
-    public static final String EXTRA_ENTRY_ID = "entry_id";
-    public static final String EXTRA_ENTRY_CAT = "entry_cat";
+    private static final String EXTRA_ENTRY_ID = "entry_id";
+    private static final String EXTRA_ENTRY_CAT = "entry_cat";
 
     /**
      * The ID for the entry being edited
      */
     private long mEntryId;
+
+    /**
+     * Start the Activity to edit an entry.
+     *
+     * @param context  The Context
+     * @param entryId  The ID for the entry to edit
+     * @param entryCat The name of the entry category
+     */
+    public static void startActivity(Context context, long entryId, String entryCat) {
+        final Intent intent = new Intent(context, EditEntryActivity.class);
+        intent.putExtra(EXTRA_ENTRY_ID, entryId);
+        intent.putExtra(EXTRA_ENTRY_CAT, entryCat);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

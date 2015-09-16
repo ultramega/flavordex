@@ -113,12 +113,9 @@ public class SettingsActivity extends AppCompatActivity {
             if(resultCode == Activity.RESULT_OK) {
                 switch(requestCode) {
                     case REQUEST_EDIT_CAT:
-                        final Intent intent = new Intent(getContext(), EditCatActivity.class);
-                        intent.putExtra(EditCatActivity.EXTRA_CAT_ID,
-                                data.getLongExtra(CatListDialog.EXTRA_CAT_ID, 0));
-                        intent.putExtra(EditCatActivity.EXTRA_CAT_NAME,
+                        EditCatActivity.startActivity(getContext(),
+                                data.getLongExtra(CatListDialog.EXTRA_CAT_ID, 0),
                                 data.getStringExtra(CatListDialog.EXTRA_CAT_NAME));
-                        startActivity(intent);
                         break;
                 }
             }
