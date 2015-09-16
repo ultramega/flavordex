@@ -35,6 +35,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.dialog.EntryFilterDialog;
 import com.ultramegasoft.flavordex2.dialog.ExportDialog;
@@ -60,6 +61,7 @@ public class EntryListFragment extends ListFragment
     private static final int REQUEST_ADD_ENTRY = 200;
     private static final int REQUEST_IMPORT_FILE = 300;
     private static final int REQUEST_DELETE_ENTRY = 400;
+    private static final int REQUEST_SELECT_CAT = 500;
 
     /**
      * Extras for Activity results
@@ -289,8 +291,7 @@ public class EntryListFragment extends ListFragment
                 setSort(Tables.Entries.RATING);
                 return true;
             case R.id.menu_add_entry:
-                startActivityForResult(new Intent(getContext(), AddEntryActivity.class),
-                        REQUEST_ADD_ENTRY);
+                CatListDialog.showDialog(getFragmentManager(), this, REQUEST_SELECT_CAT, true);
                 return true;
             case R.id.menu_xport:
                 PermissionUtils.checkExternalStoragePerm(getActivity(),
@@ -368,6 +369,12 @@ public class EntryListFragment extends ListFragment
             switch(requestCode) {
                 case REQUEST_SET_FILTERS:
                     setFilters(data);
+                    break;
+                case REQUEST_SELECT_CAT:
+                    final Intent addIntent = new Intent(getContext(), AddEntryActivity.class);
+                    addIntent.putExtra(AddEntryActivity.EXTRA_CAT_ID,
+                            data.getLongExtra(CatListDialog.EXTRA_CAT_ID, 0));
+                    startActivityForResult(addIntent, REQUEST_ADD_ENTRY);
                     break;
                 case REQUEST_ADD_ENTRY:
                     final long entryId = data.getLongExtra(AddEntryActivity.EXTRA_ENTRY_ID, 0);

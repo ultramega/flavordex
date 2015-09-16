@@ -20,7 +20,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -73,7 +72,6 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCatId = getArguments().getLong(ARG_CAT_ID, 0);
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -114,18 +112,6 @@ public class AddEntryFragment extends Fragment implements LoaderManager.LoaderCa
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_CAT_NAME, mCatName);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case android.R.id.home:
-                final Fragment fragment = new CatListFragment();
-                getFragmentManager().beginTransaction().replace(android.R.id.content, fragment)
-                        .commit();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

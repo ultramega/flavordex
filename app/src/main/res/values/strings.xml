@@ -36,7 +36,6 @@
     <string name="title_settings">Application Settings</string>
     <string name="title_permission">Permission Requested</string>
 
-
     <string name="header_details">Details</string>
     <string name="header_rating">Rating</string>
     <string name="header_notes">Notes</string>
@@ -94,6 +93,7 @@
     <string name="button_grant_permission">Grant Permission</string>
     <string name="button_import">Import Selected</string>
     <string name="button_export">Export</string>
+    <string name="button_create_cat">Create Category</string>
 
     <string name="hint_empty" translatable="false">\?</string>
     <string name="hint_entry_title">Entry Title</string>

@@ -37,18 +37,12 @@ public class AddEntryActivity extends AppCompatActivity {
         }
 
         if(savedInstanceState == null) {
-            if(catId > 0) {
-                final Fragment fragment = new AddEntryFragment();
-                final Bundle args = new Bundle();
-                args.putLong(AddEntryFragment.ARG_CAT_ID, catId);
-                fragment.setArguments(args);
-                getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment)
-                        .commit();
-            } else {
-                final Fragment fragment = new CatListFragment();
-                getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment)
-                        .commit();
-            }
+            final Fragment fragment = new AddEntryFragment();
+            final Bundle args = new Bundle();
+            args.putLong(AddEntryFragment.ARG_CAT_ID, catId);
+            fragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment)
+                    .commit();
         }
     }
 
