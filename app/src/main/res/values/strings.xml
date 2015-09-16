@@ -138,8 +138,10 @@
     <string name="message_request_storage">Flavordex requires external storage access to enable photo features.</string>
     <string name="message_request_storage_xport">Flavordex requires external storage access to enable importing and exporting.</string>
 
-    <string name="pref_detect_location">Remember locations</string>
-    <string name="pref_summary_detect_location">Auto-fill location name based on previous entries</string>
+    <string name="pref_detect_location">Remember Locations</string>
+    <string name="pref_summary_detect_location">Auto-fill location name based on previous entries.</string>
+    <string name="pref_edit_cats">Edit Categories</string>
+    <string name="pref_summary_edit_cats">Add, remove, or customize entry categories.</string>
 
     <string name="error_camera">Error: Unable to launch camera</string>
     <string name="error_read_dir">Error: Unable to open directory for reading</string>

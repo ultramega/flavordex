@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.MenuItem;
 
+import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 /**
@@ -56,23 +58,70 @@ public class SettingsActivity extends AppCompatActivity {
      * The Fragment handling the preferences interface.
      */
     public static class SettingsFragment extends PreferenceFragmentCompat {
+        /**
+         * Key for the category editing preference
+         */
+        private static final String PREF_EDIT_CATS = "pref_edit_cats";
+
+        /**
+         * Request codes for external Activities
+         */
+        private static final int REQUEST_EDIT_CAT = 100;
+
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
             addPreferencesFromResource(R.xml.preferences);
 
-            setupLocationPref(findPreference(FlavordexApp.PREF_DETECT_LOCATION));
+            setupLocationPref();
+            setupEditCatsPref();
         }
 
-        private void setupLocationPref(Preference locationPref) {
-            final LocationManager lm = (LocationManager)getActivity().getSystemService(LOCATION_SERVICE);
-            locationPref.setEnabled(lm.getProviders(true).contains(LocationManager.NETWORK_PROVIDER));
+        /**
+         * Set up the location detection preference.
+         */
+        private void setupLocationPref() {
+            final Preference pref = findPreference(FlavordexApp.PREF_DETECT_LOCATION);
+            final LocationManager lm =
+                    (LocationManager)getActivity().getSystemService(LOCATION_SERVICE);
+            pref.setEnabled(lm.getProviders(true).contains(LocationManager.NETWORK_PROVIDER));
 
-            locationPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            pref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
                     return !((boolean)o) || PermissionUtils.checkLocationPerm(getActivity());
                 }
             });
+        }
+
+        /**
+         * Set up the category editing preference.
+         */
+        private void setupEditCatsPref() {
+            final Preference pref = findPreference(PREF_EDIT_CATS);
+            pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    CatListDialog.showDialog(getFragmentManager(), SettingsFragment.this,
+                            REQUEST_EDIT_CAT);
+                    return false;
+                }
+            });
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if(resultCode == Activity.RESULT_OK) {
+                switch(requestCode) {
+                    case REQUEST_EDIT_CAT:
+                        final Intent intent = new Intent(getContext(), EditCatActivity.class);
+                        intent.putExtra(EditCatActivity.EXTRA_CAT_ID,
+                                data.getLongExtra(CatListDialog.EXTRA_CAT_ID, 0));
+                        intent.putExtra(EditCatActivity.EXTRA_CAT_NAME,
+                                data.getStringExtra(CatListDialog.EXTRA_CAT_NAME));
+                        startActivity(intent);
+                        break;
+                }
+            }
         }
     }
 }

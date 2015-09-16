@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="pref_detect_location"
         android:summary="@string/pref_summary_detect_location"
         android:title="@string/pref_detect_location" />
+    <Preference
+        android:key="pref_edit_cats"
+        android:summary="@string/pref_summary_edit_cats"
+        android:title="@string/pref_edit_cats" />
 </PreferenceScreen>
