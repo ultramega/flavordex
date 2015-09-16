@@ -41,6 +41,9 @@ public class InputUtils {
      * @param filter   The InputFilter
      */
     public static void addFilter(EditText editText, InputFilter filter) {
+        if(editText == null || filter == null) {
+            return;
+        }
         final InputFilter[] currentFilters = editText.getFilters();
         final InputFilter[] newFilters = new InputFilter[currentFilters.length + 1];
         newFilters[0] = filter;
