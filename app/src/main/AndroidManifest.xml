@@ -44,8 +44,9 @@
             android:label="@string/title_create_cat" />
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".EntryListActivity" />
+            android:label="@string/title_settings"
+            android:parentActivityName=".EntryListActivity"
+            android:theme="@style/AppTheme.DialogWhenLarge" />
 
         <provider
             android:name=".provider.FlavordexProvider"

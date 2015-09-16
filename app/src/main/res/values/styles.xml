@@ -1,5 +1,9 @@
 <resources>
+
     <style name="AppTheme" parent="Theme.AppCompat">
+    </style>
+
+    <style name="AppTheme.DialogWhenLarge" parent="Theme.AppCompat.DialogWhenLarge">
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 

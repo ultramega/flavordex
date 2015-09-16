@@ -33,7 +33,9 @@
     <string name="title_select_file">Select File</string>
     <string name="title_importing">Importing…</string>
     <string name="title_exporting">Exporting…</string>
+    <string name="title_settings">Application Settings</string>
     <string name="title_permission">Permission Requested</string>
+
 
     <string name="header_details">Details</string>
     <string name="header_rating">Rating</string>
@@ -136,7 +138,6 @@
     <string name="message_request_storage">Flavordex requires external storage access to enable photo features.</string>
     <string name="message_request_storage_xport">Flavordex requires external storage access to enable importing and exporting.</string>
 
-    <string name="pref_cat_general">General Settings</string>
     <string name="pref_detect_location">Remember locations</string>
     <string name="pref_summary_detect_location">Auto-fill location name based on previous entries</string>
 
