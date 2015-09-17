@@ -2,6 +2,4 @@
 <resources>
     <dimen name="rew_padding">4dp</dimen>
     <dimen name="photo_grid_size">150dp</dimen>
-    <dimen name="file_padding">6dp</dimen>
-    <dimen name="file_padding_indent">20dp</dimen>
 </resources>

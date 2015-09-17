@@ -6,8 +6,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -20,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,6 +78,21 @@ public class FileSelectorDialog extends DialogFragment {
      * Filter out files that do not contain this string
      */
     private String mNameFilter;
+
+    /**
+     * The ListView from the layout
+     */
+    private ListView mListView;
+
+    /**
+     * The header view used to show the current directory and allow traversing up the tree
+     */
+    private TextView mHeader;
+
+    /**
+     * The view to show when the current directory is empty
+     */
+    private TextView mEmpty;
 
     /**
      * The Adapter backing the list
@@ -163,6 +177,11 @@ public class FileSelectorDialog extends DialogFragment {
         }
 
         mAdapter = new FileListAdapter(getContext());
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         setupAdapter();
     }
 
@@ -170,15 +189,25 @@ public class FileSelectorDialog extends DialogFragment {
     @Override
     @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final View root = LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
-        final ListView listView = (ListView)root.findViewById(R.id.list);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        final ViewGroup root =
+                (ViewGroup)LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
+        mListView = (ListView)root.findViewById(R.id.list);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectItem(position);
             }
         });
-        listView.setAdapter(mAdapter);
+        mListView.setAdapter(mAdapter);
+
+        mEmpty = (TextView)root.findViewById(R.id.empty);
+        if(mNameFilter == null) {
+            mEmpty.setText(R.string.message_empty_dir);
+        } else {
+            mEmpty.setText(getString(R.string.message_empty_dir_filtered, mNameFilter));
+        }
+        mEmpty.setVisibility(View.VISIBLE);
+        root.removeView(mEmpty);
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.title_select_file)
@@ -209,12 +238,15 @@ public class FileSelectorDialog extends DialogFragment {
      * @param index The item index
      */
     private void selectItem(int index) {
+        final ListAdapter adapter = mListView.getAdapter();
+        final int type = adapter.getItemViewType(index);
+        final String item = (String)adapter.getItem(index);
+
         final File file = new File(mPath);
-        final int type = mAdapter.getItemViewType(index);
-        if(type == FileListAdapter.CURRENT_DIR_TYPE) {
+        if(type == AdapterView.ITEM_VIEW_TYPE_HEADER_OR_FOOTER) {
             mPath = file.getParentFile().getPath();
         } else {
-            mPath = new File(file, mAdapter.getItem(index)).getPath();
+            mPath = new File(file, item).getPath();
         }
 
         if(type == FileListAdapter.FILE_TYPE) {
@@ -247,8 +279,38 @@ public class FileSelectorDialog extends DialogFragment {
             return;
         }
 
-        final String currentDir = mPath.equals(mRootPath) ? null : file.getName();
-        mAdapter.setData(getFileList(file), getDirList(file), currentDir);
+        mAdapter.setData(getFileList(file), getDirList(file));
+        setHeader(mPath.equals(mRootPath) ? null : file.getName());
+        showEmpty(mAdapter.isEmpty());
+    }
+
+    /**
+     * Set the header text.
+     *
+     * @param header The header text or null to remove the header
+     */
+    private void setHeader(String header) {
+        if(mHeader == null) {
+            mHeader = (TextView)LayoutInflater.from(getContext())
+                    .inflate(R.layout.file_list_item_dir_open, mListView, false);
+        }
+        mListView.removeHeaderView(mHeader);
+        if(header != null) {
+            mHeader.setText(header);
+            mListView.addHeaderView(mHeader);
+        }
+    }
+
+    /**
+     * Show or hide the empty directory text.
+     *
+     * @param show Whether to show the empty directory text
+     */
+    private void showEmpty(boolean show) {
+        mListView.removeFooterView(mEmpty);
+        if(show) {
+            mListView.addFooterView(mEmpty, null, false);
+        }
     }
 
     /**
@@ -302,18 +364,11 @@ public class FileSelectorDialog extends DialogFragment {
          */
         public static final int FILE_TYPE = 0;
         public static final int DIR_TYPE = 1;
-        public static final int CURRENT_DIR_TYPE = 2;
 
         /**
          * The Context
          */
         private final Context mContext;
-
-        /**
-         * View padding in pixels
-         */
-        private final int mPadding;
-        private final int mPaddingIndent;
 
         /**
          * The list of file names
@@ -330,9 +385,6 @@ public class FileSelectorDialog extends DialogFragment {
          */
         public FileListAdapter(Context context) {
             mContext = context;
-            final Resources res = context.getResources();
-            mPadding = res.getDimensionPixelSize(R.dimen.file_padding);
-            mPaddingIndent = res.getDimensionPixelSize(R.dimen.file_padding_indent);
         }
 
         /**
@@ -347,30 +399,13 @@ public class FileSelectorDialog extends DialogFragment {
         /**
          * Set the data backing the Adapter.
          *
-         * @param files      The list of file names
-         * @param dirs       The list of directory names
-         * @param currentDir The current directory name
+         * @param files The list of file names
+         * @param dirs  The list of directory names
          */
-        public void setData(String[] files, String[] dirs, String currentDir) {
+        public void setData(String[] files, String[] dirs) {
             reset();
-            addItem(currentDir, CURRENT_DIR_TYPE);
             addItems(dirs, DIR_TYPE);
             addItems(files, FILE_TYPE);
-        }
-
-        /**
-         * Add an item to the list.
-         *
-         * @param item The item name
-         * @param type The item type
-         */
-        public void addItem(String item, int type) {
-            if(item == null) {
-                return;
-            }
-            mData.add(item);
-            mTypes.add(type);
-            notifyDataSetChanged();
         }
 
         /**
@@ -407,7 +442,7 @@ public class FileSelectorDialog extends DialogFragment {
 
         @Override
         public int getViewTypeCount() {
-            return 3;
+            return 2;
         }
 
         @Override
@@ -418,26 +453,10 @@ public class FileSelectorDialog extends DialogFragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if(convertView == null) {
-                final int id;
-                final int padding;
-                switch(getItemViewType(position)) {
-                    case CURRENT_DIR_TYPE:
-                        id = R.layout.file_list_item_dir_open;
-                        padding = mPadding;
-                        break;
-                    case DIR_TYPE:
-                        id = R.layout.file_list_item_dir;
-                        padding = mPaddingIndent;
-                        break;
-                    default:
-                        id = R.layout.file_list_item;
-                        padding = mPaddingIndent;
-                }
+                final int id = getItemViewType(position) == DIR_TYPE
+                        ? R.layout.file_list_item_dir
+                        : R.layout.file_list_item;
                 convertView = LayoutInflater.from(mContext).inflate(id, parent, false);
-                convertView.setPadding(padding, mPadding, mPadding, mPadding);
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    convertView.setPaddingRelative(padding, mPadding, mPadding, mPadding);
-                }
             }
 
             ((TextView)convertView).setText(mData.get(position));

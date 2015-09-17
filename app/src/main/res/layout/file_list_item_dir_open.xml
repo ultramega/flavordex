@@ -9,4 +9,6 @@
     android:drawablePadding="4dp"
     android:drawableRight="@drawable/ic_arrow_up"
     android:drawableStart="@drawable/ic_folder_open"
-    android:padding="@dimen/file_padding" />
+    android:gravity="center_vertical"
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
+    android:padding="6dp" />

@@ -7,4 +7,7 @@
     android:drawableLeft="@drawable/ic_file"
     android:drawablePadding="4dp"
     android:drawableStart="@drawable/ic_file"
-    android:padding="@dimen/file_padding" />
+    android:gravity="center_vertical"
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp" />

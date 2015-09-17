@@ -130,6 +130,8 @@
     <string name="message_no_photos">No Photos</string>
     <string name="message_no_media">External storage not available</string>
     <string name="message_active_filters">Filtered by %s.</string>
+    <string name="message_empty_dir">No files found.</string>
+    <string name="message_empty_dir_filtered">No %s files found.</string>
     <string name="message_import_no_data">No valid entries were found.</string>
     <string name="message_import_complete">Import complete.</string>
     <string name="message_export_complete">Export complete.</string>
