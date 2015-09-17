@@ -16,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
@@ -197,7 +198,6 @@ public class FileSelectorDialog extends DialogFragment {
                 selectItem(position);
             }
         });
-        mListView.setAdapter(mAdapter);
 
         mEmpty = (TextView)root.findViewById(R.id.empty);
         if(mNameFilter == null) {
@@ -207,6 +207,8 @@ public class FileSelectorDialog extends DialogFragment {
         }
         mEmpty.setVisibility(View.VISIBLE);
         ((ViewGroup)root.findViewById(R.id.list_container)).removeView(mEmpty);
+        mEmpty.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.title_select_file)
@@ -278,9 +280,13 @@ public class FileSelectorDialog extends DialogFragment {
             return;
         }
 
+        mListView.setAdapter(null);
+
         mAdapter.setData(getFileList(file), getDirList(file));
         setHeader(mPath.equals(mRootPath) ? null : file.getName());
         showEmpty(mAdapter.isEmpty());
+
+        mListView.setAdapter(mAdapter);
     }
 
     /**
