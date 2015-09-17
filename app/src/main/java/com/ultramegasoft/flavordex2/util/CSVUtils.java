@@ -159,13 +159,13 @@ public class CSVUtils {
             final CSVReader reader = new CSVReader(new FileReader(file));
 
             if((line = reader.readNext()) != null) {
+                final CSVHolder data = new CSVHolder();
                 final List<String> fields = Arrays.asList(line);
-                if(!fields.contains(Tables.Entries.TITLE)) {
-                    return null;
+                if(!fields.contains(Tables.Entries.TITLE) || !fields.contains(Tables.Entries.CAT)) {
+                    return data;
                 }
 
                 final ContentResolver cr = context.getContentResolver();
-                final CSVHolder data = new CSVHolder();
 
                 final HashMap<String, String> rowMap = new HashMap<>();
                 EntryHolder entry;
@@ -176,7 +176,7 @@ public class CSVUtils {
                     }
                     entry = readCSVRow(rowMap);
 
-                    if(TextUtils.isEmpty(entry.title)) {
+                    if(TextUtils.isEmpty(entry.title) || TextUtils.isEmpty(entry.catName)) {
                         continue;
                     }
 
