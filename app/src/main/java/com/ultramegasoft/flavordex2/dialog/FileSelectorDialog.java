@@ -189,8 +189,7 @@ public class FileSelectorDialog extends DialogFragment {
     @Override
     @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final ViewGroup root =
-                (ViewGroup)LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
+        final View root = LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
         mListView = (ListView)root.findViewById(R.id.list);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -207,7 +206,7 @@ public class FileSelectorDialog extends DialogFragment {
             mEmpty.setText(getString(R.string.message_empty_dir_filtered, mNameFilter));
         }
         mEmpty.setVisibility(View.VISIBLE);
-        root.removeView(mEmpty);
+        ((ViewGroup)root.findViewById(R.id.list_container)).removeView(mEmpty);
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.title_select_file)

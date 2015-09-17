@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -64,6 +65,7 @@ public class ImportDialog extends DialogFragment
     /**
      * Views from the layout
      */
+    private FrameLayout mListContainer;
     private ListView mListView;
     private ProgressBar mProgressBar;
 
@@ -108,6 +110,8 @@ public class ImportDialog extends DialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final View root = LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
 
+        mListContainer = (FrameLayout)root.findViewById(R.id.list_container);
+
         mListView = (ListView)root.findViewById(R.id.list);
         mListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -126,7 +130,6 @@ public class ImportDialog extends DialogFragment
         if(mData != null) {
             mListView.setAdapter(new CSVListAdapter(getContext(), mData));
         } else if(mFilePath != null) {
-            mProgressBar.setVisibility(View.VISIBLE);
             getLoaderManager().initLoader(0, null, this).forceLoad();
         }
 
@@ -179,6 +182,8 @@ public class ImportDialog extends DialogFragment
 
     @Override
     public Loader<CSVUtils.CSVHolder> onCreateLoader(int id, Bundle args) {
+        mListContainer.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
         return new AsyncTaskLoader<CSVUtils.CSVHolder>(getContext()) {
             @Override
             public CSVUtils.CSVHolder loadInBackground() {
@@ -191,6 +196,7 @@ public class ImportDialog extends DialogFragment
     public void onLoadFinished(Loader<CSVUtils.CSVHolder> loader, CSVUtils.CSVHolder data) {
         if(data != null) {
             mProgressBar.setVisibility(View.GONE);
+            mListContainer.setVisibility(View.VISIBLE);
             mListView.setAdapter(new CSVListAdapter(getContext(), data));
 
             for(int i = 0; i < data.entries.size(); i++) {
