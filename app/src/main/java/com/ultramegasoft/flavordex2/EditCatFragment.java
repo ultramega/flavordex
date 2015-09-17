@@ -473,7 +473,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
             if(field.isEmpty() || field.delete) {
                 continue;
             }
-            data.add(new RadarHolder(field.id, field.name, 0));
+            data.add(new RadarHolder(field.name, 0));
         }
         return data;
     }
@@ -531,7 +531,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
                         Tables.Extras.PRESET + " = 0", null, Tables.Extras._ID + " ASC");
             case LOADER_FLAVOR:
                 return new CursorLoader(getContext(), Uri.withAppendedPath(uri, "flavor"), null,
-                        Tables.Flavors.DELETED + " = 0", null, Tables.Flavors._ID + " ASC");
+                        null, null, Tables.Flavors._ID + " ASC");
         }
         return null;
     }

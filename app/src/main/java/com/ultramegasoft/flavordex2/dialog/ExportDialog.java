@@ -422,9 +422,10 @@ public class ExportDialog extends DialogFragment {
                     String name;
                     int value;
                     while(cursor.moveToNext()) {
-                        name = cursor.getString(cursor.getColumnIndex(Tables.Flavors.NAME));
+                        name = cursor.getString(cursor.getColumnIndex(
+                                Tables.EntriesFlavors.FLAVOR));
                         value = cursor.getInt(cursor.getColumnIndex(Tables.EntriesFlavors.VALUE));
-                        entry.addFlavor(0, name, value);
+                        entry.addFlavor(name, value);
                     }
                 } finally {
                     cursor.close();

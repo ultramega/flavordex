@@ -281,7 +281,7 @@ public class CSVUtils {
             } catch(NumberFormatException e) {
                 continue;
             }
-            entry.addFlavor(0, pair[0], value);
+            entry.addFlavor(pair[0], value);
         }
     }
 

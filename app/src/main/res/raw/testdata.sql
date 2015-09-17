@@ -20,147 +20,147 @@ INSERT INTO `makers` VALUES (4,'','Southern Oromia region, Sidamo');
 --
 INSERT INTO `makers` VALUES (5,'Stevo','California');
 --
-INSERT INTO `flavors` VALUES (60,5,'Flavor',0);
+INSERT INTO `flavors` VALUES (60,5,'Flavor');
 --
-INSERT INTO `flavors` VALUES (61,5,'Fruit',0);
+INSERT INTO `flavors` VALUES (61,5,'Fruit');
 --
-INSERT INTO `flavors` VALUES (62,5,'Sweet',0);
+INSERT INTO `flavors` VALUES (62,5,'Sweet');
 --
-INSERT INTO `flavors` VALUES (63,5,'Earth',0);
+INSERT INTO `flavors` VALUES (63,5,'Earth');
 --
-INSERT INTO `flavors` VALUES (64,5,'Bitter',0);
+INSERT INTO `flavors` VALUES (64,5,'Bitter');
 --
-INSERT INTO `flavors` VALUES (65,5,'Linger',0);
+INSERT INTO `flavors` VALUES (65,5,'Linger');
 --
-INSERT INTO `entries_flavors` VALUES (1,1,31,3);
+INSERT INTO `entries_flavors` VALUES (1,1,'Body',3);
 --
-INSERT INTO `entries_flavors` VALUES (2,1,32,4);
+INSERT INTO `entries_flavors` VALUES (2,1,'Charcoal',4);
 --
-INSERT INTO `entries_flavors` VALUES (3,1,33,4);
+INSERT INTO `entries_flavors` VALUES (3,1,'Oak',4);
 --
-INSERT INTO `entries_flavors` VALUES (4,1,34,4);
+INSERT INTO `entries_flavors` VALUES (4,1,'Leather',4);
 --
-INSERT INTO `entries_flavors` VALUES (5,1,35,2);
+INSERT INTO `entries_flavors` VALUES (5,1,'Spice',2);
 --
-INSERT INTO `entries_flavors` VALUES (6,1,36,3);
+INSERT INTO `entries_flavors` VALUES (6,1,'Alcohol',3);
 --
-INSERT INTO `entries_flavors` VALUES (7,1,37,3);
+INSERT INTO `entries_flavors` VALUES (7,1,'Astringent',3);
 --
-INSERT INTO `entries_flavors` VALUES (8,1,38,4);
+INSERT INTO `entries_flavors` VALUES (8,1,'Linger',4);
 --
-INSERT INTO `entries_flavors` VALUES (9,1,39,2);
+INSERT INTO `entries_flavors` VALUES (9,1,'Sweet',2);
 --
-INSERT INTO `entries_flavors` VALUES (10,1,40,2);
+INSERT INTO `entries_flavors` VALUES (10,1,'Maple',2);
 --
-INSERT INTO `entries_flavors` VALUES (11,1,41,3);
+INSERT INTO `entries_flavors` VALUES (11,1,'Fruit',3);
 --
-INSERT INTO `entries_flavors` VALUES (12,1,42,2);
+INSERT INTO `entries_flavors` VALUES (12,1,'Vanilla',2);
 --
-INSERT INTO `entries_flavors` VALUES (13,1,43,1);
+INSERT INTO `entries_flavors` VALUES (13,1,'Smoke',1);
 --
-INSERT INTO `entries_flavors` VALUES (14,1,44,0);
+INSERT INTO `entries_flavors` VALUES (14,1,'Peat',0);
 --
-INSERT INTO `entries_flavors` VALUES (15,1,45,1);
+INSERT INTO `entries_flavors` VALUES (15,1,'Nut',1);
 --
-INSERT INTO `entries_flavors` VALUES (16,2,1,2);
+INSERT INTO `entries_flavors` VALUES (16,2,'Body',2);
 --
-INSERT INTO `entries_flavors` VALUES (17,2,2,2);
+INSERT INTO `entries_flavors` VALUES (17,2,'Syrup',2);
 --
-INSERT INTO `entries_flavors` VALUES (18,2,3,2);
+INSERT INTO `entries_flavors` VALUES (18,2,'Fruit',2);
 --
-INSERT INTO `entries_flavors` VALUES (19,2,4,5);
+INSERT INTO `entries_flavors` VALUES (19,2,'Citrus',5);
 --
-INSERT INTO `entries_flavors` VALUES (20,2,5,5);
+INSERT INTO `entries_flavors` VALUES (20,2,'Hops',5);
 --
-INSERT INTO `entries_flavors` VALUES (21,2,6,4);
+INSERT INTO `entries_flavors` VALUES (21,2,'Linger',4);
 --
-INSERT INTO `entries_flavors` VALUES (22,2,7,2);
+INSERT INTO `entries_flavors` VALUES (22,2,'Linger',2);
 --
-INSERT INTO `entries_flavors` VALUES (23,2,8,3);
+INSERT INTO `entries_flavors` VALUES (23,2,'Herb',3);
 --
-INSERT INTO `entries_flavors` VALUES (24,2,9,2);
+INSERT INTO `entries_flavors` VALUES (24,2,'Malt',2);
 --
-INSERT INTO `entries_flavors` VALUES (25,2,10,3);
+INSERT INTO `entries_flavors` VALUES (25,2,'Alcohol',3);
 --
-INSERT INTO `entries_flavors` VALUES (26,2,11,2);
+INSERT INTO `entries_flavors` VALUES (26,2,'Sweet',2);
 --
-INSERT INTO `entries_flavors` VALUES (27,2,12,3);
+INSERT INTO `entries_flavors` VALUES (27,2,'Sour',3);
 --
-INSERT INTO `entries_flavors` VALUES (28,2,13,3);
+INSERT INTO `entries_flavors` VALUES (28,2,'Bitter',3);
 --
-INSERT INTO `entries_flavors` VALUES (29,2,14,2);
+INSERT INTO `entries_flavors` VALUES (29,2,'Astringent',2);
 --
-INSERT INTO `entries_flavors` VALUES (30,3,15,4);
+INSERT INTO `entries_flavors` VALUES (30,3,'Body',4);
 --
-INSERT INTO `entries_flavors` VALUES (31,3,16,4);
+INSERT INTO `entries_flavors` VALUES (31,3,'Fruit',4);
 --
-INSERT INTO `entries_flavors` VALUES (32,3,17,2);
+INSERT INTO `entries_flavors` VALUES (32,3,'Citrus',2);
 --
-INSERT INTO `entries_flavors` VALUES (33,3,18,4);
+INSERT INTO `entries_flavors` VALUES (33,3,'Berry',4);
 --
-INSERT INTO `entries_flavors` VALUES (34,3,19,1);
+INSERT INTO `entries_flavors` VALUES (34,3,'Floral',1);
 --
-INSERT INTO `entries_flavors` VALUES (35,3,20,3);
+INSERT INTO `entries_flavors` VALUES (35,3,'Spice',3);
 --
-INSERT INTO `entries_flavors` VALUES (36,3,21,2);
+INSERT INTO `entries_flavors` VALUES (36,3,'Herb',2);
 --
-INSERT INTO `entries_flavors` VALUES (37,3,22,1);
+INSERT INTO `entries_flavors` VALUES (37,3,'Nut',1);
 --
-INSERT INTO `entries_flavors` VALUES (38,3,23,4);
+INSERT INTO `entries_flavors` VALUES (38,3,'Earth',4);
 --
-INSERT INTO `entries_flavors` VALUES (39,3,24,3);
+INSERT INTO `entries_flavors` VALUES (39,3,'Wood',3);
 --
-INSERT INTO `entries_flavors` VALUES (40,3,25,2);
+INSERT INTO `entries_flavors` VALUES (40,3,'Caramel',2);
 --
-INSERT INTO `entries_flavors` VALUES (41,3,26,3);
+INSERT INTO `entries_flavors` VALUES (41,3,'Sweet',3);
 --
-INSERT INTO `entries_flavors` VALUES (42,3,27,3);
+INSERT INTO `entries_flavors` VALUES (42,3,'Sour',3);
 --
-INSERT INTO `entries_flavors` VALUES (43,3,28,4);
+INSERT INTO `entries_flavors` VALUES (43,3,'Astringent',4);
 --
-INSERT INTO `entries_flavors` VALUES (44,3,29,4);
+INSERT INTO `entries_flavors` VALUES (44,3,'Linger',4);
 --
-INSERT INTO `entries_flavors` VALUES (45,3,30,4);
+INSERT INTO `entries_flavors` VALUES (45,3,'Heat',4);
 --
-INSERT INTO `entries_flavors` VALUES (46,4,46,2);
+INSERT INTO `entries_flavors` VALUES (46,4,'Body',2);
 --
-INSERT INTO `entries_flavors` VALUES (47,4,47,2);
+INSERT INTO `entries_flavors` VALUES (47,4,'Citrus',2);
 --
-INSERT INTO `entries_flavors` VALUES (48,4,48,5);
+INSERT INTO `entries_flavors` VALUES (48,4,'Berry',5);
 --
-INSERT INTO `entries_flavors` VALUES (49,4,49,3);
+INSERT INTO `entries_flavors` VALUES (49,4,'Floral',3);
 --
-INSERT INTO `entries_flavors` VALUES (50,4,50,1);
+INSERT INTO `entries_flavors` VALUES (50,4,'Spice',1);
 --
-INSERT INTO `entries_flavors` VALUES (51,4,51,1);
+INSERT INTO `entries_flavors` VALUES (51,4,'Smoke',1);
 --
-INSERT INTO `entries_flavors` VALUES (52,4,52,3);
+INSERT INTO `entries_flavors` VALUES (52,4,'Nut',3);
 --
-INSERT INTO `entries_flavors` VALUES (53,4,53,1);
+INSERT INTO `entries_flavors` VALUES (53,4,'Chocolate',1);
 --
-INSERT INTO `entries_flavors` VALUES (54,4,54,2);
+INSERT INTO `entries_flavors` VALUES (54,4,'Caramel',2);
 --
-INSERT INTO `entries_flavors` VALUES (55,4,55,3);
+INSERT INTO `entries_flavors` VALUES (55,4,'Sweet',3);
 --
-INSERT INTO `entries_flavors` VALUES (56,4,56,2);
+INSERT INTO `entries_flavors` VALUES (56,4,'Sour',2);
 --
-INSERT INTO `entries_flavors` VALUES (57,4,57,1);
+INSERT INTO `entries_flavors` VALUES (57,4,'Bitter',1);
 --
-INSERT INTO `entries_flavors` VALUES (58,4,58,1);
+INSERT INTO `entries_flavors` VALUES (58,4,'Salt',1);
 --
-INSERT INTO `entries_flavors` VALUES (59,4,59,3);
+INSERT INTO `entries_flavors` VALUES (59,4,'Finish',3);
 --
-INSERT INTO `entries_flavors` VALUES (60,5,60,3);
+INSERT INTO `entries_flavors` VALUES (60,5,'Flavor',3);
 --
-INSERT INTO `entries_flavors` VALUES (61,5,61,2);
+INSERT INTO `entries_flavors` VALUES (61,5,'Fruit',2);
 --
-INSERT INTO `entries_flavors` VALUES (62,5,62,4);
+INSERT INTO `entries_flavors` VALUES (62,5,'Sweet',4);
 --
-INSERT INTO `entries_flavors` VALUES (63,5,63,5);
+INSERT INTO `entries_flavors` VALUES (63,5,'Earth',5);
 --
-INSERT INTO `entries_flavors` VALUES (64,5,64,3);
+INSERT INTO `entries_flavors` VALUES (64,5,'Bitter',3);
 --
-INSERT INTO `entries_flavors` VALUES (65,5,65,4);
+INSERT INTO `entries_flavors` VALUES (65,5,'Linger',4);
 --
 INSERT INTO `extras` VALUES (23,5,'Sample Extra',0,0);
 --

@@ -77,7 +77,7 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
         ContentValues rowValues;
         for(RadarHolder holder : radarHolders) {
             rowValues = new ContentValues();
-            rowValues.put(Tables.EntriesFlavors.FLAVOR, holder.id);
+            rowValues.put(Tables.EntriesFlavors.FLAVOR, holder.name);
             rowValues.put(Tables.EntriesFlavors.VALUE, holder.value);
 
             data.add(rowValues);
@@ -96,12 +96,10 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         final ArrayList<RadarHolder> holders = new ArrayList<>();
-        long id;
         String name;
         while(data.moveToNext()) {
-            id = data.getLong(data.getColumnIndex(Tables.Flavors._ID));
             name = data.getString(data.getColumnIndex(Tables.Flavors.NAME));
-            holders.add(new RadarHolder(id, name, 0));
+            holders.add(new RadarHolder(name, 0));
         }
 
         mRadarView.setData(holders);

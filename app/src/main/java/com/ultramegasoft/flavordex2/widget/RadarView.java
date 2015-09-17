@@ -178,11 +178,10 @@ public class RadarView extends View {
          * Called when the selected item index is changed.
          *
          * @param index The index of the selected item
-         * @param id    The ID of the selected item
          * @param name  The name of the selected item
          * @param value The value of the selected item
          */
-        void onSelectedItemChanged(int index, long id, String name, int value);
+        void onSelectedItemChanged(int index, String name, int value);
 
         /**
          * Called when the value of the selected item is changed.
@@ -552,7 +551,7 @@ public class RadarView extends View {
         }
         final ArrayList<RadarHolder> data = new ArrayList<>();
         for(RadarHolder item : mData) {
-            data.add(new RadarHolder(item.id, item.name, item.value));
+            data.add(new RadarHolder(item.name, item.value));
         }
         return data;
     }
@@ -568,7 +567,7 @@ public class RadarView extends View {
             for(RadarHolder item : data) {
                 item.value = Math.max(0, item.value);
                 item.value = Math.min(mMaxValue, item.value);
-                mData.add(new RadarHolder(item.id, item.name, item.value));
+                mData.add(new RadarHolder(item.name, item.value));
             }
         } else {
             mData = null;
@@ -730,7 +729,7 @@ public class RadarView extends View {
     private void onSelectedItemChanged() {
         final RadarHolder item = mData.get(mSelected);
         for(RadarViewListener listener : mListeners) {
-            listener.onSelectedItemChanged(mSelected, item.id, item.name, item.value);
+            listener.onSelectedItemChanged(mSelected, item.name, item.value);
         }
     }
 

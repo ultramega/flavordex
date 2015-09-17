@@ -22,11 +22,6 @@ public class RadarHolder implements Parcelable {
     };
 
     /**
-     * The ID associated with this item
-     */
-    public final long id;
-
-    /**
      * The label for this item
      */
     public String name;
@@ -37,18 +32,16 @@ public class RadarHolder implements Parcelable {
     public int value;
 
     /**
-     * @param id    The ID associated with this item
      * @param name  The name of this item to use as the label
      * @param value The value of this data point
      */
-    public RadarHolder(long id, String name, int value) {
-        this.id = id;
+    public RadarHolder(String name, int value) {
         this.name = name;
         this.value = value;
     }
 
     private RadarHolder(Parcel in) {
-        this(in.readLong(), in.readString(), in.readInt());
+        this(in.readString(), in.readInt());
     }
 
     @Override
@@ -58,7 +51,6 @@ public class RadarHolder implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
         dest.writeString(name);
         dest.writeInt(value);
     }

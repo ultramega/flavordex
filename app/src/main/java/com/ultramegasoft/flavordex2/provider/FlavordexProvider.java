@@ -184,7 +184,7 @@ public class FlavordexProvider extends ContentProvider {
                         + uri.getPathSegments().get(1));
                 break;
             case ENTRIES_FLAVOR:
-                queryBuilder.setTables(Tables.EntriesFlavors.VIEW_NAME);
+                queryBuilder.setTables(Tables.EntriesFlavors.TABLE_NAME);
                 queryBuilder.appendWhere(Tables.EntriesFlavors.ENTRY + " = "
                         + uri.getPathSegments().get(1));
                 break;
@@ -379,6 +379,11 @@ public class FlavordexProvider extends ContentProvider {
                 selection = appendWhere(selection,
                         Tables.Flavors.CAT + " = " + uri.getPathSegments().get(1));
                 break;
+            case ENTRIES_FLAVOR:
+                table = Tables.EntriesFlavors.TABLE_NAME;
+                selection = appendWhere(selection,
+                        Tables.EntriesFlavors.ENTRY + " = " + uri.getPathSegments().get(1));
+                break;
             case PHOTOS:
                 table = Tables.Photos.TABLE_NAME;
                 break;
@@ -392,7 +397,6 @@ public class FlavordexProvider extends ContentProvider {
                 selection = appendWhere(selection,
                         Tables.Photos.ENTRY + " = " + uri.getLastPathSegment());
                 break;
-            case ENTRIES_FLAVOR:
             case LOCATIONS:
             case LOCATIONS_ID:
                 throw new IllegalArgumentException("Update not permitted on: " + uri.toString());
@@ -472,6 +476,11 @@ public class FlavordexProvider extends ContentProvider {
                 selection = appendWhere(selection,
                         Tables.Flavors.CAT + " = " + uri.getPathSegments().get(1));
                 break;
+            case ENTRIES_FLAVOR:
+                table = Tables.EntriesFlavors.TABLE_NAME;
+                selection = appendWhere(selection,
+                        Tables.EntriesFlavors.ENTRY + " = " + uri.getPathSegments().get(1));
+                break;
             case PHOTOS:
                 table = Tables.Photos.TABLE_NAME;
                 break;
@@ -485,7 +494,6 @@ public class FlavordexProvider extends ContentProvider {
                 selection = appendWhere(selection,
                         Tables.Photos.ENTRY + " = " + uri.getLastPathSegment());
                 break;
-            case ENTRIES_FLAVOR:
             case LOCATIONS:
             case LOCATIONS_ID:
                 throw new IllegalArgumentException("Delete not permitted on: " + uri.toString());

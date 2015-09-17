@@ -308,11 +308,6 @@ public class ImportDialog extends DialogFragment
              */
             private Uri mCatUri;
 
-            /**
-             * Whether this is a new category
-             */
-            private boolean mIsCatNew;
-
             public SaveTask() {
                 mResolver = getContext().getContentResolver();
             }
@@ -370,14 +365,12 @@ public class ImportDialog extends DialogFragment
                 final Cursor cursor = mResolver.query(uri, projection, where, whereArgs, null);
                 try {
                     if(cursor.moveToFirst()) {
-                        mIsCatNew = false;
                         return cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
                     }
                 } finally {
                     cursor.close();
                 }
 
-                mIsCatNew = true;
                 final ContentValues values = new ContentValues();
                 values.put(Tables.Cats.NAME, name);
                 return Long.valueOf(mResolver.insert(uri, values).getLastPathSegment());
@@ -434,36 +427,10 @@ public class ImportDialog extends DialogFragment
                 final Uri uri = Uri.withAppendedPath(entryUri, "flavor");
                 final ContentValues values = new ContentValues();
                 for(RadarHolder flavor : entry.getFlavors()) {
-                    values.put(Tables.EntriesFlavors.FLAVOR, getFlavorId(flavor.name));
+                    values.put(Tables.EntriesFlavors.FLAVOR, flavor.name);
                     values.put(Tables.EntriesFlavors.VALUE, flavor.value);
                     mResolver.insert(uri, values);
                 }
-            }
-
-            /**
-             * Find the ID of a flavor, creating one if it doesn't exist.
-             *
-             * @param name The name of the flavor
-             * @return The ID for the flavor
-             */
-            private long getFlavorId(String name) {
-                final Uri uri = Uri.withAppendedPath(mCatUri, "flavor");
-                final String[] projection = new String[] {Tables.Flavors._ID};
-                final String where = Tables.Flavors.NAME + " = ?";
-                final String[] whereArgs = new String[] {name};
-                final Cursor cursor = mResolver.query(uri, projection, where, whereArgs, null);
-                try {
-                    if(cursor.moveToFirst()) {
-                        return cursor.getLong(cursor.getColumnIndex(Tables.Flavors._ID));
-                    }
-                } finally {
-                    cursor.close();
-                }
-
-                final ContentValues values = new ContentValues();
-                values.put(Tables.Flavors.NAME, name);
-                values.put(Tables.Flavors.DELETED, !mIsCatNew);
-                return Long.valueOf(mResolver.insert(uri, values).getLastPathSegment());
             }
 
             /**

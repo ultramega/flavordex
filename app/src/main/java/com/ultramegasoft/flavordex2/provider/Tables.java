@@ -101,7 +101,6 @@ public class Tables {
          * Table names
          */
         public static final String TABLE_NAME = "entries_flavors";
-        public static final String VIEW_NAME = "view_entry_flavor";
 
         /**
          * Column names
@@ -213,7 +212,6 @@ public class Tables {
          */
         public static final String CAT = "cat";
         public static final String NAME = "name";
-        public static final String DELETED = "deleted";
 
         /**
          * Content data types

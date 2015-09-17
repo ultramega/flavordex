@@ -419,7 +419,7 @@ public class AddEntryFragment extends Fragment {
                     flavor.put(Tables.EntriesFlavors.VALUE, 0);
                     while(cursor.moveToNext()) {
                         flavor.put(Tables.EntriesFlavors.FLAVOR,
-                                cursor.getLong(cursor.getColumnIndex(Tables.Flavors._ID)));
+                                cursor.getString(cursor.getColumnIndex(Tables.Flavors.NAME)));
                         mResolver.insert(Uri.withAppendedPath(entryUri, "flavor"), flavor);
                     }
                 } finally {

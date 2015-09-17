@@ -101,12 +101,11 @@ public class EntryHolder implements Parcelable {
     /**
      * Add a flavor to this entry.
      *
-     * @param id    The database ID for this flavor
      * @param name  The name of this flavor
      * @param value The value of this flavor
      */
-    public void addFlavor(long id, String name, int value) {
-        mFlavors.add(new RadarHolder(id, name, value));
+    public void addFlavor(String name, int value) {
+        mFlavors.add(new RadarHolder(name, value));
     }
 
     /**

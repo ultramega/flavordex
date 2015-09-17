@@ -172,16 +172,16 @@ public class RadarEditWidget extends LinearLayout {
             @Override
             public void onDataChanged(ArrayList<RadarHolder> newData) {
                 if(newData == null || newData.isEmpty()) {
-                    onSelectedItemChanged(0, 0, null, 0);
+                    onSelectedItemChanged(0, null, 0);
                     return;
                 }
                 final int index = mRadarView.getSelectedIndex();
                 final RadarHolder item = newData.get(index);
-                onSelectedItemChanged(index, item.id, item.name, item.value);
+                onSelectedItemChanged(index, item.name, item.value);
             }
 
             @Override
-            public void onSelectedItemChanged(int index, long id, String name, int value) {
+            public void onSelectedItemChanged(int index, String name, int value) {
                 setName(name);
                 setValue(value);
             }

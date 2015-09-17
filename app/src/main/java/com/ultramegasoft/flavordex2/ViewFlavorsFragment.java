@@ -213,12 +213,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         final Uri uri =
                 Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/flavor");
-        final String[] projection = new String[] {
-                Tables.EntriesFlavors.FLAVOR,
-                Tables.Flavors.NAME,
-                Tables.EntriesFlavors.VALUE
-        };
-        return new CursorLoader(getContext(), uri, projection, null, null,
+        return new CursorLoader(getContext(), uri, null, null, null,
                 Tables.EntriesFlavors._ID + " ASC");
     }
 
@@ -226,8 +221,12 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     public void onLoadFinished(Loader<Cursor> loader, Cursor d) {
         final ArrayList<RadarHolder> flavorValues = new ArrayList<>();
 
+        String name;
+        int value;
         while(d.moveToNext()) {
-            flavorValues.add(new RadarHolder(d.getLong(0), d.getString(1), d.getInt(2)));
+            name = d.getString(d.getColumnIndex(Tables.EntriesFlavors.FLAVOR));
+            value = d.getInt(d.getColumnIndex(Tables.EntriesFlavors.VALUE));
+            flavorValues.add(new RadarHolder(name, value));
         }
 
         mData = flavorValues;
@@ -275,9 +274,10 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
         protected Void doInBackground(Void... arg0) {
             Uri uri =
                     Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/flavor");
+            mResolver.delete(uri, null, null);
             final ContentValues values = new ContentValues();
             for(RadarHolder item : mData) {
-                values.put(Tables.EntriesFlavors.FLAVOR, item.id);
+                values.put(Tables.EntriesFlavors.FLAVOR, item.name);
                 values.put(Tables.EntriesFlavors.VALUE, item.value);
                 mResolver.insert(uri, values);
             }
