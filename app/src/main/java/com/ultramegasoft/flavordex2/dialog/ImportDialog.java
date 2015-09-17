@@ -24,6 +24,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.R;
@@ -115,6 +116,10 @@ public class ImportDialog extends DialogFragment
                 invalidateButtons();
             }
         });
+
+        final TextView emptyView = (TextView)root.findViewById(R.id.empty);
+        emptyView.setText(R.string.message_import_no_data);
+        mListView.setEmptyView(emptyView);
 
         mProgressBar = (ProgressBar)root.findViewById(R.id.progress);
 

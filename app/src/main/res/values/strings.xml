@@ -130,6 +130,7 @@
     <string name="message_no_photos">No Photos</string>
     <string name="message_no_media">External storage not available</string>
     <string name="message_active_filters">Filtered by %s.</string>
+    <string name="message_import_no_data">No valid entries were found.</string>
     <string name="message_import_complete">Import complete.</string>
     <string name="message_export_complete">Export complete.</string>
     <string name="message_duplicates_unchecked" tools:ignore="PluralsCandidate">%1$d possible %2$s %3$s unchecked.</string>
@@ -148,7 +149,7 @@
     <string name="error_csv_import">Import failed</string>
     <string name="error_csv_export">Export failed</string>
     <string name="error_csv_export_file">Unable to create destination file.</string>
-    <string name="error_csv_parse">Unable to parse the .csv file\n\nMake sure the first row is column names, and contains a \'title\' field.</string>
+    <string name="error_csv_parse">Unable to parse the .csv file.</string>
     <string name="error_required">required</string>
 
     <string name="share_subject">I logged %s on Flavordex</string>
