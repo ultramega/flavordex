@@ -105,10 +105,10 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
      */
     private View getLayout() {
         final ListView listView = new ListView(getContext());
-        listView.setAdapter(mAdapter);
 
         listView.addFooterView(LayoutInflater.from(getContext())
                 .inflate(R.layout.cat_add_list_item, listView, false));
+        listView.setAdapter(mAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
