@@ -7,4 +7,8 @@
         android:icon="@drawable/ic_edit"
         android:title="@string/menu_edit_flavor"
         app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/menu_reset_flavor"
+        android:title="@string/menu_reset_flavor"
+        app:showAsAction="never" />
 </menu>

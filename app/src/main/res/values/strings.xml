@@ -35,6 +35,7 @@
     <string name="title_exporting">Exporting…</string>
     <string name="title_settings">Application Settings</string>
     <string name="title_permission">Permission Requested</string>
+    <string name="title_reset_flavor">Reset Flavor Chart</string>
 
     <string name="header_details">Details</string>
     <string name="header_rating">Rating</string>
@@ -60,6 +61,7 @@
     <string name="menu_take_photo">Take Photo</string>
     <string name="menu_remove_photo">Remove Photo</string>
     <string name="menu_edit_flavor">Edit Flavors</string>
+    <string name="menu_reset_flavor">Reset Flavors</string>
     <string name="menu_xport">Import/Export</string>
     <string name="menu_import">Import Entries</string>
     <string name="menu_export">Export Entries</string>
@@ -140,6 +142,7 @@
     <string name="message_delete_cat_entries">Delete &lt;b>%1$d %2$s&lt;/b> from this category.</string>
     <string name="message_request_storage">Flavordex requires external storage access to enable photo features.</string>
     <string name="message_request_storage_xport">Flavordex requires external storage access to enable importing and exporting.</string>
+    <string name="message_reset_flavor">Do you want to reset this flavor chart to the current category default? This will result in a blank chart.</string>
 
     <string name="pref_detect_location">Remember Locations</string>
     <string name="pref_summary_detect_location">Auto-fill location name based on previous entries.</string>

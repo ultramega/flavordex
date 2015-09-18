@@ -1,11 +1,14 @@
 package com.ultramegasoft.flavordex2;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -19,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.RadarEditWidget;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
@@ -27,11 +31,22 @@ import com.ultramegasoft.flavordex2.widget.RadarView;
 import java.util.ArrayList;
 
 /**
- * Fragment to display the flavor radar chart of a journal entry.
+ * Fragment to display and edit the flavor radar chart of a journal entry.
  *
  * @author Steve Guidetti
  */
 public class ViewFlavorsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * Loader IDs
+     */
+    private static final int LOADER_FLAVOR = 0;
+    private static final int LOADER_DEFAULT_FLAVOR = 1;
+
+    /**
+     * Request codes for external Activities
+     */
+    private static final int REQUEST_RESET = 100;
+
     /**
      * Keys for the saved state of this Fragment
      */
@@ -81,7 +96,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
             mEditMode = savedInstanceState.getBoolean(STATE_EDIT_MODE, false);
             mRadarView.setVisibility(View.VISIBLE);
         } else if(mData == null) {
-            getLoaderManager().initLoader(0, null, this);
+            getLoaderManager().initLoader(LOADER_FLAVOR, null, this);
         } else {
             mRadarView.setVisibility(View.VISIBLE);
         }
@@ -153,13 +168,35 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menu_edit_flavor).setEnabled(!mEditMode);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        final int id = item.getItemId();
-        if(id == R.id.menu_edit_flavor) {
-            setEditMode(true, true);
-            return true;
+        switch(item.getItemId()) {
+            case R.id.menu_edit_flavor:
+                setEditMode(true, true);
+                return true;
+            case R.id.menu_reset_flavor:
+                ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_RESET,
+                        getString(R.string.title_reset_flavor),
+                        getString(R.string.message_reset_flavor));
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == Activity.RESULT_OK) {
+            switch(requestCode) {
+                case REQUEST_RESET:
+                    getLoaderManager().initLoader(LOADER_DEFAULT_FLAVOR, null, this);
+                    break;
+            }
+        }
     }
 
     /**
@@ -190,6 +227,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
 
         mRadarView.setInteractive(editMode);
         mEditMode = editMode;
+        ActivityCompat.invalidateOptionsMenu(getActivity());
     }
 
     /**
@@ -210,30 +248,55 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        final Uri uri =
-                Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/flavor");
-        return new CursorLoader(getContext(), uri, null, null, null,
-                Tables.EntriesFlavors._ID + " ASC");
+    public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
+        Uri uri;
+        switch(id) {
+            case LOADER_FLAVOR:
+                uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE,
+                        mEntryId + "/flavor");
+                return new CursorLoader(getContext(), uri, null, null, null,
+                        Tables.EntriesFlavors._ID + " ASC");
+            case LOADER_DEFAULT_FLAVOR:
+                final long catId = getArguments().getLong(ViewEntryFragment.ARG_ENTRY_CAT_ID);
+                uri = Uri.withAppendedPath(Tables.Cats.CONTENT_ID_URI_BASE, catId + "/flavor");
+                return new CursorLoader(getContext(), uri, null, null, null,
+                        Tables.Flavors._ID + " ASC");
+        }
+        return null;
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor d) {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         final ArrayList<RadarHolder> flavorValues = new ArrayList<>();
 
         String name;
         int value;
-        while(d.moveToNext()) {
-            name = d.getString(d.getColumnIndex(Tables.EntriesFlavors.FLAVOR));
-            value = d.getInt(d.getColumnIndex(Tables.EntriesFlavors.VALUE));
-            flavorValues.add(new RadarHolder(name, value));
-        }
+        switch(loader.getId()) {
+            case LOADER_FLAVOR:
+                while(data.moveToNext()) {
+                    name = data.getString(data.getColumnIndex(Tables.EntriesFlavors.FLAVOR));
+                    value = data.getInt(data.getColumnIndex(Tables.EntriesFlavors.VALUE));
+                    flavorValues.add(new RadarHolder(name, value));
+                }
+                mData = flavorValues;
+                break;
+            case LOADER_DEFAULT_FLAVOR:
+                while(data.moveToNext()) {
+                    name = data.getString(data.getColumnIndex(Tables.Flavors.NAME));
+                    flavorValues.add(new RadarHolder(name, 0));
+                }
 
-        mData = flavorValues;
+                if(!mEditMode) {
+                    setEditMode(true, true);
+                } else {
+                    mRadarView.turnTo(0);
+                }
+                break;
+        }
         mRadarView.setData(flavorValues);
         mRadarView.setVisibility(View.VISIBLE);
 
-        getLoaderManager().destroyLoader(0);
+        getLoaderManager().destroyLoader(loader.getId());
     }
 
     @Override
