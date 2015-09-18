@@ -28,15 +28,15 @@ import java.util.ArrayList;
  */
 public abstract class AbsPhotosFragment extends Fragment {
     /**
-     * Keys for the saved state
-     */
-    private static final String STATE_PHOTOS = "photos";
-
-    /**
      * Request codes for external Activities
      */
     private static final int REQUEST_CAPTURE_IMAGE = 100;
     private static final int REQUEST_SELECT_IMAGE = 200;
+
+    /**
+     * Keys for the saved state
+     */
+    private static final String STATE_PHOTOS = "photos";
 
     /**
      * Whether the external storage is readable
