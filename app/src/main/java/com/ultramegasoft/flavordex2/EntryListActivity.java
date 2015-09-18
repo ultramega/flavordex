@@ -45,25 +45,32 @@ public class EntryListActivity extends AppCompatActivity {
         PermissionUtils.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
-    public void onItemSelected(long id, String cat, long catId) {
+    /**
+     * Called by the ListFragment when an item is selected.
+     *
+     * @param id      The entry ID
+     * @param catName The name of the entry category
+     * @param catId   The ID of the entry category
+     */
+    public void onItemSelected(long id, String catName, long catId) {
         if(mTwoPane) {
-            final Bundle arguments = new Bundle();
-            arguments.putLong(ViewEntryFragment.ARG_ENTRY_ID, id);
-            arguments.putString(ViewEntryFragment.ARG_ENTRY_CAT, cat);
-            arguments.putLong(ViewEntryFragment.ARG_ENTRY_CAT_ID, catId);
+            final Bundle args = new Bundle();
+            args.putLong(ViewEntryFragment.ARG_ENTRY_ID, id);
+            args.putString(ViewEntryFragment.ARG_ENTRY_CAT, catName);
+            args.putLong(ViewEntryFragment.ARG_ENTRY_CAT_ID, catId);
 
             final ViewEntryFragment fragment = new ViewEntryFragment();
-            fragment.setArguments(arguments);
+            fragment.setArguments(args);
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.entry_detail_container, fragment).commit();
 
         } else {
-            final Intent detailIntent = new Intent(this, ViewEntryActivity.class);
-            detailIntent.putExtra(ViewEntryFragment.ARG_ENTRY_ID, id);
-            detailIntent.putExtra(ViewEntryFragment.ARG_ENTRY_CAT, cat);
-            detailIntent.putExtra(ViewEntryFragment.ARG_ENTRY_CAT_ID, catId);
-            startActivity(detailIntent);
+            final Intent intent = new Intent(this, ViewEntryActivity.class);
+            intent.putExtra(ViewEntryFragment.ARG_ENTRY_ID, id);
+            intent.putExtra(ViewEntryFragment.ARG_ENTRY_CAT, catName);
+            intent.putExtra(ViewEntryFragment.ARG_ENTRY_CAT_ID, catId);
+            startActivity(intent);
         }
     }
 }
