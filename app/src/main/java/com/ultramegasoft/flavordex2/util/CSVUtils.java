@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -39,9 +40,14 @@ public class CSVUtils {
     /**
      * Delimiters for field values
      */
-    private static final String PHOTO_DELIM = "|";
     private static final String FIELD_DELIM = "|";
     private static final String PAIR_DELIM = ":";
+
+    /**
+     * Regex patterns for splitting strings
+     */
+    private static final Pattern sFieldSplitter = Pattern.compile("\\" + FIELD_DELIM);
+    private static final Pattern sPairSplitter = Pattern.compile(PAIR_DELIM);
 
     /**
      * Formatter for dates in CSV files
@@ -247,8 +253,8 @@ public class CSVUtils {
         }
 
         String[] pair;
-        for(String extra : extraField.split("\\" + FIELD_DELIM)) {
-            pair = extra.split(PAIR_DELIM, 2);
+        for(String extra : sFieldSplitter.split(extraField)) {
+            pair = sPairSplitter.split(extra, 2);
             if(pair.length == 2) {
                 entry.addExtra(0, pair[0], false, pair[1]);
             }
@@ -269,8 +275,8 @@ public class CSVUtils {
 
         String[] pair;
         int value;
-        for(String flavor : flavorsField.split("\\" + FIELD_DELIM)) {
-            pair = flavor.split(PAIR_DELIM, 2);
+        for(String flavor : sFieldSplitter.split(flavorsField)) {
+            pair = sPairSplitter.split(flavor, 2);
             if(pair.length != 2) {
                 continue;
             }
@@ -297,7 +303,7 @@ public class CSVUtils {
             return;
         }
 
-        for(String photo : photosField.split("\\" + PHOTO_DELIM)) {
+        for(String photo : sFieldSplitter.split(photosField)) {
             if(new File(photo).canRead()) {
                 entry.addPhoto(0, photo);
             }
