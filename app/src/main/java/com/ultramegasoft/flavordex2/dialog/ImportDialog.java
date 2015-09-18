@@ -372,7 +372,7 @@ public class ImportDialog extends DialogFragment
                 }
 
                 final ContentValues values = new ContentValues();
-                values.put(Tables.Cats.NAME, name);
+                values.put(Tables.Cats.NAME, name.replace("_", ""));
                 return Long.valueOf(mResolver.insert(uri, values).getLastPathSegment());
             }
 
@@ -413,7 +413,7 @@ public class ImportDialog extends DialogFragment
                 }
 
                 final ContentValues values = new ContentValues();
-                values.put(Tables.Extras.NAME, name);
+                values.put(Tables.Extras.NAME, name.replace("_", ""));
                 return Long.valueOf(mResolver.insert(uri, values).getLastPathSegment());
             }
 
