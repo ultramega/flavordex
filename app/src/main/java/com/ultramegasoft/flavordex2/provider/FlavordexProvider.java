@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2.provider;
 
+import android.app.backup.BackupManager;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -81,9 +82,15 @@ public class FlavordexProvider extends ContentProvider {
      */
     private DatabaseHelper mDbHelper;
 
+    /**
+     * The BackupManager to notify of data changes
+     */
+    private BackupManager mBackupManager;
+
     @Override
     public boolean onCreate() {
         mDbHelper = new DatabaseHelper(getContext());
+        mBackupManager = new BackupManager(getContext());
         return true;
     }
 
@@ -297,12 +304,16 @@ public class FlavordexProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI: " + uri.toString());
         }
 
-        final long id = mDbHelper.getWritableDatabase().insert(table, null, values);
+        synchronized(FlavordexProvider.class) {
+            final long id = mDbHelper.getWritableDatabase().insert(table, null, values);
 
-        if(id > 0) {
-            final Uri rowUri = ContentUris.withAppendedId(uri, id);
-            getContext().getContentResolver().notifyChange(rowUri, null);
-            return rowUri;
+            if(id > 0) {
+                mBackupManager.dataChanged();
+
+                final Uri rowUri = ContentUris.withAppendedId(uri, id);
+                getContext().getContentResolver().notifyChange(rowUri, null);
+                return rowUri;
+            }
         }
 
         throw new SQLiteException("Failed to insert row into " + uri.toString());
@@ -409,14 +420,17 @@ public class FlavordexProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI: " + uri.toString());
         }
 
-        final int count = mDbHelper.getWritableDatabase().update(table, values, selection,
-                selectionArgs);
+        synchronized(FlavordexProvider.class) {
+            final int count = mDbHelper.getWritableDatabase().update(table, values, selection,
+                    selectionArgs);
 
-        if(count > 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
+            if(count > 0) {
+                mBackupManager.dataChanged();
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
+
+            return count;
         }
-
-        return count;
     }
 
     @Override
@@ -506,13 +520,17 @@ public class FlavordexProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI: " + uri.toString());
         }
 
-        final int count = mDbHelper.getWritableDatabase().delete(table, selection, selectionArgs);
+        synchronized(FlavordexProvider.class) {
+            final int count =
+                    mDbHelper.getWritableDatabase().delete(table, selection, selectionArgs);
 
-        if(count > 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
+            if(count > 0) {
+                mBackupManager.dataChanged();
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
+
+            return count;
         }
-
-        return count;
     }
 
 
@@ -547,8 +565,10 @@ public class FlavordexProvider extends ContentProvider {
                 makerValues.put(Tables.Makers.NAME, maker);
                 makerValues.put(Tables.Makers.LOCATION, origin);
 
-                final long makerId = db.insert(Tables.Makers.TABLE_NAME, null, makerValues);
-                values.put(Tables.Entries.MAKER, makerId);
+                synchronized(FlavordexProvider.class) {
+                    final long makerId = db.insert(Tables.Makers.TABLE_NAME, null, makerValues);
+                    values.put(Tables.Entries.MAKER, makerId);
+                }
             }
         } finally {
             cursor.close();

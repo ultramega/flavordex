@@ -1,6 +1,7 @@
 package com.ultramegasoft.flavordex2;
 
 import android.app.Application;
+import android.app.backup.BackupManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -87,9 +88,16 @@ public class FlavordexApp extends Application implements
      */
     private String mLocationName;
 
+    /**
+     * The BackupManager to notify of preference changes
+     */
+    private BackupManager mBackupManager;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        mBackupManager = new BackupManager(this);
+
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
         if(prefs.getBoolean(PREF_DETECT_LOCATION, false)) {
@@ -99,6 +107,7 @@ public class FlavordexApp extends Application implements
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        mBackupManager.dataChanged();
         if(PREF_DETECT_LOCATION.equals(key)) {
             setLocationEnabled(sharedPreferences.getBoolean(key, false));
         }
