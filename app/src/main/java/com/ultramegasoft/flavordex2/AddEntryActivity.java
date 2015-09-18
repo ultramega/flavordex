@@ -27,6 +27,7 @@ public class AddEntryActivity extends AppCompatActivity {
      */
     public static final String EXTRA_ENTRY_ID = "entry_id";
     public static final String EXTRA_ENTRY_CAT = "entry_cat";
+    public static final String EXTRA_ENTRY_CAT_ID = "entry_cat_id";
 
     /**
      * Get an Intent to start this Activity.
@@ -76,13 +77,15 @@ public class AddEntryActivity extends AppCompatActivity {
     /**
      * Send the ID of the new entry to the calling Activity.
      *
-     * @param entryId  The ID of the newly created entry
-     * @param entryCat The name of the entry category
+     * @param entryId    The ID of the newly created entry
+     * @param entryCat   The name of the entry category
+     * @param entryCatId The ID for the entry category
      */
-    public void publishResult(long entryId, String entryCat) {
+    public void publishResult(long entryId, String entryCat, long entryCatId) {
         final Intent data = new Intent();
         data.putExtra(EXTRA_ENTRY_ID, entryId);
         data.putExtra(EXTRA_ENTRY_CAT, entryCat);
+        data.putExtra(EXTRA_CAT_ID, entryCatId);
 
         setResult(RESULT_OK, data);
         finish();

@@ -299,7 +299,7 @@ public class AddEntryFragment extends Fragment {
             if(activity == null) {
                 mEntryId = entryId;
             } else {
-                activity.publishResult(entryId, mEntry.catName);
+                activity.publishResult(entryId, mEntry.catName, mEntry.catId);
             }
         }
 

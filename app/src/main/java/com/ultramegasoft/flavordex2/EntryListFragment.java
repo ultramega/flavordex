@@ -84,6 +84,7 @@ public class EntryListFragment extends ListFragment
      */
     private static final String[] LIST_PROJECTION = new String[] {
             Tables.Entries._ID,
+            Tables.Entries.CAT_ID,
             Tables.Entries.CAT,
             Tables.Entries.TITLE,
             Tables.Entries.MAKER,
@@ -232,7 +233,10 @@ public class EntryListFragment extends ListFragment
             return;
         }
         mActivatedItem = id;
-        ((EntryListActivity)getActivity()).onItemSelected(id, mAdapter.getItemCat(id));
+        final Cursor cursor = (Cursor)mAdapter.getItem(position);
+        final String catName = cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT));
+        final long catId = cursor.getLong(cursor.getColumnIndex(Tables.Entries.CAT_ID));
+        ((EntryListActivity)getActivity()).onItemSelected(id, catName, catId);
     }
 
     @Override
@@ -342,7 +346,7 @@ public class EntryListFragment extends ListFragment
                 return true;
             case R.id.menu_edit_entry:
                 EditEntryActivity.startActivity(getContext(), info.id,
-                        mAdapter.getItemCat(info.id));
+                        cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT)));
                 return true;
             case R.id.menu_delete_entry:
                 if(cursor != null) {
@@ -378,7 +382,8 @@ public class EntryListFragment extends ListFragment
                     if(entryId > 0) {
                         mActivatedItem = entryId;
                         ((EntryListActivity)getActivity()).onItemSelected(entryId,
-                                data.getStringExtra(AddEntryActivity.EXTRA_ENTRY_CAT));
+                                data.getStringExtra(AddEntryActivity.EXTRA_ENTRY_CAT),
+                                data.getLongExtra(AddEntryActivity.EXTRA_ENTRY_CAT_ID, 0));
                     }
                     break;
                 case REQUEST_IMPORT_FILE:

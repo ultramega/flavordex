@@ -33,6 +33,8 @@ public class ViewEntryActivity extends AppCompatActivity {
                     intent.getLongExtra(ViewEntryFragment.ARG_ENTRY_ID, 0));
             arguments.putString(ViewEntryFragment.ARG_ENTRY_CAT,
                     intent.getStringExtra(ViewEntryFragment.ARG_ENTRY_CAT));
+            arguments.putString(ViewEntryFragment.ARG_ENTRY_CAT_ID,
+                    intent.getStringExtra(ViewEntryFragment.ARG_ENTRY_CAT_ID));
 
             final ViewEntryFragment fragment = new ViewEntryFragment();
             fragment.setArguments(arguments);

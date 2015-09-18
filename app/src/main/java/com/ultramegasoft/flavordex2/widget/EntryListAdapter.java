@@ -44,11 +44,6 @@ public class EntryListAdapter extends CursorAdapter {
     private final SimpleDateFormat mDateFormat;
 
     /**
-     * Map of item IDs to item categories
-     */
-    private final HashMap<Long, String> mItemCats = new HashMap<>();
-
-    /**
      * Map of item IDs to their position index in the list
      */
     private final HashMap<Long, Integer> mItemPositions = new HashMap<>();
@@ -126,8 +121,6 @@ public class EntryListAdapter extends CursorAdapter {
         } else {
             holder.date.setText(null);
         }
-
-        mItemCats.put(id, cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT)));
     }
 
     /**
@@ -149,16 +142,6 @@ public class EntryListAdapter extends CursorAdapter {
             mMultiChoice = multiChoice;
             notifyDataSetChanged();
         }
-    }
-
-    /**
-     * Get the category of the item with the specified ID.
-     *
-     * @param id The row ID
-     * @return The category name
-     */
-    public String getItemCat(long id) {
-        return mItemCats.get(id);
     }
 
     /**

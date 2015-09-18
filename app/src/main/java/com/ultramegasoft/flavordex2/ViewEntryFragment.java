@@ -37,6 +37,7 @@ public class ViewEntryFragment extends Fragment {
      */
     public static final String ARG_ENTRY_ID = "entry_id";
     public static final String ARG_ENTRY_CAT = "entry_cat";
+    public static final String ARG_ENTRY_CAT_ID = "entry_cat_id";
 
     /**
      * Request code for deleting an entry
@@ -77,6 +78,7 @@ public class ViewEntryFragment extends Fragment {
 
         final Bundle args = new Bundle();
         args.putLong(ARG_ENTRY_ID, mEntryId);
+        args.putLong(ARG_ENTRY_CAT_ID, getArguments().getLong(ARG_ENTRY_CAT_ID));
 
         Drawable icon;
         TabHost.TabSpec tab;

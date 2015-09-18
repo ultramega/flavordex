@@ -45,11 +45,12 @@ public class EntryListActivity extends AppCompatActivity {
         PermissionUtils.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
-    public void onItemSelected(long id, String cat) {
+    public void onItemSelected(long id, String cat, long catId) {
         if(mTwoPane) {
             final Bundle arguments = new Bundle();
             arguments.putLong(ViewEntryFragment.ARG_ENTRY_ID, id);
             arguments.putString(ViewEntryFragment.ARG_ENTRY_CAT, cat);
+            arguments.putLong(ViewEntryFragment.ARG_ENTRY_CAT_ID, catId);
 
             final ViewEntryFragment fragment = new ViewEntryFragment();
             fragment.setArguments(arguments);
@@ -61,6 +62,7 @@ public class EntryListActivity extends AppCompatActivity {
             final Intent detailIntent = new Intent(this, ViewEntryActivity.class);
             detailIntent.putExtra(ViewEntryFragment.ARG_ENTRY_ID, id);
             detailIntent.putExtra(ViewEntryFragment.ARG_ENTRY_CAT, cat);
+            detailIntent.putExtra(ViewEntryFragment.ARG_ENTRY_CAT_ID, catId);
             startActivity(detailIntent);
         }
     }
