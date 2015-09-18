@@ -11,6 +11,6 @@
 
     <EditText
         android:id="@+id/value"
-        style="@style/TextInput"
+        style="@style/TextInput.Name"
         tools:ignore="TextFields" />
 </TableRow>
