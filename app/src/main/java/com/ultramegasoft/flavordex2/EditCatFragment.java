@@ -699,12 +699,12 @@ public class EditCatFragment extends LoadingProgressFragment
 
         @Override
         protected Void doInBackground(Void... params) {
-            final Uri catUri = insertCat();
+            final Uri catUri = updateCat();
             if(mExtras != null) {
-                insertExtras(catUri);
+                updateExtras(catUri);
             }
             if(mFlavors != null) {
-                insertFlavors(catUri);
+                updateFlavors(catUri);
             }
             return null;
         }
@@ -714,7 +714,7 @@ public class EditCatFragment extends LoadingProgressFragment
          *
          * @return The base Uri for the category record
          */
-        private Uri insertCat() {
+        private Uri updateCat() {
             final Uri uri;
             if(mCatId > 0) {
                 uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
@@ -732,7 +732,7 @@ public class EditCatFragment extends LoadingProgressFragment
          *
          * @param catUri The base Uri for the category
          */
-        private void insertExtras(Uri catUri) {
+        private void updateExtras(Uri catUri) {
             final Uri insertUri = Uri.withAppendedPath(catUri, "extras");
             Uri uri;
             final ContentValues values = new ContentValues();
@@ -758,7 +758,7 @@ public class EditCatFragment extends LoadingProgressFragment
          *
          * @param catUri The base Uri for the category
          */
-        private void insertFlavors(Uri catUri) {
+        private void updateFlavors(Uri catUri) {
             final Uri insertUri = Uri.withAppendedPath(catUri, "flavor");
             Uri uri;
             final ContentValues values = new ContentValues();
