@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Paint;
@@ -14,7 +15,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -44,19 +45,12 @@ import java.util.ArrayList;
  * @author Steve Guidetti
  */
 public class EditCatFragment extends LoadingProgressFragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<EditCatFragment.DataLoader.Holder> {
     /**
      * Keys for the Fragment arguments
      */
     public static final String ARG_CAT_ID = "cat_id";
     public static final String ARG_CAT_NAME = "cat_name";
-
-    /**
-     * Loader IDs
-     */
-    private static final int LOADER_CAT = 0;
-    private static final int LOADER_EXTRAS = 1;
-    private static final int LOADER_FLAVOR = 2;
 
     /**
      * Request codes for external Activities
@@ -136,11 +130,9 @@ public class EditCatFragment extends LoadingProgressFragment
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState == null) {
             if(mCatId > 0) {
-                getLoaderManager().initLoader(LOADER_CAT, null, this);
-                getLoaderManager().initLoader(LOADER_EXTRAS, null, this);
-                getLoaderManager().initLoader(LOADER_FLAVOR, null, this);
+                getLoaderManager().initLoader(0, null, this).forceLoad();
             } else {
-                addFlavor(0, null);
+                createFlavor();
                 hideLoadingIndicator(false);
                 if(mTxtTitle != null) {
                     mTxtTitle.requestFocus();
@@ -149,15 +141,7 @@ public class EditCatFragment extends LoadingProgressFragment
         } else {
             mExtraFields = savedInstanceState.getParcelableArrayList(STATE_EXTRA_FIELDS);
             mFlavorFields = savedInstanceState.getParcelableArrayList(STATE_FLAVOR_FIELDS);
-
-            for(int i = 0; i < mExtraFields.size(); i++) {
-                addExtraField(i);
-            }
-
-            for(int i = 0; i < mFlavorFields.size(); i++) {
-                addFlavorField(i);
-            }
-
+            populateFields();
             hideLoadingIndicator(false);
         }
     }
@@ -178,14 +162,14 @@ public class EditCatFragment extends LoadingProgressFragment
         root.findViewById(R.id.button_add_extra).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addExtra(0, null, false);
+                createExtra();
             }
         });
 
         root.findViewById(R.id.button_add_flavor).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addFlavor(0, null);
+                createFlavor();
             }
         });
 
@@ -252,29 +236,37 @@ public class EditCatFragment extends LoadingProgressFragment
     }
 
     /**
-     * Add an extra field.
-     *
-     * @param id      The database ID, if any
-     * @param name    The name of the field
-     * @param deleted Whether to show the field as deleted
+     * Add all the fields to the layout.
      */
-    private void addExtra(long id, String name, boolean deleted) {
+    private void populateFields() {
+        for(Field field : mExtraFields) {
+            addExtraField(field);
+        }
+        for(Field field : mFlavorFields) {
+            addFlavorField(field);
+        }
+    }
+
+    /**
+     * Create a new extra field.
+     */
+    private void createExtra() {
         final int count = mExtraFields.size();
         if(count > 0 && TextUtils.isEmpty(mExtraFields.get(count - 1).name)) {
             return;
         }
-        if(mExtraFields.add(new Field(id, name, deleted))) {
-            addExtraField(count);
-        }
+
+        final Field field = new Field(0, null);
+        mExtraFields.add(field);
+        addExtraField(field);
     }
 
     /**
      * Add the Views associated with an extra field to the layout.
      *
-     * @param i The array index of the extra field
+     * @param field The field
      */
-    private void addExtraField(int i) {
-        final Field field = mExtraFields.get(i);
+    private void addExtraField(final Field field) {
         if(field == null) {
             return;
         }
@@ -310,28 +302,25 @@ public class EditCatFragment extends LoadingProgressFragment
     }
 
     /**
-     * Add a flavor to the radar chart.
-     *
-     * @param id   The database ID of the flavor, if any
-     * @param name The name of the flavor
+     * Create a new flavor.
      */
-    private void addFlavor(long id, String name) {
+    private void createFlavor() {
         final int count = mFlavorFields.size();
         if(count > 0 && TextUtils.isEmpty(mFlavorFields.get(count - 1).name)) {
             return;
         }
-        if(mFlavorFields.add(new Field(id, name))) {
-            addFlavorField(count);
-        }
+
+        final Field field = new Field(0, null);
+        mFlavorFields.add(field);
+        addFlavorField(field);
     }
 
     /**
      * Add the Views associated with a flavor to the layout.
      *
-     * @param i The array index of the flavor
+     * @param field The field
      */
-    private void addFlavorField(int i) {
-        final Field field = mFlavorFields.get(i);
+    private void addFlavorField(final Field field) {
         if(field == null) {
             return;
         }
@@ -519,55 +508,148 @@ public class EditCatFragment extends LoadingProgressFragment
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
-        switch(id) {
-            case LOADER_CAT:
-                return new CursorLoader(getContext(), uri, null, null, null, null);
-            case LOADER_EXTRAS:
-                return new CursorLoader(getContext(), Uri.withAppendedPath(uri, "extras"), null,
-                        Tables.Extras.PRESET + " = 0", null, Tables.Extras._ID + " ASC");
-            case LOADER_FLAVOR:
-                return new CursorLoader(getContext(), Uri.withAppendedPath(uri, "flavor"), null,
-                        null, null, Tables.Flavors._ID + " ASC");
-        }
-        return null;
+    public Loader<DataLoader.Holder> onCreateLoader(int id, Bundle args) {
+        return new DataLoader(getContext(), mCatId);
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        switch(loader.getId()) {
-            case LOADER_CAT:
-                if(data.moveToFirst()) {
-                    if(mTxtTitle != null) {
-                        final String name = data.getString(data.getColumnIndex(Tables.Cats.NAME));
-                        mTxtTitle.setText(FlavordexApp.getRealCatName(getContext(), name));
-                        mTxtTitle.setSelection(mTxtTitle.length());
-                    }
-                    hideLoadingIndicator(true);
-                }
-                break;
-            case LOADER_EXTRAS:
-                while(data.moveToNext()) {
-                    addExtra(data.getLong(data.getColumnIndex(Tables.Extras._ID)),
-                            data.getString(data.getColumnIndex(Tables.Extras.NAME)),
-                            data.getInt(data.getColumnIndex(Tables.Extras.DELETED)) == 1);
-                }
-                break;
-            case LOADER_FLAVOR:
-                while(data.moveToNext()) {
-                    addFlavor(data.getLong(data.getColumnIndex(Tables.Flavors._ID)),
-                            data.getString(data.getColumnIndex(Tables.Flavors.NAME)));
-                }
-                mRadarView.setData(getRadarData());
-                break;
+    public void onLoadFinished(Loader<DataLoader.Holder> loader, DataLoader.Holder data) {
+        if(mTxtTitle != null) {
+            mTxtTitle.setText(FlavordexApp.getRealCatName(getContext(), data.catName));
+            mTxtTitle.setSelection(mTxtTitle.length());
         }
+        mExtraFields = data.extras;
+        mFlavorFields = data.flavors;
+        populateFields();
+        mRadarView.setData(getRadarData());
 
-        getLoaderManager().destroyLoader(loader.getId());
+        hideLoadingIndicator(true);
+        getLoaderManager().destroyLoader(0);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(Loader<DataLoader.Holder> loader) {
+    }
+
+    /**
+     * Custom Loader to load everything in one task
+     */
+    public static class DataLoader extends AsyncTaskLoader<DataLoader.Holder> {
+        /**
+         * The ContentResolver to use
+         */
+        private final ContentResolver mResolver;
+
+        /**
+         * The category ID
+         */
+        private long mCatId;
+
+        /**
+         * @param context The Context
+         * @param catId   The category ID
+         */
+        public DataLoader(Context context, long catId) {
+            super(context);
+            mResolver = context.getContentResolver();
+            mCatId = catId;
+        }
+
+        @Override
+        public Holder loadInBackground() {
+            final Holder holder = new Holder();
+            final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
+            loadCat(holder, uri);
+            loadExtras(holder, uri);
+            loadFlavors(holder, uri);
+            return holder;
+        }
+
+        /**
+         * Load data from the categories table.
+         *
+         * @param holder The Holder
+         * @param catUri The Uri for the category
+         */
+        private void loadCat(Holder holder, Uri catUri) {
+            final Cursor cursor = mResolver.query(catUri, null, null, null, null);
+            try {
+                if(cursor.moveToFirst()) {
+                    holder.catName = cursor.getString(cursor.getColumnIndex(Tables.Cats.NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+
+        /**
+         * Load the custom extra fields for the category.
+         *
+         * @param holder The Holder
+         * @param catUri The Uri for the category
+         */
+        private void loadExtras(Holder holder, Uri catUri) {
+            final Uri uri = Uri.withAppendedPath(catUri, "extras");
+            final String where = Tables.Extras.PRESET + " = 0";
+            final String sort = Tables.Extras._ID + " ASC";
+            final Cursor cursor = mResolver.query(uri, null, where, null, sort);
+            try {
+                long id;
+                String name;
+                boolean deleted;
+                while(cursor.moveToNext()) {
+                    id = cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
+                    name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
+                    deleted = cursor.getInt(cursor.getColumnIndex(Tables.Extras.DELETED)) == 1;
+                    holder.extras.add(new Field(id, name, deleted));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+
+        /**
+         * Load the flavors for the category.
+         *
+         * @param holder The Holder
+         * @param catUri The Uri for the category
+         */
+        private void loadFlavors(Holder holder, Uri catUri) {
+            final Uri uri = Uri.withAppendedPath(catUri, "flavor");
+            final String sort = Tables.Flavors._ID + " ASC";
+            final Cursor cursor = mResolver.query(uri, null, null, null, sort);
+            try {
+                long id;
+                String name;
+                while(cursor.moveToNext()) {
+                    id = cursor.getLong(cursor.getColumnIndex(Tables.Flavors._ID));
+                    name = cursor.getString(cursor.getColumnIndex(Tables.Flavors.NAME));
+                    holder.flavors.add(new Field(id, name));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+
+        /**
+         * The holder for return data
+         */
+        public static class Holder {
+            /**
+             * The name of the category
+             */
+            public String catName;
+
+            /**
+             * The list of extra fields for the category
+             */
+            public ArrayList<Field> extras = new ArrayList<>();
+
+            /**
+             * The list of flavors for the category
+             */
+            public ArrayList<Field> flavors = new ArrayList<>();
+        }
     }
 
     /**

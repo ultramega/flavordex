@@ -457,7 +457,7 @@ public class EditInfoFragment extends LoadingProgressFragment
         }
 
         /**
-         * The holder for return data.
+         * The holder for return data
          */
         public static class Holder {
             /**
