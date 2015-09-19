@@ -1,7 +1,7 @@
 package com.ultramegasoft.flavordex2.util;
 
 import android.text.InputFilter;
-import android.text.LoginFilter;
+import android.text.Spanned;
 import android.widget.EditText;
 
 /**
@@ -13,24 +13,20 @@ public class InputUtils {
     /**
      * Filter for field names
      */
-    public static final InputFilter NAME_FILTER = new LoginFilter.UsernameFilterGeneric() {
-        private static final String sReservedCharacters = "_|:";
-
+    public static final InputFilter NAME_FILTER = new InputFilter() {
         @Override
-        public boolean isAllowed(char c) {
-            return sReservedCharacters.indexOf(c) == -1;
-        }
-    };
-
-    /**
-     * Filter for field values
-     */
-    public static final InputFilter VALUE_FILTER = new LoginFilter.UsernameFilterGeneric() {
-        private static final String sReservedCharacters = "|:";
-
-        @Override
-        public boolean isAllowed(char c) {
-            return sReservedCharacters.indexOf(c) == -1;
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest,
+                                   int dstart, int dend) {
+            if(dstart == 0 && end > 0) {
+                for(int i = start; i < end; i++) {
+                    if(source.charAt(i) != '_') {
+                        return source.subSequence(i, end);
+                    } else if(end == 1) {
+                        return "";
+                    }
+                }
+            }
+            return source;
         }
     };
 

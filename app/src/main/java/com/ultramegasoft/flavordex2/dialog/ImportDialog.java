@@ -372,7 +372,7 @@ public class ImportDialog extends DialogFragment
                 }
 
                 final ContentValues values = new ContentValues();
-                values.put(Tables.Cats.NAME, entry.catName.replace("_", ""));
+                values.put(Tables.Cats.NAME, filterName(entry.catName));
                 final Uri catUri = mResolver.insert(uri, values);
 
                 entry.catId = Long.valueOf(catUri.getLastPathSegment());
@@ -392,7 +392,7 @@ public class ImportDialog extends DialogFragment
                 final ContentValues values = new ContentValues();
                 values.put(Tables.Flavors.CAT, entry.catId);
                 for(RadarHolder flavor : entry.getFlavors()) {
-                    values.put(Tables.Flavors.NAME, flavor.name);
+                    values.put(Tables.Flavors.NAME, filterName(flavor.name));
                     mResolver.insert(uri, values);
                 }
             }
@@ -434,7 +434,7 @@ public class ImportDialog extends DialogFragment
                 }
 
                 final ContentValues values = new ContentValues();
-                values.put(Tables.Extras.NAME, name.replace("_", ""));
+                values.put(Tables.Extras.NAME, filterName(name));
                 return Long.valueOf(mResolver.insert(uri, values).getLastPathSegment());
             }
 
@@ -448,7 +448,7 @@ public class ImportDialog extends DialogFragment
                 final Uri uri = Uri.withAppendedPath(entryUri, "flavor");
                 final ContentValues values = new ContentValues();
                 for(RadarHolder flavor : entry.getFlavors()) {
-                    values.put(Tables.EntriesFlavors.FLAVOR, flavor.name);
+                    values.put(Tables.EntriesFlavors.FLAVOR, filterName(flavor.name));
                     values.put(Tables.EntriesFlavors.VALUE, flavor.value);
                     mResolver.insert(uri, values);
                 }
@@ -467,6 +467,21 @@ public class ImportDialog extends DialogFragment
                     values.put(Tables.Photos.PATH, photo.path);
                     mResolver.insert(uri, values);
                 }
+            }
+
+            /**
+             * Filter for category and field names.
+             *
+             * @param name The original text
+             * @return The filtered text
+             */
+            private String filterName(String name) {
+                for(int i = 0; i < name.length(); i++) {
+                    if(name.charAt(i) != '_') {
+                        return name.substring(i);
+                    }
+                }
+                return name;
             }
 
             @Override
