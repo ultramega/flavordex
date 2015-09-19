@@ -279,6 +279,8 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                     flavorValues.add(new RadarHolder(name, value));
                 }
                 mData = flavorValues;
+                mRadarView.startAnimation(AnimationUtils.loadAnimation(getContext(),
+                        android.R.anim.fade_in));
                 break;
             case LOADER_DEFAULT_FLAVOR:
                 while(data.moveToNext()) {
