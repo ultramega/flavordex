@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -39,7 +38,7 @@ import java.util.LinkedHashMap;
  *
  * @author Steve Guidetti
  */
-public class EditInfoFragment extends Fragment
+public class EditInfoFragment extends LoadingProgressFragment
         implements LoaderManager.LoaderCallbacks<EditInfoFragment.DataLoader.Holder> {
     /**
      * Keys for the Fragment arguments
@@ -99,6 +98,7 @@ public class EditInfoFragment extends Fragment
             mExtras = (LinkedHashMap<String, ExtraFieldHolder>)savedInstanceState
                     .getSerializable(STATE_EXTRAS);
             populateExtras(mExtras);
+            hideLoadingIndicator(false);
         }
     }
 
@@ -106,7 +106,7 @@ public class EditInfoFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View root = inflater.inflate(getLayoutId(), container, false);
+        final View root = super.onCreateView(inflater, container, savedInstanceState);
 
         mTxtTitle = (EditText)root.findViewById(R.id.entry_title);
         mTxtMaker = (AutoCompleteTextView)root.findViewById(R.id.entry_maker);
@@ -130,22 +130,12 @@ public class EditInfoFragment extends Fragment
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mTxtTitle.requestFocus();
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_EXTRAS, mExtras);
     }
 
-    /**
-     * Get the ID for the layout to use.
-     *
-     * @return An ID from R.layout
-     */
+    @Override
     protected int getLayoutId() {
         return R.layout.fragment_edit_info;
     }
@@ -338,6 +328,9 @@ public class EditInfoFragment extends Fragment
         populateFields(data.entry);
         mExtras = data.extras;
         populateExtras(data.extras);
+
+        hideLoadingIndicator(true);
+        mTxtTitle.setSelection(mTxtTitle.getText().length());
     }
 
     @Override
@@ -345,7 +338,7 @@ public class EditInfoFragment extends Fragment
     }
 
     /**
-     * Custom Loader to load everything in one task.
+     * Custom Loader to load everything in one task
      */
     public static class DataLoader extends AsyncTaskLoader<DataLoader.Holder> {
         /**

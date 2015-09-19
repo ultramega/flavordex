@@ -1,109 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="4dp">
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/entry_title"
+        style="@style/TextInput.Name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="4dp">
+        android:hint="@string/hint_entry_title" />
 
-        <EditText
-            android:id="@+id/entry_title"
-            style="@style/TextInput.Name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/hint_entry_title" />
+    <TextView
+        style="@style/SubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/header_details" />
 
-        <TextView
-            style="@style/SubHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/header_details" />
+    <TableLayout
+        android:id="@+id/entry_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1">
 
-        <TableLayout
-            android:id="@+id/entry_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="1">
+        <TableRow>
 
-            <TableRow>
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_maker" />
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_maker" />
+            <AutoCompleteTextView
+                android:id="@+id/entry_maker"
+                style="@style/TextInput.Name"
+                android:hint="@string/hint_maker"
+                android:imeOptions="actionNext" />
+        </TableRow>
 
-                <AutoCompleteTextView
-                    android:id="@+id/entry_maker"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/hint_maker"
-                    android:imeOptions="actionNext" />
-            </TableRow>
+        <TableRow>
 
-            <TableRow>
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_origin" />
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_origin" />
+            <EditText
+                android:id="@+id/entry_origin"
+                style="@style/TextInput.Name"
+                android:hint="@string/hint_origin" />
+        </TableRow>
 
-                <EditText
-                    android:id="@+id/entry_origin"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/hint_origin" />
-            </TableRow>
+        <TableRow>
 
-            <TableRow>
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_price" />
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_price" />
+            <EditText
+                android:id="@+id/entry_price"
+                style="@style/TextInput"
+                android:hint="@string/hint_price" />
+        </TableRow>
 
-                <EditText
-                    android:id="@+id/entry_price"
-                    style="@style/TextInput"
-                    android:hint="@string/hint_price" />
-            </TableRow>
+        <TableRow>
 
-            <TableRow>
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_location" />
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_location" />
+            <EditText
+                android:id="@+id/entry_location"
+                style="@style/TextInput.Name"
+                android:hint="@string/hint_location" />
+        </TableRow>
+    </TableLayout>
 
-                <EditText
-                    android:id="@+id/entry_location"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/hint_location" />
-            </TableRow>
-        </TableLayout>
+    <TextView
+        style="@style/SubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/header_rating" />
 
-        <TextView
-            style="@style/SubHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/header_rating" />
+    <RatingBar
+        android:id="@+id/entry_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:numStars="5"
+        android:stepSize="0.5" />
 
-        <RatingBar
-            android:id="@+id/entry_rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:numStars="5"
-            android:stepSize="0.5" />
+    <TextView
+        style="@style/SubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/header_notes" />
 
-        <TextView
-            style="@style/SubHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/header_notes" />
-
-        <EditText
-            android:id="@+id/entry_notes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/hint_notes"
-            android:minLines="4" />
-    </LinearLayout>
-</ScrollView>
+    <EditText
+        android:id="@+id/entry_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_notes"
+        android:minLines="4" />
+</LinearLayout>

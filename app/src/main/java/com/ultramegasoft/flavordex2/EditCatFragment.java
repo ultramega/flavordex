@@ -12,7 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -43,7 +43,8 @@ import java.util.ArrayList;
  *
  * @author Steve Guidetti
  */
-public class EditCatFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class EditCatFragment extends LoadingProgressFragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Keys for the Fragment arguments
      */
@@ -140,7 +141,7 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
                 getLoaderManager().initLoader(LOADER_FLAVOR, null, this);
             } else {
                 addFlavor(0, null);
-                mRadarView.setVisibility(View.VISIBLE);
+                hideLoadingIndicator(false);
                 if(mTxtTitle != null) {
                     mTxtTitle.requestFocus();
                 }
@@ -157,14 +158,15 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
                 addFlavorField(i);
             }
 
-            mRadarView.setVisibility(View.VISIBLE);
+            hideLoadingIndicator(false);
         }
     }
 
+    @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View root = inflater.inflate(getLayoutId(), container, false);
+        final View root = super.onCreateView(inflater, container, savedInstanceState);
 
         mTxtTitle = (EditText)root.findViewById(R.id.cat_name);
         InputUtils.addFilter(mTxtTitle, InputUtils.NAME_FILTER);
@@ -190,12 +192,8 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
         return root;
     }
 
-    /**
-     * Get the ID for the layout to use.
-     *
-     * @return An ID from R.layout
-     */
-    private int getLayoutId() {
+    @Override
+    protected int getLayoutId() {
         final String cat = getArguments().getString(ARG_CAT_NAME);
 
         if(FlavordexApp.CAT_BEER.equals(cat)) {
@@ -544,7 +542,9 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
                     if(mTxtTitle != null) {
                         final String name = data.getString(data.getColumnIndex(Tables.Cats.NAME));
                         mTxtTitle.setText(FlavordexApp.getRealCatName(getContext(), name));
+                        mTxtTitle.setSelection(mTxtTitle.length());
                     }
+                    hideLoadingIndicator(true);
                 }
                 break;
             case LOADER_EXTRAS:
@@ -560,7 +560,6 @@ public class EditCatFragment extends Fragment implements LoaderManager.LoaderCal
                             data.getString(data.getColumnIndex(Tables.Flavors.NAME)));
                 }
                 mRadarView.setData(getRadarData());
-                mRadarView.setVisibility(View.VISIBLE);
                 break;
         }
 

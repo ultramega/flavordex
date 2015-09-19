@@ -1,319 +1,314 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="4dp">
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/entry_title"
+        style="@style/TextInput.Name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="4dp">
+        android:hint="@string/coffee_hint_entry_title" />
 
-        <EditText
-            android:id="@+id/entry_title"
-            style="@style/TextInput.Name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/coffee_hint_entry_title" />
+    <TextView
+        style="@style/SubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/header_details" />
 
-        <TextView
-            style="@style/SubHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/header_details" />
+    <TableLayout
+        android:id="@+id/entry_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1">
 
-        <TableLayout
-            android:id="@+id/entry_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="1">
+        <TableRow>
 
-            <TableRow>
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_label_maker" />
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_label_maker" />
+            <AutoCompleteTextView
+                android:id="@+id/entry_maker"
+                style="@style/TextInput.Name"
+                android:hint="@string/coffee_hint_maker"
+                android:imeOptions="actionNext" />
+        </TableRow>
 
-                <AutoCompleteTextView
-                    android:id="@+id/entry_maker"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/coffee_hint_maker"
-                    android:imeOptions="actionNext" />
-            </TableRow>
+        <TableRow>
 
-            <TableRow>
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_origin" />
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_origin" />
+            <EditText
+                android:id="@+id/entry_origin"
+                style="@style/TextInput.Name"
+                android:hint="@string/hint_origin" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_label_roaster" />
+
+            <EditText
+                android:id="@+id/entry_roaster"
+                style="@style/TextInput.Name"
+                android:hint="@string/coffee_hint_roaster" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_label_roast_date" />
+
+            <EditText
+                android:id="@+id/entry_roast_date"
+                style="@style/TextInput"
+                android:hint="@string/coffee_hint_roast_date"
+                tools:ignore="TextFields" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_label_grind" />
+
+            <EditText
+                android:id="@+id/entry_grind"
+                style="@style/TextInput"
+                android:hint="@string/coffee_hint_grind" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_price" />
+
+            <EditText
+                android:id="@+id/entry_price"
+                style="@style/TextInput"
+                android:hint="@string/hint_price" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_label_brew_method" />
+
+            <Spinner
+                android:id="@+id/entry_brew_method"
+                android:entries="@array/coffee_brew_methods"
+                android:prompt="@string/coffee_hint_brew_method" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_location" />
+
+            <EditText
+                android:id="@+id/entry_location"
+                style="@style/TextInput.Name"
+                android:hint="@string/hint_location" />
+        </TableRow>
+    </TableLayout>
+
+    <TextView
+        style="@style/SubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/coffee_label_stats" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1">
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_label_dose" />
+
+            <EditText
+                android:id="@+id/entry_stats_dose"
+                style="@style/TextInput.Stats"
+                android:hint="@string/coffee_hint_dose"
+                android:inputType="number|numberDecimal" />
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_hint_grams" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/esp_mass_row"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_label_esp_mass" />
+
+            <EditText
+                android:id="@+id/entry_stats_esp_mass"
+                style="@style/TextInput.Stats"
+                android:hint="@string/coffee_hint_esp_mass"
+                android:inputType="number|numberDecimal" />
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_hint_grams" />
+        </TableRow>
+
+        <TableRow android:id="@+id/water_mass_row">
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_label_water_mass" />
+
+            <EditText
+                android:id="@+id/entry_stats_water_mass"
+                style="@style/TextInput.Stats"
+                android:hint="@string/coffee_hint_water_mass"
+                android:inputType="number|numberDecimal" />
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_hint_grams" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_label_temp" />
+
+            <EditText
+                android:id="@+id/entry_stats_temp"
+                style="@style/TextInput.Stats"
+                android:hint="@string/coffee_hint_temp"
+                android:inputType="number|numberDecimal" />
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_hint_degrees" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_label_ext_time" />
+
+            <LinearLayout android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/entry_origin"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/hint_origin" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_label_roaster" />
-
-                <EditText
-                    android:id="@+id/entry_roaster"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/coffee_hint_roaster" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_label_roast_date" />
-
-                <EditText
-                    android:id="@+id/entry_roast_date"
-                    style="@style/TextInput"
-                    android:hint="@string/coffee_hint_roast_date"
-                    tools:ignore="TextFields" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_label_grind" />
-
-                <EditText
-                    android:id="@+id/entry_grind"
-                    style="@style/TextInput"
-                    android:hint="@string/coffee_hint_grind" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_price" />
-
-                <EditText
-                    android:id="@+id/entry_price"
-                    style="@style/TextInput"
-                    android:hint="@string/hint_price" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_label_brew_method" />
-
-                <Spinner
-                    android:id="@+id/entry_brew_method"
-                    android:entries="@array/coffee_brew_methods"
-                    android:prompt="@string/coffee_hint_brew_method" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_location" />
-
-                <EditText
-                    android:id="@+id/entry_location"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/hint_location" />
-            </TableRow>
-        </TableLayout>
-
-        <TextView
-            style="@style/SubHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/coffee_label_stats" />
-
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="1">
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_label_dose" />
-
-                <EditText
-                    android:id="@+id/entry_stats_dose"
+                    android:id="@+id/entry_stats_ext_time_m"
                     style="@style/TextInput.Stats"
-                    android:hint="@string/coffee_hint_dose"
-                    android:inputType="number|numberDecimal" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/coffee_hint_ext_time_m"
+                    android:inputType="number"
+                    android:maxLength="3"
+                    android:nextFocusDown="@+id/entry_stats_ext_time_s"
+                    android:nextFocusForward="@+id/entry_stats_ext_time_s" />
 
                 <TextView
                     style="@style/TableText.Label"
-                    android:text="@string/coffee_hint_grams" />
-            </TableRow>
-
-            <TableRow
-                android:id="@+id/esp_mass_row"
-                android:visibility="gone">
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_label_esp_mass" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="@string/coffee_hint_colon" />
 
                 <EditText
-                    android:id="@+id/entry_stats_esp_mass"
+                    android:id="@+id/entry_stats_ext_time_s"
                     style="@style/TextInput.Stats"
-                    android:hint="@string/coffee_hint_esp_mass"
-                    android:inputType="number|numberDecimal" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/coffee_hint_ext_time_s"
+                    android:inputType="number"
+                    android:maxLength="2" />
+            </LinearLayout>
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_hint_grams" />
-            </TableRow>
+            <EditText
+                android:enabled="false"
+                android:visibility="invisible"
+                tools:ignore="TextFields" />
+        </TableRow>
 
-            <TableRow android:id="@+id/water_mass_row">
+        <TableRow>
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_label_water_mass" />
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_label_tds" />
 
-                <EditText
-                    android:id="@+id/entry_stats_water_mass"
-                    style="@style/TextInput.Stats"
-                    android:hint="@string/coffee_hint_water_mass"
-                    android:inputType="number|numberDecimal" />
+            <EditText
+                android:id="@+id/entry_stats_tds"
+                style="@style/TextInput.Stats"
+                android:hint="@string/coffee_hint_tds"
+                android:inputType="number|numberDecimal" />
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_hint_grams" />
-            </TableRow>
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_hint_percent" />
+        </TableRow>
 
-            <TableRow>
+        <TableRow>
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_label_temp" />
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_label_yield" />
 
-                <EditText
-                    android:id="@+id/entry_stats_temp"
-                    style="@style/TextInput.Stats"
-                    android:hint="@string/coffee_hint_temp"
-                    android:inputType="number|numberDecimal" />
+            <EditText
+                android:id="@+id/entry_stats_yield"
+                style="@style/TextInput.Stats"
+                android:hint="@string/coffee_hint_yield"
+                android:inputType="number|numberDecimal" />
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_hint_degrees" />
-            </TableRow>
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/coffee_hint_percent" />
+        </TableRow>
+    </TableLayout>
 
-            <TableRow>
+    <TextView
+        style="@style/SubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/header_rating" />
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_label_ext_time" />
+    <RatingBar
+        android:id="@+id/entry_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:numStars="5"
+        android:stepSize="0.5" />
 
-                <LinearLayout android:orientation="horizontal">
+    <TextView
+        style="@style/SubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/header_notes" />
 
-                    <EditText
-                        android:id="@+id/entry_stats_ext_time_m"
-                        style="@style/TextInput.Stats"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="@string/coffee_hint_ext_time_m"
-                        android:inputType="number"
-                        android:maxLength="3"
-                        android:nextFocusDown="@+id/entry_stats_ext_time_s"
-                        android:nextFocusForward="@+id/entry_stats_ext_time_s" />
-
-                    <TextView
-                        style="@style/TableText.Label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        android:text="@string/coffee_hint_colon" />
-
-                    <EditText
-                        android:id="@+id/entry_stats_ext_time_s"
-                        style="@style/TextInput.Stats"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="@string/coffee_hint_ext_time_s"
-                        android:inputType="number"
-                        android:maxLength="2" />
-                </LinearLayout>
-
-                <EditText
-                    android:enabled="false"
-                    android:visibility="invisible"
-                    tools:ignore="TextFields" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_label_tds" />
-
-                <EditText
-                    android:id="@+id/entry_stats_tds"
-                    style="@style/TextInput.Stats"
-                    android:hint="@string/coffee_hint_tds"
-                    android:inputType="number|numberDecimal" />
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_hint_percent" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_label_yield" />
-
-                <EditText
-                    android:id="@+id/entry_stats_yield"
-                    style="@style/TextInput.Stats"
-                    android:hint="@string/coffee_hint_yield"
-                    android:inputType="number|numberDecimal" />
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/coffee_hint_percent" />
-            </TableRow>
-        </TableLayout>
-
-        <TextView
-            style="@style/SubHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/header_rating" />
-
-        <RatingBar
-            android:id="@+id/entry_rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:numStars="5"
-            android:stepSize="0.5" />
-
-        <TextView
-            style="@style/SubHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/header_notes" />
-
-        <EditText
-            android:id="@+id/entry_notes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/hint_notes"
-            android:minLines="4" />
-    </LinearLayout>
-</ScrollView>
+    <EditText
+        android:id="@+id/entry_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_notes"
+        android:minLines="4" />
+</LinearLayout>
