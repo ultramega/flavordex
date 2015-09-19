@@ -14,6 +14,10 @@ import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -23,10 +27,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.regex.Pattern;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -37,18 +41,6 @@ import au.com.bytecode.opencsv.CSVWriter;
  * @author Steve Guidetti
  */
 public class CSVUtils {
-    /**
-     * Delimiters for field values
-     */
-    private static final String FIELD_DELIM = "|";
-    private static final String PAIR_DELIM = ":";
-
-    /**
-     * Regex patterns for splitting strings
-     */
-    private static final Pattern sFieldSplitter = Pattern.compile("\\" + FIELD_DELIM);
-    private static final Pattern sPairSplitter = Pattern.compile(PAIR_DELIM);
-
     /**
      * Formatter for dates in CSV files
      */
@@ -115,13 +107,17 @@ public class CSVUtils {
      * @param entry  The entry
      */
     private static void addExtras(ArrayList<String> fields, EntryHolder entry) {
-        final ArrayList<String> extras = new ArrayList<>();
+        final JSONObject object = new JSONObject();
         for(ExtraFieldHolder extra : entry.getExtras()) {
             if(extra.preset || !TextUtils.isEmpty(extra.value)) {
-                extras.add(extra.name + PAIR_DELIM + extra.value);
+                try {
+                    object.put(extra.name, extra.value);
+                } catch(JSONException e) {
+                    Log.w(CSVUtils.class.getSimpleName(), e.getMessage());
+                }
             }
         }
-        fields.add(TextUtils.join(FIELD_DELIM, extras));
+        fields.add(object.toString());
     }
 
     /**
@@ -131,11 +127,15 @@ public class CSVUtils {
      * @param entry  The entry
      */
     private static void addFlavors(ArrayList<String> fields, EntryHolder entry) {
-        final ArrayList<String> flavors = new ArrayList<>();
+        final JSONObject object = new JSONObject();
         for(RadarHolder flavor : entry.getFlavors()) {
-            flavors.add(flavor.name + PAIR_DELIM + flavor.value);
+            try {
+                object.put(flavor.name, flavor.value);
+            } catch(JSONException e) {
+                Log.w(CSVUtils.class.getSimpleName(), e.getMessage());
+            }
         }
-        fields.add(TextUtils.join(FIELD_DELIM, flavors));
+        fields.add(object.toString());
     }
 
     /**
@@ -145,11 +145,11 @@ public class CSVUtils {
      * @param entry  The entry
      */
     private static void addPhotos(ArrayList<String> fields, EntryHolder entry) {
-        final ArrayList<String> photos = new ArrayList<>();
+        final JSONArray array = new JSONArray();
         for(PhotoHolder photo : entry.getPhotos()) {
-            photos.add(photo.path);
+            array.put(photo.path);
         }
-        fields.add(TextUtils.join(FIELD_DELIM, photos));
+        fields.add(array.toString());
     }
 
     /**
@@ -252,12 +252,16 @@ public class CSVUtils {
             return;
         }
 
-        String[] pair;
-        for(String extra : sFieldSplitter.split(extraField)) {
-            pair = sPairSplitter.split(extra, 2);
-            if(pair.length == 2) {
-                entry.addExtra(0, pair[0], false, pair[1]);
+        try {
+            final JSONObject object = new JSONObject(extraField);
+            final Iterator<String> iterator = object.keys();
+            String name;
+            while(iterator.hasNext()) {
+                name = iterator.next();
+                entry.addExtra(0, name, false, object.optString(name));
             }
+        } catch(JSONException e) {
+            Log.w(CSVUtils.class.getSimpleName(), e.getMessage());
         }
     }
 
@@ -273,21 +277,20 @@ public class CSVUtils {
             return;
         }
 
-        String[] pair;
-        int value;
-        for(String flavor : sFieldSplitter.split(flavorsField)) {
-            pair = sPairSplitter.split(flavor, 2);
-            if(pair.length != 2) {
-                continue;
-            }
-            try {
-                value = Integer.valueOf(pair[1]);
+        try {
+            final JSONObject object = new JSONObject(flavorsField);
+            final Iterator<String> iterator = object.keys();
+            String name;
+            int value;
+            while(iterator.hasNext()) {
+                name = iterator.next();
+                value = object.optInt(name);
                 value = value < 0 ? 0 : value;
                 value = value > 5 ? 5 : value;
-            } catch(NumberFormatException e) {
-                continue;
+                entry.addFlavor(name, value);
             }
-            entry.addFlavor(pair[0], value);
+        } catch(JSONException e) {
+            Log.w(CSVUtils.class.getSimpleName(), e.getMessage());
         }
     }
 
@@ -303,10 +306,17 @@ public class CSVUtils {
             return;
         }
 
-        for(String photo : sFieldSplitter.split(photosField)) {
-            if(new File(photo).canRead()) {
-                entry.addPhoto(0, photo);
+        try {
+            final JSONArray array = new JSONArray(photosField);
+            String photo;
+            for(int i = 0; i < array.length(); i++) {
+                photo = array.optString(i);
+                if(new File(photo).canRead()) {
+                    entry.addPhoto(0, photo);
+                }
             }
+        } catch(JSONException e) {
+            Log.w(CSVUtils.class.getSimpleName(), e.getMessage());
         }
     }
 
