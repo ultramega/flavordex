@@ -364,6 +364,7 @@ public class ImportDialog extends DialogFragment
                 try {
                     if(cursor.moveToFirst()) {
                         final long id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
+                        entry.catId = id;
                         return ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, id);
                     }
                 } finally {
