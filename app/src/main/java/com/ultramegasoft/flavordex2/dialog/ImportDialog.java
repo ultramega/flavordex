@@ -317,9 +317,7 @@ public class ImportDialog extends DialogFragment
                 Uri entryUri;
                 int i = 0;
                 for(EntryHolder entry : mEntries) {
-                    entry.catId = getCatId(entry.catName);
-                    mCatUri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE,
-                            entry.catId);
+                    mCatUri = getCatId(entry);
 
                     entryUri = insertEntry(entry);
                     insertExtras(entryUri, entry);
@@ -354,26 +352,48 @@ public class ImportDialog extends DialogFragment
             /**
              * Find the ID for a category, creating one if it doesn't exist.
              *
-             * @param name The name of the category
-             * @return The ID for the category
+             * @param entry The entry
+             * @return The Uri for the category
              */
-            private long getCatId(String name) {
+            private Uri getCatId(EntryHolder entry) {
                 final Uri uri = Tables.Cats.CONTENT_URI;
                 final String[] projection = new String[] {Tables.Cats._ID};
                 final String where = Tables.Cats.NAME + " = ?";
-                final String[] whereArgs = new String[] {name};
+                final String[] whereArgs = new String[] {entry.catName};
                 final Cursor cursor = mResolver.query(uri, projection, where, whereArgs, null);
                 try {
                     if(cursor.moveToFirst()) {
-                        return cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
+                        final long id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
+                        return ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, id);
                     }
                 } finally {
                     cursor.close();
                 }
 
                 final ContentValues values = new ContentValues();
-                values.put(Tables.Cats.NAME, name.replace("_", ""));
-                return Long.valueOf(mResolver.insert(uri, values).getLastPathSegment());
+                values.put(Tables.Cats.NAME, entry.catName.replace("_", ""));
+                final Uri catUri = mResolver.insert(uri, values);
+
+                entry.catId = Long.valueOf(catUri.getLastPathSegment());
+                insertCatFlavors(catUri, entry);
+
+                return catUri;
+            }
+
+            /**
+             * Insert the flavor list for the new category.
+             *
+             * @param catUri The Uri for the category
+             * @param entry  The entry
+             */
+            private void insertCatFlavors(Uri catUri, EntryHolder entry) {
+                final Uri uri = Uri.withAppendedPath(catUri, "flavor");
+                final ContentValues values = new ContentValues();
+                values.put(Tables.Flavors.CAT, entry.catId);
+                for(RadarHolder flavor : entry.getFlavors()) {
+                    values.put(Tables.Flavors.NAME, flavor.name);
+                    mResolver.insert(uri, values);
+                }
             }
 
             /**
