@@ -4,17 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:padding="12dp">
+    android:paddingLeft="?attr/dialogPreferredPadding"
+    android:paddingRight="?attr/dialogPreferredPadding"
+    android:paddingTop="20dp">
 
     <TextView
         android:id="@+id/file_path"
-        style="@style/Base.TextAppearance.AppCompat.Medium"
+        style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:ellipsize="start"
-        android:gravity="end"
-        android:padding="4dp"
+        android:gravity="end|center_vertical"
         android:singleLine="true" />
 
     <EditText
@@ -27,7 +28,7 @@
         android:singleLine="true" />
 
     <TextView
-        style="@style/Base.TextAppearance.AppCompat.Medium"
+        style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0"
