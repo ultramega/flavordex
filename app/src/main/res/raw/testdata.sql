@@ -74,7 +74,7 @@ INSERT INTO `entries_flavors` VALUES (20,2,'Hops',5);
 --
 INSERT INTO `entries_flavors` VALUES (21,2,'Linger',4);
 --
-INSERT INTO `entries_flavors` VALUES (22,2,'Linger',2);
+INSERT INTO `entries_flavors` VALUES (22,2,'Spice',2);
 --
 INSERT INTO `entries_flavors` VALUES (23,2,'Herb',3);
 --
