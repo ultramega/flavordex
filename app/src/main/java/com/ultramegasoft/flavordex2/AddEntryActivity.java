@@ -96,7 +96,7 @@ public class AddEntryActivity extends AppCompatActivity {
         final Intent data = new Intent();
         data.putExtra(EXTRA_ENTRY_ID, entryId);
         data.putExtra(EXTRA_ENTRY_CAT, entryCat);
-        data.putExtra(EXTRA_CAT_ID, entryCatId);
+        data.putExtra(EXTRA_ENTRY_CAT_ID, entryCatId);
 
         setResult(RESULT_OK, data);
         finish();
