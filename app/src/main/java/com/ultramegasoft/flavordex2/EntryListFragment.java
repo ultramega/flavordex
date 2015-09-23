@@ -39,8 +39,8 @@ import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.dialog.EntryFilterDialog;
 import com.ultramegasoft.flavordex2.dialog.ExportDialog;
+import com.ultramegasoft.flavordex2.dialog.FileImportDialog;
 import com.ultramegasoft.flavordex2.dialog.FileSelectorDialog;
-import com.ultramegasoft.flavordex2.dialog.ImportDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryDeleter;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
@@ -387,7 +387,7 @@ public class EntryListFragment extends ListFragment
                     }
                     break;
                 case REQUEST_IMPORT_FILE:
-                    ImportDialog.showDialog(getFragmentManager(),
+                    FileImportDialog.showDialog(getFragmentManager(),
                             data.getStringExtra(FileSelectorDialog.EXTRA_PATH));
                     break;
                 case REQUEST_DELETE_ENTRY:
