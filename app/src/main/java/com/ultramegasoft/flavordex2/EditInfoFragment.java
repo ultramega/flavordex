@@ -287,10 +287,9 @@ public class EditInfoFragment extends LoadingProgressFragment
     /**
      * Get the data for this entry, including the main info fields and extra fields.
      *
-     * @return EntryHolder containing the main fields and extra fields
+     * @param entry An EntryHolder
      */
-    public final EntryHolder getData() {
-        final EntryHolder entry = new EntryHolder();
+    public final void getData(EntryHolder entry) {
         entry.id = mEntryId;
 
         if(entry.id == 0) {
@@ -307,8 +306,6 @@ public class EditInfoFragment extends LoadingProgressFragment
         entry.notes = mTxtNotes.getText().toString();
 
         entry.getExtras().addAll(mExtras.values());
-
-        return entry;
     }
 
     @Override

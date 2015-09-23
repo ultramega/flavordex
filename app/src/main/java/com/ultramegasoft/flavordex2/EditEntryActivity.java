@@ -128,7 +128,10 @@ public class EditEntryActivity extends AppCompatActivity {
         if(fragment == null || !fragment.isValid()) {
             return;
         }
-        new DataSaver(getContentResolver(), fragment.getData()).execute();
+
+        final EntryHolder entry = new EntryHolder();
+        fragment.getData(entry);
+        new DataSaver(getContentResolver(), entry).execute();
         finish();
     }
 

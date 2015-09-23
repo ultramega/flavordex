@@ -1,7 +1,6 @@
 package com.ultramegasoft.flavordex2;
 
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.RadarEditWidget;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 import com.ultramegasoft.flavordex2.widget.RadarView;
@@ -62,28 +62,17 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
     }
 
     /**
-     * Get the data from the RadarView as an array of ContentValues objects ready to be bulk
-     * inserted into the entries_flavors database table.
+     * Load the flavor data into the entry.
      *
-     * @return Array of ContentValues containing the data for the entries_flavors table
+     * @param entry The entry
      */
-    public ContentValues[] getData() {
+    public void getData(EntryHolder entry) {
         if(mRadarView == null || !mRadarView.hasData()) {
-            return null;
+            return;
         }
-        final ArrayList<ContentValues> data = new ArrayList<>();
-        final ArrayList<RadarHolder> radarHolders = mRadarView.getData();
-
-        ContentValues rowValues;
-        for(RadarHolder holder : radarHolders) {
-            rowValues = new ContentValues();
-            rowValues.put(Tables.EntriesFlavors.FLAVOR, holder.name);
-            rowValues.put(Tables.EntriesFlavors.VALUE, holder.value);
-
-            data.add(rowValues);
+        for(RadarHolder flavor : mRadarView.getData()) {
+            entry.addFlavor(flavor.name, flavor.value);
         }
-
-        return data.toArray(new ContentValues[data.size()]);
     }
 
     @Override

@@ -24,9 +24,9 @@ import android.widget.Button;
 import com.ultramegasoft.flavordex2.beer.EditBeerInfoFragment;
 import com.ultramegasoft.flavordex2.coffee.EditCoffeeInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.whiskey.EditWhiskeyInfoFragment;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
-import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.wine.EditWineInfoFragment;
 
 /**
@@ -134,30 +134,28 @@ public class AddEntryFragment extends Fragment {
         final FragmentManager fm = getChildFragmentManager();
 
         boolean isValid = false;
-        EntryHolder entry = null;
-        ContentValues[] entryFlavors = null;
-        ContentValues[] entryPhotos = null;
+        final EntryHolder entry = new EntryHolder();
         for(Fragment fragment : fm.getFragments()) {
             if(fragment instanceof EditInfoFragment) {
                 isValid = ((EditInfoFragment)fragment).isValid();
                 if(!isValid) {
                     break;
                 }
-                entry = ((EditInfoFragment)fragment).getData();
+                ((EditInfoFragment)fragment).getData(entry);
                 entry.catName = mCatName;
                 continue;
             }
             if(fragment instanceof AddFlavorsFragment) {
-                entryFlavors = ((AddFlavorsFragment)fragment).getData();
+                ((AddFlavorsFragment)fragment).getData(entry);
                 continue;
             }
             if(fragment instanceof AddPhotosFragment) {
-                entryPhotos = ((AddPhotosFragment)fragment).getData();
+                ((AddPhotosFragment)fragment).getData(entry);
             }
         }
 
         if(isValid) {
-            DataSaverFragment.init(getFragmentManager(), entry, entryFlavors, entryPhotos);
+            DataSaverFragment.init(getFragmentManager(), entry);
         } else {
             mBtnSave.setEnabled(true);
             mPager.setCurrentItem(0);
@@ -223,23 +221,12 @@ public class AddEntryFragment extends Fragment {
          * Keys for the Fragment arguments
          */
         public static final String ARG_ENTRY = "entry";
-        public static final String ARG_ENTRY_FLAVORS = "entry_flavors";
-        public static final String ARG_ENTRY_PHOTOS = "entry_photos";
 
         /**
          * The entry to insert
          */
         private EntryHolder mEntry;
 
-        /**
-         * Values for the entries_flavors table rows
-         */
-        private ContentValues[] mEntryFlavors;
-
-        /**
-         * Values for the photos table rows
-         */
-        private ContentValues[] mEntryPhotos;
 
         /**
          * The newly inserted entry ID in case the Fragment was detached when the insert task
@@ -250,17 +237,12 @@ public class AddEntryFragment extends Fragment {
         /**
          * Start a new instance of this Fragment.
          *
-         * @param fm           The FragmentManager to use
-         * @param entry        The entry to insert
-         * @param entryFlavors Values for the entries_flavors table rows
-         * @param entryPhotos  Values for the photos table rows
+         * @param fm    The FragmentManager to use
+         * @param entry The entry to insert
          */
-        public static void init(FragmentManager fm, EntryHolder entry, ContentValues[] entryFlavors,
-                                ContentValues[] entryPhotos) {
+        public static void init(FragmentManager fm, EntryHolder entry) {
             final Bundle args = new Bundle();
             args.putParcelable(ARG_ENTRY, entry);
-            args.putParcelableArray(ARG_ENTRY_FLAVORS, entryFlavors);
-            args.putParcelableArray(ARG_ENTRY_PHOTOS, entryPhotos);
 
             final Fragment fragment = new DataSaverFragment();
             fragment.setArguments(args);
@@ -275,8 +257,6 @@ public class AddEntryFragment extends Fragment {
 
             final Bundle args = getArguments();
             mEntry = args.getParcelable(ARG_ENTRY);
-            mEntryFlavors = (ContentValues[])args.getParcelableArray(ARG_ENTRY_FLAVORS);
-            mEntryPhotos = (ContentValues[])args.getParcelableArray(ARG_ENTRY_PHOTOS);
 
             new DataSaver(getContext().getContentResolver()).execute();
         }
@@ -321,64 +301,17 @@ public class AddEntryFragment extends Fragment {
 
             @Override
             protected Long doInBackground(Void... params) {
-                final Uri entryUri = mResolver.insert(Tables.Entries.CONTENT_URI, getInfo());
-                insertExtras(entryUri);
-
-                if(mEntryFlavors != null) {
-                    mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "flavor"), mEntryFlavors);
-                } else {
-                    insertDefaultFlavors(entryUri);
+                if(mEntry.getFlavors().isEmpty()) {
+                    getDefaultFlavors();
                 }
-
-                if(mEntryPhotos != null) {
-                    mResolver.bulkInsert(Uri.withAppendedPath(entryUri, "photos"), mEntryPhotos);
-                }
-
+                final Uri entryUri = EntryUtils.insertEntry(mResolver, mEntry);
                 checkLocation(mEntry.location);
-
                 return Long.valueOf(entryUri.getLastPathSegment());
             }
 
             @Override
             protected void onPostExecute(Long entryId) {
                 onComplete(entryId);
-            }
-
-            /**
-             * Get the data for the entries table.
-             *
-             * @return ContentValues ready to be inserted into the entries table
-             */
-            private ContentValues getInfo() {
-                final ContentValues values = new ContentValues();
-                values.put(Tables.Entries.TITLE, mEntry.title);
-                values.put(Tables.Entries.CAT, mEntry.catId);
-                values.put(Tables.Entries.MAKER, mEntry.maker);
-                values.put(Tables.Entries.ORIGIN, mEntry.origin);
-                values.put(Tables.Entries.LOCATION, mEntry.location);
-                values.put(Tables.Entries.DATE, mEntry.date);
-                values.put(Tables.Entries.PRICE, mEntry.price);
-                values.put(Tables.Entries.RATING, mEntry.rating);
-                values.put(Tables.Entries.NOTES, mEntry.notes);
-                return values;
-            }
-
-            /**
-             * Insert the extra fields for the new entry.
-             *
-             * @param entryUri The Uri for the new entry
-             */
-            private void insertExtras(Uri entryUri) {
-                final Uri uri = Uri.withAppendedPath(entryUri, "extras");
-                final ContentValues values = new ContentValues();
-                for(ExtraFieldHolder extra : mEntry.getExtras()) {
-                    if(!extra.preset && TextUtils.isEmpty(extra.value)) {
-                        continue;
-                    }
-                    values.put(Tables.EntriesExtras.EXTRA, extra.id);
-                    values.put(Tables.EntriesExtras.VALUE, extra.value);
-                    mResolver.insert(uri, values);
-                }
             }
 
             /**
@@ -405,22 +338,18 @@ public class AddEntryFragment extends Fragment {
             }
 
             /**
-             * Insert the default flavors with 0 values in case the user did not supply data.
-             *
-             * @param entryUri The Uri of the newly inserted entry
-             */
-            private void insertDefaultFlavors(Uri entryUri) {
+             * Get the default flavors with 0 values in case the user did not supply data.
+             **/
+            private void getDefaultFlavors() {
                 final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE,
                         mEntry.catId);
                 final Cursor cursor = mResolver.query(Uri.withAppendedPath(uri, "flavor"), null,
                         null, null, Tables.Flavors._ID + " ASC");
                 try {
-                    final ContentValues flavor = new ContentValues();
-                    flavor.put(Tables.EntriesFlavors.VALUE, 0);
+                    String name;
                     while(cursor.moveToNext()) {
-                        flavor.put(Tables.EntriesFlavors.FLAVOR,
-                                cursor.getString(cursor.getColumnIndex(Tables.Flavors.NAME)));
-                        mResolver.insert(Uri.withAppendedPath(entryUri, "flavor"), flavor);
+                        name = cursor.getString(cursor.getColumnIndex(Tables.Flavors.NAME));
+                        mEntry.addFlavor(name, 0);
                     }
                 } finally {
                     cursor.close();

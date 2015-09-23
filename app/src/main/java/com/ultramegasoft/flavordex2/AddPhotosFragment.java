@@ -1,6 +1,5 @@
 package com.ultramegasoft.flavordex2;
 
-import android.content.ContentValues;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,8 +14,8 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 
-import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.BitmapCache;
+import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ImageLoader;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
@@ -86,23 +85,14 @@ public class AddPhotosFragment extends AbsPhotosFragment {
     }
 
     /**
-     * Get the photos data as an array of ContentValues objects ready to be bulk inserted into the
-     * photos database table.
+     * Load the photos into the entry.
      *
-     * @return Array of ContentValues containing the data for the photos table
+     * @param entry The entry
      */
-    public ContentValues[] getData() {
-        final ArrayList<ContentValues> values = new ArrayList<>(getPhotos().size());
-
-        ContentValues rowValues;
+    public void getData(EntryHolder entry) {
         for(PhotoHolder photo : getPhotos()) {
-            rowValues = new ContentValues();
-            rowValues.put(Tables.Photos.PATH, photo.path);
-
-            values.add(rowValues);
+            entry.addPhoto(photo.id, photo.path);
         }
-
-        return values.toArray(new ContentValues[values.size()]);
     }
 
     @Override

@@ -4,11 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,13 +25,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.R;
-import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.CSVUtils;
+import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.CSVListAdapter;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
-import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
-import com.ultramegasoft.flavordex2.widget.PhotoHolder;
-import com.ultramegasoft.flavordex2.widget.RadarHolder;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -303,185 +296,18 @@ public class ImportDialog extends DialogFragment
              */
             private final ContentResolver mResolver;
 
-            /**
-             * The Uri for the entry category
-             */
-            private Uri mCatUri;
-
             public SaveTask() {
                 mResolver = getContext().getContentResolver();
             }
 
             @Override
             protected Void doInBackground(Void... params) {
-                Uri entryUri;
                 int i = 0;
                 for(EntryHolder entry : mEntries) {
-                    mCatUri = getCatId(entry);
-
-                    entryUri = insertEntry(entry);
-                    insertExtras(entryUri, entry);
-                    insertFlavors(entryUri, entry);
-                    insertPhotos(entryUri, entry);
+                    EntryUtils.insertEntry(mResolver, entry);
                     publishProgress(++i);
                 }
                 return null;
-            }
-
-            /**
-             * Insert the row into the entries table.
-             *
-             * @param entry The entry
-             * @return The Uri for the new entry
-             */
-            private Uri insertEntry(EntryHolder entry) {
-                final ContentValues values = new ContentValues();
-                values.put(Tables.Entries.TITLE, entry.title);
-                values.put(Tables.Entries.CAT, entry.catId);
-                values.put(Tables.Entries.MAKER, entry.maker);
-                values.put(Tables.Entries.ORIGIN, entry.origin);
-                values.put(Tables.Entries.PRICE, entry.price);
-                values.put(Tables.Entries.LOCATION, entry.location);
-                values.put(Tables.Entries.DATE, entry.date);
-                values.put(Tables.Entries.RATING, entry.rating);
-                values.put(Tables.Entries.NOTES, entry.notes);
-
-                return mResolver.insert(Tables.Entries.CONTENT_URI, values);
-            }
-
-            /**
-             * Find the ID for a category, creating one if it doesn't exist.
-             *
-             * @param entry The entry
-             * @return The Uri for the category
-             */
-            private Uri getCatId(EntryHolder entry) {
-                final Uri uri = Tables.Cats.CONTENT_URI;
-                final String[] projection = new String[] {Tables.Cats._ID};
-                final String where = Tables.Cats.NAME + " = ?";
-                final String[] whereArgs = new String[] {entry.catName};
-                final Cursor cursor = mResolver.query(uri, projection, where, whereArgs, null);
-                try {
-                    if(cursor.moveToFirst()) {
-                        final long id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
-                        entry.catId = id;
-                        return ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, id);
-                    }
-                } finally {
-                    cursor.close();
-                }
-
-                final ContentValues values = new ContentValues();
-                values.put(Tables.Cats.NAME, filterName(entry.catName));
-                final Uri catUri = mResolver.insert(uri, values);
-
-                entry.catId = Long.valueOf(catUri.getLastPathSegment());
-                insertCatFlavors(catUri, entry);
-
-                return catUri;
-            }
-
-            /**
-             * Insert the flavor list for the new category.
-             *
-             * @param catUri The Uri for the category
-             * @param entry  The entry
-             */
-            private void insertCatFlavors(Uri catUri, EntryHolder entry) {
-                final Uri uri = Uri.withAppendedPath(catUri, "flavor");
-                final ContentValues values = new ContentValues();
-                values.put(Tables.Flavors.CAT, entry.catId);
-                for(RadarHolder flavor : entry.getFlavors()) {
-                    values.put(Tables.Flavors.NAME, filterName(flavor.name));
-                    mResolver.insert(uri, values);
-                }
-            }
-
-            /**
-             * Insert the extra fields for the new entry.
-             *
-             * @param entryUri The Uri for the new entry
-             * @param entry    The entry
-             */
-            private void insertExtras(Uri entryUri, EntryHolder entry) {
-                final Uri uri = Uri.withAppendedPath(entryUri, "extras");
-                final ContentValues values = new ContentValues();
-                for(ExtraFieldHolder extra : entry.getExtras()) {
-                    values.put(Tables.EntriesExtras.EXTRA, getExtraId(extra.name));
-                    values.put(Tables.EntriesExtras.VALUE, extra.value);
-                    mResolver.insert(uri, values);
-                }
-            }
-
-            /**
-             * Find the ID of an extra field, creating one if it doesn't exist.
-             *
-             * @param name The name of the field
-             * @return The ID for the extra field
-             */
-            private long getExtraId(String name) {
-                final Uri uri = Uri.withAppendedPath(mCatUri, "extras");
-                final String[] projection = new String[] {Tables.Extras._ID};
-                final String where = Tables.Extras.NAME + " = ?";
-                final String[] whereArgs = new String[] {name};
-                final Cursor cursor = mResolver.query(uri, projection, where, whereArgs, null);
-                try {
-                    if(cursor.moveToFirst()) {
-                        return cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
-                    }
-                } finally {
-                    cursor.close();
-                }
-
-                final ContentValues values = new ContentValues();
-                values.put(Tables.Extras.NAME, filterName(name));
-                return Long.valueOf(mResolver.insert(uri, values).getLastPathSegment());
-            }
-
-            /**
-             * Insert the flavors for the new entry.
-             *
-             * @param entryUri The Uri for the new entry
-             * @param entry    The entry
-             */
-            private void insertFlavors(Uri entryUri, EntryHolder entry) {
-                final Uri uri = Uri.withAppendedPath(entryUri, "flavor");
-                final ContentValues values = new ContentValues();
-                for(RadarHolder flavor : entry.getFlavors()) {
-                    values.put(Tables.EntriesFlavors.FLAVOR, filterName(flavor.name));
-                    values.put(Tables.EntriesFlavors.VALUE, flavor.value);
-                    mResolver.insert(uri, values);
-                }
-            }
-
-            /**
-             * Insert the photos for the new entry.
-             *
-             * @param entryUri The Uri for the new entry
-             * @param entry    The entry
-             */
-            private void insertPhotos(Uri entryUri, EntryHolder entry) {
-                final Uri uri = Uri.withAppendedPath(entryUri, "photos");
-                final ContentValues values = new ContentValues();
-                for(PhotoHolder photo : entry.getPhotos()) {
-                    values.put(Tables.Photos.PATH, photo.path);
-                    mResolver.insert(uri, values);
-                }
-            }
-
-            /**
-             * Filter for category and field names.
-             *
-             * @param name The original text
-             * @return The filtered text
-             */
-            private String filterName(String name) {
-                for(int i = 0; i < name.length(); i++) {
-                    if(name.charAt(i) != '_') {
-                        return name.substring(i);
-                    }
-                }
-                return name;
             }
 
             @Override

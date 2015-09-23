@@ -2,6 +2,7 @@ package com.ultramegasoft.flavordex2.util;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -10,6 +11,10 @@ import android.text.TextUtils;
 
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.EntryHolder;
+import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
+import com.ultramegasoft.flavordex2.widget.PhotoHolder;
+import com.ultramegasoft.flavordex2.widget.RadarHolder;
 
 /**
  * Utilities for managing journal entries.
@@ -17,6 +22,179 @@ import com.ultramegasoft.flavordex2.provider.Tables;
  * @author Steve Guidetti
  */
 public class EntryUtils {
+    /**
+     * Insert a new journal entry.
+     *
+     * @param cr    The ContentResolver
+     * @param entry The entry
+     * @return The Uri for the new entry
+     */
+    public static Uri insertEntry(ContentResolver cr, EntryHolder entry) {
+        final ContentValues values = new ContentValues();
+        values.put(Tables.Entries.TITLE, entry.title);
+        values.put(Tables.Entries.MAKER, entry.maker);
+        values.put(Tables.Entries.ORIGIN, entry.origin);
+        values.put(Tables.Entries.PRICE, entry.price);
+        values.put(Tables.Entries.LOCATION, entry.location);
+        values.put(Tables.Entries.DATE, entry.date);
+        values.put(Tables.Entries.RATING, entry.rating);
+        values.put(Tables.Entries.NOTES, entry.notes);
+
+        final Uri catUri = getCatUri(cr, entry);
+        values.put(Tables.Entries.CAT, entry.catId);
+
+        final Uri entryUri = cr.insert(Tables.Entries.CONTENT_URI, values);
+        insertExtras(cr, catUri, entryUri, entry);
+        insertFlavors(cr, entryUri, entry);
+        insertPhotos(cr, entryUri, entry);
+
+        return entryUri;
+    }
+
+    /**
+     * Find the ID for a category, creating one if it doesn't exist.
+     *
+     * @param cr    The ContentResolver
+     * @param entry The entry
+     * @return The Uri for the category
+     */
+    private static Uri getCatUri(ContentResolver cr, EntryHolder entry) {
+        final Uri uri = Tables.Cats.CONTENT_URI;
+        final String[] projection = new String[] {Tables.Cats._ID};
+        final String where = Tables.Cats.NAME + " = ?";
+        final String[] whereArgs = new String[] {entry.catName};
+        final Cursor cursor = cr.query(uri, projection, where, whereArgs, null);
+        try {
+            if(cursor.moveToFirst()) {
+                final long id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
+                entry.catId = id;
+                return ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, id);
+            }
+        } finally {
+            cursor.close();
+        }
+
+        final ContentValues values = new ContentValues();
+        values.put(Tables.Cats.NAME, filterName(entry.catName));
+        final Uri catUri = cr.insert(uri, values);
+
+        entry.catId = Long.valueOf(catUri.getLastPathSegment());
+        insertCatFlavors(cr, catUri, entry);
+
+        return catUri;
+    }
+
+    /**
+     * Insert the flavor list for the new category.
+     *
+     * @param cr     The ContentResolver
+     * @param catUri The Uri for the category
+     * @param entry  The entry
+     */
+    private static void insertCatFlavors(ContentResolver cr, Uri catUri, EntryHolder entry) {
+        final Uri uri = Uri.withAppendedPath(catUri, "flavor");
+        final ContentValues values = new ContentValues();
+        values.put(Tables.Flavors.CAT, entry.catId);
+        for(RadarHolder flavor : entry.getFlavors()) {
+            values.put(Tables.Flavors.NAME, filterName(flavor.name));
+            cr.insert(uri, values);
+        }
+    }
+
+    /**
+     * Insert the extra fields for the new entry.
+     *
+     * @param cr       The ContentResolver
+     * @param catUri   The Uri for the category
+     * @param entryUri The Uri for the new entry
+     * @param entry    The entry
+     */
+    private static void insertExtras(ContentResolver cr, Uri catUri, Uri entryUri,
+                                     EntryHolder entry) {
+        final Uri uri = Uri.withAppendedPath(entryUri, "extras");
+        final ContentValues values = new ContentValues();
+        for(ExtraFieldHolder extra : entry.getExtras()) {
+            values.put(Tables.EntriesExtras.EXTRA, getExtraId(cr, catUri, extra.name));
+            values.put(Tables.EntriesExtras.VALUE, extra.value);
+            cr.insert(uri, values);
+        }
+    }
+
+    /**
+     * Find the ID of an extra field, creating one if it doesn't exist.
+     *
+     * @param cr     The ContentResolver
+     * @param catUri The Uri for the category
+     * @param name   The name of the field
+     * @return The ID for the extra field
+     */
+    private static long getExtraId(ContentResolver cr, Uri catUri, String name) {
+        final Uri uri = Uri.withAppendedPath(catUri, "extras");
+        final String[] projection = new String[] {Tables.Extras._ID};
+        final String where = Tables.Extras.NAME + " = ?";
+        final String[] whereArgs = new String[] {name};
+        final Cursor cursor = cr.query(uri, projection, where, whereArgs, null);
+        try {
+            if(cursor.moveToFirst()) {
+                return cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
+            }
+        } finally {
+            cursor.close();
+        }
+
+        final ContentValues values = new ContentValues();
+        values.put(Tables.Extras.NAME, filterName(name));
+        return Long.valueOf(cr.insert(uri, values).getLastPathSegment());
+    }
+
+    /**
+     * Insert the flavors for the new entry.
+     *
+     * @param cr       The ContentResolver
+     * @param entryUri The Uri for the new entry
+     * @param entry    The entry
+     */
+    private static void insertFlavors(ContentResolver cr, Uri entryUri, EntryHolder entry) {
+        final Uri uri = Uri.withAppendedPath(entryUri, "flavor");
+        final ContentValues values = new ContentValues();
+        for(RadarHolder flavor : entry.getFlavors()) {
+            values.put(Tables.EntriesFlavors.FLAVOR, filterName(flavor.name));
+            values.put(Tables.EntriesFlavors.VALUE, flavor.value);
+            cr.insert(uri, values);
+        }
+    }
+
+    /**
+     * Insert the photos for the new entry.
+     *
+     * @param cr       The ContentResolver
+     * @param entryUri The Uri for the new entry
+     * @param entry    The entry
+     */
+    private static void insertPhotos(ContentResolver cr, Uri entryUri, EntryHolder entry) {
+        final Uri uri = Uri.withAppendedPath(entryUri, "photos");
+        final ContentValues values = new ContentValues();
+        for(PhotoHolder photo : entry.getPhotos()) {
+            values.put(Tables.Photos.PATH, photo.path);
+            cr.insert(uri, values);
+        }
+    }
+
+    /**
+     * Filter for category and field names.
+     *
+     * @param name The original text
+     * @return The filtered text
+     */
+    private static String filterName(String name) {
+        for(int i = 0; i < name.length(); i++) {
+            if(name.charAt(i) != '_') {
+                return name.substring(i);
+            }
+        }
+        return name;
+    }
+
     /**
      * Delete an entry.
      *
