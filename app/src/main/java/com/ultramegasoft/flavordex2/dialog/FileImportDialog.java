@@ -219,20 +219,13 @@ public class FileImportDialog extends ImportDialog
          * Task for saving entries in the background.
          */
         private class SaveTask extends AsyncTask<Void, Integer, Void> {
-            /**
-             * The ContentResolver to use for inserting data
-             */
-            private final ContentResolver mResolver;
-
-            public SaveTask() {
-                mResolver = getContext().getContentResolver();
-            }
-
             @Override
             protected Void doInBackground(Void... params) {
+                final ContentResolver cr = getContext().getContentResolver();
+
                 int i = 0;
                 for(EntryHolder entry : mEntries) {
-                    EntryUtils.insertEntry(mResolver, entry);
+                    EntryUtils.insertEntry(cr, entry);
                     publishProgress(++i);
                 }
                 return null;
