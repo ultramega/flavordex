@@ -1,10 +1,14 @@
 package com.ultramegasoft.flavordex2;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 
+import com.ultramegasoft.flavordex2.dialog.AppChooserDialog;
+import com.ultramegasoft.flavordex2.util.AppImportUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 
@@ -34,6 +38,13 @@ public class EntryListActivity extends AppCompatActivity {
         }
 
         if(savedInstanceState == null) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if(prefs.getBoolean(FlavordexApp.PREF_FIRST_RUN, true)) {
+                if(AppImportUtils.isAnyAppInstalled(this)) {
+                    AppChooserDialog.showDialog(getSupportFragmentManager(), true);
+                }
+                prefs.edit().putBoolean(FlavordexApp.PREF_FIRST_RUN, false).apply();
+            }
             PermissionUtils.checkExternalStoragePerm(this, R.string.message_request_storage);
         }
     }
