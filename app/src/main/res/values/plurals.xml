@@ -12,4 +12,8 @@
         <item quantity="one">was</item>
         <item quantity="other">were</item>
     </plurals>
+    <plurals name="app">
+        <item quantity="one">App</item>
+        <item quantity="other">Apps</item>
+    </plurals>
 </resources>

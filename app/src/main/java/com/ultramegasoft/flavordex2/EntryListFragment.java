@@ -35,6 +35,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import com.ultramegasoft.flavordex2.dialog.AppChooserDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.dialog.EntryFilterDialog;
@@ -42,6 +43,7 @@ import com.ultramegasoft.flavordex2.dialog.ExportDialog;
 import com.ultramegasoft.flavordex2.dialog.FileImportDialog;
 import com.ultramegasoft.flavordex2.dialog.FileSelectorDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.AppImportUtils;
 import com.ultramegasoft.flavordex2.util.EntryDeleter;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
@@ -264,15 +266,13 @@ public class EntryListFragment extends ListFragment
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            menu.findItem(R.id.menu_xport).setVisible(false);
-        } else {
-            final boolean showXport = Environment.getExternalStorageDirectory().canWrite();
-            menu.findItem(R.id.menu_xport).setVisible(showXport
-                    || PermissionUtils.shouldAskExternalStoragePerm(getActivity()));
-            menu.findItem(R.id.menu_import).setVisible(showXport);
-            menu.findItem(R.id.menu_export).setVisible(showXport);
-        }
+        final boolean showFileXport = Environment.getExternalStorageDirectory().canWrite()
+                || PermissionUtils.shouldAskExternalStoragePerm(getActivity());
+        final boolean showAppImport = AppImportUtils.isAnyAppInstalled(getContext());
+        menu.findItem(R.id.menu_xport).setVisible(showFileXport || showAppImport);
+        menu.findItem(R.id.menu_import).setVisible(showFileXport);
+        menu.findItem(R.id.menu_export).setVisible(showFileXport);
+        menu.findItem(R.id.menu_import_app).setVisible(showAppImport);
     }
 
     @Override
@@ -297,16 +297,23 @@ public class EntryListFragment extends ListFragment
             case R.id.menu_add_entry:
                 CatListDialog.showDialog(getFragmentManager(), this, REQUEST_SELECT_CAT, true);
                 return true;
-            case R.id.menu_xport:
-                PermissionUtils.checkExternalStoragePerm(getActivity(),
-                        R.string.message_request_storage_xport);
-                return true;
             case R.id.menu_import:
+                if(!PermissionUtils.checkExternalStoragePerm(getActivity(),
+                        R.string.message_request_storage_xport)) {
+                    return true;
+                }
                 final String rootPath = Environment.getExternalStorageDirectory().getPath();
                 FileSelectorDialog.showDialog(getFragmentManager(), this, REQUEST_IMPORT_FILE,
                         rootPath, false, ".csv");
                 return true;
+            case R.id.menu_import_app:
+                AppChooserDialog.showDialog(getFragmentManager(), false);
+                return true;
             case R.id.menu_export:
+                if(!PermissionUtils.checkExternalStoragePerm(getActivity(),
+                        R.string.message_request_storage_xport)) {
+                    return true;
+                }
                 if(!mExportMode) {
                     setExportMode(true, true);
                 }

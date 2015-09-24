@@ -29,6 +29,7 @@
     <string name="title_all_entries">All Entries</string>
     <string name="title_cat_entries">%s Entries</string>
     <string name="title_import">Import Entries</string>
+    <string name="title_import_app">Import from Flavordex</string>
     <string name="title_export">Export Entries</string>
     <string name="title_select_file">Select File</string>
     <string name="title_importing">Importing…</string>
@@ -43,6 +44,7 @@
     <string name="header_date">Entry Date</string>
     <string name="header_cat_fields">Category Fields</string>
     <string name="header_cat_flavors">Category Flavors</string>
+    <string name="header_select_app">Select %s</string>
 
     <string name="menu_settings">Application Settings</string>
     <string name="menu_filter">Filter List</string>
@@ -63,8 +65,9 @@
     <string name="menu_edit_flavor">Edit Flavors</string>
     <string name="menu_reset_flavor">Reset Flavors</string>
     <string name="menu_xport">Import/Export</string>
-    <string name="menu_import">Import Entries</string>
-    <string name="menu_export">Export Entries</string>
+    <string name="menu_import">Import from CSV</string>
+    <string name="menu_import_app">Import from Flavordex</string>
+    <string name="menu_export">Export to CSV</string>
     <string name="menu_export_selected">Export</string>
     <string name="menu_save_cat">Save Category</string>
     <string name="menu_edit_cat">Edit Category</string>

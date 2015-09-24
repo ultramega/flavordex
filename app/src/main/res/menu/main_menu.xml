@@ -16,6 +16,10 @@
                 android:id="@+id/menu_import"
                 android:icon="@drawable/ic_import"
                 android:title="@string/menu_import" />
+            <item
+                android:id="@+id/menu_import_app"
+                android:icon="@drawable/ic_import"
+                android:title="@string/menu_import_app" />
         </menu>
     </item>
     <item
