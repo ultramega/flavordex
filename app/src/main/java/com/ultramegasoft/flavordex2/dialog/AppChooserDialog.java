@@ -149,7 +149,22 @@ public class AppChooserDialog extends DialogFragment {
      * Import all of the entries from the selected apps.
      */
     private void importSelected() {
-        ImporterFragment.init(getFragmentManager(), mListView.getCheckedItemIds());
+        final AppListAdapter adapter = (AppListAdapter)mListView.getAdapter();
+
+        final int[] appIds = new int[mListView.getCheckedItemCount()];
+        final CharSequence[] appNames = new String[mListView.getCheckedItemCount()];
+
+        AppImportUtils.AppHolder appHolder;
+        for(int i = 0, j = 0; i < mListView.getCount(); i++) {
+            if(mListView.isItemChecked(i)) {
+                appHolder = adapter.getItem(i);
+                appIds[j] = appHolder.app;
+                appNames[j] = appHolder.title;
+                j++;
+            }
+        }
+
+        ImporterFragment.init(getFragmentManager(), appIds, appNames);
     }
 
     /**
@@ -246,24 +261,32 @@ public class AppChooserDialog extends DialogFragment {
         /**
          * Keys for the Fragment arguments
          */
-        private static final String ARG_APPS = "apps";
+        private static final String ARG_APP_IDS = "app_ids";
+        private static final String ARG_APP_NAMES = "app_namess";
 
         /**
          * The list of source apps to import from
          */
-        private long[] mApps;
+        private int[] mApps;
+
+        /**
+         * The names of the apps
+         */
+        private CharSequence[] mAppNames;
 
         /**
          * Start a new instance of this Fragment.
          *
-         * @param fm   The FragmentManager to use
-         * @param apps The source apps
+         * @param fm       The FragmentManager to use
+         * @param appIds   The source app IDs
+         * @param appNames The names of the apps
          */
-        public static void init(FragmentManager fm, long[] apps) {
+        public static void init(FragmentManager fm, int[] appIds, CharSequence[] appNames) {
             final DialogFragment fragment = new ImporterFragment();
 
             final Bundle args = new Bundle();
-            args.putLongArray(ARG_APPS, apps);
+            args.putIntArray(ARG_APP_IDS, appIds);
+            args.putCharSequenceArray(ARG_APP_NAMES, appNames);
             fragment.setArguments(args);
 
             fragment.show(fm, TAG);
@@ -277,7 +300,8 @@ public class AppChooserDialog extends DialogFragment {
             setCancelable(false);
 
             final Bundle args = getArguments();
-            mApps = args.getLongArray(ARG_APPS);
+            mApps = args.getIntArray(ARG_APP_IDS);
+            mAppNames = args.getCharSequenceArray(ARG_APP_NAMES);
         }
 
         @NonNull
@@ -289,7 +313,7 @@ public class AppChooserDialog extends DialogFragment {
             dialog.setTitle(R.string.title_importing);
             dialog.setIndeterminate(false);
             dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            dialog.setMax(mApps.length);
+            dialog.setMessage("");
 
             return dialog;
         }
@@ -309,25 +333,27 @@ public class AppChooserDialog extends DialogFragment {
                 final Context context = getContext();
                 final ContentResolver cr = context.getContentResolver();
 
-                int i = 0;
-                for(long appId : mApps) {
-                    final int app = (int)appId;
-                    final Uri uri = AppImportUtils.getEntriesUri(app);
+                int appId;
+                for(int i = 0; i < mApps.length; i++) {
+                    appId = mApps[i];
+
+                    final Uri uri = AppImportUtils.getEntriesUri(appId);
                     final String[] projection = {AppImportUtils.EntriesColumns._ID};
                     final Cursor cursor = cr.query(uri, projection, null, null, null);
+                    int count;
                     try {
                         EntryHolder entry;
-                        final int count = cursor.getCount();
+                        count = cursor.getCount();
                         int j = 0;
                         while(cursor.moveToNext()) {
-                            entry = AppImportUtils.importEntry(context, app, cursor.getLong(0));
+                            entry = AppImportUtils.importEntry(context, appId, cursor.getLong(0));
                             EntryUtils.insertEntry(cr, entry);
-                            publishProgress(i, ++j * 10000 / count);
+                            publishProgress(i, ++j, count);
                         }
                     } finally {
                         cursor.close();
                     }
-                    publishProgress(++i, 0);
+                    publishProgress(i, count, count);
                 }
                 return null;
             }
@@ -335,8 +361,9 @@ public class AppChooserDialog extends DialogFragment {
             @Override
             protected void onProgressUpdate(Integer... values) {
                 final ProgressDialog dialog = (ProgressDialog)getDialog();
-                dialog.setProgress(values[0]);
-                dialog.setSecondaryProgress(values[1]);
+                dialog.setMessage(mAppNames[values[0]]);
+                dialog.setMax(values[2]);
+                dialog.setProgress(values[1]);
             }
 
             @Override
