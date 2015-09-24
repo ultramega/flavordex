@@ -245,6 +245,10 @@ public class AppImportUtils {
         final Cursor cursor = cr.query(Uri.withAppendedPath(sourceUri, "flavor"), null, null, null,
                 FlavorsColumns.FLAVOR + " ASC");
         try {
+            if(cursor.getCount() != names.length) {
+                return;
+            }
+
             String name;
             int value;
             while(cursor.moveToNext()) {
