@@ -228,7 +228,7 @@ public class ExportDialog extends DialogFragment {
     /**
      * Fragment for exporting the selected entries in the background.
      */
-    public static class ExporterFragment extends DialogFragment {
+    public static class ExporterFragment extends BackgroundProgressDialog {
         /**
          * The tag to identify this Fragment
          */
@@ -271,27 +271,9 @@ public class ExportDialog extends DialogFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-
-            setRetainInstance(true);
-            setCancelable(false);
-
             final Bundle args = getArguments();
             mEntryIds = args.getLongArray(ARG_ENTRY_IDS);
             mFilePath = args.getString(ARG_FILE_PATH);
-        }
-
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-            if(savedInstanceState == null) {
-                try {
-                    new DataExporter(new CSVWriter(new FileWriter(mFilePath))).execute();
-                } catch(IOException e) {
-                    Log.e(getClass().getSimpleName(), e.getMessage());
-                    showError();
-                    dismiss();
-                }
-            }
         }
 
         @NonNull
@@ -309,12 +291,14 @@ public class ExportDialog extends DialogFragment {
         }
 
         @Override
-        public void onDestroyView() {
-            final Dialog dialog = getDialog();
-            if(dialog != null) {
-                getDialog().setDismissMessage(null);
+        protected void startTask() {
+            try {
+                new DataExporter(new CSVWriter(new FileWriter(mFilePath))).execute();
+            } catch(IOException e) {
+                Log.e(getClass().getSimpleName(), e.getMessage());
+                showError();
+                dismiss();
             }
-            super.onDestroyView();
         }
 
         /**

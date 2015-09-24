@@ -119,7 +119,7 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
     /**
      * Fragment for importing the selected entries in the background.
      */
-    public static class ImporterFragment extends DialogFragment {
+    public static class ImporterFragment extends BackgroundProgressDialog {
         /**
          * The tag to identify this Fragment
          */
@@ -162,21 +162,9 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-
-            setRetainInstance(true);
-            setCancelable(false);
-
             final Bundle args = getArguments();
             mApp = args.getInt(ARG_APP);
             mEntryIds = args.getLongArray(ARG_ENTRY_IDS);
-        }
-
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-            if(savedInstanceState == null) {
-                new ImportTask().execute();
-            }
         }
 
         @NonNull
@@ -194,12 +182,8 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
         }
 
         @Override
-        public void onDestroyView() {
-            final Dialog dialog = getDialog();
-            if(dialog != null) {
-                getDialog().setDismissMessage(null);
-            }
-            super.onDestroyView();
+        protected void startTask() {
+            new ImportTask().execute();
         }
 
         /**

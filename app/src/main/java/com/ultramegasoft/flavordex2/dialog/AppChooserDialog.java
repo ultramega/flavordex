@@ -252,7 +252,7 @@ public class AppChooserDialog extends DialogFragment {
     /**
      * Fragment for importing all entries from the selected apps in the background.
      */
-    public static class ImporterFragment extends DialogFragment {
+    public static class ImporterFragment extends BackgroundProgressDialog {
         /**
          * The tag to identify this Fragment
          */
@@ -295,21 +295,9 @@ public class AppChooserDialog extends DialogFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-
-            setRetainInstance(true);
-            setCancelable(false);
-
             final Bundle args = getArguments();
             mApps = args.getIntArray(ARG_APP_IDS);
             mAppNames = args.getCharSequenceArray(ARG_APP_NAMES);
-        }
-
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-            if(savedInstanceState == null) {
-                new ImportTask().execute();
-            }
         }
 
         @NonNull
@@ -327,12 +315,8 @@ public class AppChooserDialog extends DialogFragment {
         }
 
         @Override
-        public void onDestroyView() {
-            final Dialog dialog = getDialog();
-            if(dialog != null) {
-                getDialog().setDismissMessage(null);
-            }
-            super.onDestroyView();
+        protected void startTask() {
+            new ImportTask().execute();
         }
 
         /**
