@@ -171,6 +171,14 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
             mEntryIds = args.getLongArray(ARG_ENTRY_IDS);
         }
 
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+            if(savedInstanceState == null) {
+                new ImportTask().execute();
+            }
+        }
+
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -185,25 +193,27 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
             return dialog;
         }
 
-        @Override
-        public void onStart() {
-            super.onStart();
-            new ImportTask().execute();
-        }
-
         /**
          * Task for importing entries in the background.
          */
         private class ImportTask extends AsyncTask<Void, Integer, Void> {
+            /**
+             * The Context
+             */
+            private final Context mContext;
+
+            public ImportTask() {
+                mContext = getContext().getApplicationContext();
+            }
+
             @Override
             protected Void doInBackground(Void... params) {
-                final Context context = getContext();
-                final ContentResolver cr = context.getContentResolver();
+                final ContentResolver cr = mContext.getContentResolver();
 
                 EntryHolder entry;
                 int i = 0;
                 for(long id : mEntryIds) {
-                    entry = AppImportUtils.importEntry(context, mApp, id);
+                    entry = AppImportUtils.importEntry(mContext, mApp, id);
                     EntryUtils.insertEntry(cr, entry);
                     publishProgress(++i);
                 }
@@ -212,12 +222,15 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
 
             @Override
             protected void onProgressUpdate(Integer... values) {
-                ((ProgressDialog)getDialog()).setProgress(values[0]);
+                final ProgressDialog dialog = (ProgressDialog)getDialog();
+                if(dialog != null) {
+                    dialog.setProgress(values[0]);
+                }
             }
 
             @Override
             protected void onPostExecute(Void result) {
-                Toast.makeText(getContext(), R.string.message_import_complete, Toast.LENGTH_LONG)
+                Toast.makeText(mContext, R.string.message_import_complete, Toast.LENGTH_LONG)
                         .show();
                 dismiss();
             }

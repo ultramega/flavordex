@@ -304,6 +304,14 @@ public class AppChooserDialog extends DialogFragment {
             mAppNames = args.getCharSequenceArray(ARG_APP_NAMES);
         }
 
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+            if(savedInstanceState == null) {
+                new ImportTask().execute();
+            }
+        }
+
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -318,20 +326,22 @@ public class AppChooserDialog extends DialogFragment {
             return dialog;
         }
 
-        @Override
-        public void onStart() {
-            super.onStart();
-            new ImportTask().execute();
-        }
-
         /**
          * Task for importing entries in the background.
          */
         private class ImportTask extends AsyncTask<Void, Integer, Void> {
+            /**
+             * The Context
+             */
+            private final Context mContext;
+
+            public ImportTask() {
+                mContext = getContext().getApplicationContext();
+            }
+
             @Override
             protected Void doInBackground(Void... params) {
-                final Context context = getContext();
-                final ContentResolver cr = context.getContentResolver();
+                final ContentResolver cr = mContext.getContentResolver();
 
                 int appId;
                 for(int i = 0; i < mApps.length; i++) {
@@ -346,7 +356,7 @@ public class AppChooserDialog extends DialogFragment {
                         count = cursor.getCount();
                         int j = 0;
                         while(cursor.moveToNext()) {
-                            entry = AppImportUtils.importEntry(context, appId, cursor.getLong(0));
+                            entry = AppImportUtils.importEntry(mContext, appId, cursor.getLong(0));
                             EntryUtils.insertEntry(cr, entry);
                             publishProgress(i, ++j, count);
                         }
@@ -361,14 +371,16 @@ public class AppChooserDialog extends DialogFragment {
             @Override
             protected void onProgressUpdate(Integer... values) {
                 final ProgressDialog dialog = (ProgressDialog)getDialog();
-                dialog.setMessage(mAppNames[values[0]]);
-                dialog.setMax(values[2]);
-                dialog.setProgress(values[1]);
+                if(dialog != null) {
+                    dialog.setMessage(mAppNames[values[0]]);
+                    dialog.setMax(values[2]);
+                    dialog.setProgress(values[1]);
+                }
             }
 
             @Override
             protected void onPostExecute(Void result) {
-                Toast.makeText(getContext(), R.string.message_import_complete, Toast.LENGTH_LONG)
+                Toast.makeText(mContext, R.string.message_import_complete, Toast.LENGTH_LONG)
                         .show();
                 dismiss();
             }

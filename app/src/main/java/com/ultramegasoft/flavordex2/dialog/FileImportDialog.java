@@ -3,6 +3,7 @@ package com.ultramegasoft.flavordex2.dialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -195,6 +196,14 @@ public class FileImportDialog extends ImportDialog
             mEntries = args.getParcelableArrayList(ARG_ENTRIES);
         }
 
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+            if(savedInstanceState == null) {
+                new SaveTask().execute();
+            }
+        }
+
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -209,19 +218,22 @@ public class FileImportDialog extends ImportDialog
             return dialog;
         }
 
-        @Override
-        public void onStart() {
-            super.onStart();
-            new SaveTask().execute();
-        }
-
         /**
          * Task for saving entries in the background.
          */
         private class SaveTask extends AsyncTask<Void, Integer, Void> {
+            /**
+             * The Context
+             */
+            private final Context mContext;
+
+            public SaveTask() {
+                mContext = getContext().getApplicationContext();
+            }
+
             @Override
             protected Void doInBackground(Void... params) {
-                final ContentResolver cr = getContext().getContentResolver();
+                final ContentResolver cr = mContext.getContentResolver();
 
                 int i = 0;
                 for(EntryHolder entry : mEntries) {
@@ -233,12 +245,15 @@ public class FileImportDialog extends ImportDialog
 
             @Override
             protected void onProgressUpdate(Integer... values) {
-                ((ProgressDialog)getDialog()).setProgress(values[0]);
+                final ProgressDialog dialog = (ProgressDialog)getDialog();
+                if(dialog != null) {
+                    dialog.setProgress(values[0]);
+                }
             }
 
             @Override
             protected void onPostExecute(Void result) {
-                Toast.makeText(getContext(), R.string.message_import_complete, Toast.LENGTH_LONG)
+                Toast.makeText(mContext, R.string.message_import_complete, Toast.LENGTH_LONG)
                         .show();
                 dismiss();
             }

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
@@ -279,6 +280,20 @@ public class ExportDialog extends DialogFragment {
             mFilePath = args.getString(ARG_FILE_PATH);
         }
 
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+            if(savedInstanceState == null) {
+                try {
+                    new DataExporter(new CSVWriter(new FileWriter(mFilePath))).execute();
+                } catch(IOException e) {
+                    Log.e(getClass().getSimpleName(), e.getMessage());
+                    showError();
+                    dismiss();
+                }
+            }
+        }
+
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -293,23 +308,23 @@ public class ExportDialog extends DialogFragment {
             return dialog;
         }
 
-        @Override
-        public void onStart() {
-            super.onStart();
-            try {
-                new DataExporter(new CSVWriter(new FileWriter(mFilePath))).execute();
-            } catch(IOException e) {
-                Log.e(getClass().getSimpleName(), e.getMessage());
-                MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
-                        getString(R.string.error_csv_export_file), R.drawable.ic_warning);
-                dismiss();
-            }
+        /**
+         * Show an error message.
+         */
+        private void showError() {
+            MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
+                    getString(R.string.error_csv_export_file), R.drawable.ic_warning);
         }
 
         /**
          * Task for exporting the data in the background.
          */
         private class DataExporter extends AsyncTask<Void, Integer, Boolean> {
+            /**
+             * The Context
+             */
+            private final Context mContext;
+
             /**
              * The ContentResolver to load entries from the database
              */
@@ -329,8 +344,9 @@ public class ExportDialog extends DialogFragment {
              * @param writer The CSVWriter to use for writing
              */
             public DataExporter(CSVWriter writer) {
+                mContext = getContext().getApplicationContext();
+                mResolver = mContext.getContentResolver();
                 mWriter = writer;
-                mResolver = getContext().getContentResolver();
             }
 
             @Override
@@ -453,17 +469,19 @@ public class ExportDialog extends DialogFragment {
 
             @Override
             protected void onProgressUpdate(Integer... values) {
-                ((ProgressDialog)getDialog()).setProgress(values[0]);
+                final ProgressDialog dialog = (ProgressDialog)getDialog();
+                if(dialog != null) {
+                    dialog.setProgress(values[0]);
+                }
             }
 
             @Override
             protected void onPostExecute(Boolean result) {
                 if(result) {
-                    Toast.makeText(getContext(), R.string.message_export_complete,
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, R.string.message_export_complete, Toast.LENGTH_LONG)
+                            .show();
                 } else {
-                    MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
-                            getString(R.string.error_csv_export_file), R.drawable.ic_warning);
+                    showError();
                 }
                 dismiss();
             }
