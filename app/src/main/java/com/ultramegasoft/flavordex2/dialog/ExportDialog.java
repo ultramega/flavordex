@@ -308,6 +308,15 @@ public class ExportDialog extends DialogFragment {
             return dialog;
         }
 
+        @Override
+        public void onDestroyView() {
+            final Dialog dialog = getDialog();
+            if(dialog != null) {
+                getDialog().setDismissMessage(null);
+            }
+            super.onDestroyView();
+        }
+
         /**
          * Show an error message.
          */

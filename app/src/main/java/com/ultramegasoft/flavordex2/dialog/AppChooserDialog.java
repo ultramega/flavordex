@@ -326,6 +326,15 @@ public class AppChooserDialog extends DialogFragment {
             return dialog;
         }
 
+        @Override
+        public void onDestroyView() {
+            final Dialog dialog = getDialog();
+            if(dialog != null) {
+                getDialog().setDismissMessage(null);
+            }
+            super.onDestroyView();
+        }
+
         /**
          * Task for importing entries in the background.
          */

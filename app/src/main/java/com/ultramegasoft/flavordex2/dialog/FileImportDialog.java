@@ -218,6 +218,15 @@ public class FileImportDialog extends ImportDialog
             return dialog;
         }
 
+        @Override
+        public void onDestroyView() {
+            final Dialog dialog = getDialog();
+            if(dialog != null) {
+                getDialog().setDismissMessage(null);
+            }
+            super.onDestroyView();
+        }
+
         /**
          * Task for saving entries in the background.
          */

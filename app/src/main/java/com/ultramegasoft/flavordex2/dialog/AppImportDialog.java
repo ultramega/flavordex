@@ -193,6 +193,15 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
             return dialog;
         }
 
+        @Override
+        public void onDestroyView() {
+            final Dialog dialog = getDialog();
+            if(dialog != null) {
+                getDialog().setDismissMessage(null);
+            }
+            super.onDestroyView();
+        }
+
         /**
          * Task for importing entries in the background.
          */
