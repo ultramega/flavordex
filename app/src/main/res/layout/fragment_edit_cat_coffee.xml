@@ -7,6 +7,12 @@
     android:padding="@dimen/form_padding">
 
     <TextView
+        style="@style/SubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/header_cat_title" />
+
+    <TextView
         style="@style/FieldText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
