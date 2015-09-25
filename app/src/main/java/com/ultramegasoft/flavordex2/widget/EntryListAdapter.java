@@ -99,6 +99,8 @@ public class EntryListAdapter extends CursorAdapter {
         if(mMultiChoice) {
             view.findViewById(R.id.checkbox).setVisibility(View.VISIBLE);
             holder.thumb.setVisibility(View.GONE);
+        } else {
+            ((CheckableEntryListItem)view).setMultiChoice(false);
         }
 
         return view;

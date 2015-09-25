@@ -19,34 +19,59 @@ public class CheckableEntryListItem extends LinearLayout implements Checkable {
      */
     private boolean mChecked;
 
+    /**
+     * Whether this list item is being used in a multiple choice mode ListView
+     */
+    private boolean mMultiChoice = true;
+
+    public CheckableEntryListItem(Context context) {
+        super(context);
+    }
+
     public CheckableEntryListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    /**
-     * Set the checked state of this list item.
-     *
-     * @param checked Whether to check or uncheck this list item
-     */
-    public void setChecked(boolean checked) {
-        mChecked = checked;
-
-        ((CheckBox)findViewById(R.id.checkbox)).setChecked(checked);
+    public CheckableEntryListItem(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
     }
 
-    /**
-     * Is this list item checked?
-     *
-     * @return Whether this list item is checked
-     */
+    @Override
+    public void setChecked(boolean checked) {
+        mChecked = checked;
+        ((CheckBox)findViewById(R.id.checkbox)).setChecked(checked);
+        if(!mMultiChoice) {
+            setActivated(checked);
+        }
+    }
+
+    @Override
     public boolean isChecked() {
         return mChecked;
     }
 
-    /**
-     * Toggle the checked state of this list item.
-     */
+    @Override
     public void toggle() {
         setChecked(!mChecked);
+    }
+
+    /**
+     * Is this list item is being used in a multiple choice mode ListView?
+     *
+     * @return Whether this list item is being used in a multiple choice mode ListView
+     */
+    public boolean isMultiChoice() {
+        return mMultiChoice;
+    }
+
+    /**
+     * Set whether this list item is being used in a multiple choice mode ListView. If true
+     * (default), this behaves like a regular Checkable list item. If false, the view will have the
+     * activated state applied when checked.
+     *
+     * @param multiChoice Whether this list item is being used in a multiple choice mode ListView
+     */
+    public void setMultiChoice(boolean multiChoice) {
+        mMultiChoice = multiChoice;
     }
 }
