@@ -85,8 +85,10 @@ public abstract class ImportDialog extends DialogFragment {
      */
     protected final void invalidateButtons() {
         final AlertDialog dialog = (AlertDialog)getDialog();
-        final boolean itemSelected = mListView.getCheckedItemCount() > 0;
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(itemSelected);
+        if(dialog != null) {
+            final boolean itemSelected = mListView.getCheckedItemCount() > 0;
+            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(itemSelected);
+        }
     }
 
     /**
