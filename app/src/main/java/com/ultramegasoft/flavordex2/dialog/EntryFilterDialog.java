@@ -470,7 +470,9 @@ public class EntryFilterDialog extends DialogFragment
             final int month = calendar.get(Calendar.MONTH);
             final int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-            return new DatePickerDialog(getContext(), this, year, month, day);
+            return new DatePickerDialog(getContext(),
+                    android.support.v7.appcompat.R.style.Base_Theme_AppCompat_Dialog_Alert, this,
+                    year, month, day);
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
