@@ -21,6 +21,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -90,8 +91,10 @@ public class AppChooserDialog extends DialogFragment {
                     invalidateButtons();
                 }
             });
+
+            final ListAdapter adapter = mListView.getAdapter();
             for(int i = 0; i < count; i++) {
-                mListView.setItemChecked(i, true);
+                mListView.setItemChecked(i, adapter.isEnabled(i));
             }
         } else {
             count = 1;
@@ -212,15 +215,31 @@ public class AppChooserDialog extends DialogFragment {
         }
 
         @Override
+        public int getViewTypeCount() {
+            return 2;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return isEnabled(position) ? 0 : 1;
+        }
+
+        @Override
+        public boolean isEnabled(int position) {
+            return getItem(position).supported;
+        }
+
+        @Override
         public boolean hasStableIds() {
             return true;
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            final boolean enabled = isEnabled(position);
             if(convertView == null) {
-                convertView = LayoutInflater.from(mContext).inflate(R.layout.app_list_item, parent,
-                        false);
+                final int id = enabled ? R.layout.app_list_item : R.layout.app_list_item_disabled;
+                convertView = LayoutInflater.from(mContext).inflate(id, parent, false);
 
                 final Holder holder = new Holder();
                 holder.icon = (ImageView)convertView.findViewById(R.id.icon);
@@ -235,7 +254,12 @@ public class AppChooserDialog extends DialogFragment {
 
             final Holder holder = (Holder)convertView.getTag();
             holder.icon.setImageDrawable(appHolder.icon);
-            holder.title.setText(appHolder.title);
+            if(enabled) {
+                holder.title.setText(appHolder.title);
+            } else {
+                holder.title.setText(mContext.getString(R.string.message_app_requires_update,
+                        appHolder.title));
+            }
 
             return convertView;
         }

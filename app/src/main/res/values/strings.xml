@@ -146,6 +146,7 @@
     <string name="message_request_storage">Flavordex requires external storage access to enable photo features.</string>
     <string name="message_request_storage_xport">Flavordex requires external storage access to enable importing and exporting.</string>
     <string name="message_reset_flavor">Do you want to reset this flavor chart to the current category default? This will result in a blank chart.</string>
+    <string name="message_app_requires_update">%s (requires update)</string>
 
     <string name="pref_detect_location">Remember Locations</string>
     <string name="pref_summary_detect_location">Auto-fill location name based on previous entries.</string>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.ultramegasoft.flavordex2.widget.CheckableEntryListItem
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:alpha="0.4"
+    android:background="?android:attr/activatedBackgroundIndicator"
+    android:baselineAligned="false"
+    android:orientation="horizontal">
+
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:enabled="false"
+        android:focusable="false"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/Base.TextAppearance.AppCompat.Large"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:textStyle="italic" />
+
+</com.ultramegasoft.flavordex2.widget.CheckableEntryListItem>

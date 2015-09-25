@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ProviderInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -95,6 +96,7 @@ public class AppImportUtils {
                 appHolder = new AppHolder(i);
                 appHolder.icon = pm.getApplicationIcon(appInfo);
                 appHolder.title = pm.getApplicationLabel(appInfo);
+                appHolder.supported = getProviderInfo(pm, i).exported;
 
                 apps.add(appHolder);
             } catch(PackageManager.NameNotFoundException ignored) {
@@ -127,8 +129,31 @@ public class AppImportUtils {
      * @return Whether the app is installed
      */
     public static boolean isAppInstalled(Context context, int app) {
-        final PackageManager pm = context.getPackageManager();
-        return pm.resolveContentProvider(sPackageNames[app] + ".provider", 0) != null;
+        return isAppInstalled(context, app, false);
+    }
+
+    /**
+     * Check if an app is installed on the device.
+     *
+     * @param context      The Context
+     * @param app          The app
+     * @param checkSupport Check whether the app supports importing
+     * @return Whether the app is installed
+     */
+    public static boolean isAppInstalled(Context context, int app, boolean checkSupport) {
+        final ProviderInfo pi = getProviderInfo(context.getPackageManager(), app);
+        return pi != null && (!checkSupport || pi.exported);
+    }
+
+    /**
+     * Get the information about an app's ContentProvider.
+     *
+     * @param pm  The PackageManager
+     * @param app The app
+     * @return The ProviderInfo for the app's ContentProvider
+     */
+    private static ProviderInfo getProviderInfo(PackageManager pm, int app) {
+        return pm.resolveContentProvider(sPackageNames[app] + ".provider", 0);
     }
 
     /**
@@ -301,6 +326,11 @@ public class AppImportUtils {
          * The name of the app
          */
         public CharSequence title;
+
+        /**
+         * Whether the app supports importing
+         */
+        public boolean supported;
 
         /**
          * @param app The app identifier

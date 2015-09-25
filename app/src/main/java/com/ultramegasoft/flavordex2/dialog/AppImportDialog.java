@@ -77,8 +77,9 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
         final Bundle args = getArguments();
         mApp = args.getInt(ARG_APP);
 
-        if(!AppImportUtils.isAppInstalled(getContext(), mApp)) {
+        if(!AppImportUtils.isAppInstalled(getContext(), mApp, true)) {
             dismiss();
+            return;
         }
 
         getLoaderManager().initLoader(0, null, this);
