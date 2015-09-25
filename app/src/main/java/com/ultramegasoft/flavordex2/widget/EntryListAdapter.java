@@ -85,9 +85,8 @@ public class EntryListAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        final int viewId =
-                mMultiChoice ? R.layout.entry_list_item_multiple_choice : R.layout.entry_list_item;
-        final View view = LayoutInflater.from(context).inflate(viewId, parent, false);
+        final View view =
+                LayoutInflater.from(context).inflate(R.layout.entry_list_item, parent, false);
 
         final Holder holder = new Holder();
         holder.thumb = (ImageView)view.findViewById(R.id.thumb);
@@ -96,6 +95,11 @@ public class EntryListAdapter extends CursorAdapter {
         holder.rating = (RatingBar)view.findViewById(R.id.rating);
         holder.date = (TextView)view.findViewById(R.id.date);
         view.setTag(holder);
+
+        if(mMultiChoice) {
+            view.findViewById(R.id.checkbox).setVisibility(View.VISIBLE);
+            holder.thumb.setVisibility(View.GONE);
+        }
 
         return view;
     }
@@ -110,7 +114,7 @@ public class EntryListAdapter extends CursorAdapter {
         final float rating = cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING));
         final long date = cursor.getLong(cursor.getColumnIndex(Tables.Entries.DATE));
 
-        if(holder.thumb != null) {
+        if(!mMultiChoice) {
             sThumbLoader.load(holder.thumb, id);
         }
         holder.title.setText(title);

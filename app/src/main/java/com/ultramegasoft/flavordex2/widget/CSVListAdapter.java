@@ -69,8 +69,11 @@ public class CSVListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if(convertView == null) {
-            convertView = LayoutInflater.from(mContext)
-                    .inflate(R.layout.entry_list_item_multiple_choice, parent, false);
+            convertView =
+                    LayoutInflater.from(mContext).inflate(R.layout.entry_list_item, parent, false);
+
+            convertView.findViewById(R.id.checkbox).setVisibility(View.VISIBLE);
+            convertView.findViewById(R.id.thumb).setVisibility(View.GONE);
 
             final Holder holder = new Holder();
             holder.title = (TextView)convertView.findViewById(R.id.title);
