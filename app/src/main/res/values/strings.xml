@@ -144,7 +144,7 @@
     <string name="message_confirm_delete_cat">Are you sure you want to delete the &lt;b>%s&lt;/b> category?</string>
     <string name="message_delete_cat_entries">Delete &lt;b>%1$d %2$s&lt;/b> from this category.</string>
     <string name="message_request_storage">Flavordex requires external storage access to enable photo features.</string>
-    <string name="message_request_storage_xport">Flavordex requires external storage access to enable importing and exporting.</string>
+    <string name="message_request_storage_xport">Flavordex requires external storage access to enable CSV file importing and exporting.</string>
     <string name="message_reset_flavor">Do you want to reset this flavor chart to the current category default? This will result in a blank chart.</string>
     <string name="message_app_requires_update">%s (requires update)</string>
 
