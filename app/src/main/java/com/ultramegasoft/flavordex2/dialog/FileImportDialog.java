@@ -139,7 +139,7 @@ public class FileImportDialog extends ImportDialog
             invalidateButtons();
         } else {
             MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
-                    getString(R.string.error_csv_import), R.drawable.ic_warning);
+                    getString(R.string.error_csv_parse), R.drawable.ic_warning);
             dismiss();
         }
 

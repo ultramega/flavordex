@@ -296,7 +296,7 @@ public class ExportDialog extends DialogFragment {
                 new DataExporter(new CSVWriter(new FileWriter(mFilePath))).execute();
             } catch(IOException e) {
                 Log.e(getClass().getSimpleName(), e.getMessage());
-                showError();
+                showError(R.string.error_csv_export_file);
                 dismiss();
             }
         }
@@ -304,9 +304,9 @@ public class ExportDialog extends DialogFragment {
         /**
          * Show an error message.
          */
-        private void showError() {
+        private void showError(int errorString) {
             MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
-                    getString(R.string.error_csv_export_file), R.drawable.ic_warning);
+                    getString(errorString), R.drawable.ic_warning);
         }
 
         /**
@@ -474,7 +474,7 @@ public class ExportDialog extends DialogFragment {
                     Toast.makeText(mContext, R.string.message_export_complete, Toast.LENGTH_LONG)
                             .show();
                 } else {
-                    showError();
+                    showError(R.string.error_csv_export);
                 }
                 dismiss();
             }
