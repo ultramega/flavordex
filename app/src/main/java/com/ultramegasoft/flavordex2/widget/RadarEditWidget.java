@@ -69,7 +69,7 @@ public class RadarEditWidget extends LinearLayout {
     public RadarEditWidget(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        inflate(getContext(), R.layout.radar_edit_widget, this);
+        inflate(getContext(), R.layout.widget_radar_edit, this);
 
         final Resources res = getResources();
         setOrientation(VERTICAL);

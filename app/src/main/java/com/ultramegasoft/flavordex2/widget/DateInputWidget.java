@@ -94,7 +94,7 @@ public class DateInputWidget extends LinearLayout implements DatePickerDialog.On
     public DateInputWidget(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        inflate(getContext(), R.layout.date_input_widget, this);
+        inflate(getContext(), R.layout.widget_date_input, this);
         setOrientation(HORIZONTAL);
 
         mTxtDate = (TextView)findViewById(R.id.diw_date);
