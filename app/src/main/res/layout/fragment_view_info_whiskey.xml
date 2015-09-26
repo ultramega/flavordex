@@ -88,7 +88,7 @@
 
                 <TextView
                     style="@style/TableText.Label"
-                    android:text="@string/label_location" />
+                    android:text="@string/label_tasted" />
 
                 <LinearLayout android:orientation="vertical">
 

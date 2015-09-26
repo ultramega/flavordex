@@ -167,8 +167,9 @@ public class EditEntryActivity extends AppCompatActivity {
             values.put(Tables.Entries.TITLE, mEntry.title);
             values.put(Tables.Entries.MAKER, mEntry.maker);
             values.put(Tables.Entries.ORIGIN, mEntry.origin);
-            values.put(Tables.Entries.LOCATION, mEntry.location);
             values.put(Tables.Entries.PRICE, mEntry.price);
+            values.put(Tables.Entries.LOCATION, mEntry.location);
+            values.put(Tables.Entries.DATE, mEntry.date);
             values.put(Tables.Entries.RATING, mEntry.rating);
             values.put(Tables.Entries.NOTES, mEntry.notes);
             mResolver.update(uri, values, null, null);

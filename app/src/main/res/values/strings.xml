@@ -117,7 +117,9 @@
     <string name="label_maker">Maker: </string>
     <string name="label_origin">Origin: </string>
     <string name="label_price">Price: </string>
-    <string name="label_location">Tasted: </string>
+    <string name="label_tasted">Tasted: </string>
+    <string name="label_location">Location: </string>
+    <string name="label_date">Date/Time: </string>
     <string name="label_date_min">Starting: </string>
     <string name="label_date_max">Ending: </string>
 

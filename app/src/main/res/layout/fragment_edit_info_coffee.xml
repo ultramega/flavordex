@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -128,6 +129,19 @@
                 android:id="@+id/entry_location"
                 style="@style/TextInput.Name"
                 android:hint="@string/hint_location" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:layout_gravity="center_vertical"
+                android:text="@string/label_date" />
+
+            <com.ultramegasoft.flavordex2.widget.DateInputWidget
+                android:id="@+id/entry_date"
+                app:allowClear="false"
+                app:showTime="true" />
         </TableRow>
     </TableLayout>
 

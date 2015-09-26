@@ -27,9 +27,11 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.DateInputWidget;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 
 /**
@@ -57,6 +59,7 @@ public class EditInfoFragment extends LoadingProgressFragment
     private EditText mTxtOrigin;
     private EditText mTxtPrice;
     private EditText mTxtLocation;
+    private DateInputWidget mDateInputWidget;
     private RatingBar mRatingBar;
     private EditText mTxtNotes;
 
@@ -112,12 +115,14 @@ public class EditInfoFragment extends LoadingProgressFragment
         mTxtOrigin = (EditText)root.findViewById(R.id.entry_origin);
         mTxtPrice = (EditText)root.findViewById(R.id.entry_price);
         mTxtLocation = (EditText)root.findViewById(R.id.entry_location);
+        mDateInputWidget = (DateInputWidget)root.findViewById(R.id.entry_date);
         mRatingBar = (RatingBar)root.findViewById(R.id.entry_rating);
         mTxtNotes = (EditText)root.findViewById(R.id.entry_notes);
 
         mInfoTable = (TableLayout)root.findViewById(R.id.entry_info);
 
         mTxtLocation.setText(((FlavordexApp)getActivity().getApplication()).getLocationName());
+        mDateInputWidget.setDate(new Date());
         setupMakersAutoComplete();
 
         return root;
@@ -190,6 +195,7 @@ public class EditInfoFragment extends LoadingProgressFragment
             mTxtOrigin.setText(entry.origin);
             mTxtPrice.setText(entry.price);
             mTxtLocation.setText(entry.location);
+            mDateInputWidget.setDate(new Date(entry.date));
             mRatingBar.setRating(entry.rating);
             mTxtNotes.setText(entry.notes);
         }
@@ -294,14 +300,14 @@ public class EditInfoFragment extends LoadingProgressFragment
 
         if(entry.id == 0) {
             entry.catId = mCatId;
-            entry.date = System.currentTimeMillis();
         }
 
         entry.title = mTxtTitle.getText().toString();
         entry.maker = mTxtMaker.getText().toString();
         entry.origin = mTxtOrigin.getText().toString();
-        entry.location = mTxtLocation.getText().toString();
         entry.price = mTxtPrice.getText().toString();
+        entry.location = mTxtLocation.getText().toString();
+        entry.date = mDateInputWidget.getDate().getTime();
         entry.rating = mRatingBar.getRating();
         entry.notes = mTxtNotes.getText().toString();
 
@@ -389,6 +395,7 @@ public class EditInfoFragment extends LoadingProgressFragment
                     entry.origin = cursor.getString(cursor.getColumnIndex(Tables.Entries.ORIGIN));
                     entry.price = cursor.getString(cursor.getColumnIndex(Tables.Entries.PRICE));
                     entry.location = cursor.getString(cursor.getColumnIndex(Tables.Entries.LOCATION));
+                    entry.date = cursor.getLong(cursor.getColumnIndex(Tables.Entries.DATE));
                     entry.rating = cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING));
                     entry.notes = cursor.getString(cursor.getColumnIndex(Tables.Entries.NOTES));
 
