@@ -20,19 +20,16 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.CatListAdapter;
+import com.ultramegasoft.flavordex2.widget.DateInputWidget;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * Dialog to contain the entry filter form.
@@ -47,12 +44,6 @@ public class EntryFilterDialog extends DialogFragment
     private static final String TAG = "EntryFilterDialog";
 
     /**
-     * Request codes
-     */
-    private static final int REQUEST_SET_DATE_MIN = 100;
-    private static final int REQUEST_SET_DATE_MAX = 200;
-
-    /**
      * Loader IDs
      */
     private static final int LOADER_CATS = 0;
@@ -61,6 +52,8 @@ public class EntryFilterDialog extends DialogFragment
      * Arguments for the Fragment
      */
     private static final String ARG_FILTER_VALUES = "filter_values";
+    private static final String ARG_DATE_MIN = "date_min";
+    private static final String ARG_DATE_MAX = "date_max";
 
     /**
      * Keys for the result data Intent
@@ -73,8 +66,6 @@ public class EntryFilterDialog extends DialogFragment
     /**
      * Keys for the saved state
      */
-    private static final String STATE_DATE_MIN = "date_min";
-    private static final String STATE_DATE_MAX = "date_max";
     private static final String STATE_CAT = "cat";
 
     /**
@@ -84,24 +75,13 @@ public class EntryFilterDialog extends DialogFragment
     private EditText mTxtMaker;
     private EditText mTxtOrigin;
     private EditText mTxtLocation;
-    private Button mBtnDateMin;
-    private Button mBtnDateMax;
+    private DateInputWidget mDateMin;
+    private DateInputWidget mDateMax;
 
     /**
      * The currently selected category ID
      */
     private long mCatId;
-
-    /**
-     * Minimum and maximum timestamps
-     */
-    private Long mDateMin;
-    private Long mDateMax;
-
-    /**
-     * Formatter for dates
-     */
-    private SimpleDateFormat mDateFormat;
 
     /**
      * Show the filter dialog.
@@ -127,8 +107,6 @@ public class EntryFilterDialog extends DialogFragment
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mDateFormat = new SimpleDateFormat(getString(R.string.date_format), Locale.US);
-
         if(savedInstanceState != null) {
             mCatId = savedInstanceState.getLong(STATE_CAT, 0);
         }
@@ -136,7 +114,7 @@ public class EntryFilterDialog extends DialogFragment
         return new AlertDialog.Builder(getContext())
                 .setTitle(R.string.title_filter)
                 .setIcon(R.drawable.ic_filter_list)
-                .setView(getLayout(savedInstanceState))
+                .setView(getLayout())
                 .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         performFilter();
@@ -153,11 +131,10 @@ public class EntryFilterDialog extends DialogFragment
     /**
      * Get the layout for the filter form.
      *
-     * @param savedInstanceState The last saved state for the Fragment
      * @return The layout
      */
     @SuppressLint("InflateParams")
-    private View getLayout(Bundle savedInstanceState) {
+    private View getLayout() {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
         final View root = inflater.inflate(R.layout.dialog_filter_list, null);
 
@@ -165,29 +142,12 @@ public class EntryFilterDialog extends DialogFragment
         mTxtMaker = (EditText)root.findViewById(R.id.maker);
         mTxtOrigin = (EditText)root.findViewById(R.id.origin);
         mTxtLocation = (EditText)root.findViewById(R.id.location);
+        mDateMin = (DateInputWidget)root.findViewById(R.id.date_min);
+        mDateMax = (DateInputWidget)root.findViewById(R.id.date_max);
 
-        mBtnDateMin = (Button)root.findViewById(R.id.button_date_min);
-        mBtnDateMax = (Button)root.findViewById(R.id.button_date_max);
-
-        setupEventHandlers(root);
+        setupEventHandlers();
         populateFields();
         getLoaderManager().initLoader(LOADER_CATS, null, this);
-
-        if(savedInstanceState != null) {
-            if(savedInstanceState.containsKey(STATE_DATE_MIN)) {
-                mDateMin = savedInstanceState.getLong(STATE_DATE_MIN);
-            }
-            if(savedInstanceState.containsKey(STATE_DATE_MAX)) {
-                mDateMax = savedInstanceState.getLong(STATE_DATE_MAX);
-            }
-        }
-
-        if(mDateMin != null) {
-            mBtnDateMin.setText(mDateFormat.format(new Date(mDateMin)));
-        }
-        if(mDateMax != null) {
-            mBtnDateMax.setText(mDateFormat.format(new Date(mDateMax)));
-        }
 
         return root;
     }
@@ -195,21 +155,13 @@ public class EntryFilterDialog extends DialogFragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(mDateMin != null) {
-            outState.putLong(STATE_DATE_MIN, mDateMin);
-        }
-        if(mDateMax != null) {
-            outState.putLong(STATE_DATE_MAX, mDateMax);
-        }
         outState.putLong(STATE_CAT, mCatId);
     }
 
     /**
      * Add event handlers to fields.
-     *
-     * @param root The layout
      */
-    private void setupEventHandlers(View root) {
+    private void setupEventHandlers() {
         mSpinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -222,33 +174,31 @@ public class EntryFilterDialog extends DialogFragment
             }
         });
 
-        mBtnDateMin.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                DateDialog.showDialog(getFragmentManager(), EntryFilterDialog.this,
-                        REQUEST_SET_DATE_MIN, mDateMin);
+        mDateMin.setListener(new DateInputWidget.OnDateChangeListener() {
+            @Override
+            public void onDateChanged(@NonNull Date date) {
+                final Date maxDate = mDateMax.getDate();
+                if(maxDate != null && date.after(maxDate)) {
+                    mDateMax.setDate(date);
+                }
             }
-        });
-        mBtnDateMax.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                DateDialog.showDialog(getFragmentManager(), EntryFilterDialog.this,
-                        REQUEST_SET_DATE_MAX, mDateMax);
+
+            @Override
+            public void onDateCleared() {
             }
         });
 
-        final ImageButton btnClearDateMin =
-                (ImageButton)root.findViewById(R.id.button_date_min_clear);
-        btnClearDateMin.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mDateMin = null;
-                mBtnDateMin.setText(null);
+        mDateMax.setListener(new DateInputWidget.OnDateChangeListener() {
+            @Override
+            public void onDateChanged(@NonNull Date date) {
+                final Date minDate = mDateMin.getDate();
+                if(minDate != null && date.before(minDate)) {
+                    mDateMin.setDate(date);
+                }
             }
-        });
-        final ImageButton btnClearDateMax =
-                (ImageButton)root.findViewById(R.id.button_date_max_clear);
-        btnClearDateMax.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mDateMax = null;
-                mBtnDateMax.setText(null);
+
+            @Override
+            public void onDateCleared() {
             }
         });
     }
@@ -267,32 +217,8 @@ public class EntryFilterDialog extends DialogFragment
                 mTxtMaker.setText(filters.getAsString(Tables.Entries.MAKER));
                 mTxtOrigin.setText(filters.getAsString(Tables.Entries.ORIGIN));
                 mTxtLocation.setText(filters.getAsString(Tables.Entries.LOCATION));
-
-                mDateMin = filters.getAsLong(STATE_DATE_MIN);
-                mDateMax = filters.getAsLong(STATE_DATE_MAX);
-            }
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == Activity.RESULT_OK && data != null) {
-            final long date = data.getLongExtra(DateDialog.ARG_DATE, 0);
-            final String dateString = mDateFormat.format(new Date(date));
-            if(requestCode == REQUEST_SET_DATE_MIN) {
-                mDateMin = date;
-                mBtnDateMin.setText(dateString);
-                if(mDateMax != null && date > mDateMax) {
-                    mDateMax = date;
-                    mBtnDateMax.setText(dateString);
-                }
-            } else if(requestCode == REQUEST_SET_DATE_MAX) {
-                mDateMax = date;
-                mBtnDateMax.setText(dateString);
-                if(mDateMin != null && date < mDateMin) {
-                    mDateMin = date;
-                    mBtnDateMin.setText(dateString);
-                }
+                mDateMin.setTime(filters.getAsLong(ARG_DATE_MIN));
+                mDateMax.setTime(filters.getAsLong(ARG_DATE_MAX));
             }
         }
     }
@@ -350,15 +276,17 @@ public class EntryFilterDialog extends DialogFragment
             fieldsList.append(getString(R.string.filter_location)).append(", ");
         }
 
-        if(mDateMin != null || mDateMax != null) {
-            if(mDateMin != null) {
-                filterValues.put(STATE_DATE_MIN, mDateMin);
-                where.append(Tables.Entries.DATE).append(" >= ").append(mDateMin).append(" AND ");
+        final long minDate = mDateMin.getTime();
+        final long maxDate = mDateMax.getTime();
+        if(minDate != -1 || maxDate != -1) {
+            if(minDate != -1) {
+                filterValues.put(ARG_DATE_MIN, minDate);
+                where.append(Tables.Entries.DATE).append(" >= ").append(minDate).append(" AND ");
             }
-            if(mDateMax != null) {
-                filterValues.put(STATE_DATE_MAX, mDateMax);
+            if(maxDate != -1) {
+                filterValues.put(ARG_DATE_MAX, maxDate);
                 where.append(Tables.Entries.DATE).append(" < ")
-                        .append(mDateMax + (24 * 60 * 60 * 1000)).append(" AND ");
+                        .append(maxDate + (24 * 60 * 60 * 1000)).append(" AND ");
             }
             fieldsList.append(getString(R.string.filter_date)).append(", ");
         }

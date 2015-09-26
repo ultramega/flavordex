@@ -7,63 +7,57 @@
     android:paddingRight="?attr/dialogPreferredPadding"
     android:paddingTop="2dp">
 
-    <LinearLayout
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:stretchColumns="1">
 
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="1">
+        <TableRow>
 
-            <TableRow>
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_cat" />
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_cat" />
+            <Spinner
+                android:id="@+id/entry_cat"
+                android:prompt="@string/hint_entry_cat" />
+        </TableRow>
 
-                <Spinner
-                    android:id="@+id/entry_cat"
-                    android:prompt="@string/hint_entry_cat" />
-            </TableRow>
+        <TableRow>
 
-            <TableRow>
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_maker" />
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_maker" />
+            <EditText
+                android:id="@+id/maker"
+                style="@style/TextInput.Name"
+                android:hint="@string/hint_maker" />
+        </TableRow>
 
-                <EditText
-                    android:id="@+id/maker"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/hint_maker" />
-            </TableRow>
+        <TableRow>
 
-            <TableRow>
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_origin" />
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_origin" />
+            <EditText
+                android:id="@+id/origin"
+                style="@style/TextInput.Name"
+                android:hint="@string/hint_origin" />
+        </TableRow>
 
-                <EditText
-                    android:id="@+id/origin"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/hint_origin" />
-            </TableRow>
+        <TableRow>
 
-            <TableRow>
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_location" />
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_location" />
-
-                <EditText
-                    android:id="@+id/location"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/hint_location_filter" />
-            </TableRow>
-        </TableLayout>
+            <EditText
+                android:id="@+id/location"
+                style="@style/TextInput.Name"
+                android:hint="@string/hint_location_filter" />
+        </TableRow>
 
         <TextView
             style="@style/SubHeader"
@@ -71,38 +65,28 @@
             android:layout_height="wrap_content"
             android:text="@string/header_date" />
 
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="1">
+        <TableRow>
 
-            <TableRow>
+            <TextView
+                style="@style/TableText.Label"
+                android:layout_gravity="center_vertical"
+                android:text="@string/label_date_min" />
 
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_date_min" />
+            <com.ultramegasoft.flavordex2.widget.DateInputWidget
+                android:id="@+id/date_min"
+                android:background="@drawable/divider" />
+        </TableRow>
 
-                <Button android:id="@+id/button_date_min" />
+        <TableRow>
 
-                <ImageButton
-                    android:id="@+id/button_date_min_clear"
-                    android:contentDescription="@string/button_clear"
-                    android:src="@drawable/ic_clear" />
-            </TableRow>
+            <TextView
+                style="@style/TableText.Label"
+                android:layout_gravity="center_vertical"
+                android:text="@string/label_date_max" />
 
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_date_max" />
-
-                <Button android:id="@+id/button_date_max" />
-
-                <ImageButton
-                    android:id="@+id/button_date_max_clear"
-                    android:contentDescription="@string/button_clear"
-                    android:src="@drawable/ic_clear" />
-            </TableRow>
-        </TableLayout>
-    </LinearLayout>
+            <com.ultramegasoft.flavordex2.widget.DateInputWidget
+                android:id="@+id/date_max"
+                android:background="@drawable/divider" />
+        </TableRow>
+    </TableLayout>
 </ScrollView>

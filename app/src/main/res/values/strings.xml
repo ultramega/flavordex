@@ -101,6 +101,7 @@
     <string name="button_import">Import Selected</string>
     <string name="button_export">Export</string>
     <string name="button_create_cat">Create Category</string>
+    <string name="button_set_date">Set Date</string>
 
     <string name="hint_empty" translatable="false">\?</string>
     <string name="hint_entry_title">Entry Title</string>
