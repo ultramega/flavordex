@@ -144,7 +144,7 @@ public class DateInputWidget extends LinearLayout
         mBtnClear.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearDate();
+                setDate(null);
             }
         });
 
@@ -184,23 +184,13 @@ public class DateInputWidget extends LinearLayout
     }
 
     /**
-     * Clear the date.
-     */
-    public void clearDate() {
-        setDate(null);
-        if(mListener != null) {
-            mListener.onDateCleared();
-        }
-    }
-
-    /**
      * Set the date.
      *
      * @param date A Date
      */
     public void setDate(Date date) {
-        mDate = date;
         if(date != null) {
+            mDate = (Date)date.clone();
             mTxtDate.setText(mDateFormat.format(date));
             mTxtTime.setText(mTimeFormat.format(date));
             if(mAllowClear) {
@@ -210,9 +200,13 @@ public class DateInputWidget extends LinearLayout
                 mListener.onDateChanged(date);
             }
         } else {
+            mDate = null;
             mTxtDate.setText(null);
             mTxtTime.setText(null);
             mBtnClear.setVisibility(GONE);
+            if(mListener != null) {
+                mListener.onDateCleared();
+            }
         }
     }
 
@@ -222,7 +216,10 @@ public class DateInputWidget extends LinearLayout
      * @return A Date or null if not set
      */
     public Date getDate() {
-        return mDate;
+        if(mDate != null) {
+            return (Date)mDate.clone();
+        }
+        return null;
     }
 
     public void setShowTime(boolean showTime) {
