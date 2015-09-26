@@ -189,7 +189,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
         String date = null;
         final long timestamp = data.getLong(data.getColumnIndex(Tables.Entries.DATE));
         if(timestamp > 0) {
-            final String format = getResources().getString(R.string.date_format);
+            final String format = getResources().getString(R.string.date_time_format);
             date = new SimpleDateFormat(format, Locale.US).format(new Date(timestamp));
         }
 
