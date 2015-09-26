@@ -10,12 +10,12 @@
 
     <TextView
         android:id="@+id/diw_date"
-        style="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:paddingLeft="4dp"
-        android:paddingRight="4dp" />
+        android:paddingRight="4dp"
+        android:textSize="20sp" />
 
     <ImageButton
         android:id="@+id/diw_button_clear"
