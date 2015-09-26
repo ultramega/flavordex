@@ -217,8 +217,13 @@ public class EntryFilterDialog extends DialogFragment
                 mTxtMaker.setText(filters.getAsString(Tables.Entries.MAKER));
                 mTxtOrigin.setText(filters.getAsString(Tables.Entries.ORIGIN));
                 mTxtLocation.setText(filters.getAsString(Tables.Entries.LOCATION));
-                mDateMin.setTime(filters.getAsLong(ARG_DATE_MIN));
-                mDateMax.setTime(filters.getAsLong(ARG_DATE_MAX));
+
+                if(filters.containsKey(ARG_DATE_MIN)) {
+                    mDateMin.setDate(new Date(filters.getAsLong(ARG_DATE_MIN)));
+                }
+                if(filters.containsKey(ARG_DATE_MAX)) {
+                    mDateMax.setDate(new Date(filters.getAsLong(ARG_DATE_MAX)));
+                }
             }
         }
     }
@@ -276,17 +281,19 @@ public class EntryFilterDialog extends DialogFragment
             fieldsList.append(getString(R.string.filter_location)).append(", ");
         }
 
-        final long minDate = mDateMin.getTime();
-        final long maxDate = mDateMax.getTime();
-        if(minDate != -1 || maxDate != -1) {
-            if(minDate != -1) {
-                filterValues.put(ARG_DATE_MIN, minDate);
-                where.append(Tables.Entries.DATE).append(" >= ").append(minDate).append(" AND ");
+        final Date minDate = mDateMin.getDate();
+        final Date maxDate = mDateMax.getDate();
+        if(minDate != null || maxDate != null) {
+            if(minDate != null) {
+                final long minTime = minDate.getTime();
+                filterValues.put(ARG_DATE_MIN, minTime);
+                where.append(Tables.Entries.DATE).append(" >= ").append(minTime).append(" AND ");
             }
-            if(maxDate != -1) {
-                filterValues.put(ARG_DATE_MAX, maxDate);
+            if(maxDate != null) {
+                final long maxTime = maxDate.getTime();
+                filterValues.put(ARG_DATE_MAX, maxTime);
                 where.append(Tables.Entries.DATE).append(" < ")
-                        .append(maxDate + (24 * 60 * 60 * 1000)).append(" AND ");
+                        .append(maxTime + (24 * 60 * 60 * 1000)).append(" AND ");
             }
             fieldsList.append(getString(R.string.filter_date)).append(", ");
         }
