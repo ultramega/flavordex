@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DateInputWidget">
+        <attr name="dateFormat" format="string" />
+        <attr name="timeFormat" format="string" />
+        <attr name="showTime" format="boolean" />
+        <attr name="allowClear" format="boolean" />
+    </declare-styleable>
+
+    <string name="diw_date_format" translatable="false">MMM dd, yyyy</string>
+    <string name="diw_time_format" translatable="false">hh:mm a</string>
+    <string name="diw_button_set_date">Set Date</string>
+    <string name="diw_button_set_time">Set Time</string>
+</resources>

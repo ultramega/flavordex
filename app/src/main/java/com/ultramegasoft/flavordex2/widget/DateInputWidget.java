@@ -162,10 +162,10 @@ public class DateInputWidget extends LinearLayout
                 getContext().obtainStyledAttributes(attrs, R.styleable.DateInputWidget);
         final String dateFormat =
                 res.getString(a.getResourceId(R.styleable.DateInputWidget_dateFormat,
-                        R.string.date_format));
+                        R.string.diw_date_format));
         final String timeFormat =
                 res.getString(a.getResourceId(R.styleable.DateInputWidget_timeFormat,
-                        R.string.time_format));
+                        R.string.diw_time_format));
         setShowTime(a.getBoolean(R.styleable.DateInputWidget_showTime, false));
         setAllowClear(a.getBoolean(R.styleable.DateInputWidget_allowClear, false));
         a.recycle();

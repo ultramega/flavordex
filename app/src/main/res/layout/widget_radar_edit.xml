@@ -13,7 +13,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:contentDescription="@string/button_back"
+            android:contentDescription="@string/rew_button_back"
             android:nextFocusLeft="@id/rew_button_back"
             android:src="@drawable/ic_rotate_right" />
 
@@ -22,7 +22,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:contentDescription="@string/button_forward"
+            android:contentDescription="@string/rew_button_forward"
             android:nextFocusRight="@id/rew_button_forward"
             android:src="@drawable/ic_rotate_left" />
     </LinearLayout>
@@ -58,7 +58,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:nextFocusLeft="@id/rew_button_cancel"
-            android:text="@string/button_cancel" />
+            android:text="@string/rew_button_cancel" />
 
         <Button
             android:id="@+id/rew_button_save"
@@ -68,7 +68,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:nextFocusRight="@id/rew_button_save"
-            android:text="@string/button_save"
+            android:text="@string/rew_button_save"
             tools:ignore="RelativeOverlap" />
     </RelativeLayout>
 </merge>

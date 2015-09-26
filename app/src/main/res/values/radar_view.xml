@@ -18,15 +18,4 @@
             <flag name="end" value="0x00800005" />
         </attr>
     </declare-styleable>
-    <declare-styleable name="RadarEditWidget">
-        <attr name="showButtonBar" format="boolean" />
-        <attr name="textColor" format="color" />
-        <attr name="textSize" format="dimension" />
-    </declare-styleable>
-    <declare-styleable name="DateInputWidget">
-        <attr name="dateFormat" format="string" />
-        <attr name="timeFormat" format="string" />
-        <attr name="showTime" format="boolean" />
-        <attr name="allowClear" format="boolean" />
-    </declare-styleable>
 </resources>

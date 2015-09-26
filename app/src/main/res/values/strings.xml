@@ -84,10 +84,6 @@
     <string name="button_save">Save</string>
     <string name="button_clear">Clear</string>
     <string name="button_undo">Undo</string>
-    <string name="button_back">Back</string>
-    <string name="button_forward">Forward</string>
-    <string name="button_prev">Previous</string>
-    <string name="button_next">Next</string>
     <string name="button_add_photo">Add Photo</string>
     <string name="button_select_photo">From Gallery</string>
     <string name="button_take_photo">From Camera</string>
@@ -102,7 +98,6 @@
     <string name="button_import">Import Selected</string>
     <string name="button_export">Export</string>
     <string name="button_create_cat">Create Category</string>
-    <string name="button_set_date">Set Date</string>
 
     <string name="hint_empty" translatable="false">\?</string>
     <string name="hint_entry_title">Entry Title</string>
