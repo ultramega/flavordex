@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 
@@ -83,5 +85,23 @@ public class EntryListActivity extends AppCompatActivity {
             intent.putExtra(ViewEntryFragment.ARG_ENTRY_CAT_ID, catId);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mTwoPane) {
+            final FragmentManager fm = getSupportFragmentManager();
+            final Fragment fragment = fm.findFragmentById(R.id.entry_detail_container);
+            if(fragment instanceof ViewEntryFragment) {
+                if(((ViewEntryFragment)fragment).onBackButtonPressed()) {
+                    return;
+                }
+            }
+            if(fragment != null) {
+                ((EntryListFragment)fm.findFragmentById(R.id.entry_list)).clearSelection();
+                return;
+            }
+        }
+        super.onBackPressed();
     }
 }

@@ -247,6 +247,19 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
         mRadarView.setData(mData);
     }
 
+    /**
+     * Called when the back button is pressed.
+     *
+     * @return Whether the back button press was intercepted
+     */
+    public boolean onBackButtonPressed() {
+        if(mEditMode) {
+            cancelEdit();
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         Uri uri;

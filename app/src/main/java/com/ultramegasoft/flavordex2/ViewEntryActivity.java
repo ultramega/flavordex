@@ -3,6 +3,7 @@ package com.ultramegasoft.flavordex2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -59,5 +60,17 @@ public class ViewEntryActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        final Fragment fragment =
+                getSupportFragmentManager().findFragmentById(R.id.entry_detail_container);
+        if(fragment instanceof ViewEntryFragment) {
+            if(((ViewEntryFragment)fragment).onBackButtonPressed()) {
+                return;
+            }
+        }
+        super.onBackPressed();
     }
 }

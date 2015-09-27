@@ -59,6 +59,11 @@ public class ViewEntryFragment extends Fragment {
      */
     private String mEntryTitle;
 
+    /**
+     * The FragmentTabHost
+     */
+    private FragmentTabHost mTabHost;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,9 +77,8 @@ public class ViewEntryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final FragmentTabHost tabHost =
-                (FragmentTabHost)inflater.inflate(R.layout.tab_layout, container, false);
-        tabHost.setup(getContext(), getChildFragmentManager(), R.id.content);
+        mTabHost = (FragmentTabHost)inflater.inflate(R.layout.tab_layout, container, false);
+        mTabHost.setup(getContext(), getChildFragmentManager(), R.id.content);
 
         final Bundle args = new Bundle();
         args.putLong(ARG_ENTRY_ID, mEntryId);
@@ -84,18 +88,18 @@ public class ViewEntryFragment extends Fragment {
         TabHost.TabSpec tab;
 
         icon = ActivityCompat.getDrawable(getContext(), R.drawable.ic_description);
-        tab = tabHost.newTabSpec("info_" + mEntryId).setIndicator(null, icon);
-        tabHost.addTab(tab, getEntryInfoClass(), args);
+        tab = mTabHost.newTabSpec("info_" + mEntryId).setIndicator(null, icon);
+        mTabHost.addTab(tab, getEntryInfoClass(), args);
 
         icon = ActivityCompat.getDrawable(getContext(), R.drawable.ic_radar);
-        tab = tabHost.newTabSpec("flavors_" + mEntryId).setIndicator(null, icon);
-        tabHost.addTab(tab, ViewFlavorsFragment.class, args);
+        tab = mTabHost.newTabSpec("flavors_" + mEntryId).setIndicator(null, icon);
+        mTabHost.addTab(tab, ViewFlavorsFragment.class, args);
 
         icon = ActivityCompat.getDrawable(getContext(), R.drawable.ic_photo);
-        tab = tabHost.newTabSpec("photos_" + mEntryId).setIndicator(null, icon);
-        tabHost.addTab(tab, ViewPhotosFragment.class, args);
+        tab = mTabHost.newTabSpec("photos_" + mEntryId).setIndicator(null, icon);
+        mTabHost.addTab(tab, ViewPhotosFragment.class, args);
 
-        return tabHost;
+        return mTabHost;
     }
 
     @Override
@@ -123,9 +127,9 @@ public class ViewEntryFragment extends Fragment {
             switch(requestCode) {
                 case REQUEST_DELETE_ENTRY:
                     final FragmentManager fm = getFragmentManager();
-                    fm.beginTransaction().remove(this).commit();
-                    if(fm.findFragmentById(R.id.entry_list) != null) {
-                        setEntryTitle(null);
+                    final Fragment fragment = fm.findFragmentById(R.id.entry_list);
+                    if(fragment instanceof EntryListFragment) {
+                        ((EntryListFragment)fragment).clearSelection();
                     } else {
                         getActivity().finish();
                     }
@@ -143,6 +147,22 @@ public class ViewEntryFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_ENTRY_TITLE, mEntryTitle);
+    }
+
+    /**
+     * Called when the back button is pressed.
+     *
+     * @return Whether the back button press was intercepted
+     */
+    public boolean onBackButtonPressed() {
+        if(mTabHost.getCurrentTab() == 1) {
+            final FragmentManager fm = getChildFragmentManager();
+            final Fragment fragment = fm.findFragmentByTag("flavors_" + mEntryId);
+            if(fragment instanceof ViewFlavorsFragment) {
+                return ((ViewFlavorsFragment)fragment).onBackButtonPressed();
+            }
+        }
+        return false;
     }
 
     /**

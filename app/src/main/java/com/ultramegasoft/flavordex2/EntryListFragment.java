@@ -400,16 +400,7 @@ public class EntryListFragment extends ListFragment
                 case REQUEST_DELETE_ENTRY:
                     final long id = data.getLongExtra(EXTRA_ENTRY_ID, 0);
                     if(mTwoPane && id == mActivatedItem) {
-                        final FragmentManager fm = getFragmentManager();
-                        final Fragment fragment = fm.findFragmentById(R.id.entry_detail_container);
-                        if(fragment != null) {
-                            fm.beginTransaction().remove(fragment).commit();
-                            final ActionBar actionBar =
-                                    ((AppCompatActivity)getActivity()).getSupportActionBar();
-                            if(actionBar != null) {
-                                actionBar.setSubtitle(null);
-                            }
-                        }
+                        clearSelection();
                     }
                     new EntryDeleter(getContext(), id).execute();
                     break;
@@ -740,6 +731,24 @@ public class EntryListFragment extends ListFragment
         if(position != ListView.INVALID_POSITION && !mExportMode) {
             getListView().setItemChecked(position, true);
         }
+    }
+
+    /**
+     * Clear the selected list item.
+     */
+    public void clearSelection() {
+        final FragmentManager fm = getFragmentManager();
+        final Fragment fragment = fm.findFragmentById(R.id.entry_detail_container);
+        if(fragment != null) {
+            fm.beginTransaction().remove(fragment).commit();
+            final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+            if(actionBar != null) {
+                actionBar.setSubtitle(null);
+            }
+        }
+
+        getListView().setItemChecked(mAdapter.getItemIndex(mActivatedItem), false);
+        mActivatedItem = -1;
     }
 
     @Override
