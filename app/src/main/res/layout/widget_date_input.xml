@@ -1,43 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ImageButton
-        android:id="@+id/diw_button_set_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/diw_button_set_date"
-        android:src="@drawable/ic_calendar" />
-
-    <TextView
-        android:id="@+id/diw_date"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:textSize="20sp" />
-
     <LinearLayout
-        android:id="@+id/diw_time_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:visibility="gone">
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/diw_button_set_time"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/diw_button_set_time"
-            android:src="@drawable/ic_time" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/diw_time"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:textSize="20sp" />
+            <ImageButton
+                android:id="@+id/diw_button_set_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/diw_button_set_date"
+                android:src="@drawable/ic_calendar" />
+
+            <TextView
+                android:id="@+id/diw_date"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:singleLine="true"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/diw_time_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/diw_button_set_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/diw_button_set_time"
+                android:src="@drawable/ic_time" />
+
+            <TextView
+                android:id="@+id/diw_time"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:singleLine="true"
+                android:textSize="20sp" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <ImageButton
