@@ -73,6 +73,12 @@ public class DateInputWidget extends LinearLayout
     private DatePickerDialog mDatePickerDialog;
 
     /**
+     * Date constraints
+     */
+    private Date mMinDate;
+    private Date mMaxDate;
+
+    /**
      * The TimePickerDialog
      */
     private TimePickerDialog mTimePickerDialog;
@@ -91,6 +97,11 @@ public class DateInputWidget extends LinearLayout
      * The current listener for date changes
      */
     private OnDateChangeListener mListener;
+
+    /**
+     * Reusable Calendar object
+     */
+    private final Calendar mCalendar = Calendar.getInstance();
 
     /**
      * Interface for listeners for date changes.
@@ -222,10 +233,20 @@ public class DateInputWidget extends LinearLayout
         return null;
     }
 
+    /**
+     * Enable or disable the time display.
+     *
+     * @param showTime Whether to show the time
+     */
     public void setShowTime(boolean showTime) {
         mLayoutTime.setVisibility(showTime ? VISIBLE : GONE);
     }
 
+    /**
+     * Is the time display enabled?
+     *
+     * @return Whether the time display is showing
+     */
     public boolean getShowTime() {
         return mLayoutTime.getVisibility() == VISIBLE;
     }
@@ -251,20 +272,71 @@ public class DateInputWidget extends LinearLayout
     }
 
     /**
+     * Set the minimum date allowed in the date picker dialog.
+     *
+     * @param minDate The minimum date the dialog should allow
+     */
+    public void setMinDate(Date minDate) {
+        if(minDate != null) {
+            mMinDate = (Date)minDate.clone();
+        } else {
+            mMinDate = null;
+            mDatePickerDialog = null;
+        }
+    }
+
+    /**
+     * Get the minimum date allowed in the date picker dialog.
+     *
+     * @return The minimum date allowed in the date picker dialog
+     */
+    public Date getMinDate() {
+        if(mMinDate != null) {
+            return (Date)mMinDate.clone();
+        }
+        return null;
+    }
+
+    /**
+     * Set the maximum date allowed in the date picker dialog.
+     *
+     * @param maxDate The maximum date the dialog should allow
+     */
+    public void setMaxDate(Date maxDate) {
+        if(maxDate != null) {
+            mMaxDate = (Date)maxDate.clone();
+        } else {
+            mMaxDate = null;
+            mDatePickerDialog = null;
+        }
+    }
+
+    /**
+     * Get the maximum date allowed in the date picker dialog.
+     *
+     * @return The maximum date allowed in the date picker dialog
+     */
+    public Date getMaxDate() {
+        if(mMaxDate != null) {
+            return (Date)mMaxDate.clone();
+        }
+        return null;
+    }
+
+    /**
      * Open the DatePickerDialog to set the date.
      *
      * @param initDate The initial date to select in the dialog
      */
     private void openDatePicker(Date initDate) {
-        final Calendar calendar = Calendar.getInstance();
         if(initDate != null) {
-            calendar.setTime(initDate);
+            mCalendar.setTime(initDate);
         } else {
-            calendar.setTimeInMillis(System.currentTimeMillis());
+            mCalendar.setTimeInMillis(System.currentTimeMillis());
         }
-        final int year = calendar.get(Calendar.YEAR);
-        final int month = calendar.get(Calendar.MONTH);
-        final int day = calendar.get(Calendar.DAY_OF_MONTH);
+        final int year = mCalendar.get(Calendar.YEAR);
+        final int month = mCalendar.get(Calendar.MONTH);
+        final int day = mCalendar.get(Calendar.DAY_OF_MONTH);
 
         if(mDatePickerDialog == null) {
             mDatePickerDialog = new DatePickerDialog(getContext(),
@@ -273,19 +345,26 @@ public class DateInputWidget extends LinearLayout
         } else {
             mDatePickerDialog.updateDate(year, month, day);
         }
+
+        if(mMinDate != null) {
+            mDatePickerDialog.getDatePicker().setMinDate(mMinDate.getTime());
+        }
+        if(mMaxDate != null) {
+            mDatePickerDialog.getDatePicker().setMaxDate(mMaxDate.getTime());
+        }
+
         mDatePickerDialog.show();
     }
 
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+        mCalendar.clear();
         if(mDate != null) {
-            calendar.setTimeInMillis(mDate.getTime());
+            mCalendar.setTime(mDate);
         }
-        calendar.set(year, monthOfYear, dayOfMonth);
-        calendar.set(Calendar.MILLISECOND, 0);
-        setDate(calendar.getTime());
+        mCalendar.set(year, monthOfYear, dayOfMonth);
+        mCalendar.set(Calendar.MILLISECOND, 0);
+        setDate(mCalendar.getTime());
     }
 
     /**
@@ -294,14 +373,13 @@ public class DateInputWidget extends LinearLayout
      * @param initDate The initial date to select in the dialog
      */
     private void openTimePicker(Date initDate) {
-        final Calendar calendar = Calendar.getInstance();
         if(initDate != null) {
-            calendar.setTime(initDate);
+            mCalendar.setTime(initDate);
         } else {
-            calendar.setTimeInMillis(System.currentTimeMillis());
+            mCalendar.setTimeInMillis(System.currentTimeMillis());
         }
-        final int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        final int minute = calendar.get(Calendar.MINUTE);
+        final int hour = mCalendar.get(Calendar.HOUR_OF_DAY);
+        final int minute = mCalendar.get(Calendar.MINUTE);
 
         if(mTimePickerDialog == null) {
             mTimePickerDialog = new TimePickerDialog(getContext(),
@@ -326,22 +404,22 @@ public class DateInputWidget extends LinearLayout
      * @param minute    The minute
      */
     private void onDialogTimeChange(int hourOfDay, int minute) {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        calendar.set(Calendar.MINUTE, minute);
-        mTimePickerDialogDate = calendar.getTime();
+        mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        mCalendar.set(Calendar.MINUTE, minute);
+        mTimePickerDialogDate = mCalendar.getTime();
     }
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        final Calendar calendar = Calendar.getInstance();
         if(mDate != null) {
-            calendar.setTimeInMillis(mDate.getTime());
+            mCalendar.setTimeInMillis(mDate.getTime());
+        } else {
+            mCalendar.clear();
         }
-        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.MILLISECOND, 0);
-        setDate(calendar.getTime());
+        mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        mCalendar.set(Calendar.MINUTE, minute);
+        mCalendar.set(Calendar.MILLISECOND, 0);
+        setDate(mCalendar.getTime());
     }
 
     @Override
@@ -361,9 +439,8 @@ public class DateInputWidget extends LinearLayout
         outState.putSerializable(STATE_DATE, mDate);
         if(mDatePickerDialog != null && mDatePickerDialog.isShowing()) {
             final DatePicker picker = mDatePickerDialog.getDatePicker();
-            final Calendar calendar = Calendar.getInstance();
-            calendar.set(picker.getYear(), picker.getMonth(), picker.getDayOfMonth());
-            outState.putSerializable(STATE_DIALOG_DATE, calendar.getTime());
+            mCalendar.set(picker.getYear(), picker.getMonth(), picker.getDayOfMonth());
+            outState.putSerializable(STATE_DIALOG_DATE, mCalendar.getTime());
         }
         if(mTimePickerDialog != null && mTimePickerDialog.isShowing()) {
             outState.putSerializable(STATE_DIALOG_TIME, mTimePickerDialogDate);
