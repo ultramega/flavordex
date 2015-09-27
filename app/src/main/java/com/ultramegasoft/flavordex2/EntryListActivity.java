@@ -40,13 +40,13 @@ public class EntryListActivity extends AppCompatActivity {
 
         if(findViewById(R.id.entry_detail_container) != null) {
             mTwoPane = true;
+            mWelcomeFragment = new WelcomeFragment();
             ((EntryListFragment)getSupportFragmentManager().findFragmentById(R.id.entry_list))
                     .setTwoPane(true);
         }
 
         if(savedInstanceState == null) {
             if(mTwoPane) {
-                mWelcomeFragment = new WelcomeFragment();
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.entry_detail_container, mWelcomeFragment).commit();
             }
