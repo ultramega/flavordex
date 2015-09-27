@@ -79,6 +79,18 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
         fragment.show(fm, TAG);
     }
 
+    /**
+     * Close the dialog.
+     *
+     * @param fm The FragmentManager to use
+     */
+    public static void closeDialog(FragmentManager fm) {
+        final DialogFragment fragment = (DialogFragment)fm.findFragmentByTag(TAG);
+        if(fragment != null) {
+            fragment.dismiss();
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

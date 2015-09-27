@@ -383,6 +383,7 @@ public class EntryListFragment extends ListFragment
                     startActivityForResult(addIntent, REQUEST_ADD_ENTRY);
                     break;
                 case REQUEST_ADD_ENTRY:
+                    CatListDialog.closeDialog(getFragmentManager());
                     final long entryId = data.getLongExtra(AddEntryActivity.EXTRA_ENTRY_ID, 0);
                     if(entryId > 0) {
                         mActivatedItem = entryId;
