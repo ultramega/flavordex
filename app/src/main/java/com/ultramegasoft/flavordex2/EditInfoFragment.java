@@ -122,7 +122,11 @@ public class EditInfoFragment extends LoadingProgressFragment
         mInfoTable = (TableLayout)root.findViewById(R.id.entry_info);
 
         mTxtLocation.setText(((FlavordexApp)getActivity().getApplication()).getLocationName());
-        mDateInputWidget.setDate(new Date());
+
+        final Date date = new Date();
+        mDateInputWidget.setDate(date);
+        mDateInputWidget.setMaxDate(date);
+
         setupMakersAutoComplete();
 
         return root;
