@@ -34,6 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:shrinkColumns="1"
             android:stretchColumns="1">
 
             <TableRow android:background="@drawable/divider">
