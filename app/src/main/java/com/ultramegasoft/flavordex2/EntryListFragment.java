@@ -9,8 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -737,18 +735,13 @@ public class EntryListFragment extends ListFragment
      * Clear the selected list item.
      */
     public void clearSelection() {
-        final FragmentManager fm = getFragmentManager();
-        final Fragment fragment = fm.findFragmentById(R.id.entry_detail_container);
-        if(fragment != null) {
-            fm.beginTransaction().remove(fragment).commit();
-            final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-            if(actionBar != null) {
-                actionBar.setSubtitle(null);
-            }
+        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setSubtitle(null);
         }
-
         getListView().setItemChecked(mAdapter.getItemIndex(mActivatedItem), false);
         mActivatedItem = -1;
+        ((EntryListActivity)getActivity()).onItemSelected(mActivatedItem, null, 0);
     }
 
     @Override

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name" translatable="false">FlavorDex</string>
+    <string name="app_name" translatable="false">Flavordex</string>
     <string name="date_format" translatable="false">MMM dd, yyyy</string>
     <string name="date_time_format" translatable="false">MMM dd, yyyy h:mm a</string>
     <string name="ext_csv" translatable="false">.csv</string>
@@ -129,6 +129,7 @@
     <string name="field_price">Price</string>
     <string name="field_location">Tasting Location</string>
 
+    <string name="message_welcome">Welcome to Flavordex</string>
     <string name="message_no_data">No entries found.</string>
     <string name="message_no_data_filter">No entries found matching &lt;b>%s&lt;/b>.</string>
     <string name="message_confirm_delete">Are you sure you want to delete &lt;b>%s&lt;/b>?</string>
@@ -148,6 +149,8 @@
     <string name="message_request_storage_xport">Flavordex requires external storage access to enable CSV file importing and exporting.</string>
     <string name="message_reset_flavor">Do you want to reset this flavor chart to the current category default? This will result in a blank chart.</string>
     <string name="message_app_requires_update">%s (requires update)</string>
+    <string name="message_version">Flavordex v.%s</string>
+    <string name="message_copyright">Copyright © 2015 UltraMega Software</string>
 
     <string name="pref_detect_location">Remember Locations</string>
     <string name="pref_summary_detect_location">Auto-fill location name based on previous entries.</string>

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 
@@ -27,6 +28,11 @@ public class EntryListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
 
+    /**
+     * Fragment to show in two-pane mode when no item is selected
+     */
+    private Fragment mWelcomeFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,12 +40,17 @@ public class EntryListActivity extends AppCompatActivity {
 
         if(findViewById(R.id.entry_detail_container) != null) {
             mTwoPane = true;
-
             ((EntryListFragment)getSupportFragmentManager().findFragmentById(R.id.entry_list))
                     .setTwoPane(true);
         }
 
         if(savedInstanceState == null) {
+            if(mTwoPane) {
+                mWelcomeFragment = new WelcomeFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.entry_detail_container, mWelcomeFragment).commit();
+            }
+
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             if(prefs.getBoolean(FlavordexApp.PREF_FIRST_RUN, true)) {
                 if(AppImportUtils.isAnyAppInstalled(this)) {
@@ -67,16 +78,23 @@ public class EntryListActivity extends AppCompatActivity {
      */
     public void onItemSelected(long id, String catName, long catId) {
         if(mTwoPane) {
-            final Bundle args = new Bundle();
-            args.putLong(ViewEntryFragment.ARG_ENTRY_ID, id);
-            args.putString(ViewEntryFragment.ARG_ENTRY_CAT, catName);
-            args.putLong(ViewEntryFragment.ARG_ENTRY_CAT_ID, catId);
+            final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            final Fragment fragment;
+            if(id == -1) {
+                fragment = mWelcomeFragment;
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+            } else {
+                final Bundle args = new Bundle();
+                args.putLong(ViewEntryFragment.ARG_ENTRY_ID, id);
+                args.putString(ViewEntryFragment.ARG_ENTRY_CAT, catName);
+                args.putLong(ViewEntryFragment.ARG_ENTRY_CAT_ID, catId);
 
-            final ViewEntryFragment fragment = new ViewEntryFragment();
-            fragment.setArguments(args);
+                fragment = new ViewEntryFragment();
+                fragment.setArguments(args);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            }
 
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.entry_detail_container, fragment).commit();
+            ft.replace(R.id.entry_detail_container, fragment).commit();
 
         } else {
             final Intent intent = new Intent(this, ViewEntryActivity.class);
