@@ -342,11 +342,7 @@ public class EntryListFragment extends ListFragment
                             cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
                     final float rating =
                             cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING));
-                    final Intent shareIntent =
-                            EntryUtils.getShareIntent(getContext(), title, rating);
-                    if(shareIntent != null) {
-                        startActivity(shareIntent);
-                    }
+                    EntryUtils.share(getContext(), title, rating);
                 }
                 return true;
             case R.id.menu_edit_entry:
