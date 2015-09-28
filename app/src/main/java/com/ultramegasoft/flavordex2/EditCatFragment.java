@@ -95,6 +95,7 @@ public class EditCatFragment extends LoadingProgressFragment
          *
          * @return Whether undo is allowed
          */
+        @SuppressWarnings("BooleanMethodIsAlwaysInverted")
         boolean allowUndo();
 
         /**
