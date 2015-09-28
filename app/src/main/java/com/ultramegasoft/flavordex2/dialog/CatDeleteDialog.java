@@ -48,11 +48,6 @@ public class CatDeleteDialog extends DialogFragment
     private static final String ARG_CAT_ID = "cat_id";
 
     /**
-     * Loader IDs
-     */
-    private static final int LOADER_CAT = 0;
-
-    /**
      * Keys for the saved state
      */
     private static final String STATE_SHOW_CHECK = "show_check";
@@ -188,7 +183,7 @@ public class CatDeleteDialog extends DialogFragment
         });
 
         if(savedInstanceState == null) {
-            getLoaderManager().initLoader(LOADER_CAT, null, this);
+            getLoaderManager().initLoader(0, null, this);
         } else {
             setShowCheckLayout(savedInstanceState.getBoolean(STATE_SHOW_CHECK));
         }
@@ -198,36 +193,27 @@ public class CatDeleteDialog extends DialogFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        switch(id) {
-            case LOADER_CAT:
-                final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
-                return new CursorLoader(getContext(), uri, null, null, null, null);
-        }
-        return null;
+        final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
+        return new CursorLoader(getContext(), uri, null, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        switch(loader.getId()) {
-            case LOADER_CAT:
-                if(data.moveToFirst()) {
-                    final String name = data.getString(data.getColumnIndex(Tables.Cats.NAME));
-                    final String message = getString(R.string.message_confirm_delete_cat, name);
-                    final int count = data.getInt(data.getColumnIndex(Tables.Cats.NUM_ENTRIES));
+        if(data.moveToFirst()) {
+            final String name = data.getString(data.getColumnIndex(Tables.Cats.NAME));
+            final String message = getString(R.string.message_confirm_delete_cat, name);
+            final int count = data.getInt(data.getColumnIndex(Tables.Cats.NUM_ENTRIES));
 
-                    mTxtMessage.setText(Html.fromHtml(message));
-                    if(count > 0) {
-                        final String entries =
-                                getResources().getQuantityString(R.plurals.entries, count);
-                        mTxtCheckEntries.setText(Html.fromHtml(
-                                getString(R.string.message_delete_cat_entries, count, entries)));
-                        setButtonEnabled(false);
-                    } else {
-                        setShowCheckLayout(false);
-                        setButtonEnabled(true);
-                    }
-                }
-                break;
+            mTxtMessage.setText(Html.fromHtml(message));
+            if(count > 0) {
+                final String entries = getResources().getQuantityString(R.plurals.entries, count);
+                mTxtCheckEntries.setText(Html.fromHtml(
+                        getString(R.string.message_delete_cat_entries, count, entries)));
+                setButtonEnabled(false);
+            } else {
+                setShowCheckLayout(false);
+                setButtonEnabled(true);
+            }
         }
     }
 
