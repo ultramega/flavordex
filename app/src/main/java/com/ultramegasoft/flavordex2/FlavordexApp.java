@@ -112,7 +112,6 @@ public class FlavordexApp extends Application implements
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                     .detectAll()
                     .penaltyLog()
-                    .penaltyDeath()
                     .build());
         }
 
