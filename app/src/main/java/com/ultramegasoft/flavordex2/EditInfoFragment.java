@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.FilterQueryProvider;
 import android.widget.RatingBar;
@@ -40,11 +42,17 @@ import java.util.LinkedHashMap;
  * @author Steve Guidetti
  */
 public class EditInfoFragment extends LoadingProgressFragment
-        implements LoaderManager.LoaderCallbacks<EditInfoFragment.DataLoader.Holder> {
+        implements LoaderManager.LoaderCallbacks {
     /**
      * Keys for the Fragment arguments
      */
     public static final String ARG_ENTRY_ID = "entry_id";
+
+    /**
+     * Loader IDs
+     */
+    private static final int LOADER_MAIN = 0;
+    private static final int LOADER_MAKERS = 1;
 
     /**
      * Keys for the saved state
@@ -94,7 +102,7 @@ public class EditInfoFragment extends LoadingProgressFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState == null) {
-            getLoaderManager().initLoader(0, null, this).forceLoad();
+            getLoaderManager().initLoader(LOADER_MAIN, null, this).forceLoad();
         } else {
             //noinspection unchecked
             mExtras = (LinkedHashMap<String, ExtraFieldHolder>)savedInstanceState
@@ -155,7 +163,6 @@ public class EditInfoFragment extends LoadingProgressFragment
         adapter.setFilterQueryProvider(new FilterQueryProvider() {
             @Override
             public Cursor runQuery(CharSequence constraint) {
-                final String order = Tables.Makers.NAME + " ASC";
                 final Uri uri;
                 if(TextUtils.isEmpty(constraint)) {
                     uri = Tables.Makers.CONTENT_URI;
@@ -163,7 +170,13 @@ public class EditInfoFragment extends LoadingProgressFragment
                     uri = Uri.withAppendedPath(Tables.Makers.CONTENT_FILTER_URI_BASE,
                             constraint.toString());
                 }
-                return getContext().getContentResolver().query(uri, null, null, null, order);
+
+                final Bundle args = new Bundle();
+                args.putParcelable("uri", uri);
+
+                getLoaderManager().restartLoader(LOADER_MAKERS, args, EditInfoFragment.this);
+
+                return adapter.getCursor();
             }
         });
 
@@ -319,22 +332,39 @@ public class EditInfoFragment extends LoadingProgressFragment
     }
 
     @Override
-    public Loader<DataLoader.Holder> onCreateLoader(int id, Bundle args) {
-        return new DataLoader(getContext(), mCatId, mEntryId);
+    public Loader onCreateLoader(int id, Bundle args) {
+        switch(id) {
+            case LOADER_MAIN:
+                return new DataLoader(getContext(), mCatId, mEntryId);
+            case LOADER_MAKERS:
+                final String order = Tables.Makers.NAME + " ASC";
+                final Uri uri = args.getParcelable("uri");
+                return new CursorLoader(getContext(), uri, null, null, null, order);
+        }
+        return null;
     }
 
     @Override
-    public void onLoadFinished(Loader<DataLoader.Holder> loader, DataLoader.Holder data) {
-        populateFields(data.entry);
-        mExtras = data.extras;
-        populateExtras(data.extras);
+    public void onLoadFinished(Loader loader, Object data) {
+        switch(loader.getId()) {
+            case LOADER_MAIN:
+                final DataLoader.Holder holder = (DataLoader.Holder)data;
 
-        hideLoadingIndicator(true);
-        mTxtTitle.setSelection(mTxtTitle.getText().length());
+                populateFields(holder.entry);
+                mExtras = holder.extras;
+                populateExtras(holder.extras);
+
+                hideLoadingIndicator(true);
+                mTxtTitle.setSelection(mTxtTitle.getText().length());
+                break;
+            case LOADER_MAKERS:
+                ((CursorAdapter)mTxtMaker.getAdapter()).changeCursor((Cursor)data);
+                break;
+        }
     }
 
     @Override
-    public void onLoaderReset(Loader<DataLoader.Holder> loader) {
+    public void onLoaderReset(Loader loader) {
     }
 
     /**
