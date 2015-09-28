@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -176,10 +177,13 @@ public abstract class AbsPhotosFragment extends Fragment {
             final Intent intent = PhotoUtils.getTakePhotoIntent(mCapturedPhoto);
             if(intent.resolveActivity(getContext().getPackageManager()) != null) {
                 getParentFragment().startActivityForResult(intent, REQUEST_CAPTURE_IMAGE);
+                return;
             }
         } catch(IOException e) {
-            Toast.makeText(getContext(), R.string.error_camera, Toast.LENGTH_LONG).show();
+            Log.e(getClass().getSimpleName(), e.getMessage());
         }
+
+        Toast.makeText(getContext(), R.string.error_camera, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -187,7 +191,9 @@ public abstract class AbsPhotosFragment extends Fragment {
      */
     final void addPhotoFromGallery() {
         final Intent intent = PhotoUtils.getSelectPhotoIntent();
-        getParentFragment().startActivityForResult(intent, REQUEST_SELECT_IMAGE);
+        if(intent.resolveActivity(getContext().getPackageManager()) != null) {
+            getParentFragment().startActivityForResult(intent, REQUEST_SELECT_IMAGE);
+        }
     }
 
     /**
