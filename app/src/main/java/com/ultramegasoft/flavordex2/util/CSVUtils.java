@@ -160,12 +160,12 @@ public class CSVUtils {
      * @return The data from the CSV file
      */
     public static CSVHolder importCSV(Context context, File file) {
+        CSVHolder data = null;
         try {
-            String[] line;
             final CSVReader reader = new CSVReader(new FileReader(file));
-
+            String[] line;
             if((line = reader.readNext()) != null) {
-                final CSVHolder data = new CSVHolder();
+                data = new CSVHolder();
                 final List<String> fields = Arrays.asList(line);
                 if(!fields.contains(Tables.Entries.TITLE) || !fields.contains(Tables.Entries.CAT)) {
                     return data;
@@ -188,13 +188,13 @@ public class CSVUtils {
 
                     data.addEntry(entry, isDuplicate(cr, entry));
                 }
-
-                return data;
             }
+            reader.close();
         } catch(IOException e) {
             Log.e(CSVUtils.class.getSimpleName(), e.getMessage());
         }
-        return null;
+
+        return data;
     }
 
     /**
