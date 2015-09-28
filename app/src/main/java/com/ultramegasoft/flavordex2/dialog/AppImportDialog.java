@@ -102,7 +102,7 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
         setListShown(true);
         final EntryListAdapter adapter = new EntryListAdapter(getContext());
         adapter.setMultiChoiceMode(true);
-        adapter.changeCursor(data);
+        adapter.swapCursor(data);
         setListAdapter(adapter);
 
         final ListView listView = getListView();

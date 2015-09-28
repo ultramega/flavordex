@@ -766,7 +766,7 @@ public class EntryListFragment extends ListFragment
                 listView.setItemChecked(i, false);
             }
 
-            mAdapter.changeCursor(data);
+            mAdapter.swapCursor(data);
             int pos;
             for(long checked : checkedItems) {
                 pos = mAdapter.getItemIndex(checked);
@@ -777,7 +777,7 @@ public class EntryListFragment extends ListFragment
 
             invalidateExportMenu();
         } else {
-            mAdapter.changeCursor(data);
+            mAdapter.swapCursor(data);
             setActivatedPosition(mAdapter.getItemIndex(mActivatedItem));
         }
         setListShown(true);
@@ -786,6 +786,6 @@ public class EntryListFragment extends ListFragment
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         setActivatedPosition(ListView.INVALID_POSITION);
-        mAdapter.changeCursor(null);
+        mAdapter.swapCursor(null);
     }
 }

@@ -358,7 +358,7 @@ public class EditInfoFragment extends LoadingProgressFragment
                 mTxtTitle.setSelection(mTxtTitle.getText().length());
                 break;
             case LOADER_MAKERS:
-                ((CursorAdapter)mTxtMaker.getAdapter()).changeCursor((Cursor)data);
+                ((CursorAdapter)mTxtMaker.getAdapter()).swapCursor((Cursor)data);
                 break;
         }
     }
