@@ -53,7 +53,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertWhiskeyPreset(db);
         insertCoffeePreset(db);
 
-        addDummyData(db);
+        if(FlavordexApp.DEVELOPER_MODE) {
+            addDummyData(db);
+        }
     }
 
     @Override

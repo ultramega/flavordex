@@ -11,6 +11,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
@@ -24,6 +25,11 @@ import java.util.HashMap;
  */
 public class FlavordexApp extends Application implements
         SharedPreferences.OnSharedPreferenceChangeListener {
+    /**
+     * Enable developer features
+     */
+    public static final boolean DEVELOPER_MODE = true;
+
     /**
      * Preference names
      */
@@ -97,6 +103,19 @@ public class FlavordexApp extends Application implements
     @Override
     public void onCreate() {
         super.onCreate();
+        if(DEVELOPER_MODE) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyFlashScreen()
+                    .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyDeath()
+                    .build());
+        }
+
         mBackupManager = new BackupManager(this);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
