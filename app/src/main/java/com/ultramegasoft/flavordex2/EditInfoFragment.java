@@ -365,6 +365,11 @@ public class EditInfoFragment extends LoadingProgressFragment
 
     @Override
     public void onLoaderReset(Loader loader) {
+        switch(loader.getId()) {
+            case LOADER_MAKERS:
+                ((CursorAdapter)mTxtMaker.getAdapter()).swapCursor(null);
+                break;
+        }
     }
 
     /**

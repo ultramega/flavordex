@@ -203,5 +203,6 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        mAdapter.swapCursor(null);
     }
 }

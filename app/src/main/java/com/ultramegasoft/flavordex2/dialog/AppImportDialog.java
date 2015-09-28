@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -115,6 +116,10 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        final CursorAdapter adapter = (CursorAdapter)getListAdapter();
+        if(adapter != null) {
+            adapter.swapCursor(null);
+        }
     }
 
     /**
