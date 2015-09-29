@@ -6,7 +6,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
+import android.util.Log;
 
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
@@ -113,9 +115,13 @@ public class EntryUtils {
         final Uri uri = Uri.withAppendedPath(entryUri, "extras");
         final ContentValues values = new ContentValues();
         for(ExtraFieldHolder extra : entry.getExtras()) {
-            values.put(Tables.EntriesExtras.EXTRA, getExtraId(cr, catUri, extra.name));
-            values.put(Tables.EntriesExtras.VALUE, extra.value);
-            cr.insert(uri, values);
+            try {
+                values.put(Tables.EntriesExtras.EXTRA, getExtraId(cr, catUri, extra.name));
+                values.put(Tables.EntriesExtras.VALUE, extra.value);
+                cr.insert(uri, values);
+            } catch(SQLiteException e) {
+                Log.w(EntryUtils.class.getSimpleName(), e.getMessage());
+            }
         }
     }
 
@@ -142,7 +148,7 @@ public class EntryUtils {
         }
 
         final ContentValues values = new ContentValues();
-        values.put(Tables.Extras.NAME, filterName(name));
+        values.put(Tables.Extras.NAME, name);
         return Long.valueOf(cr.insert(uri, values).getLastPathSegment());
     }
 
