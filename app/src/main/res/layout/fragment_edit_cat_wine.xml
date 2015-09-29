@@ -14,8 +14,11 @@
 
     <TextView
         style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:maxWidth="@dimen/form_width"
+        android:minWidth="@dimen/form_width"
         android:text="@string/cat_wine" />
 
     <TextView
@@ -24,53 +27,62 @@
         android:layout_height="wrap_content"
         android:text="@string/header_cat_fields" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/wine_field_entry_title" />
+        android:layout_gravity="center"
+        android:maxWidth="@dimen/form_width"
+        android:minWidth="@dimen/form_width"
+        android:orientation="vertical">
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/wine_field_varietal" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_field_entry_title" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/wine_field_maker" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_field_varietal" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/field_origin" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_field_maker" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/field_price" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/field_origin" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/field_location" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/field_price" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/wine_field_vintage" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/field_location" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/wine_field_abv" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_field_vintage" />
+
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_field_abv" />
+    </LinearLayout>
 
     <include layout="@layout/edit_cat_foot" />
 </LinearLayout>

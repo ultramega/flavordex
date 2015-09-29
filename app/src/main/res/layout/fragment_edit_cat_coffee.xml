@@ -14,8 +14,11 @@
 
     <TextView
         style="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:maxWidth="@dimen/form_width"
+        android:minWidth="@dimen/form_width"
         android:text="@string/cat_coffee" />
 
     <TextView
@@ -24,95 +27,104 @@
         android:layout_height="wrap_content"
         android:text="@string/header_cat_fields" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/coffee_field_entry_title" />
+        android:layout_gravity="center"
+        android:maxWidth="@dimen/form_width"
+        android:minWidth="@dimen/form_width"
+        android:orientation="vertical">
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/coffee_field_roaster" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coffee_field_entry_title" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/coffee_field_roast_date" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coffee_field_roaster" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/coffee_field_grind" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coffee_field_roast_date" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/coffee_field_maker" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coffee_field_grind" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/field_origin" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coffee_field_maker" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/field_price" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/field_origin" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/coffee_field_brew_method" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/field_price" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/field_location" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coffee_field_brew_method" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/coffee_field_dose" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/field_location" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/coffee_field_mass" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coffee_field_dose" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/coffee_field_temp" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coffee_field_mass" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/coffee_field_ext_time" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coffee_field_temp" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/coffee_field_tds" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coffee_field_ext_time" />
 
-    <TextView
-        style="@style/FieldText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/coffee_field_yield" />
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coffee_field_tds" />
+
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coffee_field_yield" />
+    </LinearLayout>
 
     <include layout="@layout/edit_cat_foot" />
 </LinearLayout>

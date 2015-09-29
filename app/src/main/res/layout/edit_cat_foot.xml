@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TableLayout
-        android:id="@+id/cat_extras"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:stretchColumns="0" />
+        android:layout_gravity="center"
+        android:maxWidth="@dimen/form_width"
+        android:minWidth="@dimen/form_width"
+        android:orientation="vertical">
 
-    <ImageButton
-        android:id="@+id/button_add_extra"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/button_add_extra"
-        android:src="@drawable/ic_add" />
+        <TableLayout
+            android:id="@+id/cat_extras"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="0" />
+
+        <ImageButton
+            android:id="@+id/button_add_extra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/button_add_extra"
+            android:maxWidth="@dimen/form_width"
+            android:minWidth="@dimen/form_width"
+            android:src="@drawable/ic_add" />
+    </LinearLayout>
 
     <TextView
         style="@style/SubHeader"
