@@ -253,14 +253,17 @@ public class FlavordexProvider extends ContentProvider {
             case CATS:
                 table = Tables.Cats.TABLE_NAME;
                 values.remove(Tables.Cats.PRESET);
+                filterPreset(values.getAsString(Tables.Cats.NAME));
                 break;
             case EXTRAS:
                 table = Tables.Extras.TABLE_NAME;
                 values.remove(Tables.Extras.PRESET);
+                filterPreset(values.getAsString(Tables.Extras.NAME));
                 break;
             case CATS_EXTRAS:
                 table = Tables.Extras.TABLE_NAME;
                 values.remove(Tables.Extras.PRESET);
+                filterPreset(values.getAsString(Tables.Extras.NAME));
                 values.put(Tables.Extras.CAT, uri.getPathSegments().get(1));
                 break;
             case FLAVORS:
@@ -344,11 +347,13 @@ public class FlavordexProvider extends ContentProvider {
             case CATS:
                 table = Tables.Cats.TABLE_NAME;
                 values.remove(Tables.Cats.PRESET);
+                filterPreset(values.getAsString(Tables.Cats.NAME));
                 selection = appendWhere(selection, Tables.Cats.PRESET + " = 0");
                 break;
             case CATS_ID:
                 table = Tables.Cats.TABLE_NAME;
                 values.remove(Tables.Cats.PRESET);
+                filterPreset(values.getAsString(Tables.Cats.NAME));
                 selection = appendWhere(selection, Tables.Cats.PRESET + " = 0");
                 selection = appendWhere(selection,
                         Tables.Cats._ID + " = " + uri.getLastPathSegment());
@@ -356,11 +361,13 @@ public class FlavordexProvider extends ContentProvider {
             case EXTRAS:
                 table = Tables.Extras.TABLE_NAME;
                 values.remove(Tables.Extras.PRESET);
+                filterPreset(values.getAsString(Tables.Extras.NAME));
                 selection = appendWhere(selection, Tables.Extras.PRESET + " = 0");
                 break;
             case EXTRAS_ID:
                 table = Tables.Extras.TABLE_NAME;
                 values.remove(Tables.Extras.PRESET);
+                filterPreset(values.getAsString(Tables.Extras.NAME));
                 selection = appendWhere(selection, Tables.Extras.PRESET + " = 0");
                 selection = appendWhere(selection,
                         Tables.Extras._ID + " = " + uri.getLastPathSegment());
@@ -368,6 +375,7 @@ public class FlavordexProvider extends ContentProvider {
             case CATS_EXTRAS:
                 table = Tables.Extras.TABLE_NAME;
                 values.remove(Tables.Extras.PRESET);
+                filterPreset(values.getAsString(Tables.Extras.NAME));
                 selection = appendWhere(selection, Tables.Extras.PRESET + " = 0");
                 selection = appendWhere(selection,
                         Tables.Extras.CAT + " = " + uri.getPathSegments().get(1));
@@ -590,6 +598,17 @@ public class FlavordexProvider extends ContentProvider {
             return fragment;
         } else {
             return fragment + " AND " + selection;
+        }
+    }
+
+    /**
+     * Prevent reserved names from being inserted by the user.
+     *
+     * @param name The name of the item to check
+     */
+    private static void filterPreset(String name) {
+        if(!TextUtils.isEmpty(name) && name.charAt(0) == '_') {
+            throw new SQLiteException("Illegal name: " + name);
         }
     }
 }
