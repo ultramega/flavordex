@@ -11,18 +11,25 @@
     android:orientation="vertical"
     android:padding="@dimen/form_padding">
 
-    <TextView
-        style="@style/SubHeader"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/header_entry_title" />
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/entry_title"
-        style="@style/TextInput.Name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/whiskey_hint_entry_title" />
+        <TextView
+            style="@style/TableText.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_entry_title" />
+
+        <EditText
+            android:id="@+id/entry_title"
+            style="@style/TextInput.Name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/whiskey_hint_entry_title" />
+    </LinearLayout>
 
     <TextView
         style="@style/SubHeader"
