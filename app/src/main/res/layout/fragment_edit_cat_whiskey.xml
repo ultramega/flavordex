@@ -16,7 +16,6 @@
         style="@style/TextAppearance.AppCompat.Large"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:text="@string/cat_whiskey" />
 
     <TextView

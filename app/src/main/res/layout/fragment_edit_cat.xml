@@ -17,7 +17,6 @@
         style="@style/TextInput.Name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:hint="@string/hint_cat_name" />
 
     <TextView
