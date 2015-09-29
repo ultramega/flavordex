@@ -25,6 +25,9 @@
         android:id="@+id/entry_notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:hint="@string/hint_notes"
-        android:minLines="4" />
+        android:minLines="4"
+        android:padding="14dp"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 </merge>

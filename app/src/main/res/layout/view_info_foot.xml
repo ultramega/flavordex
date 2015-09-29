@@ -9,7 +9,12 @@
 
     <TextView
         android:id="@+id/entry_notes"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:maxWidth="500dp"
+        android:minWidth="500dp"
+        android:padding="8dp"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:textIsSelectable="true" />
 </merge>
