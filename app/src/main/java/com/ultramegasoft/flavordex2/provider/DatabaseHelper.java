@@ -132,7 +132,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     private void insertWhiskeyPreset(SQLiteDatabase db) {
         final String[] extras = new String[] {
-                Tables.Extras.Whiskey.TYPE,
+                Tables.Extras.Whiskey.STYLE,
                 Tables.Extras.Whiskey.STATS_AGE,
                 Tables.Extras.Whiskey.STATS_ABV
         };

@@ -174,7 +174,7 @@ public class Tables {
          * Whiskey preset extra names
          */
         public static class Whiskey {
-            public static final String TYPE = "_type";
+            public static final String STYLE = "_style";
             public static final String STATS_AGE = "_stats_age";
             public static final String STATS_ABV = "_stats_abv";
         }

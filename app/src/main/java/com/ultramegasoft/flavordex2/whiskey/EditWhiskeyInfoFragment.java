@@ -57,7 +57,7 @@ public class EditWhiskeyInfoFragment extends EditInfoFragment {
     @Override
     protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> extras) {
         super.populateExtras(extras);
-        initEditText(mTxtType, extras.get(Tables.Extras.Whiskey.TYPE));
+        initEditText(mTxtType, extras.get(Tables.Extras.Whiskey.STYLE));
         initEditText(mTxtAge, extras.get(Tables.Extras.Whiskey.STATS_AGE));
         initEditText(mTxtABV, extras.get(Tables.Extras.Whiskey.STATS_ABV));
     }
