@@ -146,30 +146,5 @@
         </TableRow>
     </TableLayout>
 
-    <TextView
-        style="@style/SubHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/header_rating" />
-
-    <RatingBar
-        android:id="@+id/entry_rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:numStars="5"
-        android:stepSize="0.5" />
-
-    <TextView
-        style="@style/SubHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/header_notes" />
-
-    <EditText
-        android:id="@+id/entry_notes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/hint_notes"
-        android:minLines="4" />
+    <include layout="@layout/edit_info_foot" />
 </LinearLayout>
