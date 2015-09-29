@@ -376,7 +376,7 @@ public class EditCatFragment extends LoadingProgressFragment
                              final int deleteHint, final boolean deleted,
                              final CatFieldListener listener) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
-        final View root = inflater.inflate(R.layout.cat_edit_field, tableLayout, false);
+        final View root = inflater.inflate(R.layout.edit_cat_field, tableLayout, false);
 
         final InputFilter[] filters = new InputFilter[] {
                 InputUtils.NAME_FILTER,
