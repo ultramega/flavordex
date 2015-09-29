@@ -383,7 +383,6 @@ public class EditCatFragment extends LoadingProgressFragment
                 new InputFilter.LengthFilter(maxLength)
         };
         final EditText editText = (EditText)root.findViewById(R.id.field_name);
-        editText.setSaveEnabled(false);
         editText.setFilters(filters);
         editText.setHint(hint);
         editText.setText(text);

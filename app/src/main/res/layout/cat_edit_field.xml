@@ -6,6 +6,7 @@
     <EditText
         android:id="@+id/field_name"
         style="@style/TextInput.Name"
+        android:saveEnabled="false"
         tools:ignore="TextFields" />
 
     <ImageButton
