@@ -1,6 +1,5 @@
 package com.ultramegasoft.flavordex2.whiskey;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -41,10 +40,7 @@ public class EditWhiskeyInfoFragment extends EditInfoFragment {
                 android.R.layout.simple_dropdown_item_1line));
 
         mTxtAge = (EditText)root.findViewById(R.id.entry_stats_age);
-        mTxtAge.setRawInputType(Configuration.KEYBOARD_QWERTY);
-
         mTxtABV = (EditText)root.findViewById(R.id.entry_stats_abv);
-        mTxtABV.setRawInputType(Configuration.KEYBOARD_QWERTY);
 
         return root;
     }
