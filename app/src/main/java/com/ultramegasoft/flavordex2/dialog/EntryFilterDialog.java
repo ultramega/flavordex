@@ -20,7 +20,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -327,7 +326,7 @@ public class EntryFilterDialog extends DialogFragment
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        final CursorAdapter adapter = (CursorAdapter)mSpinnerCat.getAdapter();
+        final CatSpinnerAdapter adapter = (CatSpinnerAdapter)mSpinnerCat.getAdapter();
         if(adapter != null) {
             adapter.swapCursor(null);
         }
