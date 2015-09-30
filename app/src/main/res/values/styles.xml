@@ -85,4 +85,6 @@
     <style name="TextInput.Stats">
         <item name="android:maxLength">30</item>
     </style>
+
+    <style name="Spinner" parent="Widget.AppCompat.Spinner.Underlined" />
 </resources>

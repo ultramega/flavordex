@@ -132,6 +132,7 @@
 
             <Spinner
                 android:id="@+id/entry_brew_method"
+                style="@style/Spinner"
                 android:entries="@array/coffee_brew_methods"
                 android:prompt="@string/coffee_hint_brew_method" />
         </TableRow>
