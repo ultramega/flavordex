@@ -1,8 +1,11 @@
 package com.ultramegasoft.flavordex2.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +25,7 @@ import java.util.Collections;
  *
  * @author Steve Guidetti
  */
-public class CatListAdapter extends BaseAdapter {
+public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter {
     /**
      * The Context
      */
@@ -31,7 +34,12 @@ public class CatListAdapter extends BaseAdapter {
     /**
      * The layout resource ID to use for each list item
      */
-    private final int mLayoutId;
+    private final int mResource;
+
+    /**
+     * The layout resource ID to use for dropdown items
+     */
+    private final int mDropDownResource;
 
     /**
      * The ID for the TextView within the layout
@@ -39,22 +47,40 @@ public class CatListAdapter extends BaseAdapter {
     private final int mTextViewId;
 
     /**
+     * Helper for the ThemedSpinnerAdapter
+     */
+    private final ThemedSpinnerAdapter.Helper mHelper;
+
+    /**
      * List of categories sorted by display name
      */
     private final ArrayList<Category> mCats = new ArrayList<>();
 
     /**
-     * @param context     The Context
-     * @param cursor      The Cursor from the database query
-     * @param layoutResId The layout resource ID to use for each list item
-     * @param textViewId  The ID for the TextView within the layout
+     * @param context          The Context
+     * @param cursor           The Cursor from the database query
+     * @param resource         The layout resource ID to use for each list item
+     * @param dropDownResource The layout resource ID to use for dropdown items
+     * @param textViewId       The ID for the TextView within the layout
      */
-    public CatListAdapter(Context context, Cursor cursor, int layoutResId, int textViewId) {
+    public CatListAdapter(Context context, Cursor cursor, int resource, int dropDownResource, int textViewId) {
         mContext = context;
-        mLayoutId = layoutResId;
+        mResource = resource;
+        mDropDownResource = dropDownResource;
         mTextViewId = textViewId;
+        mHelper = new Helper(context);
 
         swapCursor(cursor);
+    }
+
+    /**
+     * @param context    The Context
+     * @param cursor     The Cursor from the database query
+     * @param resource   The layout resource ID to use for each list item
+     * @param textViewId The ID for the TextView within the layout
+     */
+    public CatListAdapter(Context context, Cursor cursor, int resource, int textViewId) {
+        this(context, cursor, resource, resource, textViewId);
     }
 
     /**
@@ -132,8 +158,19 @@ public class CatListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        return createView(LayoutInflater.from(mContext), mResource, position, convertView, parent);
+    }
+
+    @Override
+    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        return createView(mHelper.getDropDownViewInflater(), mDropDownResource, position,
+                convertView, parent);
+    }
+
+    protected View createView(LayoutInflater inflater, int layoutId, int position, View convertView,
+                              ViewGroup parent) {
         if(convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(mLayoutId, parent, false);
+            convertView = inflater.inflate(layoutId, parent, false);
 
             final Holder holder = new Holder();
             holder.textView = (TextView)convertView.findViewById(mTextViewId);
@@ -148,6 +185,17 @@ public class CatListAdapter extends BaseAdapter {
         holder.textView.setText(text);
 
         return convertView;
+    }
+
+    @Override
+    public void setDropDownViewTheme(Resources.Theme theme) {
+        mHelper.setDropDownViewTheme(theme);
+    }
+
+    @Nullable
+    @Override
+    public Resources.Theme getDropDownViewTheme() {
+        return mHelper.getDropDownViewTheme();
     }
 
     /**

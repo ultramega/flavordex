@@ -340,8 +340,8 @@ public class EntryFilterDialog extends DialogFragment
          * @param cursor The Cursor
          */
         public CatSpinnerAdapter(Cursor cursor) {
-            super(getContext(), cursor, android.R.layout.simple_dropdown_item_1line,
-                    android.R.id.text1);
+            super(getContext(), cursor, android.R.layout.simple_spinner_item,
+                    android.R.layout.simple_spinner_dropdown_item, android.R.id.text1);
         }
 
         @Override
