@@ -133,6 +133,7 @@ public class DateInputWidget extends LinearLayout
 
         inflate(getContext(), R.layout.widget_date_input, this);
         setOrientation(HORIZONTAL);
+        setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
 
         mTxtDate = (TextView)findViewById(R.id.diw_date);
         findViewById(R.id.diw_button_set_date).setOnClickListener(new OnClickListener() {
