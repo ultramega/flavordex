@@ -128,6 +128,7 @@
     <string name="field_origin">Origin</string>
     <string name="field_price">Price</string>
     <string name="field_location">Tasting Location</string>
+    <string name="field_date">Date/Time</string>
 
     <string name="message_welcome">Welcome to Flavordex</string>
     <string name="message_no_data">No entries found.</string>

@@ -79,6 +79,12 @@
             style="@style/FieldText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/field_date" />
+
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/beer_field_abv" />
 
         <TextView

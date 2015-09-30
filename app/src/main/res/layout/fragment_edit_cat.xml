@@ -78,6 +78,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/field_location" />
+
+        <TextView
+            style="@style/FieldText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/field_date" />
     </LinearLayout>
 
     <include layout="@layout/edit_cat_foot" />
