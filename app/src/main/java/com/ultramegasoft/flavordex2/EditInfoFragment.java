@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.CursorLoader;
@@ -87,6 +88,11 @@ public class EditInfoFragment extends LoadingProgressFragment
     private long mEntryId;
 
     /**
+     * True while data is loading
+     */
+    private boolean mIsLoading;
+
+    /**
      * Map of extra field names to their data
      */
     private LinkedHashMap<String, ExtraFieldHolder> mExtras;
@@ -94,8 +100,11 @@ public class EditInfoFragment extends LoadingProgressFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCatId = getArguments().getLong(AddEntryFragment.ARG_CAT_ID);
-        mEntryId = getArguments().getLong(ARG_ENTRY_ID);
+        setHasOptionsMenu(true);
+
+        final Bundle args = getArguments();
+        mCatId = args.getLong(AddEntryFragment.ARG_CAT_ID);
+        mEntryId = args.getLong(ARG_ENTRY_ID);
     }
 
     @Override
@@ -203,7 +212,7 @@ public class EditInfoFragment extends LoadingProgressFragment
     /**
      * Load the values for the main entry fields.
      *
-     * @param entry Te entry
+     * @param entry The entry
      */
     private void populateFields(EntryHolder entry) {
         if(entry != null) {
@@ -304,7 +313,16 @@ public class EditInfoFragment extends LoadingProgressFragment
             mTxtTitle.requestFocus();
             return false;
         }
-        return true;
+        return !mIsLoading;
+    }
+
+    /**
+     * Is this fragment currently loading data?
+     *
+     * @return True while the fragment is loading data.
+     */
+    public boolean isLoading() {
+        return mIsLoading;
     }
 
     /**
@@ -335,6 +353,8 @@ public class EditInfoFragment extends LoadingProgressFragment
     public Loader onCreateLoader(int id, Bundle args) {
         switch(id) {
             case LOADER_MAIN:
+                mIsLoading = true;
+                ActivityCompat.invalidateOptionsMenu(getActivity());
                 return new DataLoader(getContext(), mCatId, mEntryId);
             case LOADER_MAKERS:
                 final String order = Tables.Makers.NAME + " ASC";
@@ -356,6 +376,9 @@ public class EditInfoFragment extends LoadingProgressFragment
 
                 hideLoadingIndicator(true);
                 mTxtTitle.setSelection(mTxtTitle.getText().length());
+
+                mIsLoading = false;
+                ActivityCompat.invalidateOptionsMenu(getActivity());
                 break;
             case LOADER_MAKERS:
                 ((CursorAdapter)mTxtMaker.getAdapter()).swapCursor((Cursor)data);

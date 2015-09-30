@@ -83,6 +83,16 @@ public class EditEntryActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        final Fragment fragment =
+                getSupportFragmentManager().findFragmentById(android.R.id.content);
+        if(fragment instanceof EditInfoFragment) {
+            menu.findItem(R.id.menu_save).setEnabled(!((EditInfoFragment)fragment).isLoading());
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case android.R.id.home:

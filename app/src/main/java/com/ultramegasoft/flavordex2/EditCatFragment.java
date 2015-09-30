@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -85,6 +86,11 @@ public class EditCatFragment extends LoadingProgressFragment
      * The category ID from the arguments
      */
     private long mCatId;
+
+    /**
+     * True while data is loading
+     */
+    private boolean mIsLoading;
 
     /**
      * Interface for field listeners.
@@ -209,6 +215,12 @@ public class EditCatFragment extends LoadingProgressFragment
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.cat_edit_menu, menu);
         menu.findItem(R.id.menu_delete).setVisible(mCatId > 0);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menu_save).setEnabled(!mIsLoading);
     }
 
     @Override
@@ -476,7 +488,7 @@ public class EditCatFragment extends LoadingProgressFragment
             mTxtTitle.requestFocus();
             return false;
         }
-        return true;
+        return !mIsLoading;
     }
 
     /**
@@ -509,6 +521,8 @@ public class EditCatFragment extends LoadingProgressFragment
 
     @Override
     public Loader<DataLoader.Holder> onCreateLoader(int id, Bundle args) {
+        mIsLoading = true;
+        ActivityCompat.invalidateOptionsMenu(getActivity());
         return new DataLoader(getContext(), mCatId);
     }
 
@@ -522,6 +536,9 @@ public class EditCatFragment extends LoadingProgressFragment
         mFlavorFields = data.flavors;
         populateFields();
         mRadarView.setData(getRadarData());
+
+        mIsLoading = false;
+        ActivityCompat.invalidateOptionsMenu(getActivity());
 
         hideLoadingIndicator(true);
         getLoaderManager().destroyLoader(0);
