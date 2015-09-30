@@ -81,7 +81,6 @@
 
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
-    <string name="button_save">Save</string>
     <string name="button_clear">Clear</string>
     <string name="button_undo">Undo</string>
     <string name="button_add_photo">Add Photo</string>

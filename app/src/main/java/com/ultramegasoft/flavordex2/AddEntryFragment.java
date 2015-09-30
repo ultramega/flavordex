@@ -9,6 +9,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -17,9 +18,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.ultramegasoft.flavordex2.beer.EditBeerInfoFragment;
 import com.ultramegasoft.flavordex2.coffee.EditCoffeeInfoFragment;
@@ -57,13 +60,15 @@ public class AddEntryFragment extends Fragment {
     private ViewPager mPager;
 
     /**
-     * Buttons from the main layout
+     * True while the save task is running
      */
-    private Button mBtnSave;
+    private boolean mIsSaving;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
         final Bundle args = getArguments();
         mCatId = args.getLong(ARG_CAT_ID);
         mCatName = args.getString(ARG_CAT_NAME);
@@ -80,19 +85,34 @@ public class AddEntryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_add_entry, container, false);
+
         mPager = (ViewPager)root.findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(2);
         mPager.setAdapter(new PagerAdapter());
 
-        mBtnSave = (Button)root.findViewById(R.id.button_save);
-        mBtnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveEntry();
-            }
-        });
-
         return root;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.entry_edit_menu, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menu_save).setEnabled(!mIsSaving);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menu_save:
+                saveEntry();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -129,7 +149,9 @@ public class AddEntryFragment extends Fragment {
      * Insert the new entry into the database.
      */
     private void saveEntry() {
-        mBtnSave.setEnabled(false);
+        if(mIsSaving) {
+            return;
+        }
 
         final FragmentManager fm = getChildFragmentManager();
 
@@ -155,9 +177,10 @@ public class AddEntryFragment extends Fragment {
         }
 
         if(isValid) {
+            mIsSaving = true;
+            ActivityCompat.invalidateOptionsMenu(getActivity());
             DataSaverFragment.init(getFragmentManager(), entry);
         } else {
-            mBtnSave.setEnabled(true);
             mPager.setCurrentItem(0);
         }
     }
