@@ -15,6 +15,8 @@
     </style>
 
     <style name="SubHeader" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginBottom">6dp</item>
         <item name="android:paddingTop">4dp</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/divider</item>
@@ -24,11 +26,15 @@
         <item name="android:padding">4dp</item>
     </style>
 
-    <style name="TableText">
+    <style name="TableText" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:paddingLeft">4dp</item>
         <item name="android:paddingRight">4dp</item>
-        <item name="android:textSize">16sp</item>
         <item name="android:textIsSelectable">true</item>
+    </style>
+
+    <style name="TableText.Large">
+        <item name="android:textSize">24sp</item>
     </style>
 
     <style name="TableText.Header">
@@ -38,18 +44,22 @@
     </style>
 
     <style name="TableText.Label">
-        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
         <item name="android:gravity">right|center_vertical</item>
         <item name="android:textIsSelectable">false</item>
     </style>
 
+    <style name="TableText.Label.Large">
+        <item name="android:textSize">22sp</item>
+    </style>
+
     <style name="TableText.Sub">
         <item name="android:textStyle">italic</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="TableText.Stats">
-        <item name="android:textColor">#333333</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:background">@drawable/stat_field</item>
         <item name="android:typeface">monospace</item>
         <item name="android:paddingLeft">8dp</item>
@@ -65,6 +75,11 @@
 
     <style name="TextInput.Name">
         <item name="android:capitalize">words</item>
+    </style>
+
+    <style name="TextInput.Name.Large">
+        <item name="android:textSize">22sp</item>
+        <item name="android:padding">12dp</item>
     </style>
 
     <style name="TextInput.Stats">

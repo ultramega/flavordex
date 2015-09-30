@@ -15,6 +15,6 @@
         android:maxWidth="500dp"
         android:minWidth="500dp"
         android:padding="8dp"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textIsSelectable="true" />
 </merge>

@@ -46,6 +46,8 @@
     <string name="header_cat_fields">Category Fields</string>
     <string name="header_cat_flavors">Category Flavors</string>
     <string name="header_select_app">Select %s</string>
+    <string name="header_entry_title">Entry Title</string>
+    <string name="header_cat_title">Category Title</string>
 
     <string name="menu_settings">Application Settings</string>
     <string name="menu_filter">Filter List</string>
@@ -111,8 +113,7 @@
     <string name="hint_extra_name">Field Name</string>
     <string name="hint_flavor_name">Flavor Name</string>
 
-    <string name="label_cat_title">Category Name: </string>
-    <string name="label_entry_title">Entry Title: </string>
+    <string name="label_title">Title: </string>
     <string name="label_cat">Category: </string>
     <string name="label_maker">Maker: </string>
     <string name="label_origin">Origin: </string>
