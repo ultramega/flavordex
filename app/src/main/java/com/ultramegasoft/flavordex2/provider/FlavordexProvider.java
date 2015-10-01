@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 /**
@@ -95,7 +96,7 @@ public class FlavordexProvider extends ContentProvider {
     }
 
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         switch(sUriMatcher.match(uri)) {
             case ENTRIES:
             case ENTRIES_FILTER:
@@ -138,8 +139,8 @@ public class FlavordexProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
-                        String sortOrder) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection,
+                        String[] selectionArgs, String sortOrder) {
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
         switch(sUriMatcher.match(uri)) {
@@ -238,7 +239,7 @@ public class FlavordexProvider extends ContentProvider {
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         String table;
         values = new ContentValues(values);
 
@@ -323,7 +324,8 @@ public class FlavordexProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public int update(@NonNull Uri uri, ContentValues values, String selection,
+                      String[] selectionArgs) {
         String table;
         values = new ContentValues(values);
 
@@ -442,7 +444,7 @@ public class FlavordexProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         String table;
 
         switch(sUriMatcher.match(uri)) {
