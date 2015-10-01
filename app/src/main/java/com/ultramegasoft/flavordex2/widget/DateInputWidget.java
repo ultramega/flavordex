@@ -340,9 +340,7 @@ public class DateInputWidget extends LinearLayout
         final int day = mCalendar.get(Calendar.DAY_OF_MONTH);
 
         if(mDatePickerDialog == null) {
-            mDatePickerDialog = new DatePickerDialog(getContext(),
-                    android.support.v7.appcompat.R.style.Base_Theme_AppCompat_Dialog_Alert, this,
-                    year, month, day);
+            mDatePickerDialog = new DatePickerDialog(getContext(), this, year, month, day);
         } else {
             mDatePickerDialog.updateDate(year, month, day);
         }
@@ -383,9 +381,7 @@ public class DateInputWidget extends LinearLayout
         final int minute = mCalendar.get(Calendar.MINUTE);
 
         if(mTimePickerDialog == null) {
-            mTimePickerDialog = new TimePickerDialog(getContext(),
-                    android.support.v7.appcompat.R.style.Base_Theme_AppCompat_Dialog_Alert, this,
-                    hour, minute, false) {
+            mTimePickerDialog = new TimePickerDialog(getContext(), this, hour, minute, false) {
                 @Override
                 public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
                     super.onTimeChanged(view, hourOfDay, minute);
