@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingBottom="6dp"
+    android:paddingLeft="?attr/dialogPreferredPadding"
+    android:paddingRight="?attr/dialogPreferredPadding"
+    android:paddingTop="10dp">
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="1">
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/about_version" />
+
+            <TextView
+                android:id="@+id/about_version"
+                style="@style/TableText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textIsSelectable="true" />
+        </TableRow>
+
+        <TableRow android:paddingTop="8dp">
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/about_support" />
+
+            <TextView
+                android:id="@+id/about_support"
+                style="@style/Link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/about_email" />
+        </TableRow>
+
+        <TableRow android:paddingTop="8dp">
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/about_website" />
+
+            <TextView
+                android:id="@+id/about_website"
+                style="@style/Link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/about_website_url" />
+        </TableRow>
+    </TableLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/message_copyright" />
+</LinearLayout>

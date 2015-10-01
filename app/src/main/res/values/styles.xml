@@ -87,4 +87,10 @@
     </style>
 
     <style name="Spinner" parent="Widget.AppCompat.Spinner.Underlined" />
+
+    <style name="Link" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">?android:attr/textColorLink</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">middle</item>
+    </style>
 </resources>

@@ -33,6 +33,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import com.ultramegasoft.flavordex2.dialog.AboutDialog;
 import com.ultramegasoft.flavordex2.dialog.AppChooserDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
@@ -318,6 +319,9 @@ public class EntryListFragment extends ListFragment
                 return true;
             case R.id.menu_settings:
                 startActivity(new Intent(getContext(), SettingsActivity.class));
+                return true;
+            case R.id.menu_about:
+                AboutDialog.showDialog(getFragmentManager());
                 return true;
         }
         return super.onOptionsItemSelected(item);
