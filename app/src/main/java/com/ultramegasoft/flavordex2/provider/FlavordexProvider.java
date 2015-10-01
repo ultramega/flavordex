@@ -2,6 +2,7 @@ package com.ultramegasoft.flavordex2.provider;
 
 import android.app.backup.BackupManager;
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -88,10 +89,17 @@ public class FlavordexProvider extends ContentProvider {
      */
     private BackupManager mBackupManager;
 
+    /**
+     * The ContentResolver
+     */
+    private ContentResolver mResolver;
+
     @Override
     public boolean onCreate() {
         mDbHelper = new DatabaseHelper(getContext());
         mBackupManager = new BackupManager(getContext());
+        //noinspection ConstantConditions
+        mResolver = getContext().getContentResolver();
         return true;
     }
 
@@ -233,7 +241,7 @@ public class FlavordexProvider extends ContentProvider {
 
         final Cursor cursor = queryBuilder.query(mDbHelper.getReadableDatabase(), projection,
                 selection, selectionArgs, null, null, sortOrder);
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        cursor.setNotificationUri(mResolver, uri);
 
         return cursor;
     }
@@ -315,7 +323,7 @@ public class FlavordexProvider extends ContentProvider {
                 mBackupManager.dataChanged();
 
                 final Uri rowUri = ContentUris.withAppendedId(uri, id);
-                getContext().getContentResolver().notifyChange(rowUri, null);
+                mResolver.notifyChange(rowUri, null);
                 return rowUri;
             }
         }
@@ -436,7 +444,7 @@ public class FlavordexProvider extends ContentProvider {
 
             if(count > 0) {
                 mBackupManager.dataChanged();
-                getContext().getContentResolver().notifyChange(uri, null);
+                mResolver.notifyChange(uri, null);
             }
 
             return count;
@@ -536,7 +544,7 @@ public class FlavordexProvider extends ContentProvider {
 
             if(count > 0) {
                 mBackupManager.dataChanged();
-                getContext().getContentResolver().notifyChange(uri, null);
+                mResolver.notifyChange(uri, null);
             }
 
             return count;
