@@ -249,7 +249,8 @@ public class EntryUtils {
     public static void share(Context context, String title, float rating) {
         final Intent intent = getShareIntent(context, title, rating);
         if(intent.resolveActivity(context.getPackageManager()) != null) {
-            context.startActivity(intent);
+            context.startActivity(Intent.createChooser(intent,
+                    context.getString(R.string.menu_share_entry)));
         }
     }
 
