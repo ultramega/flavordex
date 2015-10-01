@@ -30,8 +30,9 @@ public class EntryUtils {
      * @param cr    The ContentResolver
      * @param entry The entry
      * @return The Uri for the new entry
+     * @throws SQLiteException
      */
-    public static Uri insertEntry(ContentResolver cr, EntryHolder entry) {
+    public static Uri insertEntry(ContentResolver cr, EntryHolder entry) throws SQLiteException {
         final ContentValues values = new ContentValues();
         values.put(Tables.Entries.TITLE, entry.title);
         values.put(Tables.Entries.MAKER, entry.maker);
@@ -81,6 +82,10 @@ public class EntryUtils {
         final ContentValues values = new ContentValues();
         values.put(Tables.Cats.NAME, filterName(entry.catName));
         final Uri catUri = cr.insert(uri, values);
+
+        if(catUri == null) {
+            throw new SQLiteException("Inserting new category failed");
+        }
 
         entry.catId = Long.valueOf(catUri.getLastPathSegment());
         insertCatFlavors(cr, catUri, entry);
@@ -154,7 +159,12 @@ public class EntryUtils {
 
         final ContentValues values = new ContentValues();
         values.put(Tables.Extras.NAME, name);
-        return Long.valueOf(cr.insert(uri, values).getLastPathSegment());
+        final Uri extraUri = cr.insert(uri, values);
+        if(extraUri == null) {
+            throw new SQLiteException("Inserting new extra field failed");
+        }
+
+        return Long.valueOf(extraUri.getLastPathSegment());
     }
 
     /**

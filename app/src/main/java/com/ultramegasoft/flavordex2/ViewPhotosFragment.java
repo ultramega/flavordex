@@ -337,7 +337,9 @@ public class ViewPhotosFragment extends AbsPhotosFragment
             values.put(Tables.Photos.PATH, mPhoto.path);
 
             uri = mResolver.insert(uri, values);
-            mPhoto.id = Long.valueOf(uri.getLastPathSegment());
+            if(uri != null) {
+                mPhoto.id = Long.valueOf(uri.getLastPathSegment());
+            }
             return null;
         }
     }
