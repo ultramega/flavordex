@@ -92,7 +92,7 @@ public class ExportDialog extends DialogFragment {
 
     @NonNull
     @Override
-    @SuppressLint("InflateParams")
+    @SuppressLint({"InflateParams", "SetTextI18n"})
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mEntryIDs = getArguments().getLongArray(ARG_ENTRY_IDS);
         mBasePath = getBasePath();

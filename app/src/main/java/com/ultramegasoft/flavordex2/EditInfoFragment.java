@@ -237,7 +237,8 @@ public class EditInfoFragment extends LoadingProgressFragment
         for(ExtraFieldHolder extra : extras.values()) {
             if(!extra.preset) {
                 final View root = inflater.inflate(R.layout.edit_info_extra, mInfoTable, false);
-                ((TextView)root.findViewById(R.id.label)).setText(extra.name + ": ");
+                ((TextView)root.findViewById(R.id.label))
+                        .setText(getString(R.string.label_field, extra.name));
                 initEditText((EditText)root.findViewById(R.id.value), extra);
                 mInfoTable.addView(root);
             }

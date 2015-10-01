@@ -90,8 +90,10 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
             mTxtBrewMethod.setText(R.string.hint_empty);
         }
 
-        setTextWithUnit(mTxtDose, getExtraValue(data.get(Tables.Extras.Coffee.STATS_DOSE)), "g");
-        setTextWithUnit(mTxtMass, getExtraValue(data.get(Tables.Extras.Coffee.STATS_MASS)), "g");
+        setTextWithUnit(mTxtDose, getExtraValue(data.get(Tables.Extras.Coffee.STATS_DOSE)),
+                getString(R.string.coffee_hint_grams));
+        setTextWithUnit(mTxtMass, getExtraValue(data.get(Tables.Extras.Coffee.STATS_MASS)),
+                getString(R.string.coffee_hint_grams));
 
         final float dose = stringToFloat(getExtraValue(data.get(Tables.Extras.Coffee.STATS_DOSE)));
         final float mass = stringToFloat(getExtraValue(data.get(Tables.Extras.Coffee.STATS_MASS)));
@@ -105,7 +107,8 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
             mTxtRatio.setText(null);
         }
 
-        setTextWithUnit(mTxtTemp, getExtraValue(data.get(Tables.Extras.Coffee.STATS_TEMP)), "°C");
+        setTextWithUnit(mTxtTemp, getExtraValue(data.get(Tables.Extras.Coffee.STATS_TEMP)),
+                getString(R.string.coffee_hint_degrees));
 
         final int extTime = stringToInt(getExtraValue(data.get(Tables.Extras.Coffee.STATS_EXTIME)));
         if(extTime > 0) {
@@ -116,8 +119,10 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
             mTxtExtTime.setText(null);
         }
 
-        setTextWithUnit(mTxtTDS, getExtraValue(data.get(Tables.Extras.Coffee.STATS_TDS)), "%");
-        setTextWithUnit(mTxtYield, getExtraValue(data.get(Tables.Extras.Coffee.STATS_YIELD)), "%");
+        setTextWithUnit(mTxtTDS, getExtraValue(data.get(Tables.Extras.Coffee.STATS_TDS)),
+                getString(R.string.coffee_hint_percent));
+        setTextWithUnit(mTxtYield, getExtraValue(data.get(Tables.Extras.Coffee.STATS_YIELD)),
+                getString(R.string.coffee_hint_percent));
     }
 
     /**
@@ -145,7 +150,7 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
      */
     private void setTextWithUnit(TextView view, String text, String unit) {
         if(!TextUtils.isEmpty(text)) {
-            view.setText(text + unit);
+            view.setText(getString(R.string.coffee_stat, text, unit));
         } else {
             view.setText(null);
         }

@@ -229,7 +229,8 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                     continue;
                 }
                 final View root = inflater.inflate(R.layout.view_info_extra, table, false);
-                ((TextView)root.findViewById(R.id.label)).setText(extra.name + ": ");
+                ((TextView)root.findViewById(R.id.label))
+                        .setText(getString(R.string.label_field, extra.name));
                 ((TextView)root.findViewById(R.id.value)).setText(extra.value);
                 table.addView(root);
                 mExtraRows.add(root);

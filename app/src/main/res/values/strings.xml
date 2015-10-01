@@ -124,6 +124,7 @@
     <string name="label_date">Date/Time: </string>
     <string name="label_date_min">Starting: </string>
     <string name="label_date_max">Ending: </string>
+    <string name="label_field">%s: </string>
 
     <string name="field_entry_title">Entry Title</string>
     <string name="field_maker">Maker</string>

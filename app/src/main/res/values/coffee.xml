@@ -19,6 +19,8 @@
     <string name="coffee_hint_percent">%</string>
     <string name="coffee_hint_colon">:</string>
 
+    <string name="coffee_stat">%1$s %2$s</string>
+
     <string name="coffee_label_maker">Producer: </string>
     <string name="coffee_label_roaster">Roaster: </string>
     <string name="coffee_label_roast_date">Roast Date: </string>
