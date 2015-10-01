@@ -163,9 +163,11 @@
     <string name="error_camera">Error: Unable to launch camera</string>
     <string name="error_read_dir">Error: Unable to open directory for reading</string>
     <string name="error_csv_export">Export failed</string>
-    <string name="error_csv_export_file">Unable to create destination file.</string>
-    <string name="error_csv_parse">Unable to parse the .csv file.</string>
+    <string name="error_csv_export_file">Unable to create destination file</string>
+    <string name="error_csv_parse">Unable to parse the .csv file</string>
     <string name="error_required">required</string>
+    <string name="error_no_app">Error: No applications found to complete your request \</string>
+    <string name="error_no_email">Error: No email client found</string>
 
     <string name="share_subject">I logged %s on Flavordex</string>
     <string name="share_body">I logged %1$s in my %2$s with a %3$.1f rating.\n\nvia Flavordex</string>

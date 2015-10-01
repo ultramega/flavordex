@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
@@ -251,6 +252,8 @@ public class EntryUtils {
         if(intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(Intent.createChooser(intent,
                     context.getString(R.string.menu_share_entry)));
+        } else {
+            Toast.makeText(context, R.string.error_no_app, Toast.LENGTH_LONG).show();
         }
     }
 

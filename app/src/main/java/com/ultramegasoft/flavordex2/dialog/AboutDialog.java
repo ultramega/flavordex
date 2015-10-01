@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.R;
@@ -74,6 +75,8 @@ public class AboutDialog extends DialogFragment {
                 getString(R.string.about_email_subject, BuildConfig.VERSION_NAME));
         if(intent.resolveActivity(getContext().getPackageManager()) != null) {
             startActivity(Intent.createChooser(intent, getString(R.string.about_send_email)));
+        } else {
+            Toast.makeText(getContext(), R.string.error_no_email, Toast.LENGTH_LONG).show();
         }
     }
 
