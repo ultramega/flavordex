@@ -214,6 +214,9 @@ public class FlavordexApp extends Application implements
         protected Void doInBackground(Void... params) {
             final ContentResolver cr = getContentResolver();
             final Cursor cursor = cr.query(Tables.Locations.CONTENT_URI, null, null, null, null);
+            if(cursor == null) {
+                return null;
+            }
 
             final double lat = mLocation.getLatitude();
             final double lon = mLocation.getLongitude();

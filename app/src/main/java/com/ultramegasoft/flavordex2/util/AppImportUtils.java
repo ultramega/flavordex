@@ -201,21 +201,24 @@ public class AppImportUtils {
         final ContentResolver cr = context.getContentResolver();
         final Uri uri = ContentUris.withAppendedId(getEntriesUri(app), sourceId);
         final Cursor cursor = cr.query(uri, null, null, null, null);
-        try {
-            if(cursor.moveToFirst()) {
-                entry.title = cursor.getString(cursor.getColumnIndex(EntriesColumns.TITLE));
-                entry.maker = cursor.getString(cursor.getColumnIndex(EntriesColumns.MAKER));
-                entry.origin = cursor.getString(cursor.getColumnIndex(EntriesColumns.ORIGIN));
-                entry.location = cursor.getString(cursor.getColumnIndex(EntriesColumns.LOCATION));
-                entry.date = cursor.getLong(cursor.getColumnIndex(EntriesColumns.DATE));
-                entry.price = cursor.getString(cursor.getColumnIndex(EntriesColumns.PRICE));
-                entry.rating = cursor.getFloat(cursor.getColumnIndex(EntriesColumns.RATING));
-                entry.notes = cursor.getString(cursor.getColumnIndex(EntriesColumns.NOTES));
+        if(cursor != null) {
+            try {
+                if(cursor.moveToFirst()) {
+                    entry.title = cursor.getString(cursor.getColumnIndex(EntriesColumns.TITLE));
+                    entry.maker = cursor.getString(cursor.getColumnIndex(EntriesColumns.MAKER));
+                    entry.origin = cursor.getString(cursor.getColumnIndex(EntriesColumns.ORIGIN));
+                    entry.location =
+                            cursor.getString(cursor.getColumnIndex(EntriesColumns.LOCATION));
+                    entry.date = cursor.getLong(cursor.getColumnIndex(EntriesColumns.DATE));
+                    entry.price = cursor.getString(cursor.getColumnIndex(EntriesColumns.PRICE));
+                    entry.rating = cursor.getFloat(cursor.getColumnIndex(EntriesColumns.RATING));
+                    entry.notes = cursor.getString(cursor.getColumnIndex(EntriesColumns.NOTES));
 
-                getExtras(sExtraColumns[app], cursor, entry);
+                    getExtras(sExtraColumns[app], cursor, entry);
+                }
+            } finally {
+                cursor.close();
             }
-        } finally {
-            cursor.close();
         }
 
         getFlavors(context, app, uri, entry);
@@ -269,20 +272,22 @@ public class AppImportUtils {
         final String[] names = getFlavorNames(context, app);
         final Cursor cursor = cr.query(Uri.withAppendedPath(sourceUri, "flavor"), null, null, null,
                 FlavorsColumns.FLAVOR + " ASC");
-        try {
-            if(cursor.getCount() != names.length) {
-                return;
-            }
+        if(cursor != null) {
+            try {
+                if(cursor.getCount() != names.length) {
+                    return;
+                }
 
-            String name;
-            int value;
-            while(cursor.moveToNext()) {
-                name = names[cursor.getInt(cursor.getColumnIndex(FlavorsColumns.FLAVOR))];
-                value = cursor.getInt(cursor.getColumnIndex(FlavorsColumns.VALUE));
-                entry.addFlavor(name, value);
+                String name;
+                int value;
+                while(cursor.moveToNext()) {
+                    name = names[cursor.getInt(cursor.getColumnIndex(FlavorsColumns.FLAVOR))];
+                    value = cursor.getInt(cursor.getColumnIndex(FlavorsColumns.VALUE));
+                    entry.addFlavor(name, value);
+                }
+            } finally {
+                cursor.close();
             }
-        } finally {
-            cursor.close();
         }
     }
 
@@ -297,14 +302,16 @@ public class AppImportUtils {
         final ContentResolver cr = context.getContentResolver();
         final Cursor cursor = cr.query(Uri.withAppendedPath(sourceUri, "photos"), null, null, null,
                 PhotosColumns._ID + " ASC");
-        try {
-            String path;
-            while(cursor.moveToNext()) {
-                path = cursor.getString(cursor.getColumnIndex(PhotosColumns.PATH));
-                entry.addPhoto(0, path);
+        if(cursor != null) {
+            try {
+                String path;
+                while(cursor.moveToNext()) {
+                    path = cursor.getString(cursor.getColumnIndex(PhotosColumns.PATH));
+                    entry.addPhoto(0, path);
+                }
+            } finally {
+                cursor.close();
             }
-        } finally {
-            cursor.close();
         }
     }
 

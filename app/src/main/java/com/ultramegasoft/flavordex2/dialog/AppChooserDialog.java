@@ -369,6 +369,9 @@ public class AppChooserDialog extends DialogFragment {
                     final Cursor cursor = cr.query(uri, projection, null, null, null);
                     int count;
                     try {
+                        if(cursor == null) {
+                            continue;
+                        }
                         EntryHolder entry;
                         count = cursor.getCount();
                         int j = 0;

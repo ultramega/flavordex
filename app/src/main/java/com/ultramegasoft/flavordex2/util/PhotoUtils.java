@@ -209,14 +209,16 @@ public class PhotoUtils {
         final Uri uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, id + "/photos");
         final Cursor cursor = cr.query(uri, new String[] {Tables.Photos.PATH}, null, null,
                 Tables.Photos._ID + " ASC");
-        try {
-            if(cursor.moveToFirst()) {
-                generateThumb(context, cursor.getString(0), id);
-            } else {
-                deleteThumb(context, id);
+        if(cursor != null) {
+            try {
+                if(cursor.moveToFirst()) {
+                    generateThumb(context, cursor.getString(0), id);
+                } else {
+                    deleteThumb(context, id);
+                }
+            } finally {
+                cursor.close();
             }
-        } finally {
-            cursor.close();
         }
     }
 

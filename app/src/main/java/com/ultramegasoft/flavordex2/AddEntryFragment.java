@@ -368,15 +368,18 @@ public class AddEntryFragment extends Fragment {
                         mEntry.catId);
                 final Cursor cursor = mResolver.query(Uri.withAppendedPath(uri, "flavor"), null,
                         null, null, Tables.Flavors._ID + " ASC");
-                try {
-                    String name;
-                    while(cursor.moveToNext()) {
-                        name = cursor.getString(cursor.getColumnIndex(Tables.Flavors.NAME));
-                        mEntry.addFlavor(name, 0);
+                if(cursor != null) {
+                    try {
+                        String name;
+                        while(cursor.moveToNext()) {
+                            name = cursor.getString(cursor.getColumnIndex(Tables.Flavors.NAME));
+                            mEntry.addFlavor(name, 0);
+                        }
+                    } finally {
+                        cursor.close();
                     }
-                } finally {
-                    cursor.close();
                 }
+
             }
         }
     }

@@ -351,12 +351,14 @@ public class ExportDialog extends DialogFragment {
                 for(long id : mEntryIds) {
                     mEntryUri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, id);
                     cursor = mResolver.query(mEntryUri, null, null, null, null);
-                    try {
-                        if(cursor.moveToFirst()) {
-                            CSVUtils.writeEntry(mWriter, readEntry(cursor));
+                    if(cursor != null) {
+                        try {
+                            if(cursor.moveToFirst()) {
+                                CSVUtils.writeEntry(mWriter, readEntry(cursor));
+                            }
+                        } finally {
+                            cursor.close();
                         }
-                    } finally {
-                        cursor.close();
                     }
                     publishProgress(++i);
                 }
@@ -404,18 +406,22 @@ public class ExportDialog extends DialogFragment {
             private void loadExtras(EntryHolder entry) {
                 final Uri uri = Uri.withAppendedPath(mEntryUri, "extras");
                 final Cursor cursor = mResolver.query(uri, null, null, null, null);
-                try {
-                    String name;
-                    String value;
-                    boolean preset;
-                    while(cursor.moveToNext()) {
-                        name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
-                        value = cursor.getString(cursor.getColumnIndex(Tables.EntriesExtras.VALUE));
-                        preset = cursor.getInt(cursor.getColumnIndex(Tables.Extras.PRESET)) == 1;
-                        entry.addExtra(0, name, preset, value);
+                if(cursor != null) {
+                    try {
+                        String name;
+                        String value;
+                        boolean preset;
+                        while(cursor.moveToNext()) {
+                            name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
+                            value = cursor.getString(
+                                    cursor.getColumnIndex(Tables.EntriesExtras.VALUE));
+                            preset = cursor.getInt(
+                                    cursor.getColumnIndex(Tables.Extras.PRESET)) == 1;
+                            entry.addExtra(0, name, preset, value);
+                        }
+                    } finally {
+                        cursor.close();
                     }
-                } finally {
-                    cursor.close();
                 }
             }
 
@@ -427,17 +433,20 @@ public class ExportDialog extends DialogFragment {
             private void loadFlavors(EntryHolder entry) {
                 final Uri uri = Uri.withAppendedPath(mEntryUri, "flavor");
                 final Cursor cursor = mResolver.query(uri, null, null, null, null);
-                try {
-                    String name;
-                    int value;
-                    while(cursor.moveToNext()) {
-                        name = cursor.getString(cursor.getColumnIndex(
-                                Tables.EntriesFlavors.FLAVOR));
-                        value = cursor.getInt(cursor.getColumnIndex(Tables.EntriesFlavors.VALUE));
-                        entry.addFlavor(name, value);
+                if(cursor != null) {
+                    try {
+                        String name;
+                        int value;
+                        while(cursor.moveToNext()) {
+                            name = cursor.getString(cursor.getColumnIndex(
+                                    Tables.EntriesFlavors.FLAVOR));
+                            value = cursor.getInt(
+                                    cursor.getColumnIndex(Tables.EntriesFlavors.VALUE));
+                            entry.addFlavor(name, value);
+                        }
+                    } finally {
+                        cursor.close();
                     }
-                } finally {
-                    cursor.close();
                 }
             }
 
@@ -449,14 +458,16 @@ public class ExportDialog extends DialogFragment {
             private void loadPhotos(EntryHolder entry) {
                 final Uri uri = Uri.withAppendedPath(mEntryUri, "photos");
                 final Cursor cursor = mResolver.query(uri, null, null, null, null);
-                try {
-                    String path;
-                    while(cursor.moveToNext()) {
-                        path = cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH));
-                        entry.addPhoto(0, path);
+                if(cursor != null) {
+                    try {
+                        String path;
+                        while(cursor.moveToNext()) {
+                            path = cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH));
+                            entry.addPhoto(0, path);
+                        }
+                    } finally {
+                        cursor.close();
                     }
-                } finally {
-                    cursor.close();
                 }
             }
 

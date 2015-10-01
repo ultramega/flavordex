@@ -590,12 +590,14 @@ public class EditCatFragment extends LoadingProgressFragment
          */
         private void loadCat(Holder holder, Uri catUri) {
             final Cursor cursor = mResolver.query(catUri, null, null, null, null);
-            try {
-                if(cursor.moveToFirst()) {
-                    holder.catName = cursor.getString(cursor.getColumnIndex(Tables.Cats.NAME));
+            if(cursor != null) {
+                try {
+                    if(cursor.moveToFirst()) {
+                        holder.catName = cursor.getString(cursor.getColumnIndex(Tables.Cats.NAME));
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
         }
 
@@ -610,18 +612,20 @@ public class EditCatFragment extends LoadingProgressFragment
             final String where = Tables.Extras.PRESET + " = 0";
             final String sort = Tables.Extras._ID + " ASC";
             final Cursor cursor = mResolver.query(uri, null, where, null, sort);
-            try {
-                long id;
-                String name;
-                boolean deleted;
-                while(cursor.moveToNext()) {
-                    id = cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
-                    name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
-                    deleted = cursor.getInt(cursor.getColumnIndex(Tables.Extras.DELETED)) == 1;
-                    holder.extras.add(new Field(id, name, deleted));
+            if(cursor != null) {
+                try {
+                    long id;
+                    String name;
+                    boolean deleted;
+                    while(cursor.moveToNext()) {
+                        id = cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
+                        name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
+                        deleted = cursor.getInt(cursor.getColumnIndex(Tables.Extras.DELETED)) == 1;
+                        holder.extras.add(new Field(id, name, deleted));
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
         }
 
@@ -635,16 +639,18 @@ public class EditCatFragment extends LoadingProgressFragment
             final Uri uri = Uri.withAppendedPath(catUri, "flavor");
             final String sort = Tables.Flavors._ID + " ASC";
             final Cursor cursor = mResolver.query(uri, null, null, null, sort);
-            try {
-                long id;
-                String name;
-                while(cursor.moveToNext()) {
-                    id = cursor.getLong(cursor.getColumnIndex(Tables.Flavors._ID));
-                    name = cursor.getString(cursor.getColumnIndex(Tables.Flavors.NAME));
-                    holder.flavors.add(new Field(id, name));
+            if(cursor != null) {
+                try {
+                    long id;
+                    String name;
+                    while(cursor.moveToNext()) {
+                        id = cursor.getLong(cursor.getColumnIndex(Tables.Flavors._ID));
+                        name = cursor.getString(cursor.getColumnIndex(Tables.Flavors.NAME));
+                        holder.flavors.add(new Field(id, name));
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
         }
 

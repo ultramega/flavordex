@@ -66,14 +66,16 @@ public class EntryUtils {
         final String where = Tables.Cats.NAME + " = ?";
         final String[] whereArgs = new String[] {entry.catName};
         final Cursor cursor = cr.query(uri, projection, where, whereArgs, null);
-        try {
-            if(cursor.moveToFirst()) {
-                final long id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
-                entry.catId = id;
-                return ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, id);
+        if(cursor != null) {
+            try {
+                if(cursor.moveToFirst()) {
+                    final long id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
+                    entry.catId = id;
+                    return ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, id);
+                }
+            } finally {
+                cursor.close();
             }
-        } finally {
-            cursor.close();
         }
 
         final ContentValues values = new ContentValues();
@@ -140,12 +142,14 @@ public class EntryUtils {
         final String where = Tables.Extras.NAME + " = ?";
         final String[] whereArgs = new String[] {name};
         final Cursor cursor = cr.query(uri, projection, where, whereArgs, null);
-        try {
-            if(cursor.moveToFirst()) {
-                return cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
+        if(cursor != null) {
+            try {
+                if(cursor.moveToFirst()) {
+                    return cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
+                }
+            } finally {
+                cursor.close();
             }
-        } finally {
-            cursor.close();
         }
 
         final ContentValues values = new ContentValues();
@@ -226,17 +230,19 @@ public class EntryUtils {
                 Tables.Photos.ENTRY
         };
         final Cursor cursor = cr.query(uri, projection, null, null, null);
-        try {
-            if(cursor.moveToFirst()) {
-                cr.delete(uri, null, null);
+        if(cursor != null) {
+            try {
+                if(cursor.moveToFirst()) {
+                    cr.delete(uri, null, null);
 
-                final long entryId = cursor.getLong(0);
-                PhotoUtils.generateThumb(context, entryId);
-                cr.notifyChange(ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE,
-                        entryId), null);
+                    final long entryId = cursor.getLong(0);
+                    PhotoUtils.generateThumb(context, entryId);
+                    cr.notifyChange(ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE,
+                            entryId), null);
+                }
+            } finally {
+                cursor.close();
             }
-        } finally {
-            cursor.close();
         }
     }
 

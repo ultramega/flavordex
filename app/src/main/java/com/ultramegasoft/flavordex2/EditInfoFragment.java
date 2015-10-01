@@ -451,21 +451,26 @@ public class EditInfoFragment extends LoadingProgressFragment
         private EntryHolder loadEntry(Uri entryUri) {
             final EntryHolder entry = new EntryHolder();
             final Cursor cursor = getContext().getContentResolver().query(entryUri, null, null, null, null);
-            try {
-                if(cursor.moveToFirst()) {
-                    entry.title = cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
-                    entry.maker = cursor.getString(cursor.getColumnIndex(Tables.Entries.MAKER));
-                    entry.origin = cursor.getString(cursor.getColumnIndex(Tables.Entries.ORIGIN));
-                    entry.price = cursor.getString(cursor.getColumnIndex(Tables.Entries.PRICE));
-                    entry.location = cursor.getString(cursor.getColumnIndex(Tables.Entries.LOCATION));
-                    entry.date = cursor.getLong(cursor.getColumnIndex(Tables.Entries.DATE));
-                    entry.rating = cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING));
-                    entry.notes = cursor.getString(cursor.getColumnIndex(Tables.Entries.NOTES));
+            if(cursor != null) {
+                try {
+                    if(cursor.moveToFirst()) {
+                        entry.title = cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
+                        entry.maker = cursor.getString(cursor.getColumnIndex(Tables.Entries.MAKER));
+                        entry.origin =
+                                cursor.getString(cursor.getColumnIndex(Tables.Entries.ORIGIN));
+                        entry.price = cursor.getString(cursor.getColumnIndex(Tables.Entries.PRICE));
+                        entry.location =
+                                cursor.getString(cursor.getColumnIndex(Tables.Entries.LOCATION));
+                        entry.date = cursor.getLong(cursor.getColumnIndex(Tables.Entries.DATE));
+                        entry.rating =
+                                cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING));
+                        entry.notes = cursor.getString(cursor.getColumnIndex(Tables.Entries.NOTES));
 
-                    mCatId = cursor.getLong(cursor.getColumnIndex(Tables.Entries.CAT_ID));
+                        mCatId = cursor.getLong(cursor.getColumnIndex(Tables.Entries.CAT_ID));
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
             return entry;
         }
@@ -479,18 +484,20 @@ public class EditInfoFragment extends LoadingProgressFragment
             final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
             final Cursor cursor = mResolver.query(Uri.withAppendedPath(uri, "extras"), null, null,
                     null, Tables.Extras._ID + " ASC");
-            long id;
-            String name;
-            boolean preset;
-            try {
-                while(cursor.moveToNext()) {
-                    id = cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
-                    name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
-                    preset = cursor.getInt(cursor.getColumnIndex(Tables.Extras.PRESET)) == 1;
-                    holder.extras.put(name, new ExtraFieldHolder(id, name, preset));
+            if(cursor != null) {
+                long id;
+                String name;
+                boolean preset;
+                try {
+                    while(cursor.moveToNext()) {
+                        id = cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
+                        name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
+                        preset = cursor.getInt(cursor.getColumnIndex(Tables.Extras.PRESET)) == 1;
+                        holder.extras.put(name, new ExtraFieldHolder(id, name, preset));
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
         }
 
@@ -503,16 +510,18 @@ public class EditInfoFragment extends LoadingProgressFragment
         private void loadExtrasValues(Holder holder, Uri entryUri) {
             final Cursor cursor = mResolver.query(Uri.withAppendedPath(entryUri, "extras"), null,
                     null, null, null);
-            String name;
-            String value;
-            try {
-                while(cursor.moveToNext()) {
-                    name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
-                    value = cursor.getString(cursor.getColumnIndex(Tables.EntriesExtras.VALUE));
-                    holder.extras.get(name).value = value;
+            if(cursor != null) {
+                String name;
+                String value;
+                try {
+                    while(cursor.moveToNext()) {
+                        name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
+                        value = cursor.getString(cursor.getColumnIndex(Tables.EntriesExtras.VALUE));
+                        holder.extras.get(name).value = value;
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
         }
 
