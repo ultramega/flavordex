@@ -590,9 +590,9 @@ public class EntryListFragment extends ListFragment
             });
 
             mExportInAnimation = AnimationUtils.loadAnimation(getContext(),
-                    android.support.v7.appcompat.R.anim.abc_slide_in_bottom);
+                    R.anim.toolbar_slide_in_bottom);
             mExportOutAnimation = AnimationUtils.loadAnimation(getContext(),
-                    android.support.v7.appcompat.R.anim.abc_slide_out_bottom);
+                    R.anim.toolbar_slide_out_bottom);
         }
 
         invalidateExportMenu();
@@ -658,9 +658,9 @@ public class EntryListFragment extends ListFragment
             });
 
             mFilterInAnimation = AnimationUtils.loadAnimation(getContext(),
-                    android.support.v7.appcompat.R.anim.abc_slide_in_top);
+                    R.anim.toolbar_slide_in_top);
             mFilterOutAnimation = AnimationUtils.loadAnimation(getContext(),
-                    android.support.v7.appcompat.R.anim.abc_slide_out_top);
+                    R.anim.toolbar_slide_out_top);
         }
 
         mFilterToolbar.setVisibility(show ? View.VISIBLE : View.GONE);
