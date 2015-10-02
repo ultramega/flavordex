@@ -225,6 +225,7 @@ public class EntryUtils {
         final ContentResolver cr = context.getContentResolver();
         final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, id);
         cr.delete(uri, null, null);
+        PhotoUtils.deleteThumb(context, id);
     }
 
     /**

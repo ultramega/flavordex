@@ -278,7 +278,7 @@ public class PhotoUtils {
      * @param context The Context
      * @param id      The entry ID
      */
-    private static void deleteThumb(Context context, long id) {
+    public static void deleteThumb(Context context, long id) {
         final File file = getThumbFile(context, id);
         if(file.exists()) {
             sThumbCache.remove(id);
