@@ -111,12 +111,9 @@ public class EntryListActivity extends AppCompatActivity {
             final FragmentManager fm = getSupportFragmentManager();
             final Fragment fragment = fm.findFragmentById(R.id.entry_detail_container);
             if(fragment instanceof ViewEntryFragment) {
-                if(((ViewEntryFragment)fragment).onBackButtonPressed()) {
-                    return;
+                if(!((ViewEntryFragment)fragment).onBackButtonPressed()) {
+                    ((EntryListFragment)fm.findFragmentById(R.id.entry_list)).clearSelection();
                 }
-            }
-            if(fragment != null) {
-                ((EntryListFragment)fm.findFragmentById(R.id.entry_list)).clearSelection();
                 return;
             }
         }
