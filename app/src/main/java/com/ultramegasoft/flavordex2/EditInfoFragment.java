@@ -290,15 +290,22 @@ public class EditInfoFragment extends LoadingProgressFragment
             spinner.setSelection(Integer.valueOf(extra.value));
         }
 
+        final AdapterView.OnItemSelectedListener listener = spinner.getOnItemSelectedListener();
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 extra.value = position + "";
+                if(listener != null) {
+                    listener.onItemSelected(parent, view, position, id);
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                if(listener != null) {
+                    listener.onNothingSelected(parent);
+                }
             }
         });
     }

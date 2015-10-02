@@ -101,7 +101,8 @@ public class EditCoffeeInfoFragment extends EditInfoFragment {
         initEditText(mTxtEspMass, extras.get(Tables.Extras.Coffee.STATS_MASS));
         initEditText(mTxtWaterMass, extras.get(Tables.Extras.Coffee.STATS_MASS));
         initEditText(mTxtTemp, extras.get(Tables.Extras.Coffee.STATS_TEMP));
-        initExtractionTime(mTxtExtTimeM, mTxtExtTimeS, extras.get(Tables.Extras.Coffee.STATS_EXTIME));
+        initExtractionTime(mTxtExtTimeM, mTxtExtTimeS,
+                extras.get(Tables.Extras.Coffee.STATS_EXTIME));
         initEditText(mTxtTDS, extras.get(Tables.Extras.Coffee.STATS_TDS));
         initEditText(mTxtYield, extras.get(Tables.Extras.Coffee.STATS_YIELD));
     }
