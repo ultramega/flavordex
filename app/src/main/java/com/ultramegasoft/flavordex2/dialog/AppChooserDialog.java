@@ -288,7 +288,7 @@ public class AppChooserDialog extends DialogFragment {
          * Keys for the Fragment arguments
          */
         private static final String ARG_APP_IDS = "app_ids";
-        private static final String ARG_APP_NAMES = "app_namess";
+        private static final String ARG_APP_NAMES = "app_names";
 
         /**
          * The list of source apps to import from
