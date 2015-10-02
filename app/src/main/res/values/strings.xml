@@ -169,6 +169,8 @@
     <string name="error_required">required</string>
     <string name="error_no_app">Error: No applications found to complete your request \</string>
     <string name="error_no_email">Error: No email client found</string>
+    <string name="error_insert_photo">Error: Failed to save photo</string>
+    <string name="error_insert_entry">Error: Failed to create new entry</string>
 
     <string name="share_subject">I logged %s on Flavordex</string>
     <string name="share_body">I logged %1$s in my %2$s with a %3$.1f rating.\n\nvia Flavordex</string>

@@ -1,11 +1,11 @@
 package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +17,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +26,7 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
@@ -146,7 +148,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         notifyDataChanged();
         mPager.setCurrentItem(getPhotos().size() - 1, true);
 
-        new PhotoSaver(getContext().getContentResolver(), mEntryId, photo).execute();
+        new PhotoSaver(getContext(), mEntryId, photo).execute();
 
     }
 
@@ -301,11 +303,11 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     /**
      * Task to insert a photo into the database in the background.
      */
-    private static class PhotoSaver extends AsyncTask<Void, Void, Void> {
+    private static class PhotoSaver extends AsyncTask<Void, Void, Boolean> {
         /**
-         * The ContentResolver to use
+         * The Context
          */
-        private final ContentResolver mResolver;
+        private final Context mContext;
 
         /**
          * The entry ID to assign the photo to
@@ -318,29 +320,42 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         private final PhotoHolder mPhoto;
 
         /**
-         * @param cr      The ContentResolver to use
+         * @param context The Context
          * @param entryId The entry ID
          * @param photo   The photo to save
          */
-        public PhotoSaver(ContentResolver cr, long entryId, PhotoHolder photo) {
-            mResolver = cr;
+        public PhotoSaver(Context context, long entryId, PhotoHolder photo) {
+            mContext = context.getApplicationContext();
             mEntryId = entryId;
             mPhoto = photo;
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Boolean doInBackground(Void... params) {
             Uri uri =
                     Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/photos");
 
             final ContentValues values = new ContentValues();
             values.put(Tables.Photos.PATH, mPhoto.path);
 
-            uri = mResolver.insert(uri, values);
-            if(uri != null) {
-                mPhoto.id = Long.valueOf(uri.getLastPathSegment());
+            try {
+                uri = mContext.getContentResolver().insert(uri, values);
+                if(uri != null) {
+                    mPhoto.id = Long.valueOf(uri.getLastPathSegment());
+                    return true;
+                }
+            } catch(SQLiteException e) {
+                Log.e(getClass().getSimpleName(), e.getMessage());
             }
-            return null;
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if(!result) {
+                Toast.makeText(mContext, R.string.error_insert_photo, Toast.LENGTH_LONG).show();
+            }
         }
     }
 

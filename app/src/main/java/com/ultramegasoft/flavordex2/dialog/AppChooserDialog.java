@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -377,7 +379,11 @@ public class AppChooserDialog extends DialogFragment {
                         int j = 0;
                         while(cursor.moveToNext()) {
                             entry = AppImportUtils.importEntry(mContext, appId, cursor.getLong(0));
-                            EntryUtils.insertEntry(cr, entry);
+                            try {
+                                EntryUtils.insertEntry(cr, entry);
+                            } catch(SQLiteException e) {
+                                Log.e(getClass().getSimpleName(), e.getMessage());
+                            }
                             publishProgress(i, ++j, count);
                         }
                     } finally {

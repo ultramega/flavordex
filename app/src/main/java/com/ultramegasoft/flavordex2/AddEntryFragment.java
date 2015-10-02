@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,6 +18,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -324,12 +326,18 @@ public class AddEntryFragment extends Fragment {
 
             @Override
             protected Long doInBackground(Void... params) {
-                if(mEntry.getFlavors().isEmpty()) {
-                    getDefaultFlavors();
+                try {
+                    if(mEntry.getFlavors().isEmpty()) {
+                        getDefaultFlavors();
+                    }
+                    final Uri entryUri = EntryUtils.insertEntry(mResolver, mEntry);
+                    checkLocation(mEntry.location);
+                    return Long.valueOf(entryUri.getLastPathSegment());
+                } catch(SQLiteException e) {
+                    Log.e(getClass().getSimpleName(), e.getMessage());
                 }
-                final Uri entryUri = EntryUtils.insertEntry(mResolver, mEntry);
-                checkLocation(mEntry.location);
-                return Long.valueOf(entryUri.getLastPathSegment());
+
+                return 0L;
             }
 
             @Override

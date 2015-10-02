@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -230,7 +232,11 @@ public class FileImportDialog extends ImportDialog
 
                 int i = 0;
                 for(EntryHolder entry : mEntries) {
-                    EntryUtils.insertEntry(cr, entry);
+                    try {
+                        EntryUtils.insertEntry(cr, entry);
+                    } catch(SQLiteException e) {
+                        Log.e(getClass().getSimpleName(), e.getMessage());
+                    }
                     publishProgress(++i);
                 }
                 return null;

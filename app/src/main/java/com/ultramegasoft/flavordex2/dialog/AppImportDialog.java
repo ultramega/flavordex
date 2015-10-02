@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -213,7 +215,11 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
                 int i = 0;
                 for(long id : mEntryIds) {
                     entry = AppImportUtils.importEntry(mContext, mApp, id);
-                    EntryUtils.insertEntry(cr, entry);
+                    try {
+                        EntryUtils.insertEntry(cr, entry);
+                    } catch(SQLiteException e) {
+                        Log.e(getClass().getSimpleName(), e.getMessage());
+                    }
                     publishProgress(++i);
                 }
                 return null;

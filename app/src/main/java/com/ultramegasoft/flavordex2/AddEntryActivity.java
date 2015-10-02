@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
@@ -93,12 +94,16 @@ public class AddEntryActivity extends AppCompatActivity {
      * @param entryCatId The ID for the entry category
      */
     public void publishResult(long entryId, String entryCat, long entryCatId) {
-        final Intent data = new Intent();
-        data.putExtra(EXTRA_ENTRY_ID, entryId);
-        data.putExtra(EXTRA_ENTRY_CAT, entryCat);
-        data.putExtra(EXTRA_ENTRY_CAT_ID, entryCatId);
+        if(entryId == 0) {
+            Toast.makeText(this, R.string.error_insert_entry, Toast.LENGTH_LONG).show();
+        } else {
+            final Intent data = new Intent();
+            data.putExtra(EXTRA_ENTRY_ID, entryId);
+            data.putExtra(EXTRA_ENTRY_CAT, entryCat);
+            data.putExtra(EXTRA_ENTRY_CAT_ID, entryCatId);
 
-        setResult(RESULT_OK, data);
-        finish();
+            setResult(RESULT_OK, data);
+            finish();
+        }
     }
 }
