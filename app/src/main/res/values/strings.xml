@@ -133,7 +133,6 @@
     <string name="field_location">Tasting Location</string>
     <string name="field_date">Date/Time</string>
 
-    <string name="message_welcome">Welcome to Flavordex</string>
     <string name="message_no_data">No entries found.</string>
     <string name="message_no_data_filter">No entries found matching &lt;b>%s&lt;/b>.</string>
     <string name="message_confirm_delete">Are you sure you want to delete &lt;b>%s&lt;/b>?</string>
@@ -180,6 +179,9 @@
     <string name="filter_origin">Origin</string>
     <string name="filter_location">Location</string>
     <string name="filter_date">Entry Date</string>
+
+    <string name="welcome_header">Welcome to Flavordex</string>
+    <string name="welcome_description">Tasting Journal</string>
 
     <string name="about_website_url" translatable="false">http://flavordex.com/</string>
     <string name="about_email" translatable="false">flavordex@ultramegasoft.com</string>

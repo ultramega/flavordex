@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:gravity="center"
         android:orientation="vertical">
 
         <TextView
@@ -18,18 +19,31 @@
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
             android:gravity="center"
-            android:text="@string/message_welcome"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:text="@string/welcome_header"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textIsSelectable="true"
             tools:ignore="UnusedAttribute" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="40dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="30dp"
             android:contentDescription="@string/app_name"
             android:src="@drawable/logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="@string/app_name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/welcome_description"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     </LinearLayout>
 
@@ -40,7 +54,7 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="40dp">
+        android:padding="30dp">
 
         <TextView
             android:id="@+id/text_version"
