@@ -86,8 +86,8 @@
     <string name="button_clear">Clear</string>
     <string name="button_undo">Undo</string>
     <string name="button_add_photo">Add Photo</string>
-    <string name="button_select_photo">From Gallery</string>
-    <string name="button_take_photo">From Camera</string>
+    <string name="button_select_photo">Add From Gallery</string>
+    <string name="button_take_photo">Add From Camera</string>
     <string name="button_remove_photo">Remove Photo</string>
     <string name="button_clear_filter">Remove Filters</string>
     <string name="button_select_dir">Select Directory</string>
