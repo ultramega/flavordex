@@ -19,3 +19,15 @@
 -keep public class android.support.v7.widget.ShareActionProvider {
     <init>(...);
 }
+
+-keep public class android.support.v7.preference.Preference {
+    <init>(...);
+}
+
+-keep public class android.support.v7.preference.PreferenceScreen {
+    <init>(...);
+}
+
+-keep public class android.support.v7.preference.CheckBoxPreference {
+    <init>(...);
+}
