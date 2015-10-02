@@ -166,8 +166,6 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param data The Cursor set to the correct row
      */
     private void populateViews(Cursor data) {
-        ((ViewEntryFragment)getParentFragment()).setEntryTitle(mTitle);
-
         mTxtTitle.setText(mTitle);
 
         final String maker = data.getString(data.getColumnIndex(Tables.Entries.MAKER));

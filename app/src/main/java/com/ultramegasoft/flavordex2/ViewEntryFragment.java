@@ -1,13 +1,20 @@
 package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -21,6 +28,7 @@ import android.widget.TabHost;
 import com.ultramegasoft.flavordex2.beer.ViewBeerInfoFragment;
 import com.ultramegasoft.flavordex2.coffee.ViewCoffeeInfoFragment;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
+import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryDeleter;
 import com.ultramegasoft.flavordex2.whiskey.ViewWhiskeyInfoFragment;
 import com.ultramegasoft.flavordex2.wine.ViewWineInfoFragment;
@@ -31,7 +39,7 @@ import com.ultramegasoft.flavordex2.wine.ViewWineInfoFragment;
  *
  * @author Steve Guidetti
  */
-public class ViewEntryFragment extends Fragment {
+public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Keys for the Fragment arguments
      */
@@ -43,11 +51,6 @@ public class ViewEntryFragment extends Fragment {
      * Request code for deleting an entry
      */
     private static final int REQUEST_DELETE_ENTRY = 100;
-
-    /**
-     * Keys for the saved state
-     */
-    private static final String STATE_ENTRY_TITLE = "entry_title";
 
     /**
      * The database ID for this entry
@@ -69,9 +72,12 @@ public class ViewEntryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mEntryId = getArguments().getLong(ARG_ENTRY_ID);
-        if(savedInstanceState != null) {
-            setEntryTitle(savedInstanceState.getString(STATE_ENTRY_TITLE));
-        }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -126,13 +132,6 @@ public class ViewEntryFragment extends Fragment {
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
                 case REQUEST_DELETE_ENTRY:
-                    final FragmentManager fm = getFragmentManager();
-                    final Fragment fragment = fm.findFragmentById(R.id.entry_list);
-                    if(fragment instanceof EntryListFragment) {
-                        ((EntryListFragment)fragment).clearSelection();
-                    } else {
-                        getActivity().finish();
-                    }
                     new EntryDeleter(getContext(), mEntryId).execute();
                     return;
             }
@@ -141,12 +140,6 @@ public class ViewEntryFragment extends Fragment {
         if(fragment != null) {
             fragment.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(STATE_ENTRY_TITLE, mEntryTitle);
     }
 
     /**
@@ -163,6 +156,24 @@ public class ViewEntryFragment extends Fragment {
             }
         }
         return false;
+    }
+
+    /**
+     * Called when the entry no longer exists.
+     */
+    private void onEntryDeleted() {
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                final FragmentManager fm = getFragmentManager();
+                final Fragment fragment = fm.findFragmentById(R.id.entry_list);
+                if(fragment instanceof EntryListFragment) {
+                    ((EntryListFragment)fragment).clearSelection();
+                } else {
+                    getActivity().finish();
+                }
+            }
+        });
     }
 
     /**
@@ -194,11 +205,31 @@ public class ViewEntryFragment extends Fragment {
      *
      * @param title The title of the entry
      */
-    public void setEntryTitle(String title) {
+    private void setEntryTitle(String title) {
         mEntryTitle = title;
         final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if(actionBar != null) {
             actionBar.setSubtitle(title);
         }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId);
+        final String[] projection = new String[] {Tables.Entries.TITLE};
+        return new CursorLoader(getContext(), uri, projection, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if(data.moveToFirst()) {
+            setEntryTitle(data.getString(data.getColumnIndex(Tables.Entries.TITLE)));
+        } else {
+            onEntryDeleted();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
     }
 }

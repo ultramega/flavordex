@@ -398,9 +398,6 @@ public class EntryListFragment extends ListFragment
                     break;
                 case REQUEST_DELETE_ENTRY:
                     final long id = data.getLongExtra(EXTRA_ENTRY_ID, 0);
-                    if(mTwoPane && id == mActivatedItem) {
-                        clearSelection();
-                    }
                     new EntryDeleter(getContext(), id).execute();
                     break;
             }
