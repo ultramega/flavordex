@@ -28,7 +28,7 @@ public class FlavordexApp extends Application implements
     /**
      * Enable developer features
      */
-    public static final boolean DEVELOPER_MODE = true;
+    public static final boolean DEVELOPER_MODE = false;
 
     /**
      * Preference names
