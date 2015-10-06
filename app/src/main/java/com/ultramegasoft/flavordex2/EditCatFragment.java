@@ -56,7 +56,7 @@ public class EditCatFragment extends LoadingProgressFragment
     /**
      * Request codes for external Activities
      */
-    private static final int REQUEST_DELETE_CAT = 100;
+    private static final int REQUEST_DELETE_CAT = 200;
 
     /**
      * Keys for the saved state

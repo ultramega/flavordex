@@ -32,7 +32,7 @@ public abstract class AbsPhotosFragment extends Fragment {
      * Request codes for external Activities
      */
     private static final int REQUEST_CAPTURE_IMAGE = 100;
-    private static final int REQUEST_SELECT_IMAGE = 200;
+    private static final int REQUEST_SELECT_IMAGE = 101;
 
     /**
      * Keys for the saved state

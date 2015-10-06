@@ -58,11 +58,11 @@ public class EntryListFragment extends ListFragment
     /**
      * Request codes for external Activities
      */
-    private static final int REQUEST_SET_FILTERS = 100;
-    private static final int REQUEST_ADD_ENTRY = 200;
-    private static final int REQUEST_IMPORT_FILE = 300;
-    private static final int REQUEST_DELETE_ENTRY = 400;
-    private static final int REQUEST_SELECT_CAT = 500;
+    private static final int REQUEST_SET_FILTERS = 300;
+    private static final int REQUEST_ADD_ENTRY = 301;
+    private static final int REQUEST_IMPORT_FILE = 302;
+    private static final int REQUEST_DELETE_ENTRY = 303;
+    private static final int REQUEST_SELECT_CAT = 304;
 
     /**
      * Extras for Activity results

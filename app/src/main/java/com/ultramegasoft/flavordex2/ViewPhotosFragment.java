@@ -51,7 +51,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     /**
      * Request codes for external Activities
      */
-    private static final int REQUEST_DELETE_IMAGE = 300;
+    private static final int REQUEST_DELETE_IMAGE = 700;
 
     /**
      * The database ID for this entry

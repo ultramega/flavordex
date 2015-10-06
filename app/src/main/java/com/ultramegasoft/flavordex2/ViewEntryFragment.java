@@ -50,7 +50,7 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
     /**
      * Request code for deleting an entry
      */
-    private static final int REQUEST_DELETE_ENTRY = 100;
+    private static final int REQUEST_DELETE_ENTRY = 500;
 
     /**
      * The database ID for this entry

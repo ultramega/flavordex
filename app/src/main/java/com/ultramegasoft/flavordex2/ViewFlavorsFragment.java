@@ -45,7 +45,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     /**
      * Request codes for external Activities
      */
-    private static final int REQUEST_RESET = 100;
+    private static final int REQUEST_RESET = 600;
 
     /**
      * Keys for the saved state of this Fragment

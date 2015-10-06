@@ -66,7 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
         /**
          * Request codes for external Activities
          */
-        private static final int REQUEST_EDIT_CAT = 100;
+        private static final int REQUEST_EDIT_CAT = 400;
 
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
