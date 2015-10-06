@@ -38,6 +38,7 @@ public abstract class AbsPhotosFragment extends Fragment {
      * Keys for the saved state
      */
     private static final String STATE_PHOTOS = "photos";
+    private static final String STATE_CAPTURE_URI = "capture_uri";
 
     /**
      * Whether the external storage is readable
@@ -73,6 +74,7 @@ public abstract class AbsPhotosFragment extends Fragment {
 
         if(savedInstanceState != null) {
             mPhotos = savedInstanceState.getParcelableArrayList(STATE_PHOTOS);
+            mCapturedPhoto = savedInstanceState.getParcelable(STATE_CAPTURE_URI);
         }
     }
 
@@ -106,6 +108,7 @@ public abstract class AbsPhotosFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(STATE_PHOTOS, mPhotos);
+        outState.putParcelable(STATE_CAPTURE_URI, mCapturedPhoto);
     }
 
     @Override
