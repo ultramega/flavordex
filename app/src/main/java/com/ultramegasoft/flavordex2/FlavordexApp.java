@@ -34,6 +34,7 @@ public class FlavordexApp extends Application implements
      * Preference names
      */
     public static final String PREF_FIRST_RUN = "pref_first_run";
+    public static final String PREF_SYNC_PHOTOS = "pref_sync_photos";
     public static final String PREF_DETECT_LOCATION = "pref_detect_location";
     public static final String PREF_LIST_SORT_FIELD = "pref_list_sort_field";
     public static final String PREF_LIST_SORT_REVERSED = "pref_list_sort_reversed";
@@ -121,6 +122,9 @@ public class FlavordexApp extends Application implements
         prefs.registerOnSharedPreferenceChangeListener(this);
         if(prefs.getBoolean(PREF_DETECT_LOCATION, false)) {
             setLocationEnabled(true);
+        }
+        if(prefs.getBoolean(PREF_SYNC_PHOTOS, false)) {
+            PhotoSyncService.syncPhotos(this);
         }
     }
 
