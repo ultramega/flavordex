@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * The current version of the schema, incremented by 1 for each iteration
      */
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     /**
      * The Context
@@ -60,6 +60,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        StringBuilder query;
+        switch(oldVersion) {
+            case 1:
+                query = new StringBuilder("ALTER TABLE `").append(Tables.Photos.TABLE_NAME)
+                        .append("` ADD COLUMN `").append(Tables.Photos.DRIVE_ID).append("` TEXT;");
+                db.execSQL(query.toString());
+        }
     }
 
     /**

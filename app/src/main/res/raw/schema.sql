@@ -57,7 +57,8 @@ CREATE TABLE `makers` (
 CREATE TABLE `photos` (
   `_id` INTEGER PRIMARY KEY,
   `entry` INTEGER,
-  `path` TEXT
+  `path` TEXT,
+  `drive_id` TEXT
 );
 --
 CREATE TABLE `cats` (

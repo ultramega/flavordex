@@ -284,6 +284,7 @@ public class Tables {
          */
         public static final String ENTRY = "entry";
         public static final String PATH = "path";
+        public static final String DRIVE_ID = "drive_id";
 
         /**
          * Content data types
