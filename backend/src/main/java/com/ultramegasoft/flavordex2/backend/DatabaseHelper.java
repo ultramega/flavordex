@@ -73,6 +73,34 @@ public class DatabaseHelper {
     }
 
     /**
+     * Unregister a client device from the database.
+     *
+     * @param clientId The database ID of the client
+     * @param gId      The Google user ID
+     */
+    public static void unregisterClient(long clientId, String gId) {
+        try {
+            final Connection conn = getConnection();
+            try {
+                final long userId = getUserId(conn, gId);
+                if(userId > 0) {
+                    final String sql = "DELETE FROM clients WHERE id = ? AND user = ?";
+                    final PreparedStatement stmt = conn.prepareStatement(sql);
+                    stmt.setLong(1, clientId);
+                    stmt.setLong(2, userId);
+                    stmt.executeUpdate();
+                }
+            } finally {
+                if(conn != null) {
+                    conn.close();
+                }
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Get the database ID of a user, creating one if it doesn't exist.
      *
      * @param conn The database connection
