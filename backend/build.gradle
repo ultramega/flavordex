@@ -26,6 +26,7 @@ dependencies {
     compile 'com.google.appengine:appengine-endpoints:1.9.27'
     compile 'com.google.appengine:appengine-endpoints-deps:1.9.27'
     compile 'javax.servlet:servlet-api:2.5'
+    compile 'mysql:mysql-connector-java:5.1.37'
 }
 
 appengine {
