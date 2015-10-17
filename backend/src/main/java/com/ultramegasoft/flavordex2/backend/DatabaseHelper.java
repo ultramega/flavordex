@@ -19,7 +19,12 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/flavordex2");
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch(ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/flavordex2?user=root");
     }
 
     /**
