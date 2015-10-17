@@ -124,7 +124,9 @@ public class DatabaseHelper {
         } else {
             sql = "INSERT INTO users (g_id) VALUES (?)";
             stmt = conn.prepareStatement(sql);
+            stmt.setString(1, gId);
             stmt.executeUpdate();
+
             result = stmt.getGeneratedKeys();
             if(result.next()) {
                 return result.getLong(1);
