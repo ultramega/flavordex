@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2.backend;
 
+import com.google.api.server.spi.Constant;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -26,7 +27,8 @@ import javax.inject.Named;
         },
         clientIds = {
                 BackendConstants.WEB_CLIENT_ID,
-                BackendConstants.ANDROID_CLIENT_ID
+                BackendConstants.ANDROID_CLIENT_ID,
+                Constant.API_EXPLORER_CLIENT_ID
         },
         audiences = {
                 BackendConstants.ANDROID_AUDIENCE
