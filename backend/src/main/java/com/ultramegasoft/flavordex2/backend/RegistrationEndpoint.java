@@ -28,6 +28,7 @@ import javax.inject.Named;
         clientIds = {
                 BackendConstants.WEB_CLIENT_ID,
                 BackendConstants.ANDROID_CLIENT_ID,
+                BackendConstants.ANDROID_CLIENT_ID_DEBUG,
                 Constant.API_EXPLORER_CLIENT_ID
         },
         audiences = {
