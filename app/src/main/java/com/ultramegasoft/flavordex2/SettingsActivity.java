@@ -272,6 +272,7 @@ public class SettingsActivity extends AppCompatActivity {
             } else if(FlavordexApp.PREF_SYNC_DATA.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
                     ((CheckBoxPreference)findPreference(key)).setChecked(true);
+                    BackendService.syncData(getContext());
                 }
             } else if(FlavordexApp.PREF_SYNC_PHOTOS.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
