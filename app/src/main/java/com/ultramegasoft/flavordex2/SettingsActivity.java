@@ -21,6 +21,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
+import com.ultramegasoft.flavordex2.dialog.DriveConnectDialog;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
@@ -35,7 +36,6 @@ public class SettingsActivity extends AppCompatActivity {
      */
     private static final int REQUEST_EDIT_CAT = 400;
     private static final int REQUEST_SELECT_ACCOUNT = 401;
-    private static final int REQUEST_CONNECT_DRIVE = 402;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,7 +82,9 @@ public class SettingsActivity extends AppCompatActivity {
             if(accountName != null) {
                 registerClient(accountName);
             }
+            return;
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
@@ -240,20 +242,12 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
                     if((Boolean)o) {
-                        connectToDrive();
+                        DriveConnectDialog.showDialog(getFragmentManager());
                         return false;
                     }
                     return true;
                 }
             });
-        }
-
-        /**
-         * Launch the Activity to authorize the connection to Google Drive.
-         */
-        private void connectToDrive() {
-            final Intent intent = new Intent(getContext(), DriveConnectActivity.class);
-            startActivityForResult(intent, REQUEST_CONNECT_DRIVE);
         }
 
         @Override
@@ -264,15 +258,6 @@ public class SettingsActivity extends AppCompatActivity {
                         EditCatActivity.startActivity(getContext(),
                                 data.getLongExtra(CatListDialog.EXTRA_CAT_ID, 0),
                                 data.getStringExtra(CatListDialog.EXTRA_CAT_NAME));
-                    }
-                    break;
-                case REQUEST_CONNECT_DRIVE:
-                    if(resultCode == RESULT_OK) {
-                        PreferenceManager.getDefaultSharedPreferences(getContext()).edit()
-                                .putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, true).apply();
-                    } else if(data != null) {
-                        GoogleApiAvailability.getInstance().showErrorDialogFragment(getActivity(),
-                                data.getIntExtra(DriveConnectActivity.EXTRA_ERROR_CODE, 0), 0);
                     }
                     break;
             }

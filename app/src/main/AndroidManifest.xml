@@ -67,9 +67,6 @@
             android:label="@string/title_settings"
             android:parentActivityName=".EntryListActivity"
             android:theme="@style/AppTheme.DialogWhenLarge" />
-        <activity
-            android:name=".DriveConnectActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <provider
             android:name=".provider.FlavordexProvider"
