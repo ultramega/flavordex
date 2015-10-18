@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <Preference
-        android:key="pref_edit_cats"
-        android:summary="@string/pref_summary_edit_cats"
-        android:title="@string/pref_edit_cats" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="pref_sync_photos"
-        android:summary="@string/pref_summary_sync_photos"
-        android:title="@string/pref_sync_photos" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="pref_detect_location"
-        android:summary="@string/pref_summary_detect_location"
-        android:title="@string/pref_detect_location" />
+    <PreferenceCategory android:title="@string/pref_cat_general">
+        <Preference
+            android:key="pref_edit_cats"
+            android:summary="@string/pref_summary_edit_cats"
+            android:title="@string/pref_edit_cats" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_detect_location"
+            android:summary="@string/pref_summary_detect_location"
+            android:title="@string/pref_detect_location" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="pref_cat_sync"
+        android:title="@string/pref_cat_sync">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_sync_data"
+            android:summary="@string/pref_summary_sync_data"
+            android:title="@string/pref_sync_data" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_sync_photos"
+            android:summary="@string/pref_summary_sync_photos"
+            android:title="@string/pref_sync_photos" />
+    </PreferenceCategory>
 </PreferenceScreen>

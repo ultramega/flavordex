@@ -26,8 +26,9 @@ public class PermissionUtils {
     /**
      * Request codes
      */
-    private static final int REQUEST_STORAGE = 10;
-    private static final int REQUEST_LOCATION = 20;
+    public static final int REQUEST_STORAGE = 10;
+    public static final int REQUEST_LOCATION = 20;
+    public static final int REQUEST_ACCOUNTS = 30;
 
     /**
      * Check whether we have permission to read and write external storage.
@@ -132,6 +133,67 @@ public class PermissionUtils {
     public static void requestLocationPerm(Activity activity) {
         ActivityCompat.requestPermissions(activity,
                 new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+    }
+
+    /**
+     * Should we ask for location permissions? Returns true if the user has previously denied
+     * permission but has not checked 'Never ask again.'
+     *
+     * @param activity The Activity making the request
+     * @return Whether we should ask for location permissions
+     */
+    public static boolean shouldAskLocationPerm(Activity activity) {
+        return ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                Manifest.permission.ACCESS_COARSE_LOCATION);
+    }
+
+    /**
+     * Check whether we have permission to access the user's accounts.
+     *
+     * @param context The Context
+     * @return Whether we have permission to access the user's accounts
+     */
+    public static boolean hasAccountsPerm(Context context) {
+        return PermissionChecker.checkSelfPermission(context,
+                Manifest.permission.GET_ACCOUNTS) == PermissionChecker.PERMISSION_GRANTED;
+    }
+
+    /**
+     * Make a request for accounts permission from the user if they are not already granted.
+     *
+     * @param activity The Activity making the request
+     * @return Whether we already have accounts permission
+     */
+    public static boolean checkAccountsPerm(final FragmentActivity activity) {
+        if(hasAccountsPerm(activity)) {
+            return true;
+        }
+
+        requestAccountsPerm(activity);
+
+        return false;
+    }
+
+    /**
+     * Make the actual request from the user for accounts permission.
+     *
+     * @param activity The Activity making the request
+     */
+    public static void requestAccountsPerm(Activity activity) {
+        ActivityCompat.requestPermissions(activity,
+                new String[] {Manifest.permission.GET_ACCOUNTS}, REQUEST_ACCOUNTS);
+    }
+
+    /**
+     * Should we ask for accounts permission? Returns true if the user has previously denied
+     * permission but has not checked 'Never ask again.'
+     *
+     * @param activity The Activity making the request
+     * @return Whether we should ask for accounts permission
+     */
+    public static boolean shouldAskAccountsPerm(Activity activity) {
+        return ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                Manifest.permission.GET_ACCOUNTS);
     }
 
     /**

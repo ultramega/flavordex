@@ -4,8 +4,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="com.flavordex.permissions.ACCESS_DATA" />
 
     <uses-feature
@@ -75,6 +76,9 @@
             android:enabled="true"
             android:exported="false" />
 
+        <service
+            android:name=".BackendService"
+            android:exported="false" />
         <service
             android:name=".PhotoSyncService"
             android:exported="false" />
