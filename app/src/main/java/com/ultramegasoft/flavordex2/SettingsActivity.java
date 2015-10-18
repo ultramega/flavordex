@@ -213,6 +213,7 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
                     if(!(boolean)o) {
+                        BackendService.unregisterClient(getContext());
                         return true;
                     }
                     if(PermissionUtils.checkAccountsPerm(getActivity())) {

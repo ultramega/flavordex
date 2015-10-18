@@ -3,6 +3,7 @@ package com.ultramegasoft.flavordex2;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -30,7 +31,8 @@ public class BackendService extends IntentService {
      * Commands this service will accept
      */
     private static final int COMMAND_REGISTER = 0;
-    private static final int COMMAND_SYNC = 1;
+    private static final int COMMAND_UNREGISTER = 1;
+    private static final int COMMAND_SYNC = 2;
 
     /**
      * The API project number
@@ -55,6 +57,17 @@ public class BackendService extends IntentService {
     }
 
     /**
+     * Unregister the client from the backend.
+     *
+     * @param context The Context
+     */
+    public static void unregisterClient(Context context) {
+        final Intent intent = new Intent(context, BackendService.class);
+        intent.putExtra(EXTRA_COMMAND, COMMAND_UNREGISTER);
+        context.startService(intent);
+    }
+
+    /**
      * Sync the journal data with the backend.
      *
      * @param context The Context
@@ -70,6 +83,9 @@ public class BackendService extends IntentService {
         switch(intent.getIntExtra(EXTRA_COMMAND, -1)) {
             case COMMAND_REGISTER:
                 doRegisterClient(intent.getStringExtra(EXTRA_ACCOUNT_NAME));
+                break;
+            case COMMAND_UNREGISTER:
+                doUnregisterClient();
                 break;
             case COMMAND_SYNC:
                 doSyncData();
@@ -107,6 +123,32 @@ public class BackendService extends IntentService {
         } catch(IOException e) {
             Log.e(getClass().getSimpleName(), e.getMessage());
         }
+    }
+
+    /**
+     * Handle client unregistration.
+     */
+    private void doUnregisterClient() {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
+        if(accountName == null) {
+            return;
+        }
+
+        final GoogleAccountCredential credential = BackendUtils.getCredential(this);
+        credential.setSelectedAccountName(accountName);
+
+        final Registration registration = BackendUtils.getRegistration(credential);
+        try {
+            InstanceID.getInstance(this)
+                    .deleteToken(PROJECT_NUMBER, GoogleCloudMessaging.INSTANCE_ID_SCOPE);
+            registration.unregister(BackendUtils.getClientId(this)).execute();
+        } catch(IOException e) {
+            Log.e(getClass().getSimpleName(), e.getMessage());
+        }
+
+        BackendUtils.setClientId(this, 0);
+        prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_DATA, false).apply();
     }
 
     /**
