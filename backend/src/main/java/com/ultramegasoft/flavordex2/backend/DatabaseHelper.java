@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Database access helpers.
@@ -30,18 +31,18 @@ public class DatabaseHelper {
     /**
      * Register a client device with the database.
      *
-     * @param gId   The Google user ID
-     * @param gcmId The Google Cloud Messaging ID
+     * @param userEmail The user's email address
+     * @param gcmId     The Google Cloud Messaging ID
      * @return The RegistrationRecord
      */
-    public static RegistrationRecord registerClient(String gId, String gcmId) {
+    public static RegistrationRecord registerClient(String userEmail, String gcmId) {
         final RegistrationRecord record = new RegistrationRecord();
         try {
             Connection conn = null;
             try {
                 conn = getConnection();
 
-                final long id = getUserId(conn, gId);
+                final long id = getUserId(conn, userEmail);
 
                 String sql = "SELECT id, gcm_id FROM clients WHERE user = ?";
                 PreparedStatement stmt = conn.prepareStatement(sql);
@@ -56,7 +57,7 @@ public class DatabaseHelper {
                 }
 
                 sql = "INSERT INTO clients (user, gcm_id) VALUES (?, ?)";
-                stmt = conn.prepareStatement(sql);
+                stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 stmt.setLong(1, id);
                 stmt.setString(2, gcmId);
 
@@ -80,14 +81,14 @@ public class DatabaseHelper {
     /**
      * Unregister a client device from the database.
      *
-     * @param clientId The database ID of the client
-     * @param gId      The Google user ID
+     * @param clientId  The database ID of the client
+     * @param userEmail The user's email address
      */
-    public static void unregisterClient(long clientId, String gId) {
+    public static void unregisterClient(long clientId, String userEmail) {
         try {
             final Connection conn = getConnection();
             try {
-                final long userId = getUserId(conn, gId);
+                final long userId = getUserId(conn, userEmail);
                 if(userId > 0) {
                     final String sql = "DELETE FROM clients WHERE id = ? AND user = ?";
                     final PreparedStatement stmt = conn.prepareStatement(sql);
@@ -108,23 +109,23 @@ public class DatabaseHelper {
     /**
      * Get the database ID of a user, creating one if it doesn't exist.
      *
-     * @param conn The database connection
-     * @param gId  The Google user ID
+     * @param conn      The database connection
+     * @param userEmail The user's email address
      * @return The user's database ID
      * @throws SQLException
      */
-    private static long getUserId(Connection conn, String gId) throws SQLException {
-        String sql = "SELECT id FROM users WHERE g_id = ?";
+    private static long getUserId(Connection conn, String userEmail) throws SQLException {
+        String sql = "SELECT id FROM users WHERE email = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setString(1, gId);
+        stmt.setString(1, userEmail);
 
         ResultSet result = stmt.executeQuery();
         if(result.next()) {
             return result.getLong(1);
         } else {
-            sql = "INSERT INTO users (g_id) VALUES (?)";
-            stmt = conn.prepareStatement(sql);
-            stmt.setString(1, gId);
+            sql = "INSERT INTO users (email) VALUES (?)";
+            stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, userEmail);
             stmt.executeUpdate();
 
             result = stmt.getGeneratedKeys();

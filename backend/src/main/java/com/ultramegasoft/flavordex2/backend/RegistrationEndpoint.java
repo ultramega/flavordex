@@ -50,7 +50,7 @@ public class RegistrationEndpoint {
         if(user == null) {
             throw new UnauthorizedException("Unauthorized");
         }
-        return DatabaseHelper.registerClient(user.getUserId(), gcmId);
+        return DatabaseHelper.registerClient(user.getEmail(), gcmId);
     }
 
     /**
@@ -66,6 +66,6 @@ public class RegistrationEndpoint {
         if(user == null) {
             throw new UnauthorizedException("Unauthorized");
         }
-        DatabaseHelper.unregisterClient(clientId, user.getUserId());
+        DatabaseHelper.unregisterClient(clientId, user.getEmail());
     }
 }
