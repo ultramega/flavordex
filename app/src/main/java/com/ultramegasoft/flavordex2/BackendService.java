@@ -3,6 +3,16 @@ package com.ultramegasoft.flavordex2;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.preference.PreferenceManager;
+import android.util.Log;
+
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.ultramegasoft.flavordex2.backend.registration.Registration;
+import com.ultramegasoft.flavordex2.util.BackendUtils;
+
+import java.io.IOException;
 
 /**
  * Service for accessing the backend.
@@ -21,6 +31,11 @@ public class BackendService extends IntentService {
      */
     private static final int COMMAND_REGISTER = 0;
     private static final int COMMAND_SYNC = 1;
+
+    /**
+     * The API project number
+     */
+    private static final String PROJECT_NUMBER = "1001621163874";
 
     public BackendService() {
         super("BackendService");
@@ -68,7 +83,30 @@ public class BackendService extends IntentService {
      * @param accountName The name of the account to use
      */
     private void doRegisterClient(String accountName) {
-        // TODO: 10/18/2015 Implement registration
+        if(accountName == null) {
+            return;
+        }
+
+        final GoogleAccountCredential credential = BackendUtils.getCredential(this);
+        credential.setSelectedAccountName(accountName);
+
+        final InstanceID instanceID = InstanceID.getInstance(this);
+
+        try {
+            final String token =
+                    instanceID.getToken(PROJECT_NUMBER, GoogleCloudMessaging.INSTANCE_ID_SCOPE);
+
+            final Registration registration = BackendUtils.getRegistration(credential);
+            final long clientId = registration.register(token).execute().getClientId();
+            if(clientId > 0) {
+                BackendUtils.setClientId(this, clientId);
+                PreferenceManager.getDefaultSharedPreferences(this).edit()
+                        .putString(FlavordexApp.PREF_ACCOUNT_NAME, accountName)
+                        .putBoolean(FlavordexApp.PREF_SYNC_DATA, true).apply();
+            }
+        } catch(IOException e) {
+            Log.e(getClass().getSimpleName(), e.getMessage());
+        }
     }
 
     /**
