@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2;
+package com.ultramegasoft.flavordex2.service;
 
 import android.app.IntentService;
 import android.content.Context;
@@ -10,6 +10,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.backend.registration.Registration;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 

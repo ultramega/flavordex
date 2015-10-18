@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2;
+package com.ultramegasoft.flavordex2.fragment;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -26,6 +26,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ultramegasoft.flavordex2.AddEntryActivity;
+import com.ultramegasoft.flavordex2.FlavordexApp;
+import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.beer.EditBeerInfoFragment;
 import com.ultramegasoft.flavordex2.coffee.EditCoffeeInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;

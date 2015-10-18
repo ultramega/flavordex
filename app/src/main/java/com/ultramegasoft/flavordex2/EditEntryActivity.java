@@ -17,6 +17,7 @@ import android.view.MenuItem;
 
 import com.ultramegasoft.flavordex2.beer.EditBeerInfoFragment;
 import com.ultramegasoft.flavordex2.coffee.EditCoffeeInfoFragment;
+import com.ultramegasoft.flavordex2.fragment.EditInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.whiskey.EditWhiskeyInfoFragment;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;

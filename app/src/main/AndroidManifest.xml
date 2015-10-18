@@ -75,17 +75,17 @@
             android:exported="false" />
 
         <service
-            android:name=".InstanceIDService"
+            android:name=".service.InstanceIDService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
         <service
-            android:name=".BackendService"
+            android:name=".service.BackendService"
             android:exported="false" />
         <service
-            android:name=".PhotoSyncService"
+            android:name=".service.PhotoSyncService"
             android:exported="false" />
 
     </application>

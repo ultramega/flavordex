@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2;
+package com.ultramegasoft.flavordex2.fragment;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
@@ -286,7 +287,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         public Fragment getItem(int position) {
             final Bundle args = new Bundle();
             args.putString(PhotoFragment.ARG_PATH, mData.get(position).path);
-            return Fragment.instantiate(getContext(), PhotoFragment.class.getName(), args);
+            return instantiate(getContext(), PhotoFragment.class.getName(), args);
         }
 
         @Override

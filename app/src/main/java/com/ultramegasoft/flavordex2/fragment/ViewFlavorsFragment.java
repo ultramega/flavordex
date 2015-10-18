@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2;
+package com.ultramegasoft.flavordex2.fragment;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.RadarEditWidget;

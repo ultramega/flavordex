@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2;
+package com.ultramegasoft.flavordex2.fragment;
 
 import android.content.ContentUris;
 import android.content.Intent;
@@ -23,6 +23,8 @@ import android.widget.RatingBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import com.ultramegasoft.flavordex2.EditEntryActivity;
+import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;

@@ -9,8 +9,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.ultramegasoft.flavordex2.EditInfoFragment;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.fragment.EditInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.widget.SpecialArrayAdapter;

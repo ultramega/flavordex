@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2;
+package com.ultramegasoft.flavordex2.fragment;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -29,6 +29,8 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import com.ultramegasoft.flavordex2.FlavordexApp;
+import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.DateInputWidget;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;

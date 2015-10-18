@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2;
+package com.ultramegasoft.flavordex2.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;

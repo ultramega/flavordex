@@ -22,6 +22,8 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.DriveConnectDialog;
+import com.ultramegasoft.flavordex2.service.BackendService;
+import com.ultramegasoft.flavordex2.service.PhotoSyncService;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 

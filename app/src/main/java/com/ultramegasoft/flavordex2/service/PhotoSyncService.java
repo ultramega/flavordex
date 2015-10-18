@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2;
+package com.ultramegasoft.flavordex2.service;
 
 import android.app.IntentService;
 import android.content.ContentResolver;

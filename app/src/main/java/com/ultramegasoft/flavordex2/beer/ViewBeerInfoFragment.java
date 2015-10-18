@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.R;
-import com.ultramegasoft.flavordex2.ViewInfoFragment;
+import com.ultramegasoft.flavordex2.fragment.ViewInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 

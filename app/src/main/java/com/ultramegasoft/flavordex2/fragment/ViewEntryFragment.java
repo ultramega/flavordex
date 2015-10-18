@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2;
+package com.ultramegasoft.flavordex2.fragment;
 
 import android.app.Activity;
 import android.content.ContentUris;
@@ -25,6 +25,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TabHost;
 
+import com.ultramegasoft.flavordex2.FlavordexApp;
+import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.beer.ViewBeerInfoFragment;
 import com.ultramegasoft.flavordex2.coffee.ViewCoffeeInfoFragment;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;

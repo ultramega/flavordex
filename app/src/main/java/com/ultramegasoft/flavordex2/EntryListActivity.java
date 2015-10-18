@@ -11,6 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 
 import com.ultramegasoft.flavordex2.dialog.AppChooserDialog;
+import com.ultramegasoft.flavordex2.fragment.EntryListFragment;
+import com.ultramegasoft.flavordex2.fragment.ViewEntryFragment;
+import com.ultramegasoft.flavordex2.fragment.WelcomeFragment;
 import com.ultramegasoft.flavordex2.util.AppImportUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 

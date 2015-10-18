@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2;
+package com.ultramegasoft.flavordex2.fragment;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -33,6 +33,12 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import com.ultramegasoft.flavordex2.AddEntryActivity;
+import com.ultramegasoft.flavordex2.EditEntryActivity;
+import com.ultramegasoft.flavordex2.EntryListActivity;
+import com.ultramegasoft.flavordex2.FlavordexApp;
+import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.SettingsActivity;
 import com.ultramegasoft.flavordex2.dialog.AboutDialog;
 import com.ultramegasoft.flavordex2.dialog.AppChooserDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;

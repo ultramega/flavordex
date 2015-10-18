@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.ultramegasoft.flavordex2.fragment.ViewEntryFragment;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 /**

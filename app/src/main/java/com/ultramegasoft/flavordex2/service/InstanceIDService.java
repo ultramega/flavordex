@@ -1,9 +1,10 @@
-package com.ultramegasoft.flavordex2;
+package com.ultramegasoft.flavordex2.service;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.google.android.gms.iid.InstanceIDListenerService;
+import com.ultramegasoft.flavordex2.FlavordexApp;
 
 /**
  * Service to handle InstanceID callbacks.

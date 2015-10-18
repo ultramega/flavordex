@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2;
+package com.ultramegasoft.flavordex2.fragment;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -32,6 +32,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 
+import com.ultramegasoft.flavordex2.FlavordexApp;
+import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.dialog.CatDeleteDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.InputUtils;
