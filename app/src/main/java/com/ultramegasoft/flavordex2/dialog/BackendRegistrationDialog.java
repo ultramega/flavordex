@@ -133,7 +133,13 @@ public class BackendRegistrationDialog extends DialogFragment {
         final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
         if(accountName == null) {
             final GoogleAccountCredential credential = BackendUtils.getCredential(getContext());
-            startActivityForResult(credential.newChooseAccountIntent(), REQUEST_SELECT_ACCOUNT);
+            final Intent intent = credential.newChooseAccountIntent();
+            if(intent.resolveActivity(getContext().getPackageManager()) != null) {
+                startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
+            } else {
+                Toast.makeText(getContext(), R.string.error_get_accounts, Toast.LENGTH_LONG).show();
+                dismiss();
+            }
         } else {
             registerClient(accountName);
         }

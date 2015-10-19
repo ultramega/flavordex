@@ -178,6 +178,7 @@
     <string name="error_no_email">Error: No email client found</string>
     <string name="error_insert_photo">Error: Failed to save photo</string>
     <string name="error_insert_entry">Error: Failed to create new entry</string>
+    <string name="error_get_accounts">Error: Unable to open the account chooser</string>
     <string name="error_register_failed">Error: Failed to connect to the sync service</string>
 
     <string name="share_subject">I logged %s on Flavordex</string>
