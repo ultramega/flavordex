@@ -17,7 +17,6 @@ import com.ultramegasoft.flavordex2.fragment.WelcomeFragment;
 import com.ultramegasoft.flavordex2.util.AppImportUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
-
 /**
  * The main application Activity. This shows a list of all the journal entries. On narrow screens,
  * selecting an entry launches a new Activity to show details. On wide screens, selecting an entry
