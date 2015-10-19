@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.widget.Toast;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.ultramegasoft.flavordex2.FlavordexApp;
@@ -45,6 +46,10 @@ public class BackendRegistrationDialog extends DialogFragment {
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if(intent.hasExtra(BackendService.EXTRA_ERROR)) {
+                Toast.makeText(getContext(), R.string.error_register_failed, Toast.LENGTH_LONG)
+                        .show();
+            }
             dismiss();
         }
     };

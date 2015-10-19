@@ -29,6 +29,11 @@ public class BackendService extends IntentService {
     public static final String ACTION_COMPLETED = "com.ultramegasoft.flavordex2.service.COMPLETE";
 
     /**
+     * Keys for broadcast Intent extras
+     */
+    public static final String EXTRA_ERROR = "error";
+
+    /**
      * Keys for the Intent extras
      */
     private static final String EXTRA_COMMAND = "command";
@@ -45,6 +50,11 @@ public class BackendService extends IntentService {
      * The API project number
      */
     private static final String PROJECT_NUMBER = "1001621163874";
+
+    /**
+     * The error message in case of failure
+     */
+    private String mError;
 
     public BackendService() {
         super("BackendService");
@@ -98,9 +108,16 @@ public class BackendService extends IntentService {
                 doSyncData();
                 break;
         }
+    }
 
-        final Intent broadcastIntent = new Intent(ACTION_COMPLETED);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        final Intent intent = new Intent(ACTION_COMPLETED);
+        if(mError != null) {
+            intent.putExtra(EXTRA_ERROR, mError);
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     /**
@@ -132,6 +149,7 @@ public class BackendService extends IntentService {
             }
         } catch(IOException e) {
             Log.e(getClass().getSimpleName(), e.getMessage());
+            mError = e.getMessage();
         }
     }
 
@@ -155,6 +173,7 @@ public class BackendService extends IntentService {
             registration.unregister(BackendUtils.getClientId(this)).execute();
         } catch(IOException e) {
             Log.e(getClass().getSimpleName(), e.getMessage());
+            mError = e.getMessage();
         }
 
         BackendUtils.setClientId(this, 0);
