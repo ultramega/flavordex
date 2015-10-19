@@ -131,9 +131,7 @@ public class SettingsActivity extends AppCompatActivity {
         private void setupLocationPref() {
             final LocationManager lm =
                     (LocationManager)getActivity().getSystemService(LOCATION_SERVICE);
-            final boolean hasProvider = lm.getProviders(true)
-                    .contains(LocationManager.NETWORK_PROVIDER);
-            if(!hasProvider) {
+            if(!lm.getProviders(true).contains(LocationManager.NETWORK_PROVIDER)) {
                 mPrefLocation.setVisible(false);
                 return;
             }
