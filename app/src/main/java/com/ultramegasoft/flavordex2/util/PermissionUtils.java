@@ -49,26 +49,13 @@ public class PermissionUtils {
      * @param rationale Rationale for requesting external storage permissions
      * @return Whether we already have external storage permissions
      */
-    public static boolean checkExternalStoragePerm(final FragmentActivity activity, int rationale) {
-        return checkExternalStoragePerm(activity, activity.getText(rationale));
-    }
-
-    /**
-     * Make a request for external storage permissions from the user if they are not already
-     * granted.
-     *
-     * @param activity  The Activity making the request
-     * @param rationale Rationale for requesting external storage permissions
-     * @return Whether we already have external storage permissions
-     */
-    public static boolean checkExternalStoragePerm(final FragmentActivity activity,
-                                                   CharSequence rationale) {
+    public static boolean checkExternalStoragePerm(FragmentActivity activity, int rationale) {
         if(hasExternalStoragePerm(activity)) {
             return true;
         }
 
         if(shouldAskExternalStoragePerm(activity)) {
-            PermissionDialog.showDialog(activity, rationale);
+            PermissionDialog.showDialog(activity, activity.getString(rationale));
         } else {
             requestExternalStoragePerm(activity);
         }
@@ -115,7 +102,7 @@ public class PermissionUtils {
      * @param activity The Activity making the request
      * @return Whether we already have location permissions
      */
-    public static boolean checkLocationPerm(final FragmentActivity activity) {
+    public static boolean checkLocationPerm(FragmentActivity activity) {
         if(hasLocationPerm(activity)) {
             return true;
         }
@@ -164,7 +151,7 @@ public class PermissionUtils {
      * @param activity The Activity making the request
      * @return Whether we already have accounts permission
      */
-    public static boolean checkAccountsPerm(final FragmentActivity activity) {
+    public static boolean checkAccountsPerm(FragmentActivity activity) {
         if(hasAccountsPerm(activity)) {
             return true;
         }
