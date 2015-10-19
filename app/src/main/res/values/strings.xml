@@ -154,6 +154,7 @@
     <string name="message_app_requires_update">%s (requires update)</string>
     <string name="message_version">Flavordex v.%s</string>
     <string name="message_copyright">Copyright © 2015 UltraMega Software</string>
+    <string name="message_registering_client">Registering device with the sync service…</string>
     <string name="message_connecting_drive">Connecting to Google Drive…</string>
 
     <string name="pref_cat_general">General</string>

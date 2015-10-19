@@ -1,6 +1,5 @@
 package com.ultramegasoft.flavordex2;
 
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,12 +18,11 @@ import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.ultramegasoft.flavordex2.dialog.BackendRegistrationDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.DriveConnectDialog;
 import com.ultramegasoft.flavordex2.service.BackendService;
 import com.ultramegasoft.flavordex2.service.PhotoSyncService;
-import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 /**
@@ -37,7 +35,6 @@ public class SettingsActivity extends AppCompatActivity {
      * Request codes for external Activities
      */
     private static final int REQUEST_EDIT_CAT = 400;
-    private static final int REQUEST_SELECT_ACCOUNT = 401;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,48 +65,8 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if(requestCode == PermissionUtils.REQUEST_ACCOUNTS) {
-            if(PermissionUtils.hasAccountsPerm(this)) {
-                selectAccount();
-            }
-            return;
-        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         PermissionUtils.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUEST_SELECT_ACCOUNT && data != null) {
-            final String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            if(accountName != null) {
-                registerClient(accountName);
-            }
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    /**
-     * Select an account to use to access the backend.
-     */
-    public void selectAccount() {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
-        if(accountName == null) {
-            final GoogleAccountCredential credential = BackendUtils.getCredential(this);
-            startActivityForResult(credential.newChooseAccountIntent(), REQUEST_SELECT_ACCOUNT);
-        } else {
-            registerClient(accountName);
-        }
-    }
-
-    /**
-     * Register this client with the backend.
-     *
-     * @param accountName The account name
-     */
-    private void registerClient(String accountName) {
-        BackendService.registerClient(this, accountName);
     }
 
     /**
@@ -220,9 +177,7 @@ public class SettingsActivity extends AppCompatActivity {
                         BackendService.unregisterClient(getContext());
                         return true;
                     }
-                    if(PermissionUtils.checkAccountsPerm(getActivity())) {
-                        ((SettingsActivity)getActivity()).selectAccount();
-                    }
+                    BackendRegistrationDialog.showDialog(getFragmentManager());
                     return false;
                 }
             });

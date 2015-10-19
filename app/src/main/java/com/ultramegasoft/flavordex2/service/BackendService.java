@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -22,6 +23,11 @@ import java.io.IOException;
  * @author Steve Guidetti
  */
 public class BackendService extends IntentService {
+    /**
+     * Action value for broadcast Intents
+     */
+    public static final String ACTION_COMPLETED = "com.ultramegasoft.flavordex2.service.COMPLETE";
+
     /**
      * Keys for the Intent extras
      */
@@ -92,6 +98,9 @@ public class BackendService extends IntentService {
                 doSyncData();
                 break;
         }
+
+        final Intent broadcastIntent = new Intent(ACTION_COMPLETED);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
 
     /**
