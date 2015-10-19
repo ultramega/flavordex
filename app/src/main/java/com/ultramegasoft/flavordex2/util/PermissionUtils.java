@@ -10,7 +10,9 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AlertDialog;
 
@@ -55,9 +57,35 @@ public class PermissionUtils {
         }
 
         if(shouldAskExternalStoragePerm(activity)) {
-            PermissionDialog.showDialog(activity, activity.getString(rationale));
+            PermissionDialog.showDialog(activity.getSupportFragmentManager(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_STORAGE,
+                    activity.getString(rationale), null);
         } else {
             requestExternalStoragePerm(activity);
+        }
+
+        return false;
+    }
+
+    /**
+     * Make a request for external storage permissions from the user if they are not already
+     * granted.
+     *
+     * @param fragment  The Fragment making the request
+     * @param rationale Rationale for requesting external storage permissions
+     * @return Whether we already have external storage permissions
+     */
+    public static boolean checkExternalStoragePerm(Fragment fragment, int rationale) {
+        if(hasExternalStoragePerm(fragment.getContext())) {
+            return true;
+        }
+
+        if(shouldAskExternalStoragePerm(fragment)) {
+            PermissionDialog.showDialog(fragment.getFragmentManager(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_STORAGE,
+                    fragment.getString(rationale), fragment);
+        } else {
+            requestExternalStoragePerm(fragment);
         }
 
         return false;
@@ -74,6 +102,16 @@ public class PermissionUtils {
     }
 
     /**
+     * Make the actual request from the user for external storage permissions.
+     *
+     * @param fragment The Fragment making the request
+     */
+    public static void requestExternalStoragePerm(Fragment fragment) {
+        fragment.requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                REQUEST_STORAGE);
+    }
+
+    /**
      * Should we ask for external storage permissions? Returns true if the user has previously
      * denied permission but has not checked 'Never ask again.'
      *
@@ -83,6 +121,18 @@ public class PermissionUtils {
     public static boolean shouldAskExternalStoragePerm(Activity activity) {
         return ActivityCompat.shouldShowRequestPermissionRationale(activity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    }
+
+    /**
+     * Should we ask for external storage permissions? Returns true if the user has previously
+     * denied permission but has not checked 'Never ask again.'
+     *
+     * @param fragment The Fragment making the request
+     * @return Whether we should ask for external storage permissions
+     */
+    public static boolean shouldAskExternalStoragePerm(Fragment fragment) {
+        return fragment
+                .shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     /**
@@ -113,6 +163,22 @@ public class PermissionUtils {
     }
 
     /**
+     * Make a request for location permissions from the user if they are not already granted.
+     *
+     * @param fragment The Fragment making the request
+     * @return Whether we already have location permissions
+     */
+    public static boolean checkLocationPerm(Fragment fragment) {
+        if(hasLocationPerm(fragment.getContext())) {
+            return true;
+        }
+
+        requestLocationPerm(fragment);
+
+        return false;
+    }
+
+    /**
      * Make the actual request from the user for location permissions.
      *
      * @param activity The Activity making the request
@@ -120,6 +186,16 @@ public class PermissionUtils {
     public static void requestLocationPerm(Activity activity) {
         ActivityCompat.requestPermissions(activity,
                 new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+    }
+
+    /**
+     * Make the actual request from the user for location permissions.
+     *
+     * @param fragment The Fragment making the request
+     */
+    public static void requestLocationPerm(Fragment fragment) {
+        fragment.requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION},
+                REQUEST_LOCATION);
     }
 
     /**
@@ -132,6 +208,18 @@ public class PermissionUtils {
     public static boolean shouldAskLocationPerm(Activity activity) {
         return ActivityCompat.shouldShowRequestPermissionRationale(activity,
                 Manifest.permission.ACCESS_COARSE_LOCATION);
+    }
+
+    /**
+     * Should we ask for location permissions? Returns true if the user has previously denied
+     * permission but has not checked 'Never ask again.'
+     *
+     * @param fragment The Fragment making the request
+     * @return Whether we should ask for location permissions
+     */
+    public static boolean shouldAskLocationPerm(Fragment fragment) {
+        return fragment
+                .shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION);
     }
 
     /**
@@ -162,6 +250,22 @@ public class PermissionUtils {
     }
 
     /**
+     * Make a request for accounts permission from the user if they are not already granted.
+     *
+     * @param fragment The Fragment making the request
+     * @return Whether we already have accounts permission
+     */
+    public static boolean checkAccountsPerm(Fragment fragment) {
+        if(hasAccountsPerm(fragment.getContext())) {
+            return true;
+        }
+
+        requestAccountsPerm(fragment);
+
+        return false;
+    }
+
+    /**
      * Make the actual request from the user for accounts permission.
      *
      * @param activity The Activity making the request
@@ -169,6 +273,16 @@ public class PermissionUtils {
     public static void requestAccountsPerm(Activity activity) {
         ActivityCompat.requestPermissions(activity,
                 new String[] {Manifest.permission.GET_ACCOUNTS}, REQUEST_ACCOUNTS);
+    }
+
+    /**
+     * Make the actual request from the user for accounts permission.
+     *
+     * @param fragment The Fragment making the request
+     */
+    public static void requestAccountsPerm(Fragment fragment) {
+        fragment.requestPermissions(new String[] {Manifest.permission.GET_ACCOUNTS},
+                REQUEST_ACCOUNTS);
     }
 
     /**
@@ -181,6 +295,17 @@ public class PermissionUtils {
     public static boolean shouldAskAccountsPerm(Activity activity) {
         return ActivityCompat.shouldShowRequestPermissionRationale(activity,
                 Manifest.permission.GET_ACCOUNTS);
+    }
+
+    /**
+     * Should we ask for accounts permission? Returns true if the user has previously denied
+     * permission but has not checked 'Never ask again.'
+     *
+     * @param fragment The Fragment making the request
+     * @return Whether we should ask for accounts permission
+     */
+    public static boolean shouldAskAccountsPerm(Fragment fragment) {
+        return fragment.shouldShowRequestPermissionRationale(Manifest.permission.GET_ACCOUNTS);
     }
 
     /**
@@ -233,22 +358,29 @@ public class PermissionUtils {
         /**
          * Arguments for the Fragment
          */
+        private static final String ARG_PERMISSION = "permission";
         private static final String ARG_MESSAGE = "message";
 
         /**
          * Show the dialog.
          *
-         * @param activity The Activity to attach to
-         * @param message  The rationale message
+         * @param fm          The FragmentManager to use
+         * @param permission  The permission being requested
+         * @param requestCode The permission request code
+         * @param target      The target Fragment
+         * @param message     The rationale message
          */
-        public static void showDialog(FragmentActivity activity, CharSequence message) {
+        public static void showDialog(FragmentManager fm, String permission, int requestCode,
+                                      CharSequence message, Fragment target) {
             final DialogFragment fragment = new PermissionDialog();
+            fragment.setTargetFragment(target, requestCode);
 
             final Bundle args = new Bundle();
+            args.putString(ARG_PERMISSION, permission);
             args.putCharSequence(ARG_MESSAGE, message);
             fragment.setArguments(args);
 
-            fragment.show(activity.getSupportFragmentManager(), TAG);
+            fragment.show(fm, TAG);
         }
 
         @NonNull
@@ -265,7 +397,14 @@ public class PermissionUtils {
         @Override
         public void onDismiss(DialogInterface dialog) {
             super.onDismiss(dialog);
-            requestExternalStoragePerm(getActivity());
+            final String permission = getArguments().getString(ARG_PERMISSION);
+            final Fragment target = getTargetFragment();
+            if(target != null) {
+                target.requestPermissions(new String[] {permission}, getTargetRequestCode());
+            } else {
+                ActivityCompat.requestPermissions(getActivity(), new String[] {permission},
+                        getTargetRequestCode());
+            }
         }
     }
 }
