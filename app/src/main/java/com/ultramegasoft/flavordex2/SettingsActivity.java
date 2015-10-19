@@ -16,8 +16,6 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.MenuItem;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.ultramegasoft.flavordex2.dialog.BackendRegistrationDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.DriveConnectDialog;
@@ -62,46 +60,47 @@ public class SettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        PermissionUtils.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
-    }
-
     /**
      * The Fragment handling the preferences interface.
      */
     public static class SettingsFragment extends PreferenceFragmentCompat
             implements SharedPreferences.OnSharedPreferenceChangeListener {
         /**
-         * Key for the syncing preference category
-         */
-        private static final String PREF_CAT_SYNC = "pref_cat_sync";
-
-        /**
          * Key for the category editing preference
          */
         private static final String PREF_EDIT_CATS = "pref_edit_cats";
 
         /**
-         * Whether the Google API is available on the device
+         * Preference items
          */
-        private boolean mGoogleApiAvailable;
+        private CheckBoxPreference mPrefLocation;
+        private CheckBoxPreference mPrefSyncData;
+        private CheckBoxPreference mPrefSyncPhotos;
 
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
-            mGoogleApiAvailable = GoogleApiAvailability.getInstance()
-                    .isGooglePlayServicesAvailable(getContext()) == ConnectionResult.SUCCESS;
-
             PreferenceManager.getDefaultSharedPreferences(getContext())
                     .registerOnSharedPreferenceChangeListener(this);
 
             addPreferencesFromResource(R.xml.preferences);
 
-            setupSyncCategory();
+            mPrefLocation = (CheckBoxPreference)findPreference(FlavordexApp.PREF_DETECT_LOCATION);
+            mPrefSyncData = (CheckBoxPreference)findPreference(FlavordexApp.PREF_SYNC_DATA);
+            mPrefSyncPhotos = (CheckBoxPreference)findPreference(FlavordexApp.PREF_SYNC_PHOTOS);
+
             setupEditCatsPref();
             setupLocationPref();
+            setupSyncDataPref();
+            setupSyncPhotosPref();
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            mPrefLocation.setEnabled(PermissionUtils.hasLocationPerm(getContext())
+                    || PermissionUtils.shouldAskLocationPerm(getActivity()));
+            mPrefSyncData.setEnabled(PermissionUtils.hasAccountsPerm(getContext())
+                    || PermissionUtils.shouldAskAccountsPerm(getActivity()));
         }
 
         @Override
@@ -109,18 +108,6 @@ public class SettingsActivity extends AppCompatActivity {
             super.onDestroy();
             PreferenceManager.getDefaultSharedPreferences(getContext())
                     .unregisterOnSharedPreferenceChangeListener(this);
-        }
-
-        /**
-         * Set up the syncing preference category.
-         */
-        private void setupSyncCategory() {
-            final Preference pref = findPreference(PREF_CAT_SYNC);
-            pref.setVisible(mGoogleApiAvailable);
-            pref.setEnabled(mGoogleApiAvailable);
-
-            setupSyncDataPref();
-            setupSyncPhotosPref();
         }
 
         /**
@@ -142,69 +129,68 @@ public class SettingsActivity extends AppCompatActivity {
          * Set up the location detection preference.
          */
         private void setupLocationPref() {
-            final Preference pref = findPreference(FlavordexApp.PREF_DETECT_LOCATION);
             final LocationManager lm =
                     (LocationManager)getActivity().getSystemService(LOCATION_SERVICE);
             final boolean hasProvider = lm.getProviders(true)
                     .contains(LocationManager.NETWORK_PROVIDER);
             if(!hasProvider) {
-                pref.setVisible(false);
+                mPrefLocation.setVisible(false);
                 return;
             }
 
-            pref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object o) {
-                    return !((boolean)o) || PermissionUtils.checkLocationPerm(getActivity());
-                }
-            });
+            mPrefLocation.setOnPreferenceChangeListener(
+                    new Preference.OnPreferenceChangeListener() {
+                        @Override
+                        public boolean onPreferenceChange(Preference preference, Object o) {
+                            return !((boolean)o)
+                                    || PermissionUtils.checkLocationPerm(SettingsFragment.this);
+                        }
+                    });
         }
 
         /**
          * Set up the data syncing preference.
          */
         private void setupSyncDataPref() {
-            final Preference pref = findPreference(FlavordexApp.PREF_SYNC_DATA);
-            pref.setVisible(mGoogleApiAvailable);
-            if(!mGoogleApiAvailable) {
-                return;
-            }
-
-            pref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object o) {
-                    if(!(boolean)o) {
-                        BackendService.unregisterClient(getContext());
-                        return true;
-                    }
-                    BackendRegistrationDialog.showDialog(getFragmentManager());
-                    return false;
-                }
-            });
+            mPrefSyncData.setOnPreferenceChangeListener(
+                    new Preference.OnPreferenceChangeListener() {
+                        @Override
+                        public boolean onPreferenceChange(Preference preference, Object o) {
+                            if(!(boolean)o) {
+                                BackendService.unregisterClient(getContext());
+                                return true;
+                            }
+                            BackendRegistrationDialog.showDialog(getFragmentManager());
+                            return false;
+                        }
+                    });
         }
 
         /**
          * Set up the photo syncing preference.
          */
         private void setupSyncPhotosPref() {
-            final Preference pref = findPreference(FlavordexApp.PREF_SYNC_PHOTOS);
-            pref.setVisible(mGoogleApiAvailable);
-            if(!mGoogleApiAvailable) {
-                return;
-            }
+            mPrefSyncPhotos.setEnabled(PermissionUtils.hasExternalStoragePerm(getContext()));
 
-            pref.setEnabled(PermissionUtils.hasExternalStoragePerm(getContext()));
+            mPrefSyncPhotos.setOnPreferenceChangeListener(
+                    new Preference.OnPreferenceChangeListener() {
+                        @Override
+                        public boolean onPreferenceChange(Preference preference, Object o) {
+                            if((Boolean)o) {
+                                DriveConnectDialog.showDialog(getFragmentManager());
+                                return false;
+                            }
+                            return true;
+                        }
+                    });
+        }
 
-            pref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object o) {
-                    if((Boolean)o) {
-                        DriveConnectDialog.showDialog(getFragmentManager());
-                        return false;
-                    }
-                    return true;
-                }
-            });
+        @Override
+        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                               @NonNull int[] grantResults) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            PermissionUtils.onRequestPermissionsResult(getContext(), requestCode, permissions,
+                    grantResults);
         }
 
         @Override
@@ -224,16 +210,16 @@ public class SettingsActivity extends AppCompatActivity {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if(FlavordexApp.PREF_DETECT_LOCATION.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
-                    ((CheckBoxPreference)findPreference(key)).setChecked(true);
+                    mPrefLocation.setChecked(true);
                 }
             } else if(FlavordexApp.PREF_SYNC_DATA.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
-                    ((CheckBoxPreference)findPreference(key)).setChecked(true);
+                    mPrefSyncData.setChecked(true);
                     BackendService.syncData(getContext());
                 }
             } else if(FlavordexApp.PREF_SYNC_PHOTOS.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
-                    ((CheckBoxPreference)findPreference(key)).setChecked(true);
+                    mPrefSyncPhotos.setChecked(true);
                     PhotoSyncService.syncPhotos(getContext());
                 }
             }

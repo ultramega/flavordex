@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -33,6 +34,14 @@ public class PermissionUtils {
     public static final int REQUEST_ACCOUNTS = 30;
 
     /**
+     * Keys for the backend shared preferences
+     */
+    private static final String PREFS_KEY = "perms";
+    private static final String PREF_ASKED_STORAGE = "pref_asked_storage";
+    private static final String PREF_ASKED_LOCATION = "pref_asked_location";
+    private static final String PREF_ASKED_ACCOUNTS = "pref_asked_accounts";
+
+    /**
      * Check whether we have permission to read and write external storage.
      *
      * @param context The Context
@@ -56,10 +65,12 @@ public class PermissionUtils {
             return true;
         }
 
-        if(shouldAskExternalStoragePerm(activity)) {
+        if(ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             PermissionDialog.showDialog(activity.getSupportFragmentManager(),
                     Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_STORAGE,
                     activity.getString(rationale), null);
+            getPreferences(activity).edit().putBoolean(PREF_ASKED_STORAGE, true).apply();
         } else {
             requestExternalStoragePerm(activity);
         }
@@ -80,10 +91,13 @@ public class PermissionUtils {
             return true;
         }
 
-        if(shouldAskExternalStoragePerm(fragment)) {
+        if(fragment.shouldShowRequestPermissionRationale(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             PermissionDialog.showDialog(fragment.getFragmentManager(),
                     Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_STORAGE,
                     fragment.getString(rationale), fragment);
+            getPreferences(fragment.getContext()).edit().putBoolean(PREF_ASKED_STORAGE, true)
+                    .apply();
         } else {
             requestExternalStoragePerm(fragment);
         }
@@ -99,6 +113,7 @@ public class PermissionUtils {
     public static void requestExternalStoragePerm(Activity activity) {
         ActivityCompat.requestPermissions(activity,
                 new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE);
+        getPreferences(activity).edit().putBoolean(PREF_ASKED_STORAGE, true).apply();
     }
 
     /**
@@ -109,30 +124,20 @@ public class PermissionUtils {
     public static void requestExternalStoragePerm(Fragment fragment) {
         fragment.requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 REQUEST_STORAGE);
+        getPreferences(fragment.getContext()).edit().putBoolean(PREF_ASKED_STORAGE, true).apply();
     }
 
     /**
-     * Should we ask for external storage permissions? Returns true if the user has previously
-     * denied permission but has not checked 'Never ask again.'
+     * Should we ask for external storage permissions? Returns true if the user has not checked
+     * 'Never ask again.'
      *
      * @param activity The Activity making the request
      * @return Whether we should ask for external storage permissions
      */
     public static boolean shouldAskExternalStoragePerm(Activity activity) {
-        return ActivityCompat.shouldShowRequestPermissionRationale(activity,
+        return !getPreferences(activity).getBoolean(PREF_ASKED_STORAGE, false)
+                || ActivityCompat.shouldShowRequestPermissionRationale(activity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
-    }
-
-    /**
-     * Should we ask for external storage permissions? Returns true if the user has previously
-     * denied permission but has not checked 'Never ask again.'
-     *
-     * @param fragment The Fragment making the request
-     * @return Whether we should ask for external storage permissions
-     */
-    public static boolean shouldAskExternalStoragePerm(Fragment fragment) {
-        return fragment
-                .shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     /**
@@ -186,6 +191,7 @@ public class PermissionUtils {
     public static void requestLocationPerm(Activity activity) {
         ActivityCompat.requestPermissions(activity,
                 new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+        getPreferences(activity).edit().putBoolean(PREF_ASKED_LOCATION, true).apply();
     }
 
     /**
@@ -196,30 +202,20 @@ public class PermissionUtils {
     public static void requestLocationPerm(Fragment fragment) {
         fragment.requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION},
                 REQUEST_LOCATION);
+        getPreferences(fragment.getContext()).edit().putBoolean(PREF_ASKED_LOCATION, true).apply();
     }
 
     /**
-     * Should we ask for location permissions? Returns true if the user has previously denied
-     * permission but has not checked 'Never ask again.'
+     * Should we ask for location permissions? Returns true if the user has not checked 'Never ask
+     * again.'
      *
      * @param activity The Activity making the request
      * @return Whether we should ask for location permissions
      */
     public static boolean shouldAskLocationPerm(Activity activity) {
-        return ActivityCompat.shouldShowRequestPermissionRationale(activity,
+        return !getPreferences(activity).getBoolean(PREF_ASKED_LOCATION, false)
+                || ActivityCompat.shouldShowRequestPermissionRationale(activity,
                 Manifest.permission.ACCESS_COARSE_LOCATION);
-    }
-
-    /**
-     * Should we ask for location permissions? Returns true if the user has previously denied
-     * permission but has not checked 'Never ask again.'
-     *
-     * @param fragment The Fragment making the request
-     * @return Whether we should ask for location permissions
-     */
-    public static boolean shouldAskLocationPerm(Fragment fragment) {
-        return fragment
-                .shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION);
     }
 
     /**
@@ -273,6 +269,7 @@ public class PermissionUtils {
     public static void requestAccountsPerm(Activity activity) {
         ActivityCompat.requestPermissions(activity,
                 new String[] {Manifest.permission.GET_ACCOUNTS}, REQUEST_ACCOUNTS);
+        getPreferences(activity).edit().putBoolean(PREF_ASKED_ACCOUNTS, true).apply();
     }
 
     /**
@@ -283,41 +280,32 @@ public class PermissionUtils {
     public static void requestAccountsPerm(Fragment fragment) {
         fragment.requestPermissions(new String[] {Manifest.permission.GET_ACCOUNTS},
                 REQUEST_ACCOUNTS);
+        getPreferences(fragment.getContext()).edit().putBoolean(PREF_ASKED_ACCOUNTS, true).apply();
     }
 
     /**
-     * Should we ask for accounts permission? Returns true if the user has previously denied
-     * permission but has not checked 'Never ask again.'
+     * Should we ask for accounts permission? Returns true if the user has not checked 'Never ask
+     * again.'
      *
      * @param activity The Activity making the request
      * @return Whether we should ask for accounts permission
      */
     public static boolean shouldAskAccountsPerm(Activity activity) {
-        return ActivityCompat.shouldShowRequestPermissionRationale(activity,
+        return !getPreferences(activity).getBoolean(PREF_ASKED_ACCOUNTS, false)
+                || ActivityCompat.shouldShowRequestPermissionRationale(activity,
                 Manifest.permission.GET_ACCOUNTS);
     }
 
     /**
-     * Should we ask for accounts permission? Returns true if the user has previously denied
-     * permission but has not checked 'Never ask again.'
-     *
-     * @param fragment The Fragment making the request
-     * @return Whether we should ask for accounts permission
-     */
-    public static boolean shouldAskAccountsPerm(Fragment fragment) {
-        return fragment.shouldShowRequestPermissionRationale(Manifest.permission.GET_ACCOUNTS);
-    }
-
-    /**
      * Callback for permission requests. If external storage permissions are granted, this will
-     * restart the application. If the user checks 'Never ask again' this will restart the
-     * Activity.
+     * restart the application.
      *
+     * @param context      The Context
      * @param requestCode  The request code
      * @param permissions  Array of permissions requested
      * @param grantResults Array of results of the permission requests
      */
-    public static void onRequestPermissionsResult(Activity activity, int requestCode,
+    public static void onRequestPermissionsResult(Context context, int requestCode,
                                                   @NonNull String[] permissions,
                                                   @NonNull int[] grantResults) {
         switch(requestCode) {
@@ -337,13 +325,22 @@ public class PermissionUtils {
                         continue;
                     }
                     if(grantResults[i] == PermissionChecker.PERMISSION_GRANTED) {
-                        PreferenceManager.getDefaultSharedPreferences(activity).edit()
+                        PreferenceManager.getDefaultSharedPreferences(context).edit()
                                 .putBoolean(FlavordexApp.PREF_DETECT_LOCATION, true).commit();
-                        activity.recreate();
                     }
                 }
                 break;
         }
+    }
+
+    /**
+     * Get the shared preferences for the permissions.
+     *
+     * @param context The Context
+     * @return The SharedPreferences
+     */
+    private static SharedPreferences getPreferences(Context context) {
+        return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
     }
 
     /**

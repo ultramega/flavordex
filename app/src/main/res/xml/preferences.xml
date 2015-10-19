@@ -11,9 +11,7 @@
             android:summary="@string/pref_summary_detect_location"
             android:title="@string/pref_detect_location" />
     </PreferenceCategory>
-    <PreferenceCategory
-        android:key="pref_cat_sync"
-        android:title="@string/pref_cat_sync">
+    <PreferenceCategory android:title="@string/pref_cat_sync">
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref_sync_data"
