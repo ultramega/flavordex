@@ -40,13 +40,13 @@ public class RegistrationEndpoint {
     /**
      * Register a client device with the backend.
      *
-     * @param user  The User
      * @param gcmId The GCM registration ID
+     * @param user  The User
      * @return The RegistrationRecord containing a unique ID for the client to store
      * @throws UnauthorizedException
      */
     @ApiMethod(name = "register")
-    public RegistrationRecord register(User user, @Named("gcmId") String gcmId)
+    public RegistrationRecord register(@Named("gcmId") String gcmId, User user)
             throws UnauthorizedException {
         if(user == null) {
             throw new UnauthorizedException("Unauthorized");
@@ -57,12 +57,12 @@ public class RegistrationEndpoint {
     /**
      * Unregister a client device with the backend.
      *
-     * @param user     The User
      * @param clientId The GCM registration ID
+     * @param user     The User
      * @throws UnauthorizedException
      */
     @ApiMethod(name = "unregister")
-    public void unregister(User user, @Named("clientId") long clientId)
+    public void unregister(@Named("clientId") long clientId, User user)
             throws UnauthorizedException {
         if(user == null) {
             throw new UnauthorizedException("Unauthorized");
