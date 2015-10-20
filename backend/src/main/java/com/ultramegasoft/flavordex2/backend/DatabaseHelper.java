@@ -1,5 +1,7 @@
 package com.ultramegasoft.flavordex2.backend;
 
+import com.google.api.server.spi.response.UnauthorizedException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,71 +10,100 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Database access helpers.
+ * Database access helper.
  *
  * @author Steve Guidetti
  */
 public class DatabaseHelper {
     /**
+     * The database connection URL
+     */
+    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/flavordex2?user=root";
+
+    /**
+     * The database connection
+     */
+    private Connection mConnection;
+
+    /**
+     * The user ID to use for performing authorized requests
+     */
+    private long mUserId;
+
+    /**
      * Open a connection to the database.
      *
-     * @return The Connection object
      * @throws SQLException
      */
-    public static Connection getConnection() throws SQLException {
+    public void open() throws SQLException {
+        close();
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/flavordex2?user=root");
+        mConnection = DriverManager.getConnection(DB_URL);
+    }
+
+    /**
+     * Close the connection to the database.
+     */
+    public void close() {
+        if(mConnection != null) {
+            try {
+                mConnection.close();
+                mConnection = null;
+            } catch(SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Set the user to perform authorized requests.
+     *
+     * @param userEmail The user's email address
+     * @throws SQLException
+     */
+    public void setUser(String userEmail) throws SQLException {
+        mUserId = getUserId(userEmail);
     }
 
     /**
      * Register a client device with the database.
      *
-     * @param userEmail The user's email address
-     * @param gcmId     The Google Cloud Messaging ID
+     * @param gcmId The Google Cloud Messaging ID
      * @return The RegistrationRecord
+     * @throws SQLException
+     * @throws UnauthorizedException
      */
-    public static RegistrationRecord registerClient(String userEmail, String gcmId) {
+    public RegistrationRecord registerClient(String gcmId)
+            throws SQLException, UnauthorizedException {
+        if(mUserId == 0) {
+            throw new UnauthorizedException("Unknown user");
+        }
         final RegistrationRecord record = new RegistrationRecord();
-        try {
-            Connection conn = null;
-            try {
-                conn = getConnection();
+        String sql = "SELECT id, gcm_id FROM clients WHERE user = ?";
+        PreparedStatement stmt = mConnection.prepareStatement(sql);
+        stmt.setLong(1, mUserId);
 
-                final long id = getUserId(conn, userEmail);
-
-                String sql = "SELECT id, gcm_id FROM clients WHERE user = ?";
-                PreparedStatement stmt = conn.prepareStatement(sql);
-                stmt.setLong(1, id);
-
-                ResultSet result = stmt.executeQuery();
-                while(result.next()) {
-                    if(gcmId.equals(result.getString(2))) {
-                        record.setClientId(result.getLong(1));
-                        return record;
-                    }
-                }
-
-                sql = "INSERT INTO clients (user, gcm_id) VALUES (?, ?)";
-                stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                stmt.setLong(1, id);
-                stmt.setString(2, gcmId);
-
-                stmt.executeUpdate();
-                result = stmt.getGeneratedKeys();
-                if(result.next()) {
-                    record.setClientId(result.getLong(1));
-                }
-            } finally {
-                if(conn != null) {
-                    conn.close();
-                }
+        ResultSet result = stmt.executeQuery();
+        while(result.next()) {
+            if(gcmId.equals(result.getString(2))) {
+                record.setClientId(result.getLong(1));
+                return record;
             }
-        } catch(SQLException e) {
-            e.printStackTrace();
+        }
+
+        sql = "INSERT INTO clients (user, gcm_id) VALUES (?, ?)";
+        stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        stmt.setLong(1, mUserId);
+        stmt.setString(2, gcmId);
+
+        stmt.executeUpdate();
+        result = stmt.getGeneratedKeys();
+        if(result.next()) {
+            record.setClientId(result.getLong(1));
         }
 
         return record;
@@ -81,42 +112,31 @@ public class DatabaseHelper {
     /**
      * Unregister a client device from the database.
      *
-     * @param clientId  The database ID of the client
-     * @param userEmail The user's email address
+     * @param clientId The database ID of the client
+     * @throws SQLException
+     * @throws UnauthorizedException
      */
-    public static void unregisterClient(long clientId, String userEmail) {
-        try {
-            final Connection conn = getConnection();
-            try {
-                final long userId = getUserId(conn, userEmail);
-                if(userId > 0) {
-                    final String sql = "DELETE FROM clients WHERE id = ? AND user = ?";
-                    final PreparedStatement stmt = conn.prepareStatement(sql);
-                    stmt.setLong(1, clientId);
-                    stmt.setLong(2, userId);
-                    stmt.executeUpdate();
-                }
-            } finally {
-                if(conn != null) {
-                    conn.close();
-                }
-            }
-        } catch(SQLException e) {
-            e.printStackTrace();
+    public void unregisterClient(long clientId) throws SQLException, UnauthorizedException {
+        if(mUserId == 0) {
+            throw new UnauthorizedException("Unknown user");
         }
+        final String sql = "DELETE FROM clients WHERE id = ? AND user = ?";
+        final PreparedStatement stmt = mConnection.prepareStatement(sql);
+        stmt.setLong(1, clientId);
+        stmt.setLong(2, mUserId);
+        stmt.executeUpdate();
     }
 
     /**
      * Get the database ID of a user, creating one if it doesn't exist.
      *
-     * @param conn      The database connection
      * @param userEmail The user's email address
      * @return The user's database ID
      * @throws SQLException
      */
-    private static long getUserId(Connection conn, String userEmail) throws SQLException {
+    private long getUserId(String userEmail) throws SQLException {
         String sql = "SELECT id FROM users WHERE email = ?";
-        PreparedStatement stmt = conn.prepareStatement(sql);
+        PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setString(1, userEmail);
 
         ResultSet result = stmt.executeQuery();
@@ -124,7 +144,7 @@ public class DatabaseHelper {
             return result.getLong(1);
         } else {
             sql = "INSERT INTO users (email) VALUES (?)";
-            stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, userEmail);
             stmt.executeUpdate();
 

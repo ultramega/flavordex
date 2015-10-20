@@ -7,6 +7,8 @@ import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.users.User;
 
+import java.sql.SQLException;
+
 import javax.inject.Named;
 
 /**
@@ -47,11 +49,18 @@ public class RegistrationEndpoint {
      */
     @ApiMethod(name = "register")
     public RegistrationRecord register(@Named("gcmId") String gcmId, User user)
-            throws UnauthorizedException {
+            throws SQLException, UnauthorizedException {
         if(user == null) {
             throw new UnauthorizedException("Unauthorized");
         }
-        return DatabaseHelper.registerClient(user.getEmail(), gcmId);
+        final DatabaseHelper helper = new DatabaseHelper();
+        try {
+            helper.open();
+            helper.setUser(user.getEmail());
+            return helper.registerClient(gcmId);
+        } finally {
+            helper.close();
+        }
     }
 
     /**
@@ -63,10 +72,17 @@ public class RegistrationEndpoint {
      */
     @ApiMethod(name = "unregister")
     public void unregister(@Named("clientId") long clientId, User user)
-            throws UnauthorizedException {
+            throws SQLException, UnauthorizedException {
         if(user == null) {
             throw new UnauthorizedException("Unauthorized");
         }
-        DatabaseHelper.unregisterClient(clientId, user.getEmail());
+        final DatabaseHelper helper = new DatabaseHelper();
+        try {
+            helper.open();
+            helper.setUser(user.getEmail());
+            helper.unregisterClient(clientId);
+        } finally {
+            helper.close();
+        }
     }
 }
