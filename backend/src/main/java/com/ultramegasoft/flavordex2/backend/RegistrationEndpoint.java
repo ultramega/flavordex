@@ -4,6 +4,7 @@ import com.google.api.server.spi.Constant;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
+import com.google.api.server.spi.response.InternalServerErrorException;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.users.User;
 
@@ -45,11 +46,12 @@ public class RegistrationEndpoint {
      * @param gcmId The GCM registration ID
      * @param user  The User
      * @return The RegistrationRecord containing a unique ID for the client to store
+     * @throws InternalServerErrorException
      * @throws UnauthorizedException
      */
     @ApiMethod(name = "register")
     public RegistrationRecord register(@Named("gcmId") String gcmId, User user)
-            throws SQLException, UnauthorizedException {
+            throws InternalServerErrorException, UnauthorizedException {
         if(user == null) {
             throw new UnauthorizedException("Unauthorized");
         }
@@ -58,6 +60,9 @@ public class RegistrationEndpoint {
             helper.open();
             helper.setUser(user.getEmail());
             return helper.registerClient(gcmId);
+        } catch(SQLException e) {
+            e.printStackTrace();
+            throw new InternalServerErrorException(e);
         } finally {
             helper.close();
         }
@@ -68,11 +73,12 @@ public class RegistrationEndpoint {
      *
      * @param clientId The GCM registration ID
      * @param user     The User
+     * @throws InternalServerErrorException
      * @throws UnauthorizedException
      */
     @ApiMethod(name = "unregister")
     public void unregister(@Named("clientId") long clientId, User user)
-            throws SQLException, UnauthorizedException {
+            throws InternalServerErrorException, UnauthorizedException {
         if(user == null) {
             throw new UnauthorizedException("Unauthorized");
         }
@@ -81,6 +87,9 @@ public class RegistrationEndpoint {
             helper.open();
             helper.setUser(user.getEmail());
             helper.unregisterClient(clientId);
+        } catch(SQLException e) {
+            e.printStackTrace();
+            throw new InternalServerErrorException(e);
         } finally {
             helper.close();
         }
