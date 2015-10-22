@@ -85,11 +85,6 @@ public class FlavordexApp extends Application implements
     };
 
     /**
-     * Task for finding the nearest location from the database
-     */
-    private final LocatorTask mLocatorTask = new LocatorTask();
-
-    /**
      * The current Location
      */
     private Location mLocation;
@@ -180,8 +175,7 @@ public class FlavordexApp extends Application implements
     private void setLocation(Location location) {
         mLocation = location;
         if(location != null) {
-            mLocatorTask.cancel(true);
-            mLocatorTask.execute();
+            new LocatorTask().execute();
         } else {
             mLocationName = null;
         }
