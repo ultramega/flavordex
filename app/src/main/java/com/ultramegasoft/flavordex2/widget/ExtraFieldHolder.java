@@ -66,9 +66,7 @@ public class ExtraFieldHolder implements Parcelable {
     private ExtraFieldHolder(Parcel in) {
         id = in.readLong();
         name = in.readString();
-        final boolean[] booleans = new boolean[1];
-        in.readBooleanArray(booleans);
-        preset = booleans[0];
+        preset = in.readInt() == 1;
         value = in.readString();
     }
 
@@ -81,7 +79,7 @@ public class ExtraFieldHolder implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(name);
-        dest.writeBooleanArray(new boolean[] {preset});
+        dest.writeInt(preset ? 1 : 0);
         dest.writeString(value);
     }
 }

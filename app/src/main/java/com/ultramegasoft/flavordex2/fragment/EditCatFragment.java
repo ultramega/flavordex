@@ -740,6 +740,7 @@ public class EditCatFragment extends LoadingProgressFragment
          * @return The base Uri for the category record
          */
         private Uri updateCat() {
+            mCatInfo.put(Tables.Cats.UPDATED, System.currentTimeMillis());
             final Uri uri;
             if(mCatId > 0) {
                 uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
@@ -857,9 +858,7 @@ public class EditCatFragment extends LoadingProgressFragment
         Field(Parcel in) {
             this.id = in.readLong();
             this.name = in.readString();
-            final boolean[] booleans = new boolean[1];
-            in.readBooleanArray(booleans);
-            this.delete = booleans[0];
+            this.delete = in.readInt() == 1;
         }
 
         /**
@@ -880,7 +879,7 @@ public class EditCatFragment extends LoadingProgressFragment
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeLong(id);
             dest.writeString(name);
-            dest.writeBooleanArray(new boolean[] {delete});
+            dest.writeInt(delete ? 1 : 0);
         }
     }
 }

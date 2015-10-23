@@ -150,13 +150,12 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         mPager.setCurrentItem(getPhotos().size() - 1, true);
 
         new PhotoSaver(getContext(), mEntryId, photo).execute();
-
     }
 
     @Override
     protected void onPhotoRemoved(PhotoHolder photo) {
         notifyDataChanged();
-        new PhotoDeleter(getContext(), photo).execute();
+        new PhotoDeleter(getContext(), mEntryId, photo).execute();
     }
 
     /**
@@ -343,6 +342,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
                 uri = mContext.getContentResolver().insert(uri, values);
                 if(uri != null) {
                     mPhoto.id = Long.valueOf(uri.getLastPathSegment());
+                    EntryUtils.markChanged(mContext.getContentResolver(), mEntryId);
                     return true;
                 }
             } catch(SQLiteException e) {
@@ -370,22 +370,30 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         private final Context mContext;
 
         /**
+         * The entry ID the photo is assigned to
+         */
+        private final long mEntryId;
+
+        /**
          * The photo to delete
          */
         private final PhotoHolder mPhoto;
 
         /**
          * @param context The Context
+         * @param entryId The entry ID
          * @param photo   The photo to delete
          */
-        public PhotoDeleter(Context context, PhotoHolder photo) {
+        public PhotoDeleter(Context context, long entryId, PhotoHolder photo) {
             mContext = context.getApplicationContext();
+            mEntryId = entryId;
             mPhoto = photo;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
             EntryUtils.deletePhoto(mContext, mPhoto.id);
+            EntryUtils.markChanged(mContext.getContentResolver(), mEntryId);
             return null;
         }
     }

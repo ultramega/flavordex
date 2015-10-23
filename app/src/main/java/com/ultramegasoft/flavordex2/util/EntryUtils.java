@@ -42,6 +42,8 @@ public class EntryUtils {
         values.put(Tables.Entries.DATE, entry.date);
         values.put(Tables.Entries.RATING, entry.rating);
         values.put(Tables.Entries.NOTES, entry.notes);
+        values.put(Tables.Entries.UPDATED, System.currentTimeMillis());
+        values.put(Tables.Entries.REMOTE_ID, entry.remoteId);
 
         final Uri catUri = getCatUri(cr, entry);
         values.put(Tables.Entries.CAT, entry.catId);
@@ -224,6 +226,32 @@ public class EntryUtils {
     public static void delete(Context context, long id) {
         final ContentResolver cr = context.getContentResolver();
         final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, id);
+
+        final String[] projection = new String[] {
+                Tables.Entries.CAT_ID,
+                Tables.Entries.REMOTE_ID
+        };
+        final Cursor cursor =
+                cr.query(uri, projection, null, null, null);
+        if(cursor != null) {
+            try {
+                if(cursor.moveToFirst()) {
+                    final long remoteId =
+                            cursor.getLong(cursor.getColumnIndex(Tables.Entries.REMOTE_ID));
+                    if(remoteId > 0) {
+                        final ContentValues values = new ContentValues();
+                        values.put(Tables.Deleted.TYPE, Tables.Deleted.TYPE_ENTRY);
+                        values.put(Tables.Deleted.CAT,
+                                cursor.getLong(cursor.getColumnIndex(Tables.Entries.CAT_ID)));
+                        values.put(Tables.Deleted.REMOTE_ID, remoteId);
+                        cr.insert(Tables.Deleted.CONTENT_URI, values);
+                    }
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+
         cr.delete(uri, null, null);
         PhotoUtils.deleteThumb(context, id);
     }
@@ -255,6 +283,19 @@ public class EntryUtils {
                 cursor.close();
             }
         }
+    }
+
+    /**
+     * Set the changed time of an entry.
+     *
+     * @param cr      The ContentResolver
+     * @param entryId The entry's database ID
+     */
+    public static void markChanged(ContentResolver cr, long entryId) {
+        final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId);
+        final ContentValues values = new ContentValues();
+        values.put(Tables.Entries.UPDATED, System.currentTimeMillis());
+        cr.update(uri, values, null, null);
     }
 
     /**

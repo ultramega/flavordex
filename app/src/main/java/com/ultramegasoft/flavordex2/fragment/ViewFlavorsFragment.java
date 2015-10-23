@@ -25,6 +25,7 @@ import android.view.animation.AnimationUtils;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.RadarEditWidget;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 import com.ultramegasoft.flavordex2.widget.RadarView;
@@ -360,6 +361,8 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                 values.put(Tables.EntriesFlavors.VALUE, item.value);
                 mResolver.insert(uri, values);
             }
+
+            EntryUtils.markChanged(mResolver, mEntryId);
 
             return null;
         }

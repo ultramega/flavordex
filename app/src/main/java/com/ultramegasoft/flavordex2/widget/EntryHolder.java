@@ -36,6 +36,7 @@ public class EntryHolder implements Parcelable {
     public long date;
     public float rating;
     public String notes;
+    public long remoteId;
 
     /**
      * List of extra fields for this entry
@@ -71,6 +72,7 @@ public class EntryHolder implements Parcelable {
         date = in.readLong();
         rating = in.readFloat();
         notes = in.readString();
+        remoteId = in.readLong();
 
         mExtras = in.createTypedArrayList(ExtraFieldHolder.CREATOR);
         mFlavors = in.createTypedArrayList(RadarHolder.CREATOR);
@@ -155,6 +157,7 @@ public class EntryHolder implements Parcelable {
         dest.writeLong(date);
         dest.writeFloat(rating);
         dest.writeString(notes);
+        dest.writeLong(remoteId);
 
         dest.writeTypedList(mExtras);
         dest.writeTypedList(mFlavors);
