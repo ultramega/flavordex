@@ -97,7 +97,6 @@ public class EntryListActivity extends AppCompatActivity {
             }
 
             ft.replace(R.id.entry_detail_container, fragment).commit();
-
         } else {
             final Intent intent = new Intent(this, ViewEntryActivity.class);
             intent.putExtra(ViewEntryFragment.ARG_ENTRY_ID, id);
