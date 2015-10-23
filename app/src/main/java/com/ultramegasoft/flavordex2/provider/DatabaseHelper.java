@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * The current version of the schema, incremented by 1 for each iteration
      */
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     /**
      * The Context
@@ -42,11 +42,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final InputStream inputStream = mContext.getResources().openRawResource(R.raw.schema);
-        final Scanner scanner = new Scanner(inputStream).useDelimiter("\\n--");
-        while(scanner.hasNext()) {
-            db.execSQL(scanner.next());
-        }
+        execRawFile(db, R.raw.schema);
+        execRawFile(db, R.raw.triggers);
+        execRawFile(db, R.raw.views);
 
         insertBeerPreset(db);
         insertWinePreset(db);
@@ -54,7 +52,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertCoffeePreset(db);
 
         if(FlavordexApp.DEVELOPER_MODE) {
-            addDummyData(db);
+            execRawFile(db, R.raw.testdata);
         }
     }
 
@@ -66,6 +64,61 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 query = new StringBuilder("ALTER TABLE `").append(Tables.Photos.TABLE_NAME)
                         .append("` ADD COLUMN `").append(Tables.Photos.DRIVE_ID).append("` TEXT;");
                 db.execSQL(query.toString());
+            case 2:
+                query = new StringBuilder("DROP VIEW IF EXISTS `").append(Tables.Entries.VIEW_NAME)
+                        .append("`;");
+                db.execSQL(query.toString());
+                query = new StringBuilder("DROP VIEW IF EXISTS `")
+                        .append(Tables.EntriesExtras.VIEW_NAME).append("`;");
+                db.execSQL(query.toString());
+
+                query = new StringBuilder("ALTER TABLE `").append(Tables.Entries.TABLE_NAME)
+                        .append("` ADD COLUMN `").append(Tables.Entries.UPDATED)
+                        .append("` INTEGER;");
+                db.execSQL(query.toString());
+                query = new StringBuilder("ALTER TABLE `").append(Tables.Entries.TABLE_NAME)
+                        .append("` ADD COLUMN `").append(Tables.Entries.DELETED)
+                        .append("` INTEGER DEFAULT 0;");
+                db.execSQL(query.toString());
+                query = new StringBuilder("ALTER TABLE `").append(Tables.Entries.TABLE_NAME)
+                        .append("` ADD COLUMN `").append(Tables.Entries.REMOTE_ID)
+                        .append("` INTEGER DEFAULT 0;");
+                db.execSQL(query.toString());
+
+                query = new StringBuilder("ALTER TABLE `").append(Tables.Extras.TABLE_NAME)
+                        .append("` ADD COLUMN `").append(Tables.Extras.REMOTE_ID)
+                        .append("` INTEGER DEFAULT 0;");
+                db.execSQL(query.toString());
+
+                query = new StringBuilder("ALTER TABLE `").append(Tables.Cats.TABLE_NAME)
+                        .append("` ADD COLUMN `").append(Tables.Entries.UPDATED)
+                        .append("` INTEGER;");
+                db.execSQL(query.toString());
+                query = new StringBuilder("ALTER TABLE `").append(Tables.Cats.TABLE_NAME)
+                        .append("` ADD COLUMN `").append(Tables.Entries.DELETED)
+                        .append("` INTEGER DEFAULT 0;");
+                db.execSQL(query.toString());
+                query = new StringBuilder("ALTER TABLE `").append(Tables.Cats.TABLE_NAME)
+                        .append("` ADD COLUMN `").append(Tables.Entries.REMOTE_ID)
+                        .append("` INTEGER DEFAULT 0;");
+                db.execSQL(query.toString());
+        }
+
+        execRawFile(db, R.raw.triggers);
+        execRawFile(db, R.raw.views);
+    }
+
+    /**
+     * Read and execute a SQL file from the raw resources.
+     *
+     * @param db       The database
+     * @param resource The raw resource ID
+     */
+    private void execRawFile(SQLiteDatabase db, int resource) {
+        final InputStream inputStream = mContext.getResources().openRawResource(resource);
+        final Scanner scanner = new Scanner(inputStream).useDelimiter("\\n--");
+        while(scanner.hasNext()) {
+            db.execSQL(scanner.next());
         }
     }
 
@@ -165,18 +218,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Tables.Extras.Coffee.STATS_YIELD
         };
         insertPreset(db, FlavordexApp.CAT_COFFEE, extras, R.array.coffee_flavor_names);
-    }
-
-    /**
-     * Add some sample data.
-     *
-     * @param db The database
-     */
-    private void addDummyData(SQLiteDatabase db) {
-        final InputStream inputStream = mContext.getResources().openRawResource(R.raw.testdata);
-        final Scanner scanner = new Scanner(inputStream).useDelimiter("\\n--");
-        while(scanner.hasNext()) {
-            db.execSQL(scanner.next());
-        }
     }
 }
