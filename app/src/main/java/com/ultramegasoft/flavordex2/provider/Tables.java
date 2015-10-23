@@ -48,7 +48,6 @@ public class Tables {
         public static final String RATING = "rating";
         public static final String NOTES = "notes";
         public static final String UPDATED = "updated";
-        public static final String DELETED = "deleted";
         public static final String REMOTE_ID = "remote_id";
 
         /**
@@ -362,7 +361,6 @@ public class Tables {
         public static final String NAME = "name";
         public static final String PRESET = "preset";
         public static final String UPDATED = "updated";
-        public static final String DELETED = "deleted";
         public static final String REMOTE_ID = "remote_id";
         public static final String NUM_ENTRIES = "num_entries";
 
@@ -381,6 +379,45 @@ public class Tables {
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
 
         private Cats() {
+        }
+    }
+
+    /**
+     * Data contract for the 'deleted' table.
+     *
+     * @author Steve Guidetti
+     */
+    public static class Deleted implements BaseColumns {
+        /**
+         * Table names
+         */
+        public static final String TABLE_NAME = "deleted";
+
+        /**
+         * Column names
+         */
+        public static final String TYPE = "type";
+        public static final String CAT = "cat";
+        public static final String REMOTE_ID = "remote_id";
+
+        /**
+         * Values for the 'type' column
+         */
+        public static final int TYPE_CAT = 0;
+        public static final int TYPE_ENTRY = 1;
+
+        /**
+         * Content data types
+         */
+        public static final String DATA_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".deleted";
+
+        /**
+         * Content Uris
+         */
+        public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
+
+        private Deleted() {
         }
     }
 }

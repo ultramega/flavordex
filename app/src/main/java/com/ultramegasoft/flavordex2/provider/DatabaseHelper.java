@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * The current version of the schema, incremented by 1 for each iteration
      */
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     /**
      * The Context
@@ -77,10 +77,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         .append("` INTEGER;");
                 db.execSQL(query.toString());
                 query = new StringBuilder("ALTER TABLE `").append(Tables.Entries.TABLE_NAME)
-                        .append("` ADD COLUMN `").append(Tables.Entries.DELETED)
-                        .append("` INTEGER DEFAULT 0;");
-                db.execSQL(query.toString());
-                query = new StringBuilder("ALTER TABLE `").append(Tables.Entries.TABLE_NAME)
                         .append("` ADD COLUMN `").append(Tables.Entries.REMOTE_ID)
                         .append("` INTEGER DEFAULT 0;");
                 db.execSQL(query.toString());
@@ -95,12 +91,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         .append("` INTEGER;");
                 db.execSQL(query.toString());
                 query = new StringBuilder("ALTER TABLE `").append(Tables.Cats.TABLE_NAME)
-                        .append("` ADD COLUMN `").append(Tables.Entries.DELETED)
-                        .append("` INTEGER DEFAULT 0;");
-                db.execSQL(query.toString());
-                query = new StringBuilder("ALTER TABLE `").append(Tables.Cats.TABLE_NAME)
                         .append("` ADD COLUMN `").append(Tables.Entries.REMOTE_ID)
                         .append("` INTEGER DEFAULT 0;");
+                db.execSQL(query.toString());
+            case 3:
+                db.execSQL("DROP TRIGGER IF EXISTS `delete_cat`;");
+                query = new StringBuilder("CREATE TABLE `").append(Tables.Deleted.TABLE_NAME)
+                        .append("` (`").append(Tables.Deleted._ID)
+                        .append("` INTEGER PRIMARY KEY, `").append(Tables.Deleted.TYPE)
+                        .append("` INTEGER, `").append(Tables.Deleted.CAT)
+                        .append("` INTEGER DEFAULT 0, `").append(Tables.Deleted.REMOTE_ID)
+                        .append("` INTEGER);");
                 db.execSQL(query.toString());
         }
 

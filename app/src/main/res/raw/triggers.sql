@@ -18,6 +18,7 @@ BEGIN
     DELETE FROM `entries` WHERE `cat` = OLD.`_id`;
     DELETE FROM `extras` WHERE `cat` = OLD.`_id`;
     DELETE FROM `flavors` WHERE `cat` = OLD.`_id`;
+    DELETE FROM `deleted` WHERE `cat` = OLD.`_id`;
 END;
 --
 CREATE TRIGGER IF NOT EXISTS `delete_entry_extra` AFTER DELETE ON `entries_extras`

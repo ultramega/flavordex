@@ -12,7 +12,6 @@ a.`price` AS `price`,
 a.`rating` AS `rating`,
 a.`notes` AS `notes`,
 a.`updated` AS `updated`,
-a.`deleted` AS `deleted`,
 a.`remote_id` AS `remote_id`
 FROM `entries` a LEFT JOIN `cats` b LEFT JOIN `makers` c
 WHERE a.`cat` = b.`_id` AND a.`maker` = c.`_id`;

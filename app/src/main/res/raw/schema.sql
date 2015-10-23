@@ -9,7 +9,6 @@ CREATE TABLE `entries` (
   `rating` REAL,
   `notes` TEXT COLLATE NOCASE,
   `updated` INTEGER,
-  `deleted` INTEGER DEFAULT 0,
   `remote_id` INTEGER DEFAULT 0
 );
 --
@@ -70,6 +69,12 @@ CREATE TABLE `cats` (
   `name`  TEXT COLLATE NOCASE,
   `preset` INTEGER DEFAULT 0,
   `updated` INTEGER,
-  `deleted` INTEGER DEFAULT 0,
   `remote_id` INTEGER DEFAULT 0
+);
+--
+CREATE TABLE `deleted` (
+  `_id` INTEGER PRIMARY KEY,
+  `type` INTEGER,
+  `cat` INTEGER DEFAULT 0,
+  `remote_id` INTEGER
 );
