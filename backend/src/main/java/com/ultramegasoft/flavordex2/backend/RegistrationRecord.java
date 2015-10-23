@@ -6,7 +6,6 @@ package com.ultramegasoft.flavordex2.backend;
  * @author Steve Guidetti
  */
 public class RegistrationRecord {
-
     private long clientId;
 
     public long getClientId() {

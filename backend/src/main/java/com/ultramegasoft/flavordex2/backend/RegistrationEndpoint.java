@@ -39,7 +39,6 @@ import javax.inject.Named;
         }
 )
 public class RegistrationEndpoint {
-
     /**
      * Register a client device with the backend.
      *
