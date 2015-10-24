@@ -378,7 +378,7 @@ public class AddEntryFragment extends Fragment {
                 final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE,
                         mEntry.catId);
                 final Cursor cursor = mResolver.query(Uri.withAppendedPath(uri, "flavor"), null,
-                        null, null, Tables.Flavors._ID + " ASC");
+                        null, null, Tables.Flavors.POS + " ASC");
                 if(cursor != null) {
                     try {
                         String name;

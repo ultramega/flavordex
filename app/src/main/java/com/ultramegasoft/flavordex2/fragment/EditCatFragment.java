@@ -612,7 +612,7 @@ public class EditCatFragment extends LoadingProgressFragment
         private void loadExtras(Holder holder, Uri catUri) {
             final Uri uri = Uri.withAppendedPath(catUri, "extras");
             final String where = Tables.Extras.PRESET + " = 0";
-            final String sort = Tables.Extras._ID + " ASC";
+            final String sort = Tables.Extras.POS + " ASC";
             final Cursor cursor = mResolver.query(uri, null, where, null, sort);
             if(cursor != null) {
                 try {
@@ -639,7 +639,7 @@ public class EditCatFragment extends LoadingProgressFragment
          */
         private void loadFlavors(Holder holder, Uri catUri) {
             final Uri uri = Uri.withAppendedPath(catUri, "flavor");
-            final String sort = Tables.Flavors._ID + " ASC";
+            final String sort = Tables.Flavors.POS + " ASC";
             final Cursor cursor = mResolver.query(uri, null, null, null, sort);
             if(cursor != null) {
                 try {

@@ -492,7 +492,7 @@ public class EditInfoFragment extends LoadingProgressFragment
         private void loadExtras(Holder holder) {
             final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
             final Cursor cursor = mResolver.query(Uri.withAppendedPath(uri, "extras"), null, null,
-                    null, Tables.Extras._ID + " ASC");
+                    null, Tables.Extras.POS + " ASC");
             if(cursor != null) {
                 long id;
                 String name;

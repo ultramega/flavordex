@@ -270,12 +270,12 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                 uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE,
                         mEntryId + "/flavor");
                 return new CursorLoader(getContext(), uri, null, null, null,
-                        Tables.EntriesFlavors._ID + " ASC");
+                        Tables.EntriesFlavors.POS + " ASC");
             case LOADER_DEFAULT_FLAVOR:
                 final long catId = getArguments().getLong(ViewEntryFragment.ARG_ENTRY_CAT_ID);
                 uri = Uri.withAppendedPath(Tables.Cats.CONTENT_ID_URI_BASE, catId + "/flavor");
                 return new CursorLoader(getContext(), uri, null, null, null,
-                        Tables.Flavors._ID + " ASC");
+                        Tables.Flavors.POS + " ASC");
         }
         return null;
     }

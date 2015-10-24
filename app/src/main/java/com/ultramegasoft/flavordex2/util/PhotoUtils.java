@@ -208,7 +208,7 @@ public class PhotoUtils {
         final ContentResolver cr = context.getContentResolver();
         final Uri uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, id + "/photos");
         final Cursor cursor = cr.query(uri, new String[] {Tables.Photos.PATH}, null, null,
-                Tables.Photos._ID + " ASC");
+                Tables.Photos.POS + " ASC");
         if(cursor != null) {
             try {
                 if(cursor.moveToFirst()) {

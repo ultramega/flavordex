@@ -243,7 +243,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
                 Tables.Photos.PATH
         };
         return new CursorLoader(getContext(), uri, projection, null, null,
-                Tables.Photos._ID + " ASC");
+                Tables.Photos.POS + " ASC");
     }
 
     @Override

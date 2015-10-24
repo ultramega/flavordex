@@ -80,7 +80,7 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
         return new CursorLoader(getContext(), Uri.withAppendedPath(uri, "flavor"), null, null,
-                null, Tables.Flavors._ID + " ASC");
+                null, Tables.Flavors.POS + " ASC");
     }
 
     @Override
