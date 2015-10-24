@@ -99,6 +99,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 query = new StringBuilder("DROP VIEW IF EXISTS `").append(Tables.Entries.VIEW_NAME)
                         .append("`;");
                 db.execSQL(query.toString());
+                query = new StringBuilder("DROP VIEW IF EXISTS `")
+                        .append(Tables.EntriesExtras.VIEW_NAME).append("`;");
+                db.execSQL(query.toString());
+
+                query = new StringBuilder("ALTER TABLE `").append(Tables.EntriesFlavors.TABLE_NAME)
+                        .append("` ADD COLUMN `").append(Tables.EntriesFlavors.POS)
+                        .append("` INTEGER;");
+                db.execSQL(query.toString());
+                query = new StringBuilder("ALTER TABLE `").append(Tables.Extras.TABLE_NAME)
+                        .append("` ADD COLUMN `").append(Tables.Extras.POS)
+                        .append("` INTEGER;");
+                db.execSQL(query.toString());
+                query = new StringBuilder("ALTER TABLE `").append(Tables.EntriesFlavors.TABLE_NAME)
+                        .append("` ADD COLUMN `").append(Tables.EntriesFlavors.POS)
+                        .append("` INTEGER;");
+                db.execSQL(query.toString());
+                query = new StringBuilder("ALTER TABLE `").append(Tables.Photos.TABLE_NAME)
+                        .append("` ADD COLUMN `").append(Tables.Photos.POS)
+                        .append("` INTEGER;");
+                db.execSQL(query.toString());
+
                 query = new StringBuilder("CREATE TABLE `").append(Tables.Deleted.TABLE_NAME)
                         .append("` (`").append(Tables.Deleted._ID)
                         .append("` INTEGER PRIMARY KEY, `").append(Tables.Deleted.TYPE)

@@ -111,6 +111,7 @@ public class Tables {
         public static final String ENTRY = "entry";
         public static final String FLAVOR = "flavor";
         public static final String VALUE = "value";
+        public static final String POS = "pos";
 
         private EntriesFlavors() {
         }
@@ -132,6 +133,7 @@ public class Tables {
          */
         public static final String CAT = "cat";
         public static final String NAME = "name";
+        public static final String POS = "pos";
         public static final String PRESET = "preset";
         public static final String DELETED = "deleted";
         public static final String REMOTE_ID = "remote_id";
@@ -216,6 +218,7 @@ public class Tables {
          */
         public static final String CAT = "cat";
         public static final String NAME = "name";
+        public static final String POS = "pos";
 
         /**
          * Content data types
@@ -289,6 +292,7 @@ public class Tables {
         public static final String ENTRY = "entry";
         public static final String PATH = "path";
         public static final String DRIVE_ID = "drive_id";
+        public static final String POS = "pos";
 
         /**
          * Content data types

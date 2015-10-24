@@ -24,13 +24,15 @@ CREATE TABLE `entries_flavors` (
   `_id` INTEGER PRIMARY KEY,
   `entry` INTEGER,
   `flavor` TEXT COLLATE NOCASE,
-  `value` INTEGER
+  `value` INTEGER,
+  `pos` INTEGER
 );
 --
 CREATE TABLE `extras` (
   `_id` INTEGER PRIMARY KEY,
   `cat` INTEGER,
   `name` TEXT,
+  `pos` INTEGER,
   `preset` INTEGER DEFAULT 0,
   `deleted` INTEGER DEFAULT 0,
   `remote_id` INTEGER DEFAULT 0
@@ -39,7 +41,8 @@ CREATE TABLE `extras` (
 CREATE TABLE `flavors` (
   `_id` INTEGER PRIMARY KEY,
   `cat` INTEGER,
-  `name` TEXT
+  `name` TEXT,
+  `pos` INTEGER
 );
 --
 CREATE TABLE `locations` (
@@ -61,7 +64,8 @@ CREATE TABLE `photos` (
   `_id` INTEGER PRIMARY KEY,
   `entry` INTEGER,
   `path` TEXT,
-  `drive_id` TEXT
+  `drive_id` TEXT,
+  `pos` INTEGER
 );
 --
 CREATE TABLE `cats` (
