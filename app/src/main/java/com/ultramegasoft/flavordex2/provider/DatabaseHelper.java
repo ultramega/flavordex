@@ -58,75 +58,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        StringBuilder query;
         switch(oldVersion) {
             case 1:
-                query = new StringBuilder("ALTER TABLE `").append(Tables.Photos.TABLE_NAME)
-                        .append("` ADD COLUMN `").append(Tables.Photos.DRIVE_ID).append("` TEXT;");
-                db.execSQL(query.toString());
-            case 2:
-                query = new StringBuilder("DROP VIEW IF EXISTS `").append(Tables.Entries.VIEW_NAME)
-                        .append("`;");
-                db.execSQL(query.toString());
-                query = new StringBuilder("DROP VIEW IF EXISTS `")
-                        .append(Tables.EntriesExtras.VIEW_NAME).append("`;");
-                db.execSQL(query.toString());
-
-                query = new StringBuilder("ALTER TABLE `").append(Tables.Entries.TABLE_NAME)
-                        .append("` ADD COLUMN `").append(Tables.Entries.UPDATED)
-                        .append("` INTEGER;");
-                db.execSQL(query.toString());
-                query = new StringBuilder("ALTER TABLE `").append(Tables.Entries.TABLE_NAME)
-                        .append("` ADD COLUMN `").append(Tables.Entries.REMOTE_ID)
-                        .append("` INTEGER DEFAULT 0;");
-                db.execSQL(query.toString());
-
-                query = new StringBuilder("ALTER TABLE `").append(Tables.Extras.TABLE_NAME)
-                        .append("` ADD COLUMN `").append(Tables.Extras.REMOTE_ID)
-                        .append("` INTEGER DEFAULT 0;");
-                db.execSQL(query.toString());
-
-                query = new StringBuilder("ALTER TABLE `").append(Tables.Cats.TABLE_NAME)
-                        .append("` ADD COLUMN `").append(Tables.Entries.UPDATED)
-                        .append("` INTEGER;");
-                db.execSQL(query.toString());
-                query = new StringBuilder("ALTER TABLE `").append(Tables.Cats.TABLE_NAME)
-                        .append("` ADD COLUMN `").append(Tables.Entries.REMOTE_ID)
-                        .append("` INTEGER DEFAULT 0;");
-                db.execSQL(query.toString());
-            case 3:
-                db.execSQL("DROP TRIGGER IF EXISTS `delete_cat`;");
-                query = new StringBuilder("DROP VIEW IF EXISTS `").append(Tables.Entries.VIEW_NAME)
-                        .append("`;");
-                db.execSQL(query.toString());
-                query = new StringBuilder("DROP VIEW IF EXISTS `")
-                        .append(Tables.EntriesExtras.VIEW_NAME).append("`;");
-                db.execSQL(query.toString());
-
-                query = new StringBuilder("ALTER TABLE `").append(Tables.EntriesFlavors.TABLE_NAME)
-                        .append("` ADD COLUMN `").append(Tables.EntriesFlavors.POS)
-                        .append("` INTEGER;");
-                db.execSQL(query.toString());
-                query = new StringBuilder("ALTER TABLE `").append(Tables.Extras.TABLE_NAME)
-                        .append("` ADD COLUMN `").append(Tables.Extras.POS)
-                        .append("` INTEGER;");
-                db.execSQL(query.toString());
-                query = new StringBuilder("ALTER TABLE `").append(Tables.EntriesFlavors.TABLE_NAME)
-                        .append("` ADD COLUMN `").append(Tables.EntriesFlavors.POS)
-                        .append("` INTEGER;");
-                db.execSQL(query.toString());
-                query = new StringBuilder("ALTER TABLE `").append(Tables.Photos.TABLE_NAME)
-                        .append("` ADD COLUMN `").append(Tables.Photos.POS)
-                        .append("` INTEGER;");
-                db.execSQL(query.toString());
-
-                query = new StringBuilder("CREATE TABLE `").append(Tables.Deleted.TABLE_NAME)
-                        .append("` (`").append(Tables.Deleted._ID)
-                        .append("` INTEGER PRIMARY KEY, `").append(Tables.Deleted.TYPE)
-                        .append("` INTEGER, `").append(Tables.Deleted.CAT)
-                        .append("` INTEGER DEFAULT 0, `").append(Tables.Deleted.REMOTE_ID)
-                        .append("` INTEGER);");
-                db.execSQL(query.toString());
+                execRawFile(db, R.raw.upgrade_v2);
         }
 
         execRawFile(db, R.raw.triggers);
