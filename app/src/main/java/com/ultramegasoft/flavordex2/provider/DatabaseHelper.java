@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * The current version of the schema, incremented by 1 for each iteration
      */
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 2;
 
     /**
      * The Context
