@@ -331,12 +331,17 @@ public class CSVUtils {
         final String[] projection = new String[] {Tables.Entries._ID};
         final String where = Tables.Entries.TITLE + " = ?";
         final String[] whereArgs = new String[] {entry.title};
-        final Cursor cursor = cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs, null);
-        try {
-            return cursor.moveToFirst();
-        } finally {
-            cursor.close();
+        final Cursor cursor =
+                cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs, null);
+        if(cursor != null) {
+            try {
+                return cursor.moveToFirst();
+            } finally {
+                cursor.close();
+            }
         }
+
+        return false;
     }
 
     /**
