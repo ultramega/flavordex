@@ -126,7 +126,7 @@ public class EntryHolder implements Parcelable {
      * @param path The path to the photo file
      */
     public void addPhoto(long id, String path) {
-        mPhotos.add(new PhotoHolder(id, path));
+        mPhotos.add(new PhotoHolder(id, path, 0));
     }
 
     /**

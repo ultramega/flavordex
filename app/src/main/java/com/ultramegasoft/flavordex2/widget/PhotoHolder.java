@@ -32,23 +32,31 @@ public class PhotoHolder implements Parcelable {
     public final String path;
 
     /**
+     * The sort position of the photo
+     */
+    public int pos;
+
+    /**
      * @param id   The database ID for this photo
      * @param path The path to the photo file
+     * @param pos  The sort position of the photo
      */
-    public PhotoHolder(long id, String path) {
+    public PhotoHolder(long id, String path, int pos) {
         this.id = id;
         this.path = path;
+        this.pos = pos;
     }
 
     /**
      * @param path The path to the photo file
+     * @param pos  The sort position of the photo
      */
-    public PhotoHolder(String path) {
-        this(0, path);
+    public PhotoHolder(String path, int pos) {
+        this(0, path, pos);
     }
 
     private PhotoHolder(Parcel in) {
-        this(in.readLong(), in.readString());
+        this(in.readLong(), in.readString(), in.readInt());
     }
 
     @Override
@@ -60,5 +68,6 @@ public class PhotoHolder implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(path);
+        dest.writeInt(pos);
     }
 }

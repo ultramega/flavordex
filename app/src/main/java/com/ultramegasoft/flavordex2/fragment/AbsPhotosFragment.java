@@ -215,13 +215,17 @@ public abstract class AbsPhotosFragment extends Fragment {
             return;
         }
 
+        int pos = 0;
         for(PhotoHolder photo : mPhotos) {
             if(path.equals(photo.path)) {
                 return;
             }
+            if(photo.pos > pos) {
+                pos = photo.pos + 1;
+            }
         }
 
-        final PhotoHolder photo = new PhotoHolder(path);
+        final PhotoHolder photo = new PhotoHolder(path, pos);
         mPhotos.add(photo);
         onPhotoAdded(photo);
     }

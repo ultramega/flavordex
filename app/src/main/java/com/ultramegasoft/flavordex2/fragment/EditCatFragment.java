@@ -762,6 +762,7 @@ public class EditCatFragment extends LoadingProgressFragment
             final Uri insertUri = Uri.withAppendedPath(catUri, "extras");
             Uri uri;
             final ContentValues values = new ContentValues();
+            int pos = 0;
             for(Field field : mExtras) {
                 if(field.id > 0) {
                     uri = ContentUris.withAppendedId(Tables.Extras.CONTENT_ID_URI_BASE, field.id);
@@ -769,11 +770,13 @@ public class EditCatFragment extends LoadingProgressFragment
                         mResolver.delete(uri, null, null);
                     } else {
                         values.put(Tables.Extras.NAME, field.name);
+                        values.put(Tables.Extras.POS, pos++);
                         values.put(Tables.Extras.DELETED, false);
                         mResolver.update(uri, values, null, null);
                     }
                 } else if(!field.isEmpty()) {
                     values.put(Tables.Extras.NAME, field.name);
+                    values.put(Tables.Extras.POS, pos++);
                     mResolver.insert(insertUri, values);
                 }
             }
@@ -788,6 +791,7 @@ public class EditCatFragment extends LoadingProgressFragment
             final Uri insertUri = Uri.withAppendedPath(catUri, "flavor");
             Uri uri;
             final ContentValues values = new ContentValues();
+            int pos = 0;
             for(Field field : mFlavors) {
                 if(field.id > 0) {
                     uri = ContentUris.withAppendedId(Tables.Flavors.CONTENT_ID_URI_BASE, field.id);
@@ -795,10 +799,12 @@ public class EditCatFragment extends LoadingProgressFragment
                         mResolver.delete(uri, null, null);
                     } else {
                         values.put(Tables.Flavors.NAME, field.name);
+                        values.put(Tables.Flavors.POS, pos++);
                         mResolver.update(uri, values, null, null);
                     }
                 } else if(!field.isEmpty()) {
                     values.put(Tables.Flavors.NAME, field.name);
+                    values.put(Tables.Flavors.POS, pos++);
                     mResolver.insert(insertUri, values);
                 }
             }

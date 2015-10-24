@@ -18,6 +18,8 @@ import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 
+import java.util.ArrayList;
+
 /**
  * Utilities for managing journal entries.
  *
@@ -103,11 +105,13 @@ public class EntryUtils {
      * @param entry  The entry
      */
     private static void insertCatFlavors(ContentResolver cr, Uri catUri, EntryHolder entry) {
+        final ArrayList<RadarHolder> flavors = entry.getFlavors();
         final Uri uri = Uri.withAppendedPath(catUri, "flavor");
         final ContentValues values = new ContentValues();
         values.put(Tables.Flavors.CAT, entry.catId);
-        for(RadarHolder flavor : entry.getFlavors()) {
-            values.put(Tables.Flavors.NAME, filterName(flavor.name));
+        for(int i = 0; i < flavors.size(); i++) {
+            values.put(Tables.Flavors.NAME, filterName(flavors.get(i).name));
+            values.put(Tables.Flavors.POS, i);
             cr.insert(uri, values);
         }
     }
@@ -161,12 +165,36 @@ public class EntryUtils {
 
         final ContentValues values = new ContentValues();
         values.put(Tables.Extras.NAME, name);
+        values.put(Tables.Extras.POS, getNextExtraPos(cr, uri));
         final Uri extraUri = cr.insert(uri, values);
         if(extraUri == null) {
             throw new SQLiteException("Inserting new extra field failed");
         }
 
         return Long.valueOf(extraUri.getLastPathSegment());
+    }
+
+    /**
+     * Get the next sort position for a new extra field.
+     *
+     * @param cr  The ContentResolver
+     * @param uri The Uri for a category's extras
+     * @return The next sort position for a new extra field
+     */
+    private static int getNextExtraPos(ContentResolver cr, Uri uri) {
+        final String[] projection = new String[] {Tables.Extras.POS};
+        final Cursor cursor = cr.query(uri, projection, null, null, Tables.Extras.POS + " DESC");
+        if(cursor != null) {
+            try {
+                if(cursor.moveToFirst()) {
+                    return cursor.getInt(0) + 1;
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+
+        return 0;
     }
 
     /**
@@ -177,11 +205,15 @@ public class EntryUtils {
      * @param entry    The entry
      */
     private static void insertFlavors(ContentResolver cr, Uri entryUri, EntryHolder entry) {
+        final ArrayList<RadarHolder> flavors = entry.getFlavors();
         final Uri uri = Uri.withAppendedPath(entryUri, "flavor");
         final ContentValues values = new ContentValues();
-        for(RadarHolder flavor : entry.getFlavors()) {
+        RadarHolder flavor;
+        for(int i = 0; i < flavors.size(); i++) {
+            flavor = flavors.get(i);
             values.put(Tables.EntriesFlavors.FLAVOR, filterName(flavor.name));
             values.put(Tables.EntriesFlavors.VALUE, flavor.value);
+            values.put(Tables.EntriesFlavors.POS, i);
             cr.insert(uri, values);
         }
     }
@@ -194,10 +226,12 @@ public class EntryUtils {
      * @param entry    The entry
      */
     private static void insertPhotos(ContentResolver cr, Uri entryUri, EntryHolder entry) {
+        final ArrayList<PhotoHolder> photos = entry.getPhotos();
         final Uri uri = Uri.withAppendedPath(entryUri, "photos");
         final ContentValues values = new ContentValues();
-        for(PhotoHolder photo : entry.getPhotos()) {
-            values.put(Tables.Photos.PATH, photo.path);
+        for(int i = 0; i < photos.size(); i++) {
+            values.put(Tables.Photos.PATH, photos.get(i).path);
+            values.put(Tables.Photos.POS, i);
             cr.insert(uri, values);
         }
     }

@@ -99,16 +99,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.clear();
         values.put(Tables.Extras.CAT, id);
         values.put(Tables.Extras.PRESET, 1);
-        for(String extra : extras) {
-            values.put(Tables.Extras.NAME, extra);
+        for(int i = 0; i < extras.length; i++) {
+            values.put(Tables.Extras.NAME, extras[i]);
+            values.put(Tables.Extras.POS, i);
             db.insert(Tables.Extras.TABLE_NAME, null, values);
         }
 
         values.clear();
         final String[] flavors = mContext.getResources().getStringArray(flavorRes);
         values.put(Tables.Flavors.CAT, id);
-        for(String flavor : flavors) {
-            values.put(Tables.Flavors.NAME, flavor);
+        for(int i = 0; i < flavors.length; i++) {
+            values.put(Tables.Flavors.NAME, flavors[i]);
+            values.put(Tables.Flavors.POS, i);
             db.insert(Tables.Flavors.TABLE_NAME, null, values);
         }
     }

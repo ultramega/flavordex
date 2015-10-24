@@ -240,7 +240,8 @@ public class ViewPhotosFragment extends AbsPhotosFragment
                 Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/photos");
         final String[] projection = new String[] {
                 Tables.Photos._ID,
-                Tables.Photos.PATH
+                Tables.Photos.PATH,
+                Tables.Photos.POS
         };
         return new CursorLoader(getContext(), uri, projection, null, null,
                 Tables.Photos.POS + " ASC");
@@ -254,7 +255,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
             while(data.moveToNext()) {
                 final String path = data.getString(1);
                 if(new File(path).exists()) {
-                    photos.add(new PhotoHolder(data.getLong(0), path));
+                    photos.add(new PhotoHolder(data.getLong(0), path, data.getInt(2)));
                 }
             }
         }
@@ -337,6 +338,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
 
             final ContentValues values = new ContentValues();
             values.put(Tables.Photos.PATH, mPhoto.path);
+            values.put(Tables.Photos.POS, mPhoto.pos);
 
             try {
                 uri = mContext.getContentResolver().insert(uri, values);

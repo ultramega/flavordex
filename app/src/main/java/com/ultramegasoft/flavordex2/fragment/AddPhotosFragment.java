@@ -120,7 +120,7 @@ public class AddPhotosFragment extends AbsPhotosFragment {
         /**
          * Empty PhotoHolder to serve as a placeholder for the add button
          */
-        private final PhotoHolder mPlaceholder = new PhotoHolder(null);
+        private final PhotoHolder mPlaceholder = new PhotoHolder(null, -1);
 
         /**
          * The data backing the Adapter
