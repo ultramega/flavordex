@@ -96,6 +96,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 db.execSQL(query.toString());
             case 3:
                 db.execSQL("DROP TRIGGER IF EXISTS `delete_cat`;");
+                query = new StringBuilder("DROP VIEW IF EXISTS `").append(Tables.Entries.VIEW_NAME)
+                        .append("`;");
+                db.execSQL(query.toString());
                 query = new StringBuilder("CREATE TABLE `").append(Tables.Deleted.TABLE_NAME)
                         .append("` (`").append(Tables.Deleted._ID)
                         .append("` INTEGER PRIMARY KEY, `").append(Tables.Deleted.TYPE)

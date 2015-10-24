@@ -1,6 +1,7 @@
 CREATE VIEW IF NOT EXISTS `view_entry` AS SELECT
 a.`_id` AS `_id`,
 a.`cat` AS `cat_id`,
+b.`remote_id` AS `cat_remote_id`,
 b.`name` AS `cat`,
 a.`title` AS `title`,
 a.`maker` AS `maker_id`,
