@@ -374,19 +374,16 @@ public class FlavordexProvider extends ContentProvider {
             case EXTRAS:
                 table = Tables.Extras.TABLE_NAME;
                 values.remove(Tables.Extras.PRESET);
-                selection = appendWhere(selection, Tables.Extras.PRESET + " = 0");
                 break;
             case EXTRAS_ID:
                 table = Tables.Extras.TABLE_NAME;
                 values.remove(Tables.Extras.PRESET);
-                selection = appendWhere(selection, Tables.Extras.PRESET + " = 0");
                 selection = appendWhere(selection,
                         Tables.Extras._ID + " = " + uri.getLastPathSegment());
                 break;
             case CATS_EXTRAS:
                 table = Tables.Extras.TABLE_NAME;
                 values.remove(Tables.Extras.PRESET);
-                selection = appendWhere(selection, Tables.Extras.PRESET + " = 0");
                 selection = appendWhere(selection,
                         Tables.Extras.CAT + " = " + uri.getPathSegments().get(1));
                 break;
