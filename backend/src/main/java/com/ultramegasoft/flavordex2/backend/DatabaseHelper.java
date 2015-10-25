@@ -306,7 +306,7 @@ public class DatabaseHelper {
             record = new PhotoRecord();
             record.setId(result.getLong("id"));
             record.setPath(result.getString("path"));
-            record.setDriveId(result.getNString("drive_id"));
+            record.setDriveId(result.getString("drive_id"));
             record.setPos(result.getInt("pos"));
             records.add(record);
         }
@@ -485,7 +485,7 @@ public class DatabaseHelper {
         stmt.setLong(1, entry.getId());
         for(PhotoRecord photo : entry.getPhotos()) {
             stmt.setString(2, photo.getPath());
-            stmt.setNString(3, photo.getDriveId());
+            stmt.setString(3, photo.getDriveId());
             stmt.setInt(4, photo.getPos());
             stmt.executeUpdate();
         }
