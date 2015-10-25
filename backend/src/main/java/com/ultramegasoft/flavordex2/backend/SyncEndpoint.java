@@ -14,6 +14,7 @@ import com.google.appengine.api.users.User;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.inject.Named;
@@ -141,9 +142,9 @@ public class SyncEndpoint {
             response.setSuccess(true);
             response.setId(record.getId());
 
-            final long[] extraIds = new long[record.getExtras().size()];
-            for(int i = 0; i < extraIds.length; i++) {
-                extraIds[i] = record.getExtras().get(i).getId();
+            final ArrayList<Long> extraIds = new ArrayList<>();
+            for(ExtraRecord extra : record.getExtras()) {
+                extraIds.add(extra.getId());
             }
             response.setExtraIds(extraIds);
         } catch(SQLException e) {
