@@ -716,10 +716,10 @@ public class DatabaseHelper {
             stmt.setBoolean(5, extra.isDeleted());
             stmt.executeUpdate();
 
-            if(cat.getId() == 0) {
+            if(extra.getId() == 0) {
                 ResultSet result = stmt.getGeneratedKeys();
                 if(result.next()) {
-                    cat.setId(result.getLong(1));
+                    extra.setId(result.getLong(1));
                 }
             }
         }
