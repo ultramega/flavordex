@@ -421,7 +421,7 @@ public class FlavordexProvider extends ContentProvider {
             case ENTRIES_PHOTOS:
                 table = Tables.Photos.TABLE_NAME;
                 selection = appendWhere(selection,
-                        Tables.Photos.ENTRY + " = " + uri.getLastPathSegment());
+                        Tables.Photos.ENTRY + " = " + uri.getPathSegments().get(1));
                 break;
             case LOCATIONS:
             case LOCATIONS_ID:
@@ -522,7 +522,7 @@ public class FlavordexProvider extends ContentProvider {
             case ENTRIES_PHOTOS:
                 table = Tables.Photos.TABLE_NAME;
                 selection = appendWhere(selection,
-                        Tables.Photos.ENTRY + " = " + uri.getLastPathSegment());
+                        Tables.Photos.ENTRY + " = " + uri.getPathSegments().get(1));
                 break;
             case DELETED:
                 table = Tables.Deleted.TABLE_NAME;
