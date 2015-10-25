@@ -342,7 +342,7 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private void insertEntry(EntryRecord entry) throws SQLException {
-        final String sql = "INSERT INTO entries (user, cat, title, maker, origin, price, location, date, rating, notes, updated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+        final String sql = "INSERT INTO entries (user, cat, title, maker, origin, price, location, date, rating, notes, updated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         final PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setLong(1, mUserId);
         stmt.setLong(2, entry.getCat());
@@ -706,11 +706,11 @@ public class DatabaseHelper {
         if(cat.getExtras() == null) {
             return;
         }
-        final String sql = "INSERT INTO extras (id, cat, name, pos, deleted) VALUES (?, ?, ?, ?, ?)";
+        final String sql = "REPLACE INTO extras (id, cat, name, pos, deleted) VALUES (?, ?, ?, ?, ?)";
         final PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        stmt.setLong(1, cat.getId());
         stmt.setLong(2, cat.getId());
         for(ExtraRecord extra : cat.getExtras()) {
+            stmt.setLong(1, extra.getId());
             stmt.setString(3, extra.getName());
             stmt.setInt(4, extra.getPos());
             stmt.setBoolean(5, extra.isDeleted());
