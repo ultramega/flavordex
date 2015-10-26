@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 
 /**
+ * Holds the data for a journal entry.
+ *
  * @author Steve Guidetti
  */
 public class EntryHolder implements Parcelable {
