@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
@@ -248,25 +247,6 @@ public class CatDeleteDialog extends DialogFragment
         @Override
         protected Void doInBackground(Void... params) {
             final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
-
-            final Cursor cursor =
-                    mResolver.query(uri, new String[] {Tables.Cats.UUID}, null, null, null);
-            if(cursor != null) {
-                try {
-                    if(cursor.moveToFirst()) {
-                        final String uuid = cursor.getString(0);
-                        if(uuid != null) {
-                            final ContentValues values = new ContentValues();
-                            values.put(Tables.Deleted.TYPE, Tables.Deleted.TYPE_CAT);
-                            values.put(Tables.Deleted.UUID, uuid);
-                            mResolver.insert(Tables.Deleted.CONTENT_URI, values);
-                        }
-                    }
-                } finally {
-                    cursor.close();
-                }
-            }
-
             mResolver.delete(uri, null, null);
             mResolver.notifyChange(Tables.Entries.CONTENT_URI, null);
             return null;

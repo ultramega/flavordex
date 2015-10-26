@@ -7,6 +7,12 @@ BEGIN
      AND NOT EXISTS (SELECT 1 FROM entries WHERE maker = OLD.maker);
 END;
 --
+CREATE TRIGGER IF NOT EXISTS log_delete_entry AFTER DELETE ON entries
+WHEN OLD.published = 1
+BEGIN
+    INSERT INTO deleted (type, cat, uuid) VALUES (1, OLD.cat, OLD.uuid);
+END;
+--
 CREATE TRIGGER IF NOT EXISTS update_entry AFTER UPDATE OF maker ON entries
 BEGIN
     DELETE FROM makers WHERE _id = OLD.maker
@@ -19,6 +25,12 @@ BEGIN
     DELETE FROM extras WHERE cat = OLD._id;
     DELETE FROM flavors WHERE cat = OLD._id;
     DELETE FROM deleted WHERE cat = OLD._id;
+END;
+--
+CREATE TRIGGER IF NOT EXISTS log_delete_cat AFTER DELETE ON cats
+WHEN OLD.published = 1
+BEGIN
+    INSERT INTO deleted (type, uuid) VALUES (0, OLD.uuid);
 END;
 --
 CREATE TRIGGER IF NOT EXISTS delete_entry_extra AFTER DELETE ON entries_extras

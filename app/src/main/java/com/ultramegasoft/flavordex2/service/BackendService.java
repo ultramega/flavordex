@@ -267,6 +267,9 @@ public class BackendService extends IntentService {
         if(cursor != null) {
             try {
                 long id;
+                Uri uri;
+                final ContentValues values = new ContentValues();
+                values.put(Tables.Cats.PUBLISHED, true);
                 while(cursor.moveToNext()) {
                     mNotifyClients = true;
                     record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Cats.UUID)));
@@ -276,7 +279,10 @@ public class BackendService extends IntentService {
                     record.setExtras(getCatExtras(cr, id));
                     record.setFlavors(getCatFlavors(cr, id));
 
-                    sync.pushCategory(clientId, record).execute();
+                    if(sync.pushCategory(clientId, record).execute().getSuccess()) {
+                        uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, id);
+                        cr.update(uri, values, null, null);
+                    }
                 }
             } finally {
                 cursor.close();
@@ -383,6 +389,9 @@ public class BackendService extends IntentService {
         if(cursor != null) {
             try {
                 long id;
+                Uri uri;
+                final ContentValues values = new ContentValues();
+                values.put(Tables.Entries.PUBLISHED, true);
                 while(cursor.moveToNext()) {
                     mNotifyClients = true;
                     record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Entries.UUID)));
@@ -404,7 +413,10 @@ public class BackendService extends IntentService {
                     record.setFlavors(getEntryFlavors(cr, id));
                     record.setPhotos(getEntryPhotos(cr, id));
 
-                    sync.pushEntry(clientId, record).execute();
+                    if(sync.pushEntry(clientId, record).execute().getSuccess()) {
+                        uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, id);
+                        cr.update(uri, values, null, null);
+                    }
                 }
             } finally {
                 cursor.close();

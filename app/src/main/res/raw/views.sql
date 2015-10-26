@@ -13,7 +13,8 @@ a.date AS date,
 a.price AS price,
 a.rating AS rating,
 a.notes AS notes,
-a.updated AS updated
+a.updated AS updated,
+a.published AS published
 FROM entries a LEFT JOIN cats b LEFT JOIN makers c
 WHERE a.cat = b._id AND a.maker = c._id;
 --

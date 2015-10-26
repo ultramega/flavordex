@@ -9,7 +9,8 @@ CREATE TABLE entries (
   date INTEGER,
   rating REAL,
   notes TEXT COLLATE NOCASE,
-  updated INTEGER DEFAULT 0
+  updated INTEGER DEFAULT 0,
+  published INTEGER DEFAULT 0
 );
 --
 CREATE TABLE entries_extras (
@@ -73,7 +74,8 @@ CREATE TABLE cats (
   uuid TEXT,
   name  TEXT COLLATE NOCASE,
   preset INTEGER DEFAULT 0,
-  updated INTEGER DEFAULT 0
+  updated INTEGER DEFAULT 0,
+  published INTEGER DEFAULT 0
 );
 --
 CREATE TABLE deleted (

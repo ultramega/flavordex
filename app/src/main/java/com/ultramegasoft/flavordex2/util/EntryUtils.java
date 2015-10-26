@@ -268,31 +268,6 @@ public class EntryUtils {
     public static void delete(Context context, long id) {
         final ContentResolver cr = context.getContentResolver();
         final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, id);
-
-        final String[] projection = new String[] {
-                Tables.Entries.CAT_ID,
-                Tables.Entries.UUID
-        };
-        final Cursor cursor = cr.query(uri, projection, null, null, null);
-        if(cursor != null) {
-            try {
-                if(cursor.moveToFirst()) {
-                    final String uuid =
-                            cursor.getString(cursor.getColumnIndex(Tables.Entries.UUID));
-                    if(uuid != null) {
-                        final ContentValues values = new ContentValues();
-                        values.put(Tables.Deleted.TYPE, Tables.Deleted.TYPE_ENTRY);
-                        values.put(Tables.Deleted.CAT,
-                                cursor.getLong(cursor.getColumnIndex(Tables.Entries.CAT_ID)));
-                        values.put(Tables.Deleted.UUID, uuid);
-                        cr.insert(Tables.Deleted.CONTENT_URI, values);
-                    }
-                }
-            } finally {
-                cursor.close();
-            }
-        }
-
         cr.delete(uri, null, null);
         PhotoUtils.deleteThumb(context, id);
     }
