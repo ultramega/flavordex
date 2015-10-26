@@ -636,11 +636,6 @@ public class BackendService extends IntentService {
      * @param record The entry record
      */
     private static void parseEntry(ContentResolver cr, EntryRecord record) {
-        final long catId = getCatId(cr, record.getCatUuid());
-        if(catId == 0) {
-            return;
-        }
-
         final long entryId = getEntryId(cr, record.getUuid());
         Uri uri;
         if(record.getDeleted()) {
@@ -649,6 +644,10 @@ public class BackendService extends IntentService {
                 cr.delete(uri, null, null);
             }
         } else {
+            final long catId = getCatId(cr, record.getCatUuid());
+            if(catId == 0) {
+                return;
+            }
             final ContentValues values = new ContentValues();
             values.put(Tables.Entries.TITLE, record.getTitle());
             values.put(Tables.Entries.MAKER, record.getMaker());
@@ -761,6 +760,9 @@ public class BackendService extends IntentService {
      * @return The local database ID of the category or 0 if not found
      */
     private static long getCatId(ContentResolver cr, String uuid) {
+        if(uuid == null) {
+            return 0;
+        }
         final String[] projection = new String[] {Tables.Cats._ID};
         final String where = Tables.Cats.UUID + " = ?";
         final String[] whereArgs = new String[] {uuid};
@@ -786,6 +788,9 @@ public class BackendService extends IntentService {
      * @return The local database ID of the entry or 0 if not found
      */
     private static long getEntryId(ContentResolver cr, String uuid) {
+        if(uuid == null) {
+            return 0;
+        }
         final String[] projection = new String[] {Tables.Entries._ID};
         final String where = Tables.Entries.UUID + " = ?";
         final String[] whereArgs = new String[] {uuid};
@@ -812,6 +817,9 @@ public class BackendService extends IntentService {
      * @return The local database ID of the extra field or 0 if not found
      */
     private static long getExtraId(ContentResolver cr, String uuid) {
+        if(uuid == null) {
+            return 0;
+        }
         final String[] projection = new String[] {Tables.Extras._ID};
         final String where = Tables.Extras.UUID + " = ?";
         final String[] whereArgs = new String[] {uuid};
