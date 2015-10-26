@@ -338,32 +338,40 @@ public class DatabaseHelper {
             throw new UnauthorizedException("Unknown user");
         }
 
-        String sql = "SELECT id, cat FROM entries WHERE uuid = ? AND user = ?";
-        PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setString(1, entry.getUuid());
-        stmt.setLong(2, mUserId);
+        try {
+            mConnection.setAutoCommit(false);
 
-        ResultSet result = stmt.executeQuery();
-        if(result.next()) {
-            entry.setId(result.getLong(1));
-            entry.setCat(result.getLong(2));
-        }
-
-        if(entry.getId() == 0) {
-            sql = "SELECT id FROM categories WHERE uuid = ? AND user = ?";
-            stmt = mConnection.prepareStatement(sql);
-            stmt.setString(1, entry.getCatUuid());
+            String sql = "SELECT id, cat FROM entries WHERE uuid = ? AND user = ?";
+            PreparedStatement stmt = mConnection.prepareStatement(sql);
+            stmt.setString(1, entry.getUuid());
             stmt.setLong(2, mUserId);
 
-            result = stmt.executeQuery();
+            ResultSet result = stmt.executeQuery();
             if(result.next()) {
-                entry.setCat(result.getLong(1));
+                entry.setId(result.getLong(1));
+                entry.setCat(result.getLong(2));
             }
-            insertEntry(entry);
-        } else if(entry.isDeleted()) {
-            deleteEntry(entry);
-        } else {
-            updateEntry(entry);
+
+            if(entry.getId() == 0) {
+                sql = "SELECT id FROM categories WHERE uuid = ? AND user = ?";
+                stmt = mConnection.prepareStatement(sql);
+                stmt.setString(1, entry.getCatUuid());
+                stmt.setLong(2, mUserId);
+
+                result = stmt.executeQuery();
+                if(result.next()) {
+                    entry.setCat(result.getLong(1));
+                }
+                insertEntry(entry);
+            } else if(entry.isDeleted()) {
+                deleteEntry(entry);
+            } else {
+                updateEntry(entry);
+            }
+
+            mConnection.commit();
+        } finally {
+            mConnection.setAutoCommit(true);
         }
     }
 
@@ -680,22 +688,30 @@ public class DatabaseHelper {
             throw new UnauthorizedException("Unknown user");
         }
 
-        final String sql = "SELECT id FROM categories WHERE uuid = ? AND user = ?";
-        final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setString(1, cat.getUuid());
-        stmt.setLong(2, mUserId);
+        try {
+            mConnection.setAutoCommit(false);
 
-        final ResultSet result = stmt.executeQuery();
-        if(result.next()) {
-            cat.setId(result.getLong(1));
-        }
+            final String sql = "SELECT id FROM categories WHERE uuid = ? AND user = ?";
+            final PreparedStatement stmt = mConnection.prepareStatement(sql);
+            stmt.setString(1, cat.getUuid());
+            stmt.setLong(2, mUserId);
 
-        if(cat.getId() == 0) {
-            insertCat(cat);
-        } else if(cat.isDeleted()) {
-            deleteCat(cat);
-        } else {
-            updateCat(cat);
+            final ResultSet result = stmt.executeQuery();
+            if(result.next()) {
+                cat.setId(result.getLong(1));
+            }
+
+            if(cat.getId() == 0) {
+                insertCat(cat);
+            } else if(cat.isDeleted()) {
+                deleteCat(cat);
+            } else {
+                updateCat(cat);
+            }
+
+            mConnection.commit();
+        } finally {
+            mConnection.setAutoCommit(true);
         }
     }
 
