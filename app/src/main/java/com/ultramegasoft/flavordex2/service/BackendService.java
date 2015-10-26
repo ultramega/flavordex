@@ -20,13 +20,11 @@ import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.backend.registration.Registration;
 import com.ultramegasoft.flavordex2.backend.sync.Sync;
 import com.ultramegasoft.flavordex2.backend.sync.model.CatRecord;
-import com.ultramegasoft.flavordex2.backend.sync.model.CatUpdateResponse;
 import com.ultramegasoft.flavordex2.backend.sync.model.EntryRecord;
 import com.ultramegasoft.flavordex2.backend.sync.model.ExtraRecord;
 import com.ultramegasoft.flavordex2.backend.sync.model.FlavorRecord;
 import com.ultramegasoft.flavordex2.backend.sync.model.PhotoRecord;
 import com.ultramegasoft.flavordex2.backend.sync.model.UpdateRecord;
-import com.ultramegasoft.flavordex2.backend.sync.model.UpdateResponse;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 
@@ -251,7 +249,7 @@ public class BackendService extends IntentService {
             try {
                 while(cursor.moveToNext()) {
                     mNotifyClients = true;
-                    record.setId(cursor.getLong(cursor.getColumnIndex(Tables.Deleted.REMOTE_ID)));
+                    record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Deleted.UUID)));
                     if(sync.pushCategory(clientId, record).execute().getSuccess()) {
                         where = Tables.Deleted._ID + " = "
                                 + cursor.getLong(cursor.getColumnIndex(Tables.Deleted._ID));
@@ -263,44 +261,22 @@ public class BackendService extends IntentService {
             }
         }
 
-        where = Tables.Cats.UPDATED + " > " + BackendUtils.getLastSync(this)
-                + " OR " + Tables.Cats.REMOTE_ID + " = 0";
+        where = Tables.Cats.UPDATED + " > " + BackendUtils.getLastSync(this);
         cursor = cr.query(Tables.Cats.CONTENT_URI, null, where, null, null);
         record.setDeleted(false);
         if(cursor != null) {
             try {
                 long id;
-                final ArrayList<Long> extraIds = new ArrayList<>();
-                CatUpdateResponse response;
-                ArrayList<Long> extraRemoteIds;
-                Uri uri;
-                final ContentValues values = new ContentValues();
                 while(cursor.moveToNext()) {
                     mNotifyClients = true;
-                    record.setId(cursor.getLong(cursor.getColumnIndex(Tables.Cats.REMOTE_ID)));
+                    record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Cats.UUID)));
                     record.setName(cursor.getString(cursor.getColumnIndex(Tables.Cats.NAME)));
 
                     id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
-                    record.setExtras(getCatExtras(cr, id, extraIds));
+                    record.setExtras(getCatExtras(cr, id));
                     record.setFlavors(getCatFlavors(cr, id));
 
-                    response = sync.pushCategory(clientId, record).execute();
-                    if(response.getSuccess()) {
-                        uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, id);
-                        values.put(Tables.Cats.REMOTE_ID, response.getId());
-                        cr.update(uri, values, null, null);
-
-                        extraRemoteIds = (ArrayList<Long>)response.getExtraIds();
-                        if(extraRemoteIds != null) {
-                            values.clear();
-                            for(int i = 0; i < extraRemoteIds.size(); i++) {
-                                uri = ContentUris.withAppendedId(Tables.Extras.CONTENT_ID_URI_BASE,
-                                        extraIds.get(i));
-                                values.put(Tables.Extras.REMOTE_ID, extraRemoteIds.get(i));
-                                cr.update(uri, values, null, null);
-                            }
-                        }
-                    }
+                    sync.pushCategory(clientId, record).execute();
                 }
             } finally {
                 cursor.close();
@@ -311,14 +287,11 @@ public class BackendService extends IntentService {
     /**
      * Get all the extra fields for a category from the local database.
      *
-     * @param cr       The ContentResolver
-     * @param catId    The local database ID of the category
-     * @param localIds An ArrayList to be populated with the local database IDs of the extra fields
+     * @param cr    The ContentResolver
+     * @param catId The local database ID of the category
      * @return A list of extra records
      */
-    private static ArrayList<ExtraRecord> getCatExtras(ContentResolver cr, long catId,
-                                                       ArrayList<Long> localIds) {
-        localIds.clear();
+    private static ArrayList<ExtraRecord> getCatExtras(ContentResolver cr, long catId) {
         final Uri uri = Uri.withAppendedPath(Tables.Cats.CONTENT_ID_URI_BASE, catId + "/extras");
         final Cursor cursor = cr.query(uri, null, null, null, null);
         if(cursor != null) {
@@ -327,13 +300,12 @@ public class BackendService extends IntentService {
                 ExtraRecord record;
                 while(cursor.moveToNext()) {
                     record = new ExtraRecord();
-                    record.setId(cursor.getLong(cursor.getColumnIndex(Tables.Extras.REMOTE_ID)));
+                    record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Extras.UUID)));
                     record.setName(cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME)));
                     record.setPos(cursor.getInt(cursor.getColumnIndex(Tables.Extras.POS)));
                     record.setDeleted(
                             cursor.getInt(cursor.getColumnIndex(Tables.Extras.DELETED)) == 1);
                     records.add(record);
-                    localIds.add(cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID)));
                 }
 
                 return records;
@@ -393,7 +365,7 @@ public class BackendService extends IntentService {
             try {
                 while(cursor.moveToNext()) {
                     mNotifyClients = true;
-                    record.setId(cursor.getLong(cursor.getColumnIndex(Tables.Deleted.REMOTE_ID)));
+                    record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Deleted.UUID)));
                     if(sync.pushEntry(clientId, record).execute().getSuccess()) {
                         where = Tables.Deleted._ID + " = "
                                 + cursor.getLong(cursor.getColumnIndex(Tables.Deleted._ID));
@@ -405,21 +377,17 @@ public class BackendService extends IntentService {
             }
         }
 
-        where = Tables.Entries.UPDATED + " > " + BackendUtils.getLastSync(this) + " OR "
-                + Tables.Entries.REMOTE_ID + " = 0";
+        where = Tables.Entries.UPDATED + " > " + BackendUtils.getLastSync(this);
         cursor = cr.query(Tables.Entries.CONTENT_URI, null, where, null, null);
         record.setDeleted(false);
         if(cursor != null) {
             try {
                 long id;
-                UpdateResponse response;
-                Uri uri;
-                final ContentValues values = new ContentValues();
                 while(cursor.moveToNext()) {
                     mNotifyClients = true;
-                    record.setId(cursor.getLong(cursor.getColumnIndex(Tables.Entries.REMOTE_ID)));
-                    record.setCat(
-                            cursor.getLong(cursor.getColumnIndex(Tables.Entries.CAT_REMOTE_ID)));
+                    record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Entries.UUID)));
+                    record.setCatUuid(
+                            cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT_UUID)));
                     record.setTitle(cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE)));
                     record.setMaker(cursor.getString(cursor.getColumnIndex(Tables.Entries.MAKER)));
                     record.setOrigin(
@@ -436,12 +404,7 @@ public class BackendService extends IntentService {
                     record.setFlavors(getEntryFlavors(cr, id));
                     record.setPhotos(getEntryPhotos(cr, id));
 
-                    response = sync.pushEntry(clientId, record).execute();
-                    if(response.getSuccess()) {
-                        uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, id);
-                        values.put(Tables.Entries.REMOTE_ID, response.getId());
-                        cr.update(uri, values, null, null);
-                    }
+                    sync.pushEntry(clientId, record).execute();
                 }
             } finally {
                 cursor.close();
@@ -466,7 +429,7 @@ public class BackendService extends IntentService {
                 ExtraRecord record;
                 while(cursor.moveToNext()) {
                     record = new ExtraRecord();
-                    record.setId(cursor.getLong(cursor.getColumnIndex(Tables.Extras.REMOTE_ID)));
+                    record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Extras.UUID)));
                     record.setValue(
                             cursor.getString(cursor.getColumnIndex(Tables.EntriesExtras.VALUE)));
                     record.setPos(cursor.getInt(cursor.getColumnIndex(Tables.Extras.POS)));
@@ -582,7 +545,7 @@ public class BackendService extends IntentService {
      * @param record The category record
      */
     private static void parseCat(ContentResolver cr, CatRecord record) {
-        final long catId = getCatId(cr, record.getId());
+        final long catId = getCatId(cr, record.getUuid());
         Uri uri;
         if(record.getDeleted()) {
             if(catId > 0) {
@@ -598,7 +561,7 @@ public class BackendService extends IntentService {
                 cr.update(uri, values, null, null);
             } else {
                 uri = Tables.Cats.CONTENT_URI;
-                values.put(Tables.Cats.REMOTE_ID, record.getId());
+                values.put(Tables.Cats.UUID, record.getUuid());
                 uri = cr.insert(uri, values);
             }
 
@@ -626,12 +589,12 @@ public class BackendService extends IntentService {
         final ContentValues values = new ContentValues();
         long id;
         for(ExtraRecord extra : extras) {
+            values.put(Tables.Extras.UUID, extra.getUuid());
             values.put(Tables.Extras.NAME, extra.getName());
             values.put(Tables.Extras.POS, extra.getPos());
             values.put(Tables.Extras.DELETED, extra.getDeleted());
-            values.put(Tables.Extras.REMOTE_ID, extra.getId());
 
-            id = getExtraId(cr, extra.getId());
+            id = getExtraId(cr, extra.getUuid());
             if(id > 0) {
                 uri = ContentUris.withAppendedId(Tables.Extras.CONTENT_ID_URI_BASE, id);
                 cr.update(uri, values, null, null);
@@ -673,12 +636,12 @@ public class BackendService extends IntentService {
      * @param record The entry record
      */
     private static void parseEntry(ContentResolver cr, EntryRecord record) {
-        final long catId = getCatId(cr, record.getCat());
+        final long catId = getCatId(cr, record.getCatUuid());
         if(catId == 0) {
             return;
         }
 
-        final long entryId = getEntryId(cr, record.getId());
+        final long entryId = getEntryId(cr, record.getUuid());
         Uri uri;
         if(record.getDeleted()) {
             if(entryId > 0) {
@@ -702,7 +665,7 @@ public class BackendService extends IntentService {
             } else {
                 uri = Tables.Entries.CONTENT_URI;
                 values.put(Tables.Entries.CAT, catId);
-                values.put(Tables.Entries.REMOTE_ID, record.getId());
+                values.put(Tables.Entries.UUID, record.getUuid());
                 uri = cr.insert(uri, values);
             }
 
@@ -731,7 +694,7 @@ public class BackendService extends IntentService {
         long extraId;
         final ContentValues values = new ContentValues();
         for(ExtraRecord extra : extras) {
-            extraId = getExtraId(cr, extra.getId());
+            extraId = getExtraId(cr, extra.getUuid());
             if(extraId > 0) {
                 values.put(Tables.EntriesExtras.EXTRA, extraId);
                 values.put(Tables.EntriesExtras.VALUE, extra.getValue());
@@ -791,16 +754,17 @@ public class BackendService extends IntentService {
     }
 
     /**
-     * Get the local database ID of a category based on the remote ID.
+     * Get the local database ID of a category based on the UUID.
      *
-     * @param cr       The ContentResolver
-     * @param remoteId The remote ID of the category
+     * @param cr   The ContentResolver
+     * @param uuid The UUID of the category
      * @return The local database ID of the category or 0 if not found
      */
-    private static long getCatId(ContentResolver cr, long remoteId) {
+    private static long getCatId(ContentResolver cr, String uuid) {
         final String[] projection = new String[] {Tables.Cats._ID};
-        final String where = Tables.Cats.REMOTE_ID + " = " + remoteId;
-        final Cursor cursor = cr.query(Tables.Cats.CONTENT_URI, projection, where, null, null);
+        final String where = Tables.Cats.UUID + " = ?";
+        final String[] whereArgs = new String[] {uuid};
+        final Cursor cursor = cr.query(Tables.Cats.CONTENT_URI, projection, where, whereArgs, null);
         if(cursor != null) {
             try {
                 if(cursor.moveToFirst()) {
@@ -815,16 +779,18 @@ public class BackendService extends IntentService {
     }
 
     /**
-     * Get the local database ID of an entry based on the remote ID.
+     * Get the local database ID of an entry based on the UUID.
      *
-     * @param cr       The ContentResolver
-     * @param remoteId The remote ID of the entry
+     * @param cr   The ContentResolver
+     * @param uuid The UUID of the entry
      * @return The local database ID of the entry or 0 if not found
      */
-    private static long getEntryId(ContentResolver cr, long remoteId) {
+    private static long getEntryId(ContentResolver cr, String uuid) {
         final String[] projection = new String[] {Tables.Entries._ID};
-        final String where = Tables.Entries.REMOTE_ID + " = " + remoteId;
-        final Cursor cursor = cr.query(Tables.Entries.CONTENT_URI, projection, where, null, null);
+        final String where = Tables.Entries.UUID + " = ?";
+        final String[] whereArgs = new String[] {uuid};
+        final Cursor cursor =
+                cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs, null);
         if(cursor != null) {
             try {
                 if(cursor.moveToFirst()) {
@@ -839,16 +805,18 @@ public class BackendService extends IntentService {
     }
 
     /**
-     * Get the local database ID of an extra field based on the remote ID.
+     * Get the local database ID of an extra field based on the UUID.
      *
-     * @param cr       The ContentResolver
-     * @param remoteId The remote ID of the extra field
+     * @param cr   The ContentResolver
+     * @param uuid The UUID of the extra field
      * @return The local database ID of the extra field or 0 if not found
      */
-    private static long getExtraId(ContentResolver cr, long remoteId) {
+    private static long getExtraId(ContentResolver cr, String uuid) {
         final String[] projection = new String[] {Tables.Extras._ID};
-        final String where = Tables.Extras.REMOTE_ID + " = " + remoteId;
-        final Cursor cursor = cr.query(Tables.Extras.CONTENT_URI, projection, where, null, null);
+        final String where = Tables.Extras.UUID + " = ?";
+        final String[] whereArgs = new String[] {uuid};
+        final Cursor cursor =
+                cr.query(Tables.Extras.CONTENT_URI, projection, where, whereArgs, null);
         if(cursor != null) {
             try {
                 if(cursor.moveToFirst()) {

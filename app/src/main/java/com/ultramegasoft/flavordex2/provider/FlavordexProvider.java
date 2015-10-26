@@ -14,6 +14,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import java.util.UUID;
+
 /**
  * The ContentProvider backing the application.
  *
@@ -261,6 +263,9 @@ public class FlavordexProvider extends ContentProvider {
         switch(sUriMatcher.match(uri)) {
             case ENTRIES:
                 table = Tables.Entries.TABLE_NAME;
+                if(!values.containsKey(Tables.Entries.UUID)) {
+                    values.put(Tables.Entries.UUID, UUID.randomUUID().toString());
+                }
                 if(values.containsKey(Tables.Entries.MAKER)
                         || values.containsKey(Tables.Entries.ORIGIN)) {
                     processMaker(values);
@@ -268,14 +273,23 @@ public class FlavordexProvider extends ContentProvider {
                 break;
             case CATS:
                 table = Tables.Cats.TABLE_NAME;
+                if(!values.containsKey(Tables.Cats.UUID)) {
+                    values.put(Tables.Cats.UUID, UUID.randomUUID().toString());
+                }
                 values.remove(Tables.Cats.PRESET);
                 break;
             case EXTRAS:
                 table = Tables.Extras.TABLE_NAME;
+                if(!values.containsKey(Tables.Extras.UUID)) {
+                    values.put(Tables.Extras.UUID, UUID.randomUUID().toString());
+                }
                 values.remove(Tables.Extras.PRESET);
                 break;
             case CATS_EXTRAS:
                 table = Tables.Extras.TABLE_NAME;
+                if(!values.containsKey(Tables.Extras.UUID)) {
+                    values.put(Tables.Extras.UUID, UUID.randomUUID().toString());
+                }
                 values.remove(Tables.Extras.PRESET);
                 values.put(Tables.Extras.CAT, uri.getPathSegments().get(1));
                 break;

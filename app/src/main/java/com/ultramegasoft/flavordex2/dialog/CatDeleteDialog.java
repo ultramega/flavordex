@@ -250,15 +250,15 @@ public class CatDeleteDialog extends DialogFragment
             final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
 
             final Cursor cursor =
-                    mResolver.query(uri, new String[] {Tables.Cats.REMOTE_ID}, null, null, null);
+                    mResolver.query(uri, new String[] {Tables.Cats.UUID}, null, null, null);
             if(cursor != null) {
                 try {
                     if(cursor.moveToFirst()) {
-                        final long remoteId = cursor.getLong(0);
-                        if(remoteId > 0) {
+                        final String uuid = cursor.getString(0);
+                        if(uuid != null) {
                             final ContentValues values = new ContentValues();
                             values.put(Tables.Deleted.TYPE, Tables.Deleted.TYPE_CAT);
-                            values.put(Tables.Deleted.REMOTE_ID, remoteId);
+                            values.put(Tables.Deleted.UUID, uuid);
                             mResolver.insert(Tables.Deleted.CONTENT_URI, values);
                         }
                     }

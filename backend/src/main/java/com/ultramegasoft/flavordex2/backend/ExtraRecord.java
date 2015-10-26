@@ -7,6 +7,7 @@ package com.ultramegasoft.flavordex2.backend;
  */
 public class ExtraRecord {
     private long id;
+    private String uuid;
     private long cat;
     private String name;
     private String value;
@@ -19,6 +20,14 @@ public class ExtraRecord {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public long getCat() {

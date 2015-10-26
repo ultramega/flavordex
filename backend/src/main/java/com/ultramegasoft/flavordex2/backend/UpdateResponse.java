@@ -7,7 +7,6 @@ package com.ultramegasoft.flavordex2.backend;
  */
 public class UpdateResponse {
     private boolean success;
-    private long id;
 
     public boolean isSuccess() {
         return success;
@@ -15,13 +14,5 @@ public class UpdateResponse {
 
     public void setSuccess(boolean success) {
         this.success = success;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 }

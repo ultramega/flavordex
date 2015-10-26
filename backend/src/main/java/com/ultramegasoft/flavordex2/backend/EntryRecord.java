@@ -9,7 +9,9 @@ import java.util.ArrayList;
  */
 public class EntryRecord {
     private long id;
+    private String uuid;
     private long cat;
+    private String catUuid;
     private String title;
     private String maker;
     private String origin;
@@ -33,12 +35,28 @@ public class EntryRecord {
         this.id = id;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
     public long getCat() {
         return cat;
     }
 
     public void setCat(long cat) {
         this.cat = cat;
+    }
+
+    public String getCatUuid() {
+        return catUuid;
+    }
+
+    public void setCatUuid(String catUuid) {
+        this.catUuid = catUuid;
     }
 
     public String getTitle() {

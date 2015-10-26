@@ -14,7 +14,6 @@ import com.google.appengine.api.users.User;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Map;
 
 import javax.inject.Named;
@@ -121,17 +120,17 @@ public class SyncEndpoint {
      * @param user     The User
      * @param record   The updated journal entry from the client
      * @param clientId The database ID of the client
-     * @return The update response containing the keys of newly inserted records
+     * @return The update response containing the result of the request
      * @throws InternalServerErrorException
      * @throws UnauthorizedException
      */
     @ApiMethod(name = "pushCategory")
-    public CatUpdateResponse pushCat(User user, CatRecord record, @Named("clientId") long clientId)
+    public UpdateResponse pushCat(User user, CatRecord record, @Named("clientId") long clientId)
             throws InternalServerErrorException, UnauthorizedException {
         if(user == null) {
             throw new UnauthorizedException("Unauthorized");
         }
-        final CatUpdateResponse response = new CatUpdateResponse();
+        final UpdateResponse response = new UpdateResponse();
         final DatabaseHelper helper = new DatabaseHelper();
         try {
             helper.open();
@@ -140,13 +139,6 @@ public class SyncEndpoint {
             helper.setLastSync(clientId, System.currentTimeMillis());
 
             response.setSuccess(true);
-            response.setId(record.getId());
-
-            final ArrayList<Long> extraIds = new ArrayList<>();
-            for(ExtraRecord extra : record.getExtras()) {
-                extraIds.add(extra.getId());
-            }
-            response.setExtraIds(extraIds);
         } catch(SQLException e) {
             e.printStackTrace();
             throw new InternalServerErrorException(e);
@@ -163,7 +155,7 @@ public class SyncEndpoint {
      * @param user     The User
      * @param record   The updated journal entry from the client
      * @param clientId The database ID of the client
-     * @return The update response containing the keys of newly inserted records
+     * @return The update response containing the result of the request
      * @throws InternalServerErrorException
      * @throws UnauthorizedException
      */
@@ -182,7 +174,6 @@ public class SyncEndpoint {
             helper.setLastSync(clientId, System.currentTimeMillis());
 
             response.setSuccess(true);
-            response.setId(record.getId());
         } catch(SQLException e) {
             e.printStackTrace();
             throw new InternalServerErrorException(e);

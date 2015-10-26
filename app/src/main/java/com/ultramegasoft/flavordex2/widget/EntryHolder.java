@@ -25,6 +25,7 @@ public class EntryHolder implements Parcelable {
      * Fields from the entries table
      */
     public long id;
+    public String uuid;
     public String title;
     public long catId;
     public String catName;
@@ -36,7 +37,6 @@ public class EntryHolder implements Parcelable {
     public long date;
     public float rating;
     public String notes;
-    public long remoteId;
 
     /**
      * List of extra fields for this entry
@@ -61,6 +61,7 @@ public class EntryHolder implements Parcelable {
 
     private EntryHolder(Parcel in) {
         id = in.readLong();
+        uuid = in.readString();
         title = in.readString();
         catId = in.readLong();
         catName = in.readString();
@@ -72,7 +73,6 @@ public class EntryHolder implements Parcelable {
         date = in.readLong();
         rating = in.readFloat();
         notes = in.readString();
-        remoteId = in.readLong();
 
         mExtras = in.createTypedArrayList(ExtraFieldHolder.CREATOR);
         mFlavors = in.createTypedArrayList(RadarHolder.CREATOR);
@@ -146,6 +146,7 @@ public class EntryHolder implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
+        dest.writeString(uuid);
         dest.writeString(title);
         dest.writeLong(catId);
         dest.writeString(catName);
@@ -157,7 +158,6 @@ public class EntryHolder implements Parcelable {
         dest.writeLong(date);
         dest.writeFloat(rating);
         dest.writeString(notes);
-        dest.writeLong(remoteId);
 
         dest.writeTypedList(mExtras);
         dest.writeTypedList(mFlavors);

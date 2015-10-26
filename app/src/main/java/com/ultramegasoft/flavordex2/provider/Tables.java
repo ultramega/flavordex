@@ -36,9 +36,10 @@ public class Tables {
         /**
          * Column names
          */
+        public static final String UUID = "uuid";
         public static final String TITLE = "title";
         public static final String CAT_ID = "cat_id";
-        public static final String CAT_REMOTE_ID = "cat_remote_id";
+        public static final String CAT_UUID = "cat_uuid";
         public static final String CAT = "cat";
         public static final String MAKER_ID = "maker_id";
         public static final String MAKER = "maker";
@@ -49,7 +50,6 @@ public class Tables {
         public static final String RATING = "rating";
         public static final String NOTES = "notes";
         public static final String UPDATED = "updated";
-        public static final String REMOTE_ID = "remote_id";
 
         /**
          * Content data types
@@ -131,12 +131,12 @@ public class Tables {
         /**
          * Column names
          */
+        public static final String UUID = "uuid";
         public static final String CAT = "cat";
         public static final String NAME = "name";
         public static final String POS = "pos";
         public static final String PRESET = "preset";
         public static final String DELETED = "deleted";
-        public static final String REMOTE_ID = "remote_id";
 
         /**
          * Content data types
@@ -363,10 +363,10 @@ public class Tables {
         /**
          * Column names
          */
+        public static final String UUID = "uuid";
         public static final String NAME = "name";
         public static final String PRESET = "preset";
         public static final String UPDATED = "updated";
-        public static final String REMOTE_ID = "remote_id";
         public static final String NUM_ENTRIES = "num_entries";
 
         /**
@@ -403,7 +403,7 @@ public class Tables {
          */
         public static final String TYPE = "type";
         public static final String CAT = "cat";
-        public static final String REMOTE_ID = "remote_id";
+        public static final String UUID = "uuid";
 
         /**
          * Values for the 'type' column

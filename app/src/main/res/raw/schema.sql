@@ -1,5 +1,6 @@
 CREATE TABLE entries (
   _id INTEGER PRIMARY KEY,
+  uuid TEXT,
   cat INTEGER,
   title TEXT COLLATE NOCASE,
   maker INTEGER,
@@ -8,8 +9,7 @@ CREATE TABLE entries (
   date INTEGER,
   rating REAL,
   notes TEXT COLLATE NOCASE,
-  updated INTEGER,
-  remote_id INTEGER DEFAULT 0
+  updated INTEGER DEFAULT 0
 );
 --
 CREATE TABLE entries_extras (
@@ -30,12 +30,12 @@ CREATE TABLE entries_flavors (
 --
 CREATE TABLE extras (
   _id INTEGER PRIMARY KEY,
+  uuid TEXT,
   cat INTEGER,
   name TEXT,
   pos INTEGER,
   preset INTEGER DEFAULT 0,
-  deleted INTEGER DEFAULT 0,
-  remote_id INTEGER DEFAULT 0
+  deleted INTEGER DEFAULT 0
 );
 --
 CREATE TABLE flavors (
@@ -70,15 +70,15 @@ CREATE TABLE photos (
 --
 CREATE TABLE cats (
   _id INTEGER PRIMARY KEY,
+  uuid TEXT,
   name  TEXT COLLATE NOCASE,
   preset INTEGER DEFAULT 0,
-  updated INTEGER,
-  remote_id INTEGER DEFAULT 0
+  updated INTEGER DEFAULT 0
 );
 --
 CREATE TABLE deleted (
   _id INTEGER PRIMARY KEY,
   type INTEGER,
-  cat INTEGER DEFAULT 0,
-  remote_id INTEGER
+  cat INTEGER,
+  uuid TEXT
 );

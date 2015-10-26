@@ -1,7 +1,8 @@
 CREATE VIEW IF NOT EXISTS view_entry AS SELECT
 a._id AS _id,
+a.uuid AS uuid,
 a.cat AS cat_id,
-b.remote_id AS cat_remote_id,
+b.uuid AS cat_uuid,
 b.name AS cat,
 a.title AS title,
 a.maker AS maker_id,
@@ -12,8 +13,7 @@ a.date AS date,
 a.price AS price,
 a.rating AS rating,
 a.notes AS notes,
-a.updated AS updated,
-a.remote_id AS remote_id
+a.updated AS updated
 FROM entries a LEFT JOIN cats b LEFT JOIN makers c
 WHERE a.cat = b._id AND a.maker = c._id;
 --
@@ -21,12 +21,12 @@ CREATE VIEW IF NOT EXISTS view_entry_extra AS SELECT
 a._id AS _id,
 a.entry AS entry,
 a.extra AS extra,
+b.uuid AS uuid,
 b.name AS name,
 b.pos AS pos,
 a.value AS value,
 b.preset AS preset,
-b.deleted AS deleted,
-b.remote_id AS remote_id
+b.deleted AS deleted
 FROM entries_extras a LEFT JOIN extras b
 WHERE a.extra = b._id;
 --

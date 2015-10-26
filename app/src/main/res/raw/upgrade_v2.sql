@@ -4,19 +4,19 @@ DROP VIEW IF EXISTS view_entry;
 --
 DROP VIEW IF EXISTS view_entry_extra;
 --
-ALTER TABLE cats ADD COLUMN updated INTEGER;
+ALTER TABLE cats ADD COLUMN uuid TEXT;
 --
-ALTER TABLE cats ADD COLUMN remote_id INTEGER DEFAULT 0;
+ALTER TABLE cats ADD COLUMN updated INTEGER DEFAULT 0;
 --
-ALTER TABLE entries ADD COLUMN updated INTEGER;
+ALTER TABLE entries ADD COLUMN uuid TEXT;
 --
-ALTER TABLE entries ADD COLUMN remote_id INTEGER DEFAULT 0;
+ALTER TABLE entries ADD COLUMN updated INTEGER DEFAULT 0;
 --
 ALTER TABLE entries_flavors ADD COLUMN pos INTEGER;
 --
-ALTER TABLE extras ADD COLUMN pos INTEGER;
+ALTER TABLE extras ADD COLUMN uuid TEXT;
 --
-ALTER TABLE extras ADD COLUMN remote_id INTEGER DEFAULT 0;
+ALTER TABLE extras ADD COLUMN pos INTEGER;
 --
 ALTER TABLE flavors ADD COLUMN pos INTEGER;
 --
@@ -32,9 +32,9 @@ UPDATE flavors SET pos = _id;
 --
 UPDATE photos SET pos = _id;
 --
-CREATE TABLE `deleted` (
-  `_id` INTEGER PRIMARY KEY,
-  `type` INTEGER,
-  `cat` INTEGER DEFAULT 0,
-  `remote_id` INTEGER
+CREATE TABLE deleted (
+  _id INTEGER PRIMARY KEY,
+  type INTEGER,
+  cat INTEGER,
+  uuid TEXT
 );

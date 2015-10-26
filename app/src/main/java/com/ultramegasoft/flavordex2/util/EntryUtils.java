@@ -19,6 +19,7 @@ import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Utilities for managing journal entries.
@@ -36,6 +37,14 @@ public class EntryUtils {
      */
     public static Uri insertEntry(ContentResolver cr, EntryHolder entry) throws SQLiteException {
         final ContentValues values = new ContentValues();
+        if(entry.uuid != null) {
+            try {
+                //noinspection ResultOfMethodCallIgnored
+                UUID.fromString(entry.uuid);
+                values.put(Tables.Entries.UUID, entry.uuid);
+            } catch(IllegalArgumentException ignored) {
+            }
+        }
         values.put(Tables.Entries.TITLE, entry.title);
         values.put(Tables.Entries.MAKER, entry.maker);
         values.put(Tables.Entries.ORIGIN, entry.origin);
@@ -45,7 +54,6 @@ public class EntryUtils {
         values.put(Tables.Entries.RATING, entry.rating);
         values.put(Tables.Entries.NOTES, entry.notes);
         values.put(Tables.Entries.UPDATED, System.currentTimeMillis());
-        values.put(Tables.Entries.REMOTE_ID, entry.remoteId);
 
         final Uri catUri = getCatUri(cr, entry);
         values.put(Tables.Entries.CAT, entry.catId);
@@ -263,21 +271,20 @@ public class EntryUtils {
 
         final String[] projection = new String[] {
                 Tables.Entries.CAT_ID,
-                Tables.Entries.REMOTE_ID
+                Tables.Entries.UUID
         };
-        final Cursor cursor =
-                cr.query(uri, projection, null, null, null);
+        final Cursor cursor = cr.query(uri, projection, null, null, null);
         if(cursor != null) {
             try {
                 if(cursor.moveToFirst()) {
-                    final long remoteId =
-                            cursor.getLong(cursor.getColumnIndex(Tables.Entries.REMOTE_ID));
-                    if(remoteId > 0) {
+                    final String uuid =
+                            cursor.getString(cursor.getColumnIndex(Tables.Entries.UUID));
+                    if(uuid != null) {
                         final ContentValues values = new ContentValues();
                         values.put(Tables.Deleted.TYPE, Tables.Deleted.TYPE_ENTRY);
                         values.put(Tables.Deleted.CAT,
                                 cursor.getLong(cursor.getColumnIndex(Tables.Entries.CAT_ID)));
-                        values.put(Tables.Deleted.REMOTE_ID, remoteId);
+                        values.put(Tables.Deleted.UUID, uuid);
                         cr.insert(Tables.Deleted.CONTENT_URI, values);
                     }
                 }

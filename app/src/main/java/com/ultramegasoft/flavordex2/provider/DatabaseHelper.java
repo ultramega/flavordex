@@ -92,6 +92,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private void insertPreset(SQLiteDatabase db, String name, String[] extras, int flavorRes) {
         ContentValues values = new ContentValues();
 
+        values.put(Tables.Cats.UUID, name);
         values.put(Tables.Cats.NAME, name);
         values.put(Tables.Cats.PRESET, 1);
         final long id = db.insert(Tables.Cats.TABLE_NAME, null, values);
@@ -100,6 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Tables.Extras.CAT, id);
         values.put(Tables.Extras.PRESET, 1);
         for(int i = 0; i < extras.length; i++) {
+            values.put(Tables.Extras.UUID, name + extras[i]);
             values.put(Tables.Extras.NAME, extras[i]);
             values.put(Tables.Extras.POS, i);
             db.insert(Tables.Extras.TABLE_NAME, null, values);

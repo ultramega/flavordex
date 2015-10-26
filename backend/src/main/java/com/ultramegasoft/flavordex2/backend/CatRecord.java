@@ -9,6 +9,7 @@ import java.util.ArrayList;
  */
 public class CatRecord {
     private long id;
+    private String uuid;
     private String name;
     private long updated;
     private boolean deleted;
@@ -22,6 +23,14 @@ public class CatRecord {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getName() {
