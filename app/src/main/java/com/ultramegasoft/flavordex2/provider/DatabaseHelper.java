@@ -2,6 +2,7 @@ package com.ultramegasoft.flavordex2.provider;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -10,6 +11,7 @@ import com.ultramegasoft.flavordex2.R;
 
 import java.io.InputStream;
 import java.util.Scanner;
+import java.util.UUID;
 
 /**
  * Helper for creating and updating the database.
@@ -61,6 +63,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         switch(oldVersion) {
             case 1:
                 execRawFile(db, R.raw.upgrade_v2);
+                generateUuids(db);
         }
 
         execRawFile(db, R.raw.triggers);
@@ -78,6 +81,95 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         final Scanner scanner = new Scanner(inputStream).useDelimiter("\\n--");
         while(scanner.hasNext()) {
             db.execSQL(scanner.next());
+        }
+    }
+
+    /**
+     * Generate UUIDs for all categories, extras, and entries.
+     *
+     * @param db The database
+     */
+    private static void generateUuids(SQLiteDatabase db) {
+        String[] columns = new String[] {
+                Tables.Cats._ID,
+                Tables.Cats.NAME,
+                Tables.Cats.PRESET
+        };
+        Cursor cursor = db.query(Tables.Cats.TABLE_NAME, columns, null, null, null, null, null);
+        if(cursor != null) {
+            try {
+                long id;
+                String name;
+                final ContentValues values = new ContentValues();
+                while(cursor.moveToNext()) {
+                    id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
+                    name = cursor.getString(cursor.getColumnIndex(Tables.Cats.NAME));
+                    if(cursor.getInt(cursor.getColumnIndex(Tables.Cats.PRESET)) == 1) {
+                        values.put(Tables.Cats.UUID, name);
+                    } else {
+                        values.put(Tables.Cats.UUID, UUID.randomUUID().toString());
+                    }
+                    db.update(Tables.Cats.TABLE_NAME, values, Tables.Cats._ID + " = " + id, null);
+                    generateExtraUuids(db, id, name);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+
+        columns = new String[] {Tables.Entries._ID};
+        cursor = db.query(Tables.Entries.TABLE_NAME, columns, null, null, null, null, null);
+        if(cursor != null) {
+            try {
+                long id;
+                final ContentValues values = new ContentValues();
+                while(cursor.moveToNext()) {
+                    id = cursor.getLong(cursor.getColumnIndex(Tables.Entries._ID));
+                    values.put(Tables.Entries.UUID, UUID.randomUUID().toString());
+                    db.update(Tables.Entries.TABLE_NAME, values, Tables.Entries._ID + " = " + id,
+                            null);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+    }
+
+    /**
+     * Generate UUIDs for all the extras of a category.
+     *
+     * @param db      The database
+     * @param catId   The database ID of the category
+     * @param catName The name of the category
+     */
+    private static void generateExtraUuids(SQLiteDatabase db, long catId, String catName) {
+        final String[] columns = new String[] {
+                Tables.Extras._ID,
+                Tables.Extras.NAME,
+                Tables.Extras.PRESET
+        };
+        final String where = Tables.Extras.CAT + " = " + catId;
+        final Cursor cursor =
+                db.query(Tables.Extras.TABLE_NAME, columns, where, null, null, null, null);
+        if(cursor != null) {
+            try {
+                long id;
+                String name;
+                final ContentValues values = new ContentValues();
+                while(cursor.moveToNext()) {
+                    id = cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
+                    if(cursor.getInt(cursor.getColumnIndex(Tables.Extras.PRESET)) == 1) {
+                        name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
+                        values.put(Tables.Extras.UUID, catName + name);
+                    } else {
+                        values.put(Tables.Extras.UUID, UUID.randomUUID().toString());
+                    }
+                    db.update(Tables.Extras.TABLE_NAME, values, Tables.Extras._ID + " = " + id,
+                            null);
+                }
+            } finally {
+                cursor.close();
+            }
         }
     }
 
