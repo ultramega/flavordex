@@ -610,7 +610,7 @@ public class DatabaseHelper {
         result = stmt.executeQuery();
         while(result.next()) {
             record = new CatRecord();
-            record.setUuid("uuid");
+            record.setUuid(result.getString("uuid"));
             record.setName(result.getString("name"));
             record.setUpdated(result.getLong("updated"));
 
