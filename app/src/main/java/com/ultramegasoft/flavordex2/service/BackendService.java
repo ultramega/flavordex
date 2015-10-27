@@ -559,14 +559,17 @@ public class BackendService extends IntentService {
     private static void parseCat(ContentResolver cr, CatRecord record) {
         final long catId = getCatId(cr, record.getUuid());
         Uri uri;
+        final ContentValues values = new ContentValues();
         if(record.getDeleted()) {
             if(catId > 0) {
                 uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, catId);
+                values.put(Tables.Cats.PUBLISHED, false);
+                cr.update(uri, values, null, null);
                 cr.delete(uri, null, null);
             }
         } else {
-            final ContentValues values = new ContentValues();
             values.put(Tables.Cats.NAME, record.getName());
+            values.put(Tables.Cats.PUBLISHED, true);
             if(catId > 0) {
                 uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, catId);
                 cr.update(uri, values, null, null);
@@ -649,9 +652,12 @@ public class BackendService extends IntentService {
     private static void parseEntry(ContentResolver cr, EntryRecord record) {
         final long entryId = getEntryId(cr, record.getUuid());
         Uri uri;
+        final ContentValues values = new ContentValues();
         if(record.getDeleted()) {
             if(entryId > 0) {
                 uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId);
+                values.put(Tables.Entries.PUBLISHED, false);
+                cr.update(uri, values, null, null);
                 cr.delete(uri, null, null);
             }
         } else {
@@ -659,7 +665,6 @@ public class BackendService extends IntentService {
             if(catId == 0) {
                 return;
             }
-            final ContentValues values = new ContentValues();
             values.put(Tables.Entries.TITLE, record.getTitle());
             values.put(Tables.Entries.MAKER, record.getMaker());
             values.put(Tables.Entries.ORIGIN, record.getOrigin());
@@ -668,6 +673,7 @@ public class BackendService extends IntentService {
             values.put(Tables.Entries.DATE, record.getDate());
             values.put(Tables.Entries.RATING, record.getRating());
             values.put(Tables.Entries.NOTES, record.getNotes());
+            values.put(Tables.Entries.PUBLISHED, true);
             if(entryId > 0) {
                 uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId);
                 cr.update(uri, values, null, null);
