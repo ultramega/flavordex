@@ -787,7 +787,7 @@ public class DatabaseHelper {
         if(cat.getExtras() == null) {
             return;
         }
-        final String sql = "REPLACE INTO extras (uuid, cat, name, pos, deleted) VALUES (?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO extras (uuid, cat, name, pos, deleted) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, pos = ?, deleted = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setLong(2, cat.getId());
         for(ExtraRecord extra : cat.getExtras()) {
@@ -795,6 +795,9 @@ public class DatabaseHelper {
             stmt.setString(3, extra.getName());
             stmt.setInt(4, extra.getPos());
             stmt.setBoolean(5, extra.isDeleted());
+            stmt.setString(6, extra.getName());
+            stmt.setInt(7, extra.getPos());
+            stmt.setBoolean(8, extra.isDeleted());
             stmt.executeUpdate();
 
             if(extra.getId() == 0) {
@@ -818,9 +821,7 @@ public class DatabaseHelper {
         }
         final ArrayList<String> extraUuids = new ArrayList<>();
         for(ExtraRecord extra : cat.getExtras()) {
-            if(extra.getId() != 0) {
-                extraUuids.add(extra.getUuid());
-            }
+            extraUuids.add(extra.getUuid());
         }
 
         String sql = "SELECT id, uuid FROM extras WHERE cat = ?";
