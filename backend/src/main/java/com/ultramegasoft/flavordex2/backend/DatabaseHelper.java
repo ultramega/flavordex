@@ -225,6 +225,7 @@ public class DatabaseHelper {
         result = stmt.executeQuery();
         while(result.next()) {
             record = new EntryRecord();
+            record.setId(result.getLong("id"));
             record.setUuid(result.getString("uuid"));
             record.setCat(result.getLong("cat"));
             record.setCatUuid(result.getString("cat_uuid"));
@@ -610,6 +611,7 @@ public class DatabaseHelper {
         result = stmt.executeQuery();
         while(result.next()) {
             record = new CatRecord();
+            record.setId(result.getLong("id"));
             record.setUuid(result.getString("uuid"));
             record.setName(result.getString("name"));
             record.setUpdated(result.getLong("updated"));
@@ -658,7 +660,7 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private ArrayList<FlavorRecord> getCatFlavors(long catId) throws SQLException {
-        final String sql = "SELECT id, name, pos FROM flavors WHERE cat = ?";
+        final String sql = "SELECT name, pos FROM flavors WHERE cat = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, catId);
 
@@ -667,7 +669,6 @@ public class DatabaseHelper {
         FlavorRecord record;
         while(result.next()) {
             record = new FlavorRecord();
-            record.setId(result.getLong("id"));
             record.setName(result.getString("name"));
             record.setPos(result.getInt("pos"));
             records.add(record);
