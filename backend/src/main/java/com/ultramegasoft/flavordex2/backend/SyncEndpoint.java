@@ -70,10 +70,10 @@ public class SyncEndpoint {
         try {
             helper.open();
             helper.setUser(user.getEmail());
+            helper.setClientId(clientId);
 
-            final long since = helper.getLastSync(clientId);
-            updateRecord.setCats(helper.getUpdatedCats(since));
-            updateRecord.setEntries(helper.getUpdatedEntries(since));
+            updateRecord.setCats(helper.getUpdatedCats());
+            updateRecord.setEntries(helper.getUpdatedEntries());
             updateRecord.setTimestamp(System.currentTimeMillis());
         } catch(SQLException e) {
             e.printStackTrace();
@@ -135,8 +135,8 @@ public class SyncEndpoint {
         try {
             helper.open();
             helper.setUser(user.getEmail());
+            helper.setClientId(clientId);
             helper.update(record);
-            helper.setLastSync(clientId, System.currentTimeMillis());
 
             response.setSuccess(true);
         } catch(SQLException e) {
@@ -170,8 +170,8 @@ public class SyncEndpoint {
         try {
             helper.open();
             helper.setUser(user.getEmail());
+            helper.setClientId(clientId);
             helper.update(record);
-            helper.setLastSync(clientId, System.currentTimeMillis());
 
             response.setSuccess(true);
         } catch(SQLException e) {

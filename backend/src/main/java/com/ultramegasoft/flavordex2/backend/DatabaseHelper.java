@@ -33,6 +33,11 @@ public class DatabaseHelper {
     private long mUserId;
 
     /**
+     * The database ID of the client making requests
+     */
+    private long mClientId;
+
+    /**
      * Open a connection to the database.
      *
      * @throws SQLException
@@ -69,6 +74,15 @@ public class DatabaseHelper {
      */
     public void setUser(String userEmail) throws SQLException {
         mUserId = getUserId(userEmail);
+    }
+
+    /**
+     * Set the client to make requests.
+     *
+     * @param clientId The database ID of the client
+     */
+    public void setClientId(long clientId) {
+        mClientId = clientId;
     }
 
     /**
@@ -189,25 +203,24 @@ public class DatabaseHelper {
     }
 
     /**
-     * Get all entries updated since the specified time.
+     * Get all entries updated by other clients since the client's last sync.
      *
-     * @param since Unix timestamp with milliseconds
-     * @return The list of entries updated since the specified time
+     * @return The list of entries updated since the last sync
      * @throws SQLException
      * @throws UnauthorizedException
      */
-    public ArrayList<EntryRecord> getUpdatedEntries(long since)
-            throws SQLException, UnauthorizedException {
+    public ArrayList<EntryRecord> getUpdatedEntries() throws SQLException, UnauthorizedException {
         if(mUserId == 0) {
             throw new UnauthorizedException("Unknown user");
         }
         final ArrayList<EntryRecord> records = new ArrayList<>();
         EntryRecord record;
 
-        String sql = "SELECT uuid FROM deleted WHERE user = ? AND time > ?";
+        String sql = "SELECT uuid FROM deleted WHERE user = ? AND time > (SELECT last_sync FROM clients WHERE id = ?) AND client != ?";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
-        stmt.setLong(2, since);
+        stmt.setLong(2, mClientId);
+        stmt.setLong(3, mClientId);
 
         ResultSet result = stmt.executeQuery();
         while(result.next()) {
@@ -217,10 +230,11 @@ public class DatabaseHelper {
             records.add(record);
         }
 
-        sql = "SELECT a.*, b.uuid AS cat_uuid FROM entries a LEFT JOIN categories b ON a.cat = b.id WHERE a.user = ? AND a.updated > ?";
+        sql = "SELECT a.*, b.uuid AS cat_uuid FROM entries a LEFT JOIN categories b ON a.cat = b.id WHERE a.user = ? AND a.updated > (SELECT last_sync FROM clients WHERE id = ?) AND a.client != ?";
         stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
-        stmt.setLong(2, since);
+        stmt.setLong(2, mClientId);
+        stmt.setLong(3, mClientId);
 
         result = stmt.executeQuery();
         while(result.next()) {
@@ -383,7 +397,7 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private void insertEntry(EntryRecord entry) throws SQLException {
-        final String sql = "INSERT INTO entries (uuid, user, cat, title, maker, origin, price, location, date, rating, notes, updated) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO entries (uuid, user, cat, title, maker, origin, price, location, date, rating, notes, updated, client) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         final PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1, entry.getUuid());
         stmt.setLong(2, mUserId);
@@ -397,6 +411,7 @@ public class DatabaseHelper {
         stmt.setFloat(10, entry.getRating());
         stmt.setString(11, entry.getNotes());
         stmt.setLong(12, System.currentTimeMillis());
+        stmt.setLong(13, mClientId);
         stmt.executeUpdate();
 
         final ResultSet result = stmt.getGeneratedKeys();
@@ -415,7 +430,7 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private void updateEntry(EntryRecord entry) throws SQLException {
-        final String sql = "UPDATE entries SET title = ?, maker = ?, origin = ?, price = ?, location = ?, date = ?, rating = ?, notes = ?, updated = ? WHERE user = ? AND id = ?";
+        final String sql = "UPDATE entries SET title = ?, maker = ?, origin = ?, price = ?, location = ?, date = ?, rating = ?, notes = ?, updated = ?, client = ? WHERE user = ? AND id = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setString(1, entry.getTitle());
         stmt.setString(2, entry.getMaker());
@@ -426,8 +441,9 @@ public class DatabaseHelper {
         stmt.setFloat(7, entry.getRating());
         stmt.setString(8, entry.getNotes());
         stmt.setLong(9, System.currentTimeMillis());
-        stmt.setLong(10, mUserId);
-        stmt.setLong(11, entry.getId());
+        stmt.setLong(10, mClientId);
+        stmt.setLong(11, mUserId);
+        stmt.setLong(12, entry.getId());
         if(stmt.executeUpdate() > 0) {
             updateEntryExtras(entry);
             updateEntryFlavors(entry);
@@ -564,36 +580,36 @@ public class DatabaseHelper {
         stmt.setLong(1, mUserId);
         stmt.setLong(2, entry.getId());
         if(stmt.executeUpdate() > 0) {
-            sql = "INSERT INTO deleted (user, type, cat, uuid, time) VALUES (?, 'entry', ?, ?, ?)";
+            sql = "INSERT INTO deleted (user, type, cat, uuid, time, client) VALUES (?, 'entry', ?, ?, ?, ?)";
             stmt = mConnection.prepareStatement(sql);
             stmt.setLong(1, mUserId);
             stmt.setLong(2, entry.getCat());
             stmt.setString(3, entry.getUuid());
             stmt.setLong(4, System.currentTimeMillis());
+            stmt.setLong(5, mClientId);
             stmt.executeUpdate();
         }
     }
 
     /**
-     * Get all categories updated since the specified time.
+     * Get all categories updated by other clients since the client's last sync.
      *
-     * @param since Unix timestamp with milliseconds
-     * @return The list of categories updated since the specified time
+     * @return The list of categories updated since the last sync
      * @throws SQLException
      * @throws UnauthorizedException
      */
-    public ArrayList<CatRecord> getUpdatedCats(long since)
-            throws SQLException, UnauthorizedException {
+    public ArrayList<CatRecord> getUpdatedCats() throws SQLException, UnauthorizedException {
         if(mUserId == 0) {
             throw new UnauthorizedException("Unknown user");
         }
         final ArrayList<CatRecord> records = new ArrayList<>();
         CatRecord record;
 
-        String sql = "SELECT uuid FROM deleted WHERE user = ? AND time > ?";
+        String sql = "SELECT uuid FROM deleted WHERE user = ? AND time > (SELECT last_sync FROM clients WHERE id = ?) AND client != ?";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
-        stmt.setLong(2, since);
+        stmt.setLong(2, mClientId);
+        stmt.setLong(3, mClientId);
 
         ResultSet result = stmt.executeQuery();
         while(result.next()) {
@@ -603,10 +619,11 @@ public class DatabaseHelper {
             records.add(record);
         }
 
-        sql = "SELECT * FROM categories WHERE user = ? AND updated > ?";
+        sql = "SELECT * FROM categories WHERE user = ? AND updated > (SELECT last_sync FROM clients WHERE id = ?) AND client != ?";
         stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
-        stmt.setLong(2, since);
+        stmt.setLong(2, mClientId);
+        stmt.setLong(3, mClientId);
 
         result = stmt.executeQuery();
         while(result.next()) {
@@ -723,12 +740,13 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private void insertCat(CatRecord cat) throws SQLException {
-        final String sql = "INSERT INTO categories (uuid, user, name, updated) VALUES (?, ?, ?, ?)";
+        final String sql = "INSERT INTO categories (uuid, user, name, updated, client) VALUES (?, ?, ?, ?, ?)";
         final PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1, cat.getUuid());
         stmt.setLong(2, mUserId);
         stmt.setString(3, cat.getName());
         stmt.setLong(4, System.currentTimeMillis());
+        stmt.setLong(5, mClientId);
         stmt.executeUpdate();
 
         final ResultSet result = stmt.getGeneratedKeys();
@@ -746,12 +764,13 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private void updateCat(CatRecord cat) throws SQLException {
-        final String sql = "UPDATE categories SET name = ?, updated = ? WHERE user = ? AND id = ?";
+        final String sql = "UPDATE categories SET name = ?, updated = ?, client = ? WHERE user = ? AND id = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setString(1, cat.getName());
         stmt.setLong(2, System.currentTimeMillis());
-        stmt.setLong(3, mUserId);
-        stmt.setLong(4, cat.getId());
+        stmt.setLong(3, mClientId);
+        stmt.setLong(4, mUserId);
+        stmt.setLong(5, cat.getId());
         if(stmt.executeUpdate() > 0) {
             updateCatExtras(cat);
             updateCatFlavors(cat);
@@ -871,33 +890,14 @@ public class DatabaseHelper {
         stmt.setLong(1, mUserId);
         stmt.setLong(2, cat.getId());
         if(stmt.executeUpdate() > 0) {
-            sql = "INSERT INTO deleted (user, type, uuid, time) VALUES (?, 'cat', ?, ?)";
+            sql = "INSERT INTO deleted (user, type, uuid, time, client) VALUES (?, 'cat', ?, ?, ?)";
             stmt = mConnection.prepareStatement(sql);
             stmt.setLong(1, mUserId);
             stmt.setString(2, cat.getUuid());
             stmt.setLong(3, System.currentTimeMillis());
+            stmt.setLong(4, mClientId);
             stmt.executeUpdate();
         }
-    }
-
-    /**
-     * Get the time of the specified client's last data sync.
-     *
-     * @param clientId The database ID of the client
-     * @return The Unix timestamp with milliseconds
-     * @throws SQLException
-     */
-    public long getLastSync(long clientId) throws SQLException {
-        final String sql = "SELECT last_sync FROM clients WHERE id = ?";
-        final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, clientId);
-
-        final ResultSet result = stmt.executeQuery();
-        if(result.next()) {
-            return result.getLong(1);
-        }
-
-        return 0;
     }
 
     /**
