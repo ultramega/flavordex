@@ -3,6 +3,7 @@ package com.ultramegasoft.flavordex2.fragment;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -25,6 +26,7 @@ import android.view.animation.AnimationUtils;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.RadarEditWidget;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
@@ -238,7 +240,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     private void saveData() {
         setEditMode(false, true);
         mData = mRadarView.getData();
-        new DataSaver(getContext().getContentResolver(), mEntryId, mData).execute();
+        new DataSaver(getContext(), mEntryId, mData).execute();
     }
 
     /**
@@ -325,9 +327,9 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
      */
     private static class DataSaver extends AsyncTask<Void, Void, Void> {
         /**
-         * The ContentResolver to use
+         * The Context
          */
-        private final ContentResolver mResolver;
+        private final Context mContext;
 
         /**
          * The entry ID to save the flavors to
@@ -340,21 +342,22 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
         private final ArrayList<RadarHolder> mData;
 
         /**
-         * @param cr      The ContentResolver to use
+         * @param context The Context
          * @param entryId The entry to save flavors to
          * @param data    The radar chart data to insert
          */
-        public DataSaver(ContentResolver cr, long entryId, ArrayList<RadarHolder> data) {
-            mResolver = cr;
+        public DataSaver(Context context, long entryId, ArrayList<RadarHolder> data) {
+            mContext = context.getApplicationContext();
             mEntryId = entryId;
             mData = data;
         }
 
         @Override
         protected Void doInBackground(Void... arg0) {
+            final ContentResolver cr = mContext.getContentResolver();
             Uri uri =
                     Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/flavor");
-            mResolver.delete(uri, null, null);
+            cr.delete(uri, null, null);
             final ContentValues values = new ContentValues();
             RadarHolder item;
             for(int i = 0; i < mData.size(); i++) {
@@ -362,11 +365,12 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                 values.put(Tables.EntriesFlavors.FLAVOR, item.name);
                 values.put(Tables.EntriesFlavors.VALUE, item.value);
                 values.put(Tables.EntriesFlavors.POS, i);
-                mResolver.insert(uri, values);
+                cr.insert(uri, values);
             }
 
-            EntryUtils.markChanged(mResolver, mEntryId);
+            EntryUtils.markChanged(cr, mEntryId);
 
+            BackendUtils.notifyDataChanged(mContext);
             return null;
         }
     }

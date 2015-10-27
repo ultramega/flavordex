@@ -36,6 +36,7 @@ import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.dialog.CatDeleteDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.InputUtils;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 import com.ultramegasoft.flavordex2.widget.RadarView;
@@ -506,8 +507,7 @@ public class EditCatFragment extends LoadingProgressFragment
             info.put(Tables.Cats.NAME, mTxtTitle.getText().toString());
         }
 
-        new DataSaver(getContext().getContentResolver(), info, mExtraFields, mFlavorFields, mCatId)
-                .execute();
+        new DataSaver(getContext(), info, mExtraFields, mFlavorFields, mCatId).execute();
 
         getActivity().finish();
     }
@@ -682,6 +682,11 @@ public class EditCatFragment extends LoadingProgressFragment
      */
     private static class DataSaver extends AsyncTask<Void, Void, Void> {
         /**
+         * The Context
+         */
+        private final Context mContext;
+
+        /**
          * The ContentResolver to use
          */
         private final ContentResolver mResolver;
@@ -707,15 +712,16 @@ public class EditCatFragment extends LoadingProgressFragment
         private final long mCatId;
 
         /**
-         * @param cr      The ContentResolver to use
+         * @param context      The Context
          * @param catInfo The basic information for the cats table
          * @param extras  The extra fields for the category
          * @param flavors The flavors for the category
          * @param catId   The category database ID, if updating
          */
-        public DataSaver(ContentResolver cr, ContentValues catInfo, ArrayList<Field> extras,
+        public DataSaver(Context context, ContentValues catInfo, ArrayList<Field> extras,
                          ArrayList<Field> flavors, long catId) {
-            mResolver = cr;
+            mContext = context.getApplicationContext();
+            mResolver = context.getContentResolver();
             mCatInfo = catInfo;
             mExtras = extras;
             mFlavors = flavors;
@@ -731,6 +737,7 @@ public class EditCatFragment extends LoadingProgressFragment
             if(mFlavors != null) {
                 updateFlavors(catUri);
             }
+            BackendUtils.notifyDataChanged(mContext);
             return null;
         }
 

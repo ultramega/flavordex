@@ -380,7 +380,7 @@ public class AppChooserDialog extends DialogFragment {
                         while(cursor.moveToNext()) {
                             entry = AppImportUtils.importEntry(mContext, appId, cursor.getLong(0));
                             try {
-                                EntryUtils.insertEntry(cr, entry);
+                                EntryUtils.insertEntry(mContext, entry);
                             } catch(SQLiteException e) {
                                 Log.e(getClass().getSimpleName(), e.getMessage());
                             }

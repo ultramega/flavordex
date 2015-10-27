@@ -19,6 +19,7 @@ import com.ultramegasoft.flavordex2.beer.EditBeerInfoFragment;
 import com.ultramegasoft.flavordex2.coffee.EditCoffeeInfoFragment;
 import com.ultramegasoft.flavordex2.fragment.EditInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.whiskey.EditWhiskeyInfoFragment;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
@@ -142,7 +143,7 @@ public class EditEntryActivity extends AppCompatActivity {
 
         final EntryHolder entry = new EntryHolder();
         fragment.getData(entry);
-        new DataSaver(getContentResolver(), entry).execute();
+        new DataSaver(this, entry).execute();
         finish();
     }
 
@@ -151,9 +152,9 @@ public class EditEntryActivity extends AppCompatActivity {
      */
     private static class DataSaver extends AsyncTask<Void, Void, Void> {
         /**
-         * The ContentResolver to use
+         * The Context
          */
-        private final ContentResolver mResolver;
+        private final Context mContext;
 
         /**
          * The entry to save
@@ -161,11 +162,11 @@ public class EditEntryActivity extends AppCompatActivity {
         private final EntryHolder mEntry;
 
         /**
-         * @param cr    The ContentResolver to use
-         * @param entry The entry to save
+         * @param context The Context
+         * @param entry   The entry to save
          */
-        public DataSaver(ContentResolver cr, EntryHolder entry) {
-            mResolver = cr;
+        public DataSaver(Context context, EntryHolder entry) {
+            mContext = context.getApplicationContext();
             mEntry = entry;
         }
 
@@ -184,9 +185,11 @@ public class EditEntryActivity extends AppCompatActivity {
             values.put(Tables.Entries.RATING, mEntry.rating);
             values.put(Tables.Entries.NOTES, mEntry.notes);
             values.put(Tables.Entries.UPDATED, System.currentTimeMillis());
-            mResolver.update(uri, values, null, null);
+            mContext.getContentResolver().update(uri, values, null, null);
 
             updateExtras(uri);
+
+            BackendUtils.notifyDataChanged(mContext);
             return null;
         }
 
@@ -196,16 +199,17 @@ public class EditEntryActivity extends AppCompatActivity {
          * @param entryUri The Uri for the entry
          */
         private void updateExtras(Uri entryUri) {
+            final ContentResolver cr = mContext.getContentResolver();
             final Uri uri = Uri.withAppendedPath(entryUri, "extras");
             final ContentValues values = new ContentValues();
             for(ExtraFieldHolder extra : mEntry.getExtras()) {
                 if(!extra.preset && TextUtils.isEmpty(extra.value)) {
-                    mResolver.delete(uri, Tables.EntriesExtras.EXTRA + " = " + extra.id, null);
+                    cr.delete(uri, Tables.EntriesExtras.EXTRA + " = " + extra.id, null);
                     continue;
                 }
                 values.put(Tables.EntriesExtras.EXTRA, extra.id);
                 values.put(Tables.EntriesExtras.VALUE, extra.value);
-                mResolver.insert(uri, values);
+                cr.insert(uri, values);
             }
         }
     }

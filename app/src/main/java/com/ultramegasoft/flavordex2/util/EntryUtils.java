@@ -30,12 +30,13 @@ public class EntryUtils {
     /**
      * Insert a new journal entry.
      *
-     * @param cr    The ContentResolver
-     * @param entry The entry
+     * @param context The Context
+     * @param entry   The entry
      * @return The Uri for the new entry
      * @throws SQLiteException
      */
-    public static Uri insertEntry(ContentResolver cr, EntryHolder entry) throws SQLiteException {
+    public static Uri insertEntry(Context context, EntryHolder entry) throws SQLiteException {
+        final ContentResolver cr = context.getContentResolver();
         final ContentValues values = new ContentValues();
         if(entry.uuid != null) {
             try {
@@ -62,6 +63,8 @@ public class EntryUtils {
         insertExtras(cr, catUri, entryUri, entry);
         insertFlavors(cr, entryUri, entry);
         insertPhotos(cr, entryUri, entry);
+
+        BackendUtils.notifyDataChanged(context);
 
         return entryUri;
     }
@@ -270,6 +273,7 @@ public class EntryUtils {
         final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, id);
         cr.delete(uri, null, null);
         PhotoUtils.deleteThumb(context, id);
+        BackendUtils.notifyDataChanged(context);
     }
 
     /**

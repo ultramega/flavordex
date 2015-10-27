@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
@@ -345,6 +346,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
                 if(uri != null) {
                     mPhoto.id = Long.valueOf(uri.getLastPathSegment());
                     EntryUtils.markChanged(mContext.getContentResolver(), mEntryId);
+                    BackendUtils.notifyDataChanged(mContext);
                     return true;
                 }
             } catch(SQLiteException e) {
@@ -396,6 +398,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         protected Void doInBackground(Void... params) {
             EntryUtils.deletePhoto(mContext, mPhoto.id);
             EntryUtils.markChanged(mContext.getContentResolver(), mEntryId);
+            BackendUtils.notifyDataChanged(mContext);
             return null;
         }
     }

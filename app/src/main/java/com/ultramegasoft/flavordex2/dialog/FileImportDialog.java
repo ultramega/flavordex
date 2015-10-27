@@ -2,7 +2,6 @@ package com.ultramegasoft.flavordex2.dialog;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
@@ -228,12 +227,10 @@ public class FileImportDialog extends ImportDialog
 
             @Override
             protected Void doInBackground(Void... params) {
-                final ContentResolver cr = mContext.getContentResolver();
-
                 int i = 0;
                 for(EntryHolder entry : mEntries) {
                     try {
-                        EntryUtils.insertEntry(cr, entry);
+                        EntryUtils.insertEntry(mContext, entry);
                     } catch(SQLiteException e) {
                         Log.e(getClass().getSimpleName(), e.getMessage());
                     }

@@ -1,6 +1,8 @@
 package com.ultramegasoft.flavordex2.util;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -9,6 +11,7 @@ import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.backend.registration.Registration;
 import com.ultramegasoft.flavordex2.backend.sync.Sync;
+import com.ultramegasoft.flavordex2.service.BackendService;
 
 /**
  * Helpers for accessing the backend.
@@ -32,6 +35,18 @@ public class BackendUtils {
      * The project Web client ID
      */
     private static final String WEB_CLIENT_ID = "1001621163874-su48pt09eaj7rd4g0mni19ag4vv2g7p7.apps.googleusercontent.com";
+
+    /**
+     * Notify the sync service that data has changed.
+     *
+     * @param context The Context
+     */
+    public static void notifyDataChanged(Context context) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if(prefs.getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
+            BackendService.syncData(context);
+        }
+    }
 
     /**
      * Get a GoogleAccountCredential to authenticate with the backend.

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.BackendUtils;
 
 /**
  * Dialog for confirming the deletion of a category. This also handles the deleting of the
@@ -107,7 +109,7 @@ public class CatDeleteDialog extends DialogFragment
                             target.onActivityResult(getTargetRequestCode(),
                                     Activity.RESULT_OK, null);
                         }
-                        new CatDeleteTask(getContext().getContentResolver(), mCatId).execute();
+                        new CatDeleteTask(getContext(), mCatId).execute();
                         dismiss();
                     }
                 })
@@ -226,9 +228,9 @@ public class CatDeleteDialog extends DialogFragment
      */
     private static class CatDeleteTask extends AsyncTask<Void, Void, Void> {
         /**
-         * The ContentResolver to use
+         * The Context
          */
-        private final ContentResolver mResolver;
+        private final Context mContext;
 
         /**
          * The category database ID
@@ -236,19 +238,21 @@ public class CatDeleteDialog extends DialogFragment
         private final long mCatId;
 
         /**
-         * @param cr    The ContentResolver to use
-         * @param catId The category database ID
+         * @param context The Context
+         * @param catId   The category database ID
          */
-        public CatDeleteTask(ContentResolver cr, long catId) {
-            mResolver = cr;
+        public CatDeleteTask(Context context, long catId) {
+            mContext = context.getApplicationContext();
             mCatId = catId;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
+            final ContentResolver cr = mContext.getContentResolver();
             final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
-            mResolver.delete(uri, null, null);
-            mResolver.notifyChange(Tables.Entries.CONTENT_URI, null);
+            cr.delete(uri, null, null);
+            cr.notifyChange(Tables.Entries.CONTENT_URI, null);
+            BackendUtils.notifyDataChanged(mContext);
             return null;
         }
     }

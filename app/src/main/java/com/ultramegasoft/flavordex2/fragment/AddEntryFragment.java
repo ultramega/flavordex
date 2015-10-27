@@ -3,6 +3,7 @@ package com.ultramegasoft.flavordex2.fragment;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -286,7 +287,7 @@ public class AddEntryFragment extends Fragment {
             final Bundle args = getArguments();
             mEntry = args.getParcelable(ARG_ENTRY);
 
-            new DataSaver(getContext().getContentResolver()).execute();
+            new DataSaver(getContext()).execute();
         }
 
         @Override
@@ -316,15 +317,15 @@ public class AddEntryFragment extends Fragment {
          */
         private class DataSaver extends AsyncTask<Void, Void, Long> {
             /**
-             * The ContentResolver to use for inserting data
+             * The Context
              */
-            private final ContentResolver mResolver;
+            private final Context mContext;
 
             /**
-             * @param contentResolver The ContentResolver to use for inserting data
+             * @param context The Context
              */
-            public DataSaver(ContentResolver contentResolver) {
-                mResolver = contentResolver;
+            public DataSaver(Context context) {
+                mContext = context.getApplicationContext();
             }
 
             @Override
@@ -333,7 +334,7 @@ public class AddEntryFragment extends Fragment {
                     if(mEntry.getFlavors().isEmpty()) {
                         getDefaultFlavors();
                     }
-                    final Uri entryUri = EntryUtils.insertEntry(mResolver, mEntry);
+                    final Uri entryUri = EntryUtils.insertEntry(mContext, mEntry);
                     checkLocation(mEntry.location);
                     return Long.valueOf(entryUri.getLastPathSegment());
                 } catch(SQLiteException e) {
@@ -367,7 +368,7 @@ public class AddEntryFragment extends Fragment {
                     values.put(Tables.Locations.LATITUDE, location.getLatitude());
                     values.put(Tables.Locations.LONGITUDE, location.getLongitude());
 
-                    mResolver.insert(Tables.Locations.CONTENT_URI, values);
+                    mContext.getContentResolver().insert(Tables.Locations.CONTENT_URI, values);
                 }
             }
 
@@ -375,10 +376,11 @@ public class AddEntryFragment extends Fragment {
              * Get the default flavors with 0 values in case the user did not supply data.
              **/
             private void getDefaultFlavors() {
+                final ContentResolver cr = mContext.getContentResolver();
                 final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE,
                         mEntry.catId);
-                final Cursor cursor = mResolver.query(Uri.withAppendedPath(uri, "flavor"), null,
-                        null, null, Tables.Flavors.POS + " ASC");
+                final Cursor cursor = cr.query(Uri.withAppendedPath(uri, "flavor"), null, null,
+                        null, Tables.Flavors.POS + " ASC");
                 if(cursor != null) {
                     try {
                         String name;

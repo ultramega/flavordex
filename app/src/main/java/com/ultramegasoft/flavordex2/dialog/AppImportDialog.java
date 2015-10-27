@@ -2,7 +2,6 @@ package com.ultramegasoft.flavordex2.dialog;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -209,14 +208,12 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
 
             @Override
             protected Void doInBackground(Void... params) {
-                final ContentResolver cr = mContext.getContentResolver();
-
                 EntryHolder entry;
                 int i = 0;
                 for(long id : mEntryIds) {
                     entry = AppImportUtils.importEntry(mContext, mApp, id);
                     try {
-                        EntryUtils.insertEntry(cr, entry);
+                        EntryUtils.insertEntry(mContext, entry);
                     } catch(SQLiteException e) {
                         Log.e(getClass().getSimpleName(), e.getMessage());
                     }
