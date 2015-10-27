@@ -353,7 +353,7 @@ public class PhotoUtils {
      * @param context The Context
      * @param uri     The Uri to query
      */
-    @TargetApi(19)
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     public static String getPath(final Context context, final Uri uri) {
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
