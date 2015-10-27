@@ -633,7 +633,7 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private ArrayList<ExtraRecord> getCatExtras(long catId) throws SQLException {
-        final String sql = "SELECT uuid, name, pos FROM extras WHERE cat = ?";
+        final String sql = "SELECT uuid, name, pos, deleted FROM extras WHERE cat = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, catId);
 
