@@ -322,8 +322,8 @@ public class DatabaseHelper {
      * @return The list of photos
      * @throws SQLException
      */
-    public ArrayList<PhotoRecord> getEntryPhotos(long entryId) throws SQLException {
-        final String sql = "SELECT id, path, drive_id, pos FROM photos WHERE entry = ?";
+    private ArrayList<PhotoRecord> getEntryPhotos(long entryId) throws SQLException {
+        final String sql = "SELECT path, drive_id, pos FROM photos WHERE entry = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, entryId);
 
