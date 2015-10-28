@@ -501,14 +501,14 @@ public class BackendService extends IntentService {
     private static ArrayList<PhotoRecord> getEntryPhotos(ContentResolver cr, long entryId) {
         final Uri uri =
                 Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, entryId + "/photos");
-        final Cursor cursor = cr.query(uri, null, null, null, null);
+        final String where = Tables.Photos.DRIVE_ID + " NOT NULL";
+        final Cursor cursor = cr.query(uri, null, where, null, null);
         if(cursor != null) {
             try {
                 final ArrayList<PhotoRecord> records = new ArrayList<>();
                 PhotoRecord record;
                 while(cursor.moveToNext()) {
                     record = new PhotoRecord();
-                    record.setPath(cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH)));
                     record.setDriveId(
                             cursor.getString(cursor.getColumnIndex(Tables.Photos.DRIVE_ID)));
                     record.setPos(cursor.getInt(cursor.getColumnIndex(Tables.Photos.POS)));
@@ -757,11 +757,11 @@ public class BackendService extends IntentService {
         }
 
         final Uri uri = Uri.withAppendedPath(entryUri, "photos");
-        cr.delete(uri, null, null);
+        final String where = Tables.Photos.DRIVE_ID + " NOT NULL";
+        cr.delete(uri, where, null);
 
         final ContentValues values = new ContentValues();
         for(PhotoRecord photo : photos) {
-            values.put(Tables.Photos.PATH, photo.getPath());
             values.put(Tables.Photos.DRIVE_ID, photo.getDriveId());
             values.put(Tables.Photos.POS, photo.getPos());
             cr.insert(uri, values);
