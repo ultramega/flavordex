@@ -26,7 +26,7 @@ CREATE TABLE entries_flavors (
   entry INTEGER,
   flavor TEXT COLLATE NOCASE,
   value INTEGER,
-  pos INTEGER
+  pos INTEGER DEFAULT 0
 );
 --
 CREATE TABLE extras (
@@ -34,7 +34,7 @@ CREATE TABLE extras (
   uuid TEXT,
   cat INTEGER,
   name TEXT,
-  pos INTEGER,
+  pos INTEGER DEFAULT 0,
   preset INTEGER DEFAULT 0,
   deleted INTEGER DEFAULT 0
 );
@@ -43,7 +43,7 @@ CREATE TABLE flavors (
   _id INTEGER PRIMARY KEY,
   cat INTEGER,
   name TEXT,
-  pos INTEGER
+  pos INTEGER DEFAULT 0
 );
 --
 CREATE TABLE locations (
@@ -66,7 +66,7 @@ CREATE TABLE photos (
   entry INTEGER,
   path TEXT,
   drive_id TEXT,
-  pos INTEGER
+  pos INTEGER DEFAULT 0
 );
 --
 CREATE TABLE cats (
