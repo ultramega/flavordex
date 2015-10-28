@@ -366,7 +366,9 @@ public class DatabaseHelper {
                 entry.setCat(result.getLong(2));
             }
 
-            if(entry.getId() == 0) {
+            if(entry.isDeleted()) {
+                deleteEntry(entry);
+            } else if(entry.getId() == 0) {
                 sql = "SELECT id FROM categories WHERE uuid = ? AND user = ?";
                 stmt = mConnection.prepareStatement(sql);
                 stmt.setString(1, entry.getCatUuid());
@@ -377,8 +379,6 @@ public class DatabaseHelper {
                     entry.setCat(result.getLong(1));
                 }
                 insertEntry(entry);
-            } else if(entry.isDeleted()) {
-                deleteEntry(entry);
             } else {
                 updateEntry(entry);
             }
@@ -717,10 +717,10 @@ public class DatabaseHelper {
                 cat.setId(result.getLong(1));
             }
 
-            if(cat.getId() == 0) {
-                insertCat(cat);
-            } else if(cat.isDeleted()) {
+            if(cat.isDeleted()) {
                 deleteCat(cat);
+            } else if(cat.getId() == 0) {
+                insertCat(cat);
             } else {
                 updateCat(cat);
             }
