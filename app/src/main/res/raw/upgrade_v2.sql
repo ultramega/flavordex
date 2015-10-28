@@ -24,9 +24,20 @@ ALTER TABLE extras ADD COLUMN pos INTEGER DEFAULT 0;
 --
 ALTER TABLE flavors ADD COLUMN pos INTEGER DEFAULT 0;
 --
-ALTER TABLE photos ADD COLUMN pos INTEGER DEFAULT 0;
+CREATE TABLE photos2 (
+  _id INTEGER PRIMARY KEY,
+  entry INTEGER,
+  path TEXT,
+  drive_id TEXT,
+  pos INTEGER DEFAULT 0,
+  UNIQUE(entry, drive_id) ON CONFLICT REPLACE
+);
 --
-ALTER TABLE photos ADD COLUMN drive_id TEXT;
+INSERT INTO photos2 (_id, entry, path) SELECT * FROM photos;
+--
+DROP TABLE photos;
+--
+ALTER TABLE photos2 RENAME TO photos;
 --
 UPDATE entries_flavors SET pos = _id;
 --

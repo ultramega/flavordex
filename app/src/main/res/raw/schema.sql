@@ -66,7 +66,8 @@ CREATE TABLE photos (
   entry INTEGER,
   path TEXT,
   drive_id TEXT,
-  pos INTEGER DEFAULT 0
+  pos INTEGER DEFAULT 0,
+  UNIQUE(entry, drive_id) ON CONFLICT REPLACE
 );
 --
 CREATE TABLE cats (
