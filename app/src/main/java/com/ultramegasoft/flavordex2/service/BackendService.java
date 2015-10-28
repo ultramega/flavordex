@@ -229,6 +229,8 @@ public class BackendService extends IntentService {
         } catch(IOException e) {
             Log.e(getClass().getSimpleName(), e.getMessage());
         }
+
+        PhotoSyncService.syncPhotos(this);
     }
 
     /**

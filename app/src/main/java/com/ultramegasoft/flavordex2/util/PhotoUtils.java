@@ -207,7 +207,8 @@ public class PhotoUtils {
 
         final ContentResolver cr = context.getContentResolver();
         final Uri uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, id + "/photos");
-        final Cursor cursor = cr.query(uri, new String[] {Tables.Photos.PATH}, null, null,
+        final String where = Tables.Photos.PATH + " NOT NULL";
+        final Cursor cursor = cr.query(uri, new String[] {Tables.Photos.PATH}, where, null,
                 Tables.Photos.POS + " ASC");
         if(cursor != null) {
             try {
@@ -331,7 +332,7 @@ public class PhotoUtils {
      * @return The media storage directory
      * @throws IOException
      */
-    private static File getMediaStorageDir() throws IOException {
+    public static File getMediaStorageDir() throws IOException {
         final File mediaStorageDir =
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         final File albumDir = new File(mediaStorageDir, ALBUM_DIR);

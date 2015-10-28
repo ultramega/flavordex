@@ -255,7 +255,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         if(data.getCount() > 0) {
             while(data.moveToNext()) {
                 final String path = data.getString(1);
-                if(new File(path).exists()) {
+                if(path != null && new File(path).exists()) {
                     photos.add(new PhotoHolder(data.getLong(0), path, data.getInt(2)));
                 }
             }

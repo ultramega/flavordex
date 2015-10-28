@@ -16,6 +16,7 @@ import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveFolder;
+import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.MetadataBuffer;
 import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.query.Filters;
@@ -24,10 +25,13 @@ import com.google.android.gms.drive.query.SearchableField;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
+import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -129,43 +133,153 @@ public class PhotoSyncService extends IntentService {
     }
 
     /**
-     * Send all local photos that do not exist on Drive to Drive.
+     * Sync all photos with Drive.
      *
      * @param driveFolder The Drive folder
      */
     private void syncPhotos(DriveFolder driveFolder) {
+        pushPhotos(driveFolder);
+        fetchPhotos();
+    }
+
+    /**
+     * Upload photos without a Drive ID.
+     *
+     * @param driveFolder The Drive folder
+     */
+    private void pushPhotos(DriveFolder driveFolder) {
         final ContentResolver cr = getContentResolver();
+        final String[] projection = new String[] {
+                Tables.Photos._ID,
+                Tables.Photos.ENTRY,
+                Tables.Photos.PATH
+        };
         final String where = Tables.Photos.DRIVE_ID + " IS NULL";
-        final Cursor cursor = cr.query(Tables.Photos.CONTENT_URI, null, where, null, null);
+        final Cursor cursor = cr.query(Tables.Photos.CONTENT_URI, projection, where, null, null);
+        if(cursor == null) {
+            return;
+        }
+        try {
+            boolean changed = false;
+            long id;
+            long entryId;
+            String filePath;
+            DriveFile driveFile;
+            final ContentValues values = new ContentValues();
+            while(cursor.moveToNext()) {
+                filePath = cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH));
+                if(filePath == null) {
+                    continue;
+                }
+                driveFile = uploadFile(driveFolder, new File(filePath));
+                if(driveFile == null) {
+                    continue;
+                }
+                id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
+                entryId = cursor.getLong(cursor.getColumnIndex(Tables.Photos.ENTRY));
+                values.put(Tables.Photos.DRIVE_ID, driveFile.getDriveId().toString());
+                cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id), values,
+                        null, null);
+
+                EntryUtils.markChanged(cr, entryId);
+                changed = true;
+            }
+
+            if(changed) {
+                BackendUtils.notifyDataChanged(this);
+            }
+        } finally {
+            cursor.close();
+        }
+    }
+
+    /**
+     * Download all photos without a local path.
+     */
+    private void fetchPhotos() {
+        final ContentResolver cr = getContentResolver();
+        final String[] projection = new String[] {
+                Tables.Photos._ID,
+                Tables.Photos.DRIVE_ID
+        };
+        final String where = Tables.Photos.PATH + " IS NULL";
+        final Cursor cursor = cr.query(Tables.Photos.CONTENT_URI, projection, where, null, null);
         if(cursor == null) {
             return;
         }
         try {
             long id;
-            long entryId;
-            File file;
-            DriveFile driveFile;
+            String driveId;
+            String filePath;
             final ContentValues values = new ContentValues();
             while(cursor.moveToNext()) {
-                file = new File(cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH)));
-                if(file.canRead()) {
-                    driveFile = putFile(driveFolder, file);
-                    if(driveFile == null) {
-                        continue;
-                    }
-
-                    id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
-                    entryId = cursor.getLong(cursor.getColumnIndex(Tables.Photos.ENTRY));
-                    values.put(Tables.Photos.DRIVE_ID, driveFile.getDriveId().getResourceId());
-                    cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id),
-                            values, null, null);
-                    EntryUtils.markChanged(cr, entryId);
+                driveId = cursor.getString(cursor.getColumnIndex(Tables.Photos.DRIVE_ID));
+                if(driveId == null) {
+                    continue;
                 }
+                filePath = downloadPhoto(driveId);
+                if(filePath == null) {
+                    continue;
+                }
+                id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
+                values.put(Tables.Photos.PATH, filePath);
+                cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id), values,
+                        null, null);
             }
-            BackendUtils.notifyDataChanged(this);
         } finally {
             cursor.close();
         }
+    }
+
+    /**
+     * Download a file from Drive.
+     *
+     * @param driveId The Drive ID
+     * @return The path to the downloaded file
+     */
+    private String downloadPhoto(String driveId) {
+        final DriveFile driveFile = DriveId.decodeFromString(driveId).asDriveFile();
+        if(driveFile == null) {
+            return null;
+        }
+
+        final DriveApi.DriveContentsResult result =
+                driveFile.open(mClient, DriveFile.MODE_READ_ONLY, null).await();
+        if(!result.getStatus().isSuccess()) {
+            return null;
+        }
+
+        final DriveContents driveContents = result.getDriveContents();
+        if(driveContents == null) {
+            return null;
+        }
+
+        try {
+            final String fileName =
+                    driveFile.getMetadata(mClient).await().getMetadata().getOriginalFilename();
+            final File outputFile = new File(PhotoUtils.getMediaStorageDir(), fileName);
+            if(outputFile.exists()) {
+                return outputFile.getPath();
+            }
+            final OutputStream outputStream =
+                    new BufferedOutputStream(new FileOutputStream(outputFile));
+            final InputStream inputStream = new BufferedInputStream(driveContents.getInputStream());
+            try {
+                while(inputStream.available() > 0) {
+                    outputStream.write(inputStream.read());
+                }
+            } finally {
+                inputStream.close();
+                outputStream.close();
+            }
+            return outputFile.getPath();
+        } catch(IOException e) {
+            Log.e(getClass().getSimpleName(), e.getMessage());
+        } finally {
+            driveContents.discard(mClient);
+        }
+
+        return null;
     }
 
     /**
@@ -198,7 +312,7 @@ public class PhotoSyncService extends IntentService {
      * @param file        The local file
      * @return The DriveFile
      */
-    private DriveFile putFile(DriveFolder driveFolder, File file) {
+    private DriveFile uploadFile(DriveFolder driveFolder, File file) {
         DriveFile driveFile = getDriveFile(driveFolder, file.getName());
         if(driveFile != null) {
             return driveFile;
@@ -213,12 +327,14 @@ public class PhotoSyncService extends IntentService {
         final DriveContents driveContents = result.getDriveContents();
         try {
             final InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-            final OutputStream outputStream = driveContents.getOutputStream();
+            final OutputStream outputStream =
+                    new BufferedOutputStream(driveContents.getOutputStream());
             try {
                 while(inputStream.available() > 0) {
                     outputStream.write(inputStream.read());
                 }
             } finally {
+                inputStream.close();
                 outputStream.close();
             }
 
