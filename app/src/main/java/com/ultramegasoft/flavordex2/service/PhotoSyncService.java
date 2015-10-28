@@ -232,6 +232,51 @@ public class PhotoSyncService extends IntentService {
     }
 
     /**
+     * Upload a file to Drive if it does not already exist.
+     *
+     * @param driveFolder The Drive folder
+     * @param file        The local file
+     * @return The DriveFile
+     */
+    private DriveFile uploadFile(DriveFolder driveFolder, File file) {
+        DriveFile driveFile = getDriveFile(driveFolder, file.getName());
+        if(driveFile != null) {
+            return driveFile;
+        }
+
+        final DriveApi.DriveContentsResult result =
+                Drive.DriveApi.newDriveContents(mClient).await();
+        if(!result.getStatus().isSuccess()) {
+            return null;
+        }
+
+        final DriveContents driveContents = result.getDriveContents();
+        try {
+            final InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+            final OutputStream outputStream =
+                    new BufferedOutputStream(driveContents.getOutputStream());
+            try {
+                while(inputStream.available() > 0) {
+                    outputStream.write(inputStream.read());
+                }
+            } finally {
+                inputStream.close();
+                outputStream.close();
+            }
+
+            driveFile = createNewFile(driveFolder, file.getName(), driveContents);
+            if(driveFile != null) {
+                return driveFile;
+            }
+        } catch(IOException e) {
+            Log.e(getClass().getSimpleName(), e.getMessage());
+        }
+
+        driveContents.discard(mClient);
+        return null;
+    }
+
+    /**
      * Download a file from Drive.
      *
      * @param driveId The Drive ID
@@ -302,51 +347,6 @@ public class PhotoSyncService extends IntentService {
         } finally {
             result.release();
         }
-        return null;
-    }
-
-    /**
-     * Upload a file to Drive if it does not already exist.
-     *
-     * @param driveFolder The Drive folder
-     * @param file        The local file
-     * @return The DriveFile
-     */
-    private DriveFile uploadFile(DriveFolder driveFolder, File file) {
-        DriveFile driveFile = getDriveFile(driveFolder, file.getName());
-        if(driveFile != null) {
-            return driveFile;
-        }
-
-        final DriveApi.DriveContentsResult result =
-                Drive.DriveApi.newDriveContents(mClient).await();
-        if(!result.getStatus().isSuccess()) {
-            return null;
-        }
-
-        final DriveContents driveContents = result.getDriveContents();
-        try {
-            final InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-            final OutputStream outputStream =
-                    new BufferedOutputStream(driveContents.getOutputStream());
-            try {
-                while(inputStream.available() > 0) {
-                    outputStream.write(inputStream.read());
-                }
-            } finally {
-                inputStream.close();
-                outputStream.close();
-            }
-
-            driveFile = createNewFile(driveFolder, file.getName(), driveContents);
-            if(driveFile != null) {
-                return driveFile;
-            }
-        } catch(IOException e) {
-            Log.e(getClass().getSimpleName(), e.getMessage());
-        }
-
-        driveContents.discard(mClient);
         return null;
     }
 
