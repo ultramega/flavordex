@@ -22,6 +22,8 @@ import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.BackendUtils;
+import com.ultramegasoft.flavordex2.util.EntryUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -140,6 +142,7 @@ public class PhotoSyncService extends IntentService {
         }
         try {
             long id;
+            long entryId;
             File file;
             DriveFile driveFile;
             final ContentValues values = new ContentValues();
@@ -152,11 +155,14 @@ public class PhotoSyncService extends IntentService {
                     }
 
                     id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
+                    entryId = cursor.getLong(cursor.getColumnIndex(Tables.Photos.ENTRY));
                     values.put(Tables.Photos.DRIVE_ID, driveFile.getDriveId().getResourceId());
                     cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id),
                             values, null, null);
+                    EntryUtils.markChanged(cr, entryId);
                 }
             }
+            BackendUtils.notifyDataChanged(this);
         } finally {
             cursor.close();
         }
@@ -198,13 +204,8 @@ public class PhotoSyncService extends IntentService {
             return driveFile;
         }
 
-        driveFile = openNewFile(driveFolder, file.getName());
-        if(driveFile == null) {
-            return null;
-        }
-
         final DriveApi.DriveContentsResult result =
-                driveFile.open(mClient, DriveFile.MODE_WRITE_ONLY, null).await();
+                Drive.DriveApi.newDriveContents(mClient).await();
         if(!result.getStatus().isSuccess()) {
             return null;
         }
@@ -213,13 +214,18 @@ public class PhotoSyncService extends IntentService {
         try {
             final InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
             final OutputStream outputStream = driveContents.getOutputStream();
-            while(inputStream.available() > 0) {
-                outputStream.write(inputStream.read());
+            try {
+                while(inputStream.available() > 0) {
+                    outputStream.write(inputStream.read());
+                }
+            } finally {
+                outputStream.close();
             }
 
-            driveContents.commit(mClient, null).await();
-
-            return driveFile;
+            driveFile = createNewFile(driveFolder, file.getName(), driveContents);
+            if(driveFile != null) {
+                return driveFile;
+            }
         } catch(IOException e) {
             Log.e(getClass().getSimpleName(), e.getMessage());
         }
@@ -229,16 +235,17 @@ public class PhotoSyncService extends IntentService {
     }
 
     /**
-     * Create a new empty file on Drive.
+     * Create a new file on Drive.
      *
      * @param driveFolder The Drive folder
      * @param name        The file name
+     * @param contents    The file content
      * @return The DriveFile for the new file
      */
-    private DriveFile openNewFile(DriveFolder driveFolder, String name) {
+    private DriveFile createNewFile(DriveFolder driveFolder, String name, DriveContents contents) {
         final MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(name).build();
         final DriveFolder.DriveFileResult result =
-                driveFolder.createFile(mClient, changeSet, null).await();
+                driveFolder.createFile(mClient, changeSet, contents).await();
         if(result.getStatus().isSuccess()) {
             return result.getDriveFile();
         }
