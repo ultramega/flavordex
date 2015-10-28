@@ -177,7 +177,7 @@ public class PhotoSyncService extends IntentService {
                 }
                 id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
                 entryId = cursor.getLong(cursor.getColumnIndex(Tables.Photos.ENTRY));
-                values.put(Tables.Photos.DRIVE_ID, driveFile.getDriveId().toString());
+                values.put(Tables.Photos.DRIVE_ID, driveFile.getDriveId().encodeToString());
                 cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id), values,
                         null, null);
 
@@ -266,6 +266,7 @@ public class PhotoSyncService extends IntentService {
 
             driveFile = createNewFile(driveFolder, file.getName(), driveContents);
             if(driveFile != null) {
+                driveContents.commit(mClient, null, null);
                 return driveFile;
             }
         } catch(IOException e) {
