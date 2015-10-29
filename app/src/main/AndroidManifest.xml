@@ -106,6 +106,14 @@
             </intent-filter>
         </service>
         <service
+            android:name=".service.DriveService"
+            android:exported="true"
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="com.google.android.gms.drive.events.HANDLE_EVENT" />
+            </intent-filter>
+        </service>
+        <service
             android:name=".service.BackendService"
             android:exported="false" />
         <service

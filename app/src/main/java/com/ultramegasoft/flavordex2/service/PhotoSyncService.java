@@ -17,8 +17,10 @@ import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.ExecutionOptions;
 import com.google.android.gms.drive.MetadataBuffer;
 import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.metadata.CustomPropertyKey;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
@@ -46,6 +48,12 @@ public class PhotoSyncService extends IntentService {
      * The name of the Drive folder to store photos
      */
     private static final String DRIVE_FOLDER = "Flavordex Photos";
+
+    /**
+     * The custom property key to identify photos
+     */
+    private static final CustomPropertyKey sHashKey =
+            new CustomPropertyKey("hash", CustomPropertyKey.PUBLIC);
 
     /**
      * The Google API Client
@@ -152,6 +160,7 @@ public class PhotoSyncService extends IntentService {
         final String[] projection = new String[] {
                 Tables.Photos._ID,
                 Tables.Photos.ENTRY,
+                Tables.Photos.HASH,
                 Tables.Photos.PATH
         };
         final String where = Tables.Photos.DRIVE_ID + " IS NULL";
@@ -163,7 +172,9 @@ public class PhotoSyncService extends IntentService {
             boolean changed = false;
             long id;
             long entryId;
+            String hash;
             String filePath;
+            File file;
             DriveFile driveFile;
             final ContentValues values = new ContentValues();
             while(cursor.moveToNext()) {
@@ -171,12 +182,23 @@ public class PhotoSyncService extends IntentService {
                 if(filePath == null) {
                     continue;
                 }
-                driveFile = uploadFile(driveFolder, new File(filePath));
+                file = new File(filePath);
+
+                hash = cursor.getString(cursor.getColumnIndex(Tables.Photos.HASH));
+                if(hash == null) {
+                    hash = PhotoUtils.getMD5Hash(file);
+                    if(hash == null) {
+                        continue;
+                    }
+                }
+
+                driveFile = uploadFile(driveFolder, file, hash);
                 if(driveFile == null) {
                     continue;
                 }
                 id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
                 entryId = cursor.getLong(cursor.getColumnIndex(Tables.Photos.ENTRY));
+                values.put(Tables.Photos.HASH, hash);
                 values.put(Tables.Photos.DRIVE_ID, driveFile.getDriveId().encodeToString());
                 cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id), values,
                         null, null);
@@ -236,10 +258,11 @@ public class PhotoSyncService extends IntentService {
      *
      * @param driveFolder The Drive folder
      * @param file        The local file
+     * @param hash        The file hash
      * @return The DriveFile
      */
-    private DriveFile uploadFile(DriveFolder driveFolder, File file) {
-        DriveFile driveFile = getDriveFile(driveFolder, file.getName());
+    private DriveFile uploadFile(DriveFolder driveFolder, File file, String hash) {
+        DriveFile driveFile = getDriveFile(driveFolder, hash);
         if(driveFile != null) {
             return driveFile;
         }
@@ -264,11 +287,8 @@ public class PhotoSyncService extends IntentService {
                 outputStream.close();
             }
 
-            driveFile = createNewFile(driveFolder, file.getName(), driveContents);
-            if(driveFile != null) {
-                driveContents.commit(mClient, null, null);
-                return driveFile;
-            }
+            createNewFile(driveFolder, file.getName(), hash, driveContents);
+            return null;
         } catch(IOException e) {
             Log.e(getClass().getSimpleName(), e.getMessage());
         }
@@ -332,12 +352,12 @@ public class PhotoSyncService extends IntentService {
      * Get a file from the Drive folder.
      *
      * @param driveFolder The Drive folder
-     * @param fileName    The file name
+     * @param hash        The file hash
      * @return The DriveFile or null if it doesn't exist.
      */
-    private DriveFile getDriveFile(DriveFolder driveFolder, String fileName) {
+    private DriveFile getDriveFile(DriveFolder driveFolder, String hash) {
         final Query query = new Query.Builder()
-                .addFilter(Filters.eq(SearchableField.TITLE, fileName)).build();
+                .addFilter(Filters.eq(sHashKey, hash)).build();
         final DriveApi.MetadataBufferResult result =
                 driveFolder.queryChildren(mClient, query).await();
         try {
@@ -355,18 +375,17 @@ public class PhotoSyncService extends IntentService {
      * Create a new file on Drive.
      *
      * @param driveFolder The Drive folder
-     * @param name        The file name
+     * @param title       The name of the file
+     * @param hash        The file hash
      * @param contents    The file content
-     * @return The DriveFile for the new file
      */
-    private DriveFile createNewFile(DriveFolder driveFolder, String name, DriveContents contents) {
-        final MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(name).build();
-        final DriveFolder.DriveFileResult result =
-                driveFolder.createFile(mClient, changeSet, contents).await();
-        if(result.getStatus().isSuccess()) {
-            return result.getDriveFile();
-        }
-
-        return null;
+    private void createNewFile(DriveFolder driveFolder, String title, String hash,
+                               DriveContents contents) {
+        final MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
+                .setTitle(title)
+                .setCustomProperty(sHashKey, hash).build();
+        final ExecutionOptions options = new ExecutionOptions.Builder()
+                .setNotifyOnCompletion(true).build();
+        driveFolder.createFile(mClient, changeSet, contents, options).await();
     }
 }
