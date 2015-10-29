@@ -208,7 +208,7 @@ public class PhotoSyncService extends IntentService {
             }
 
             if(changed) {
-                BackendUtils.notifyDataChanged(this);
+                BackendUtils.requestSync(this);
             }
         } finally {
             cursor.close();

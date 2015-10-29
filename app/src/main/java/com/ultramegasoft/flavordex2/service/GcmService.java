@@ -3,6 +3,7 @@ package com.ultramegasoft.flavordex2.service;
 import android.os.Bundle;
 
 import com.google.android.gms.gcm.GcmListenerService;
+import com.ultramegasoft.flavordex2.util.BackendUtils;
 
 /**
  * Service to handle GCM messages.
@@ -12,6 +13,6 @@ import com.google.android.gms.gcm.GcmListenerService;
 public class GcmService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        BackendService.syncData(this);
+        BackendUtils.requestSync(this);
     }
 }

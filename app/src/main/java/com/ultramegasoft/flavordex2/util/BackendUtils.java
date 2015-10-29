@@ -4,6 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.OneoffTask;
+import com.google.android.gms.gcm.Task;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.services.json.AbstractGoogleJsonClient;
@@ -11,7 +16,7 @@ import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.backend.registration.Registration;
 import com.ultramegasoft.flavordex2.backend.sync.Sync;
-import com.ultramegasoft.flavordex2.service.BackendService;
+import com.ultramegasoft.flavordex2.service.TaskService;
 
 /**
  * Helpers for accessing the backend.
@@ -37,14 +42,24 @@ public class BackendUtils {
     private static final String WEB_CLIENT_ID = "1001621163874-su48pt09eaj7rd4g0mni19ag4vv2g7p7.apps.googleusercontent.com";
 
     /**
-     * Notify the sync service that data has changed.
+     * Schedule the sync service to run if it is enabled.
      *
      * @param context The Context
      */
-    public static void notifyDataChanged(Context context) {
+    public static void requestSync(Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if(prefs.getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
-            BackendService.syncData(context);
+            final OneoffTask task = new OneoffTask.Builder()
+                    .setTag("syncData")
+                    .setUpdateCurrent(true)
+                    .setExecutionWindow(5, 20)
+                    .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+                    .setService(TaskService.class)
+                    .build();
+            if(GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
+                    == ConnectionResult.SUCCESS) {
+                GcmNetworkManager.getInstance(context).schedule(task);
+            }
         }
     }
 
