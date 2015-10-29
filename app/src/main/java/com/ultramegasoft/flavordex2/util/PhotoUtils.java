@@ -20,9 +20,15 @@ import android.util.Log;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -470,5 +476,37 @@ public class PhotoUtils {
      */
     private static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
+
+    /**
+     * Get the MD5 hash of a file as a 32 character hex string.
+     *
+     * @param file The File
+     * @return The MD5 hash of the file or null on failure
+     */
+    public static String getMD5Hash(File file) {
+        if(!file.canRead()) {
+            return null;
+        }
+
+        try {
+            final MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            final InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+            try {
+                final byte[] buffer = new byte[8192];
+                int read;
+                while((read = inputStream.read(buffer)) > 0) {
+                    messageDigest.update(buffer, 0, read);
+                }
+                final BigInteger digest = new BigInteger(1, messageDigest.digest());
+                return String.format("%32s", digest.toString(16)).replace(" ", "0");
+            } finally {
+                inputStream.close();
+            }
+        } catch(NoSuchAlgorithmException | IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+        return null;
     }
 }

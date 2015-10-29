@@ -33,6 +33,7 @@ import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
+import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
 import java.io.File;
@@ -338,6 +339,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
                     Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/photos");
 
             final ContentValues values = new ContentValues();
+            values.put(Tables.Photos.HASH, PhotoUtils.getMD5Hash(new File(mPhoto.path)));
             values.put(Tables.Photos.PATH, mPhoto.path);
             values.put(Tables.Photos.POS, mPhoto.pos);
 

@@ -323,7 +323,7 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private ArrayList<PhotoRecord> getEntryPhotos(long entryId) throws SQLException {
-        final String sql = "SELECT drive_id, pos FROM photos WHERE entry = ?";
+        final String sql = "SELECT hash, drive_id, pos FROM photos WHERE entry = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, entryId);
 
@@ -332,6 +332,7 @@ public class DatabaseHelper {
         PhotoRecord record;
         while(result.next()) {
             record = new PhotoRecord();
+            record.setHash(result.getString("hash"));
             record.setDriveId(result.getString("drive_id"));
             record.setPos(result.getInt("pos"));
             records.add(record);
@@ -538,12 +539,13 @@ public class DatabaseHelper {
         if(entry.getPhotos() == null) {
             return;
         }
-        final String sql = "INSERT INTO photos (entry, drive_id, pos) VALUES (?, ?, ?)";
+        final String sql = "INSERT INTO photos (entry, hash, drive_id, pos) VALUES (?, ?, ?, ?)";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, entry.getId());
         for(PhotoRecord photo : entry.getPhotos()) {
-            stmt.setString(2, photo.getDriveId());
-            stmt.setInt(3, photo.getPos());
+            stmt.setString(2, photo.getHash());
+            stmt.setString(3, photo.getDriveId());
+            stmt.setInt(4, photo.getPos());
             stmt.executeUpdate();
         }
     }

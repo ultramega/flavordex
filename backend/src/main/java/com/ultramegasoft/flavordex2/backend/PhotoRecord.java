@@ -8,6 +8,7 @@ package com.ultramegasoft.flavordex2.backend;
 public class PhotoRecord {
     private long id;
     private long entry;
+    private String hash;
     private String driveId;
     private int pos;
 
@@ -25,6 +26,14 @@ public class PhotoRecord {
 
     public void setEntry(long entry) {
         this.entry = entry;
+    }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String name) {
+        this.hash = name;
     }
 
     public String getDriveId() {

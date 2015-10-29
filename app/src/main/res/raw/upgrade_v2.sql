@@ -27,10 +27,11 @@ ALTER TABLE flavors ADD COLUMN pos INTEGER DEFAULT 0;
 CREATE TABLE photos2 (
   _id INTEGER PRIMARY KEY,
   entry INTEGER,
+  hash TEXT,
   path TEXT,
   drive_id TEXT,
   pos INTEGER DEFAULT 0,
-  UNIQUE(entry, drive_id) ON CONFLICT REPLACE
+  UNIQUE(entry, hash) ON CONFLICT IGNORE
 );
 --
 INSERT INTO photos2 (_id, entry, path) SELECT * FROM photos;

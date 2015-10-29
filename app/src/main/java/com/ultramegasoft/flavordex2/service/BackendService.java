@@ -27,7 +27,9 @@ import com.ultramegasoft.flavordex2.backend.sync.model.PhotoRecord;
 import com.ultramegasoft.flavordex2.backend.sync.model.UpdateRecord;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
+import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -503,14 +505,26 @@ public class BackendService extends IntentService {
     private static ArrayList<PhotoRecord> getEntryPhotos(ContentResolver cr, long entryId) {
         final Uri uri =
                 Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, entryId + "/photos");
-        final String where = Tables.Photos.DRIVE_ID + " NOT NULL";
-        final Cursor cursor = cr.query(uri, null, where, null, null);
+        final Cursor cursor = cr.query(uri, null, null, null, null);
         if(cursor != null) {
             try {
                 final ArrayList<PhotoRecord> records = new ArrayList<>();
                 PhotoRecord record;
+                String hash;
+                String path;
                 while(cursor.moveToNext()) {
+                    hash = cursor.getString(cursor.getColumnIndex(Tables.Photos.HASH));
+                    if(hash == null) {
+                        path = cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH));
+                        if(path != null) {
+                            hash = PhotoUtils.getMD5Hash(new File(path));
+                        }
+                        if(hash == null) {
+                            continue;
+                        }
+                    }
                     record = new PhotoRecord();
+                    record.setHash(hash);
                     record.setDriveId(
                             cursor.getString(cursor.getColumnIndex(Tables.Photos.DRIVE_ID)));
                     record.setPos(cursor.getInt(cursor.getColumnIndex(Tables.Photos.POS)));
@@ -758,15 +772,44 @@ public class BackendService extends IntentService {
             return;
         }
 
+        final ArrayList<String> photoHashes = new ArrayList<>();
+
         final Uri uri = Uri.withAppendedPath(entryUri, "photos");
-        final String where = Tables.Photos.DRIVE_ID + " NOT NULL";
-        cr.delete(uri, where, null);
 
         final ContentValues values = new ContentValues();
+        final String where = Tables.Photos.HASH + " = ?";
+        final String[] whereArgs = new String[1];
         for(PhotoRecord photo : photos) {
+            photoHashes.add(photo.getHash());
+            whereArgs[0] = photo.getHash();
             values.put(Tables.Photos.DRIVE_ID, photo.getDriveId());
             values.put(Tables.Photos.POS, photo.getPos());
-            cr.insert(uri, values);
+            if(cr.update(uri, values, where, whereArgs) == 0) {
+                values.put(Tables.Photos.HASH, photo.getHash());
+                cr.insert(uri, values);
+            }
+        }
+
+        final String[] projection = new String[] {
+                Tables.Photos._ID,
+                Tables.Photos.HASH
+        };
+        final Cursor cursor = cr.query(uri, projection, null, null, null);
+        if(cursor != null) {
+            try {
+                long id;
+                String hash;
+                while(cursor.moveToNext()) {
+                    hash = cursor.getString(cursor.getColumnIndex(Tables.Photos.HASH));
+                    if(!photoHashes.contains(hash)) {
+                        id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
+                        cr.delete(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id),
+                                null, null);
+                    }
+                }
+            } finally {
+                cursor.close();
+            }
         }
     }
 

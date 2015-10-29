@@ -291,6 +291,7 @@ public class Tables {
          * Column names
          */
         public static final String ENTRY = "entry";
+        public static final String HASH = "hash";
         public static final String PATH = "path";
         public static final String DRIVE_ID = "drive_id";
         public static final String POS = "pos";

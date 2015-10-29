@@ -64,10 +64,11 @@ CREATE TABLE makers (
 CREATE TABLE photos (
   _id INTEGER PRIMARY KEY,
   entry INTEGER,
+  hash TEXT,
   path TEXT,
   drive_id TEXT,
   pos INTEGER DEFAULT 0,
-  UNIQUE(entry, drive_id) ON CONFLICT REPLACE
+  UNIQUE(entry, hash) ON CONFLICT IGNORE
 );
 --
 CREATE TABLE cats (
