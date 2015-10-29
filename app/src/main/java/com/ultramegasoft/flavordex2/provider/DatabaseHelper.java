@@ -182,7 +182,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param flavorRes String-array resource ID for the list of flavors
      */
     private void insertPreset(SQLiteDatabase db, String name, String[] extras, int flavorRes) {
-        ContentValues values = new ContentValues();
+        final ContentValues values = new ContentValues();
 
         values.put(Tables.Cats.UUID, name);
         values.put(Tables.Cats.NAME, name);
