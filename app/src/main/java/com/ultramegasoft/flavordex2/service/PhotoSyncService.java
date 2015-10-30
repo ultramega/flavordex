@@ -184,27 +184,31 @@ public class PhotoSyncService extends IntentService {
                 }
                 file = new File(filePath);
 
+                values.clear();
+
                 hash = cursor.getString(cursor.getColumnIndex(Tables.Photos.HASH));
                 if(hash == null) {
                     hash = PhotoUtils.getMD5Hash(file);
                     if(hash == null) {
                         continue;
                     }
+                    values.put(Tables.Photos.HASH, hash);
                 }
 
                 driveFile = uploadFile(driveFolder, file, hash);
-                if(driveFile == null) {
-                    continue;
+                if(driveFile != null) {
+                    values.put(Tables.Photos.DRIVE_ID, driveFile.getDriveId().encodeToString());
                 }
-                id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
-                entryId = cursor.getLong(cursor.getColumnIndex(Tables.Photos.ENTRY));
-                values.put(Tables.Photos.HASH, hash);
-                values.put(Tables.Photos.DRIVE_ID, driveFile.getDriveId().encodeToString());
-                cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id), values,
-                        null, null);
 
-                EntryUtils.markChanged(cr, entryId);
-                changed = true;
+                if(values.size() > 0) {
+                    changed = true;
+                    id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
+                    entryId = cursor.getLong(cursor.getColumnIndex(Tables.Photos.ENTRY));
+                    cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id), values,
+                            null, null);
+
+                    EntryUtils.markChanged(cr, entryId);
+                }
             }
 
             if(changed) {
