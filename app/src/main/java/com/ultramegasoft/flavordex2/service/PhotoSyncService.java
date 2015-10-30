@@ -204,8 +204,8 @@ public class PhotoSyncService extends IntentService {
                     changed = true;
                     id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
                     entryId = cursor.getLong(cursor.getColumnIndex(Tables.Photos.ENTRY));
-                    cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id), values,
-                            null, null);
+                    cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id),
+                            values, null, null);
 
                     EntryUtils.markChanged(cr, entryId);
                 }
@@ -283,8 +283,10 @@ public class PhotoSyncService extends IntentService {
             final OutputStream outputStream =
                     new BufferedOutputStream(driveContents.getOutputStream());
             try {
-                while(inputStream.available() > 0) {
-                    outputStream.write(inputStream.read());
+                final byte[] buffer = new byte[8192];
+                int read;
+                while((read = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, read);
                 }
             } finally {
                 inputStream.close();
@@ -335,8 +337,10 @@ public class PhotoSyncService extends IntentService {
                     new BufferedOutputStream(new FileOutputStream(outputFile));
             final InputStream inputStream = new BufferedInputStream(driveContents.getInputStream());
             try {
-                while(inputStream.available() > 0) {
-                    outputStream.write(inputStream.read());
+                final byte[] buffer = new byte[8192];
+                int read;
+                while((read = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, read);
                 }
             } finally {
                 inputStream.close();
