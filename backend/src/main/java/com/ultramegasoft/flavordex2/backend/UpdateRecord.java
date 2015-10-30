@@ -8,17 +8,8 @@ import java.util.ArrayList;
  * @author Steve Guidetti
  */
 public class UpdateRecord {
-    private long timestamp;
     private ArrayList<EntryRecord> entries;
     private ArrayList<CatRecord> cats;
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
 
     public ArrayList<EntryRecord> getEntries() {
         return entries;

@@ -14,6 +14,7 @@ import com.google.appengine.api.users.User;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Named;
@@ -76,7 +77,6 @@ public class SyncEndpoint {
 
             updateRecord.setCats(helper.getUpdatedCats(since));
             updateRecord.setEntries(helper.getUpdatedEntries(since));
-            updateRecord.setTimestamp(System.currentTimeMillis());
         } catch(SQLException e) {
             e.printStackTrace();
             throw new InternalServerErrorException(e);
@@ -88,17 +88,17 @@ public class SyncEndpoint {
     }
 
     /**
-     * Send an updated journal entry to the server.
+     * Send updated journal data to the server.
      *
      * @param user     The User
-     * @param record   The updated journal entry from the client
+     * @param record   The updated journal data
      * @param clientId The database ID of the client
-     * @return The update response containing the result of the request
+     * @return The response containing the results of the update operations
      * @throws InternalServerErrorException
      * @throws UnauthorizedException
      */
-    @ApiMethod(name = "pushCategory")
-    public UpdateResponse pushCat(User user, CatRecord record, @Named("clientId") long clientId)
+    @ApiMethod(name = "pushUpdates")
+    public UpdateResponse push(User user, UpdateRecord record, @Named("clientId") long clientId)
             throws InternalServerErrorException, UnauthorizedException {
         if(user == null) {
             throw new UnauthorizedException("Unauthorized");
@@ -110,41 +110,45 @@ public class SyncEndpoint {
             helper.setUser(user.getEmail());
             helper.setClientId(clientId);
 
-            response.setSuccess(helper.update(record));
-        } catch(SQLException e) {
-            e.printStackTrace();
-            throw new InternalServerErrorException(e);
-        } finally {
-            helper.close();
-        }
+            boolean dataChanged = false;
+            boolean status;
+            if(record.getCats() != null) {
+                final HashMap<String, Boolean> catStatuses = new HashMap<>();
+                for(CatRecord catRecord : record.getCats()) {
+                    try {
+                        status = helper.update(catRecord);
+                        if(status) {
+                            dataChanged = true;
+                        }
+                        catStatuses.put(catRecord.getUuid(), status);
+                    } catch(SQLException e) {
+                        e.printStackTrace();
+                        catStatuses.put(catRecord.getUuid(), false);
+                    }
+                }
+                response.setCatStatuses(catStatuses);
+            }
 
-        return response;
-    }
+            if(record.getEntries() != null) {
+                final HashMap<String, Boolean> entryStatuses = new HashMap<>();
+                for(EntryRecord entryRecord : record.getEntries()) {
+                    try {
+                        status = helper.update(entryRecord);
+                        if(status) {
+                            dataChanged = true;
+                        }
+                        entryStatuses.put(entryRecord.getUuid(), status);
+                    } catch(SQLException e) {
+                        e.printStackTrace();
+                        entryStatuses.put(entryRecord.getUuid(), false);
+                    }
+                }
+                response.setEntryStatuses(entryStatuses);
+            }
 
-    /**
-     * Send an updated journal entry to the server.
-     *
-     * @param user     The User
-     * @param record   The updated journal entry from the client
-     * @param clientId The database ID of the client
-     * @return The update response containing the result of the request
-     * @throws InternalServerErrorException
-     * @throws UnauthorizedException
-     */
-    @ApiMethod(name = "pushEntry")
-    public UpdateResponse pushEntry(User user, EntryRecord record, @Named("clientId") long clientId)
-            throws InternalServerErrorException, UnauthorizedException {
-        if(user == null) {
-            throw new UnauthorizedException("Unauthorized");
-        }
-        final UpdateResponse response = new UpdateResponse();
-        final DatabaseHelper helper = new DatabaseHelper();
-        try {
-            helper.open();
-            helper.setUser(user.getEmail());
-            helper.setClientId(clientId);
-
-            response.setSuccess(helper.update(record));
+            if(dataChanged) {
+                notifyClients(helper);
+            }
         } catch(SQLException e) {
             e.printStackTrace();
             throw new InternalServerErrorException(e);
@@ -158,29 +162,20 @@ public class SyncEndpoint {
     /**
      * Notify all clients belonging to the user the a sync is requested.
      *
-     * @param user     The User
-     * @param clientId The database ID of the client sending the request
+     * @param helper The DatabaseHelper
      * @throws InternalServerErrorException
      * @throws UnauthorizedException
      */
-    @ApiMethod(name = "notifyClients")
-    public void notifyClients(User user, @Named("clientId") long clientId)
+    private void notifyClients(DatabaseHelper helper)
             throws InternalServerErrorException, UnauthorizedException {
-        if(user == null) {
-            throw new UnauthorizedException("Unauthorized");
-        }
-        final DatabaseHelper helper = new DatabaseHelper();
         try {
-            helper.open();
-            helper.setUser(user.getEmail());
-
             final Sender sender = new Sender(GCM_API_KEY);
             final Message message = new Message.Builder().collapseKey("requestKey").build();
             Result result;
             String canonicalRegId;
             String error;
             for(Map.Entry<Long, String> entry : helper.listGcmIds().entrySet()) {
-                if(entry.getKey() == clientId) {
+                if(entry.getKey() == helper.getClientId()) {
                     continue;
                 }
                 result = sender.send(message, entry.getValue(), 5);
@@ -199,8 +194,6 @@ public class SyncEndpoint {
         } catch(IOException | SQLException e) {
             e.printStackTrace();
             throw new InternalServerErrorException(e);
-        } finally {
-            helper.close();
         }
     }
 }

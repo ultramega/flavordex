@@ -77,6 +77,15 @@ public class DatabaseHelper {
     }
 
     /**
+     * Get the current client ID
+     *
+     * @return The database ID of the client
+     */
+    public long getClientId() {
+        return mClientId;
+    }
+
+    /**
      * Set the client to make requests.
      *
      * @param clientId The database ID of the client
