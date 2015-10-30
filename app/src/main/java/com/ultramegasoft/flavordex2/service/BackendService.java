@@ -221,8 +221,6 @@ public class BackendService extends IntentService {
         } catch(IOException e) {
             Log.e(getClass().getSimpleName(), e.getMessage());
         }
-
-        PhotoSyncService.syncPhotos(this);
     }
 
     /**
@@ -585,6 +583,8 @@ public class BackendService extends IntentService {
             for(EntryRecord entryRecord : record.getEntries()) {
                 parseEntry(cr, entryRecord);
             }
+
+            BackendUtils.requestPhotoSync(this);
         }
     }
 

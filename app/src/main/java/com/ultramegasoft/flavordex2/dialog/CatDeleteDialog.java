@@ -252,7 +252,7 @@ public class CatDeleteDialog extends DialogFragment
             final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
             cr.delete(uri, null, null);
             cr.notifyChange(Tables.Entries.CONTENT_URI, null);
-            BackendUtils.requestSync(mContext);
+            BackendUtils.requestDataSync(mContext);
             return null;
         }
     }

@@ -23,6 +23,12 @@ import com.ultramegasoft.flavordex2.service.TaskService;
  */
 public class BackendUtils {
     /**
+     * Task tags for the GCM Network Manager
+     */
+    public static final String TASK_SYNC_DATA = "sync_data";
+    public static final String TASK_SYNC_PHOTOS = "sync_photos";
+
+    /**
      * Keys for the backend shared preferences
      */
     private static final String PREFS_KEY = "backend";
@@ -44,13 +50,32 @@ public class BackendUtils {
      *
      * @param context The Context
      */
-    public static void requestSync(Context context) {
+    public static void requestDataSync(Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if(prefs.getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
             final OneoffTask task = new OneoffTask.Builder()
-                    .setTag("syncData")
+                    .setTag(TASK_SYNC_DATA)
                     .setUpdateCurrent(true)
-                    .setExecutionWindow(5, 20)
+                    .setExecutionWindow(5, 30)
+                    .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+                    .setService(TaskService.class)
+                    .build();
+            GcmNetworkManager.getInstance(context).schedule(task);
+        }
+    }
+
+    /**
+     * Schedule the photo sync service to run if it is enabled.
+     *
+     * @param context The Context
+     */
+    public static void requestPhotoSync(Context context) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false)) {
+            final OneoffTask task = new OneoffTask.Builder()
+                    .setTag(TASK_SYNC_PHOTOS)
+                    .setUpdateCurrent(true)
+                    .setExecutionWindow(5, 30)
                     .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
                     .setService(TaskService.class)
                     .build();

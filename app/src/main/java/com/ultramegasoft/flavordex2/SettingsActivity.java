@@ -20,7 +20,6 @@ import com.ultramegasoft.flavordex2.dialog.BackendRegistrationDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.DriveConnectDialog;
 import com.ultramegasoft.flavordex2.service.BackendService;
-import com.ultramegasoft.flavordex2.service.PhotoSyncService;
 import com.ultramegasoft.flavordex2.service.TaskService;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
@@ -215,14 +214,18 @@ public class SettingsActivity extends AppCompatActivity {
             } else if(FlavordexApp.PREF_SYNC_DATA.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
                     mPrefSyncData.setChecked(true);
-                    BackendUtils.requestSync(getContext());
+                    BackendUtils.requestDataSync(getContext());
                 } else {
-                    GcmNetworkManager.getInstance(getContext()).cancelAllTasks(TaskService.class);
+                    GcmNetworkManager.getInstance(getContext())
+                            .cancelTask(BackendUtils.TASK_SYNC_DATA, TaskService.class);
                 }
             } else if(FlavordexApp.PREF_SYNC_PHOTOS.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
                     mPrefSyncPhotos.setChecked(true);
-                    PhotoSyncService.syncPhotos(getContext());
+                    BackendUtils.requestPhotoSync(getContext());
+                } else {
+                    GcmNetworkManager.getInstance(getContext())
+                            .cancelTask(BackendUtils.TASK_SYNC_PHOTOS, TaskService.class);
                 }
             }
         }

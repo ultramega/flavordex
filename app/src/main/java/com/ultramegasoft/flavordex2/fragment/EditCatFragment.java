@@ -737,7 +737,7 @@ public class EditCatFragment extends LoadingProgressFragment
             if(mFlavors != null) {
                 updateFlavors(catUri);
             }
-            BackendUtils.requestSync(mContext);
+            BackendUtils.requestDataSync(mContext);
             return null;
         }
 

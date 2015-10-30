@@ -15,6 +15,6 @@ public class GcmService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         Log.d(getClass().getSimpleName(), "Received Message: " + data.getString("message"));
-        BackendUtils.requestSync(this);
+        BackendUtils.requestDataSync(this);
     }
 }

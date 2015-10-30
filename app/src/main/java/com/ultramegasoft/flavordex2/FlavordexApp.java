@@ -15,7 +15,7 @@ import android.os.StrictMode;
 import android.preference.PreferenceManager;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.service.PhotoSyncService;
+import com.ultramegasoft.flavordex2.util.BackendUtils;
 
 import java.util.HashMap;
 
@@ -121,9 +121,9 @@ public class FlavordexApp extends Application implements
         if(prefs.getBoolean(PREF_DETECT_LOCATION, false)) {
             setLocationEnabled(true);
         }
-        if(prefs.getBoolean(PREF_SYNC_PHOTOS, false)) {
-            PhotoSyncService.syncPhotos(this);
-        }
+
+        BackendUtils.requestDataSync(this);
+        BackendUtils.requestPhotoSync(this);
     }
 
     @Override
