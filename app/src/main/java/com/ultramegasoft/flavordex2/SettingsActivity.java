@@ -227,6 +227,8 @@ public class SettingsActivity extends AppCompatActivity {
                     GcmNetworkManager.getInstance(getContext())
                             .cancelTask(BackendUtils.TASK_SYNC_PHOTOS, TaskService.class);
                 }
+            } else if(FlavordexApp.PREF_SYNC_PHOTOS_UNMETERED.equals(key)) {
+                BackendUtils.requestPhotoSync(getContext());
             }
         }
     }

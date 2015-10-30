@@ -38,6 +38,7 @@ public class FlavordexApp extends Application implements
     public static final String PREF_ACCOUNT_NAME = "pref_account_name";
     public static final String PREF_SYNC_DATA = "pref_sync_data";
     public static final String PREF_SYNC_PHOTOS = "pref_sync_photos";
+    public static final String PREF_SYNC_PHOTOS_UNMETERED = "pref_sync_photos_unmetered";
     public static final String PREF_DETECT_LOCATION = "pref_detect_location";
     public static final String PREF_LIST_SORT_FIELD = "pref_list_sort_field";
     public static final String PREF_LIST_SORT_REVERSED = "pref_list_sort_reversed";

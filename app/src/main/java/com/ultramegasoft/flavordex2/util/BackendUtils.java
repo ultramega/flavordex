@@ -72,14 +72,19 @@ public class BackendUtils {
     public static void requestPhotoSync(Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false)) {
-            final OneoffTask task = new OneoffTask.Builder()
+            final OneoffTask.Builder builder = new OneoffTask.Builder()
                     .setTag(TASK_SYNC_PHOTOS)
                     .setUpdateCurrent(true)
                     .setExecutionWindow(5, 30)
-                    .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
-                    .setService(TaskService.class)
-                    .build();
-            GcmNetworkManager.getInstance(context).schedule(task);
+                    .setService(TaskService.class);
+
+            if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS_UNMETERED, true)) {
+                builder.setRequiredNetwork(Task.NETWORK_STATE_UNMETERED);
+            } else {
+                builder.setRequiredNetwork(Task.NETWORK_STATE_CONNECTED);
+            }
+
+            GcmNetworkManager.getInstance(context).schedule(builder.build());
         }
     }
 

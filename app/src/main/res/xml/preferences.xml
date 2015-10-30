@@ -22,5 +22,11 @@
             android:key="pref_sync_photos"
             android:summary="@string/pref_summary_sync_photos"
             android:title="@string/pref_sync_photos" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="pref_sync_photos"
+            android:key="pref_sync_photos_unmetered"
+            android:summary="@string/pref_summary_sync_photos_unmetered"
+            android:title="@string/pref_sync_photos_unmetered" />
     </PreferenceCategory>
 </PreferenceScreen>

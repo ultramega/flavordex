@@ -167,6 +167,8 @@
     <string name="pref_summary_sync_data">Sync journal data across your logged in devices.</string>
     <string name="pref_sync_photos">Sync Photos with Drive</string>
     <string name="pref_summary_sync_photos">Sync photos with your Google Drive.</string>
+    <string name="pref_sync_photos_unmetered">Sync Photos on Unmetered Connection</string>
+    <string name="pref_summary_sync_photos_unmetered">Only sync photos when connected to an unmetered connection.</string>
 
     <string name="error_camera">Error: Unable to launch camera</string>
     <string name="error_read_dir">Error: Unable to open directory for reading</string>
