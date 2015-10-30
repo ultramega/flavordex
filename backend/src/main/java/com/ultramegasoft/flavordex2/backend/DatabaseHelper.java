@@ -348,14 +348,16 @@ public class DatabaseHelper {
      * Update the entry, inserting, updating, or deleting as indicated.
      *
      * @param entry The EntryRecord to update
+     * @return Whether the operation was successful
      * @throws SQLException
      * @throws UnauthorizedException
      */
-    public void update(EntryRecord entry) throws SQLException, UnauthorizedException {
+    public boolean update(EntryRecord entry) throws SQLException, UnauthorizedException {
         if(mUserId == 0) {
             throw new UnauthorizedException("Unknown user");
         }
 
+        boolean success = false;
         try {
             mConnection.setAutoCommit(false);
 
@@ -371,7 +373,7 @@ public class DatabaseHelper {
             }
 
             if(entry.isDeleted()) {
-                deleteEntry(entry);
+                success = deleteEntry(entry);
             } else if(entry.getId() == 0) {
                 sql = "SELECT id FROM categories WHERE uuid = ? AND user = ?";
                 stmt = mConnection.prepareStatement(sql);
@@ -381,25 +383,28 @@ public class DatabaseHelper {
                 result = stmt.executeQuery();
                 if(result.next()) {
                     entry.setCat(result.getLong(1));
+                    success = insertEntry(entry);
                 }
-                insertEntry(entry);
             } else {
-                updateEntry(entry);
+                success = updateEntry(entry);
             }
 
             mConnection.commit();
         } finally {
             mConnection.setAutoCommit(true);
         }
+
+        return success;
     }
 
     /**
      * Insert a new entry.
      *
      * @param entry The EntryRecord to insert
+     * @return Whether the operation was successful
      * @throws SQLException
      */
-    private void insertEntry(EntryRecord entry) throws SQLException {
+    private boolean insertEntry(EntryRecord entry) throws SQLException {
         String sql = "INSERT INTO entries (uuid, user, cat, title, maker, origin, price, location, date, rating, notes, updated, client) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1, entry.getUuid());
@@ -415,7 +420,7 @@ public class DatabaseHelper {
         stmt.setString(11, entry.getNotes());
         stmt.setLong(12, entry.getUpdated());
         stmt.setLong(13, mClientId);
-        stmt.executeUpdate();
+        final int changed = stmt.executeUpdate();
 
         final ResultSet result = stmt.getGeneratedKeys();
         if(result.next()) {
@@ -430,15 +435,18 @@ public class DatabaseHelper {
         stmt.setLong(1, mUserId);
         stmt.setString(2, entry.getUuid());
         stmt.executeUpdate();
+
+        return changed > 0;
     }
 
     /**
      * Update an entry.
      *
      * @param entry The EntryRecord to update
+     * @return Whether the operation was successful
      * @throws SQLException
      */
-    private void updateEntry(EntryRecord entry) throws SQLException {
+    private boolean updateEntry(EntryRecord entry) throws SQLException {
         final String sql = "UPDATE entries SET title = ?, maker = ?, origin = ?, price = ?, location = ?, date = ?, rating = ?, notes = ?, updated = ?, client = ? WHERE user = ? AND id = ? AND updated < ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setString(1, entry.getTitle());
@@ -458,7 +466,11 @@ public class DatabaseHelper {
             updateEntryExtras(entry);
             updateEntryFlavors(entry);
             updateEntryPhotos(entry);
+
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -582,9 +594,10 @@ public class DatabaseHelper {
      * Delete an entry. This will delete the entry and add its UUID to the deleted log.
      *
      * @param entry The entry to delete
+     * @return Whether the operation was successful
      * @throws SQLException
      */
-    private void deleteEntry(EntryRecord entry) throws SQLException {
+    private boolean deleteEntry(EntryRecord entry) throws SQLException {
         String sql = "DELETE FROM entries WHERE user = ? AND id = ? AND updated < ?";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
@@ -599,7 +612,11 @@ public class DatabaseHelper {
             stmt.setLong(4, entry.getUpdated());
             stmt.setLong(5, mClientId);
             stmt.executeUpdate();
+
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -712,14 +729,16 @@ public class DatabaseHelper {
      * Update the category, inserting, updating, or deleting as indicated.
      *
      * @param cat The CatRecord to update
+     * @return Whether the operation was successful
      * @throws SQLException
      * @throws UnauthorizedException
      */
-    public void update(CatRecord cat) throws SQLException, UnauthorizedException {
+    public boolean update(CatRecord cat) throws SQLException, UnauthorizedException {
         if(mUserId == 0) {
             throw new UnauthorizedException("Unknown user");
         }
 
+        boolean success = false;
         try {
             mConnection.setAutoCommit(false);
 
@@ -734,26 +753,29 @@ public class DatabaseHelper {
             }
 
             if(cat.isDeleted()) {
-                deleteCat(cat);
+                success = deleteCat(cat);
             } else if(cat.getId() == 0) {
-                insertCat(cat);
+                success = insertCat(cat);
             } else {
-                updateCat(cat);
+                success = updateCat(cat);
             }
 
             mConnection.commit();
         } finally {
             mConnection.setAutoCommit(true);
         }
+
+        return success;
     }
 
     /**
      * Insert a new category.
      *
      * @param cat The CatRecord to insert
+     * @return Whether the operation was successful
      * @throws SQLException
      */
-    private void insertCat(CatRecord cat) throws SQLException {
+    private boolean insertCat(CatRecord cat) throws SQLException {
         String sql = "INSERT INTO categories (uuid, user, name, updated, client) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1, cat.getUuid());
@@ -761,7 +783,7 @@ public class DatabaseHelper {
         stmt.setString(3, cat.getName());
         stmt.setLong(4, cat.getUpdated());
         stmt.setLong(5, mClientId);
-        stmt.executeUpdate();
+        final int changed = stmt.executeUpdate();
 
         final ResultSet result = stmt.getGeneratedKeys();
         if(result.next()) {
@@ -775,15 +797,18 @@ public class DatabaseHelper {
         stmt.setLong(1, mUserId);
         stmt.setString(2, cat.getUuid());
         stmt.executeUpdate();
+
+        return changed > 0;
     }
 
     /**
      * Update a category.
      *
      * @param cat The CatRecord to update
+     * @return Whether the operation was successful
      * @throws SQLException
      */
-    private void updateCat(CatRecord cat) throws SQLException {
+    private boolean updateCat(CatRecord cat) throws SQLException {
         final String sql = "UPDATE categories SET name = ?, updated = ?, client = ? WHERE user = ? AND id = ? AND updated < ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setString(1, cat.getName());
@@ -795,7 +820,11 @@ public class DatabaseHelper {
         if(stmt.executeUpdate() > 0) {
             updateCatExtras(cat);
             updateCatFlavors(cat);
+
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -904,9 +933,10 @@ public class DatabaseHelper {
      * Delete a category. This will delete the category and add its UUID to the deleted log.
      *
      * @param cat The category to delete
+     * @return Whether the operation was successful
      * @throws SQLException
      */
-    private void deleteCat(CatRecord cat) throws SQLException {
+    private boolean deleteCat(CatRecord cat) throws SQLException {
         String sql = "DELETE FROM categories WHERE user = ? AND id = ? AND updated < ?";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
@@ -920,7 +950,11 @@ public class DatabaseHelper {
             stmt.setLong(3, cat.getUpdated());
             stmt.setLong(4, mClientId);
             stmt.executeUpdate();
+
+            return true;
         }
+
+        return false;
     }
 
     /**

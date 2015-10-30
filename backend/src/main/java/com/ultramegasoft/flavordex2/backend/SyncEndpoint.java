@@ -109,9 +109,8 @@ public class SyncEndpoint {
             helper.open();
             helper.setUser(user.getEmail());
             helper.setClientId(clientId);
-            helper.update(record);
 
-            response.setSuccess(true);
+            response.setSuccess(helper.update(record));
         } catch(SQLException e) {
             e.printStackTrace();
             throw new InternalServerErrorException(e);
@@ -144,9 +143,8 @@ public class SyncEndpoint {
             helper.open();
             helper.setUser(user.getEmail());
             helper.setClientId(clientId);
-            helper.update(record);
 
-            response.setSuccess(true);
+            response.setSuccess(helper.update(record));
         } catch(SQLException e) {
             e.printStackTrace();
             throw new InternalServerErrorException(e);
