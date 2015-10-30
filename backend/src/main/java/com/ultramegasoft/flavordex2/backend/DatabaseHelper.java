@@ -205,36 +205,39 @@ public class DatabaseHelper {
     /**
      * Get all entries updated by other clients since the client's last sync.
      *
+     * @param since The timestamp of the client's last sync
      * @return The list of entries updated since the last sync
      * @throws SQLException
      * @throws UnauthorizedException
      */
-    public ArrayList<EntryRecord> getUpdatedEntries() throws SQLException, UnauthorizedException {
+    public ArrayList<EntryRecord> getUpdatedEntries(long since)
+            throws SQLException, UnauthorizedException {
         if(mUserId == 0) {
             throw new UnauthorizedException("Unknown user");
         }
         final ArrayList<EntryRecord> records = new ArrayList<>();
         EntryRecord record;
 
-        String sql = "SELECT uuid FROM deleted WHERE user = ? AND time > (SELECT last_sync FROM clients WHERE id = ?) AND client != ?";
+        String sql = "SELECT uuid, time FROM deleted WHERE user = ? AND client != ? AND time > ?";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
         stmt.setLong(2, mClientId);
-        stmt.setLong(3, mClientId);
+        stmt.setLong(3, since);
 
         ResultSet result = stmt.executeQuery();
         while(result.next()) {
             record = new EntryRecord();
             record.setUuid(result.getString("uuid"));
+            record.setUpdated(result.getLong("time"));
             record.setDeleted(true);
             records.add(record);
         }
 
-        sql = "SELECT a.*, b.uuid AS cat_uuid FROM entries a LEFT JOIN categories b ON a.cat = b.id WHERE a.user = ? AND a.updated > (SELECT last_sync FROM clients WHERE id = ?) AND a.client != ?";
+        sql = "SELECT a.*, b.uuid AS cat_uuid FROM entries a LEFT JOIN categories b ON a.cat = b.id WHERE a.user = ? AND a.client != ? AND a.updated > ?";
         stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
         stmt.setLong(2, mClientId);
-        stmt.setLong(3, mClientId);
+        stmt.setLong(3, since);
 
         result = stmt.executeQuery();
         while(result.next()) {
@@ -397,8 +400,8 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private void insertEntry(EntryRecord entry) throws SQLException {
-        final String sql = "INSERT INTO entries (uuid, user, cat, title, maker, origin, price, location, date, rating, notes, updated, client) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        final PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        String sql = "INSERT INTO entries (uuid, user, cat, title, maker, origin, price, location, date, rating, notes, updated, client) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1, entry.getUuid());
         stmt.setLong(2, mUserId);
         stmt.setLong(3, entry.getCat());
@@ -410,7 +413,7 @@ public class DatabaseHelper {
         stmt.setLong(9, entry.getDate());
         stmt.setFloat(10, entry.getRating());
         stmt.setString(11, entry.getNotes());
-        stmt.setLong(12, System.currentTimeMillis());
+        stmt.setLong(12, entry.getUpdated());
         stmt.setLong(13, mClientId);
         stmt.executeUpdate();
 
@@ -421,6 +424,12 @@ public class DatabaseHelper {
             insertEntryFlavors(entry);
             insertEntryPhotos(entry);
         }
+
+        sql = "DELETE FROM deleted WHERE user = ? AND uuid = ?";
+        stmt = mConnection.prepareStatement(sql);
+        stmt.setLong(1, mUserId);
+        stmt.setString(2, entry.getUuid());
+        stmt.executeUpdate();
     }
 
     /**
@@ -430,7 +439,7 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private void updateEntry(EntryRecord entry) throws SQLException {
-        final String sql = "UPDATE entries SET title = ?, maker = ?, origin = ?, price = ?, location = ?, date = ?, rating = ?, notes = ?, updated = ?, client = ? WHERE user = ? AND id = ?";
+        final String sql = "UPDATE entries SET title = ?, maker = ?, origin = ?, price = ?, location = ?, date = ?, rating = ?, notes = ?, updated = ?, client = ? WHERE user = ? AND id = ? AND updated < ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setString(1, entry.getTitle());
         stmt.setString(2, entry.getMaker());
@@ -440,10 +449,11 @@ public class DatabaseHelper {
         stmt.setLong(6, entry.getDate());
         stmt.setFloat(7, entry.getRating());
         stmt.setString(8, entry.getNotes());
-        stmt.setLong(9, System.currentTimeMillis());
+        stmt.setLong(9, entry.getUpdated());
         stmt.setLong(10, mClientId);
         stmt.setLong(11, mUserId);
         stmt.setLong(12, entry.getId());
+        stmt.setLong(13, entry.getUpdated());
         if(stmt.executeUpdate() > 0) {
             updateEntryExtras(entry);
             updateEntryFlavors(entry);
@@ -575,17 +585,18 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private void deleteEntry(EntryRecord entry) throws SQLException {
-        String sql = "DELETE FROM entries WHERE user = ? AND id = ?";
+        String sql = "DELETE FROM entries WHERE user = ? AND id = ? AND updated < ?";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
         stmt.setLong(2, entry.getId());
+        stmt.setLong(3, entry.getUpdated());
         if(stmt.executeUpdate() > 0) {
             sql = "INSERT INTO deleted (user, type, cat, uuid, time, client) VALUES (?, 'entry', ?, ?, ?, ?)";
             stmt = mConnection.prepareStatement(sql);
             stmt.setLong(1, mUserId);
             stmt.setLong(2, entry.getCat());
             stmt.setString(3, entry.getUuid());
-            stmt.setLong(4, System.currentTimeMillis());
+            stmt.setLong(4, entry.getUpdated());
             stmt.setLong(5, mClientId);
             stmt.executeUpdate();
         }
@@ -594,36 +605,39 @@ public class DatabaseHelper {
     /**
      * Get all categories updated by other clients since the client's last sync.
      *
+     * @param since The timestamp of the client's last sync
      * @return The list of categories updated since the last sync
      * @throws SQLException
      * @throws UnauthorizedException
      */
-    public ArrayList<CatRecord> getUpdatedCats() throws SQLException, UnauthorizedException {
+    public ArrayList<CatRecord> getUpdatedCats(long since)
+            throws SQLException, UnauthorizedException {
         if(mUserId == 0) {
             throw new UnauthorizedException("Unknown user");
         }
         final ArrayList<CatRecord> records = new ArrayList<>();
         CatRecord record;
 
-        String sql = "SELECT uuid FROM deleted WHERE user = ? AND time > (SELECT last_sync FROM clients WHERE id = ?) AND client != ?";
+        String sql = "SELECT uuid, time FROM deleted WHERE user = ? AND client != ? AND time > ?";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
         stmt.setLong(2, mClientId);
-        stmt.setLong(3, mClientId);
+        stmt.setLong(3, since);
 
         ResultSet result = stmt.executeQuery();
         while(result.next()) {
             record = new CatRecord();
-            record.setUuid(result.getString(1));
+            record.setUuid(result.getString("uuid"));
+            record.setUpdated(result.getLong("time"));
             record.setDeleted(true);
             records.add(record);
         }
 
-        sql = "SELECT * FROM categories WHERE user = ? AND updated > (SELECT last_sync FROM clients WHERE id = ?) AND client != ?";
+        sql = "SELECT * FROM categories WHERE user = ? AND client != ? AND updated > ?";
         stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
         stmt.setLong(2, mClientId);
-        stmt.setLong(3, mClientId);
+        stmt.setLong(3, since);
 
         result = stmt.executeQuery();
         while(result.next()) {
@@ -740,12 +754,12 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private void insertCat(CatRecord cat) throws SQLException {
-        final String sql = "INSERT INTO categories (uuid, user, name, updated, client) VALUES (?, ?, ?, ?, ?)";
-        final PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        String sql = "INSERT INTO categories (uuid, user, name, updated, client) VALUES (?, ?, ?, ?, ?)";
+        PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stmt.setString(1, cat.getUuid());
         stmt.setLong(2, mUserId);
         stmt.setString(3, cat.getName());
-        stmt.setLong(4, System.currentTimeMillis());
+        stmt.setLong(4, cat.getUpdated());
         stmt.setLong(5, mClientId);
         stmt.executeUpdate();
 
@@ -755,6 +769,12 @@ public class DatabaseHelper {
             insertCatExtras(cat);
             insertCatFlavors(cat);
         }
+
+        sql = "DELETE FROM deleted WHERE user = ? AND uuid = ?";
+        stmt = mConnection.prepareStatement(sql);
+        stmt.setLong(1, mUserId);
+        stmt.setString(2, cat.getUuid());
+        stmt.executeUpdate();
     }
 
     /**
@@ -764,13 +784,14 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private void updateCat(CatRecord cat) throws SQLException {
-        final String sql = "UPDATE categories SET name = ?, updated = ?, client = ? WHERE user = ? AND id = ?";
+        final String sql = "UPDATE categories SET name = ?, updated = ?, client = ? WHERE user = ? AND id = ? AND updated < ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setString(1, cat.getName());
-        stmt.setLong(2, System.currentTimeMillis());
+        stmt.setLong(2, cat.getUpdated());
         stmt.setLong(3, mClientId);
         stmt.setLong(4, mUserId);
         stmt.setLong(5, cat.getId());
+        stmt.setLong(6, cat.getUpdated());
         if(stmt.executeUpdate() > 0) {
             updateCatExtras(cat);
             updateCatFlavors(cat);
@@ -886,34 +907,20 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private void deleteCat(CatRecord cat) throws SQLException {
-        String sql = "DELETE FROM categories WHERE user = ? AND id = ?";
+        String sql = "DELETE FROM categories WHERE user = ? AND id = ? AND updated < ?";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
         stmt.setLong(2, cat.getId());
+        stmt.setLong(3, cat.getUpdated());
         if(stmt.executeUpdate() > 0) {
             sql = "INSERT INTO deleted (user, type, uuid, time, client) VALUES (?, 'cat', ?, ?, ?)";
             stmt = mConnection.prepareStatement(sql);
             stmt.setLong(1, mUserId);
             stmt.setString(2, cat.getUuid());
-            stmt.setLong(3, System.currentTimeMillis());
+            stmt.setLong(3, cat.getUpdated());
             stmt.setLong(4, mClientId);
             stmt.executeUpdate();
         }
-    }
-
-    /**
-     * Set the time of the specified client's last data sync.
-     *
-     * @param clientId  The database ID of the client
-     * @param timestamp The Unix timestamp with milliseconds
-     * @throws SQLException
-     */
-    public void setLastSync(long clientId, long timestamp) throws SQLException {
-        final String sql = "UPDATE clients SET last_sync = ? WHERE id = ?";
-        final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, timestamp);
-        stmt.setLong(2, clientId);
-        stmt.executeUpdate();
     }
 
     /**

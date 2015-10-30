@@ -407,6 +407,7 @@ public class Tables {
         public static final String TYPE = "type";
         public static final String CAT = "cat";
         public static final String UUID = "uuid";
+        public static final String TIME = "time";
 
         /**
          * Values for the 'type' column

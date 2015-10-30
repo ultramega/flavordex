@@ -225,9 +225,9 @@ public class BackendService extends IntentService {
                 sync.notifyClients(clientId).execute();
             }
 
-            BackendUtils.setLastSync(this);
-
             fetchUpdates(sync, clientId);
+
+            BackendUtils.setLastSync(this);
         } catch(IOException e) {
             Log.e(getClass().getSimpleName(), e.getMessage());
         }
@@ -254,6 +254,7 @@ public class BackendService extends IntentService {
                 while(cursor.moveToNext()) {
                     mNotifyClients = true;
                     record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Deleted.UUID)));
+                    record.setUpdated(cursor.getLong(cursor.getColumnIndex(Tables.Deleted.TIME)));
                     if(sync.pushCategory(clientId, record).execute().getSuccess()) {
                         where = Tables.Deleted._ID + " = "
                                 + cursor.getLong(cursor.getColumnIndex(Tables.Deleted._ID));
@@ -278,6 +279,7 @@ public class BackendService extends IntentService {
                     mNotifyClients = true;
                     record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Cats.UUID)));
                     record.setName(cursor.getString(cursor.getColumnIndex(Tables.Cats.NAME)));
+                    record.setUpdated(cursor.getLong(cursor.getColumnIndex(Tables.Cats.UPDATED)));
 
                     id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
                     record.setExtras(getCatExtras(cr, id));
@@ -376,6 +378,7 @@ public class BackendService extends IntentService {
                 while(cursor.moveToNext()) {
                     mNotifyClients = true;
                     record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Deleted.UUID)));
+                    record.setUpdated(cursor.getLong(cursor.getColumnIndex(Tables.Deleted.TIME)));
                     if(sync.pushEntry(clientId, record).execute().getSuccess()) {
                         where = Tables.Deleted._ID + " = "
                                 + cursor.getLong(cursor.getColumnIndex(Tables.Deleted._ID));
@@ -411,6 +414,8 @@ public class BackendService extends IntentService {
                     record.setDate(cursor.getLong(cursor.getColumnIndex(Tables.Entries.DATE)));
                     record.setRating(cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING)));
                     record.setNotes(cursor.getString(cursor.getColumnIndex(Tables.Entries.NOTES)));
+                    record.setUpdated(
+                            cursor.getLong(cursor.getColumnIndex(Tables.Entries.UPDATED)));
 
                     id = cursor.getLong(cursor.getColumnIndex(Tables.Entries._ID));
                     record.setExtras(getEntryExtras(cr, id));
@@ -549,7 +554,8 @@ public class BackendService extends IntentService {
      */
     private void fetchUpdates(Sync sync, long clientId) throws IOException {
         final ContentResolver cr = getContentResolver();
-        final UpdateRecord record = sync.fetchUpdates(clientId).execute();
+        final UpdateRecord record =
+                sync.fetchUpdates(clientId, BackendUtils.getLastSync(this)).execute();
 
         if(record.getCats() != null) {
             for(CatRecord catRecord : record.getCats()) {
@@ -562,8 +568,6 @@ public class BackendService extends IntentService {
                 parseEntry(cr, entryRecord);
             }
         }
-
-        sync.confirmFetch(clientId, record.getTimestamp()).execute();
     }
 
     /**

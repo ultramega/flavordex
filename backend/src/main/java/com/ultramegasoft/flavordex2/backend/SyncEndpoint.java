@@ -55,12 +55,14 @@ public class SyncEndpoint {
      *
      * @param user     The User
      * @param clientId The database ID of the client
+     * @param since    The timestamp of the previous sync
      * @return The updated data from the server
      * @throws InternalServerErrorException
      * @throws UnauthorizedException
      */
     @ApiMethod(name = "fetchUpdates", httpMethod = ApiMethod.HttpMethod.GET)
-    public UpdateRecord fetch(User user, @Named("clientId") long clientId)
+    public UpdateRecord fetch(User user, @Named("clientId") long clientId,
+                              @Named("since") long since)
             throws InternalServerErrorException, UnauthorizedException {
         if(user == null) {
             throw new UnauthorizedException("Unauthorized");
@@ -72,8 +74,8 @@ public class SyncEndpoint {
             helper.setUser(user.getEmail());
             helper.setClientId(clientId);
 
-            updateRecord.setCats(helper.getUpdatedCats());
-            updateRecord.setEntries(helper.getUpdatedEntries());
+            updateRecord.setCats(helper.getUpdatedCats(since));
+            updateRecord.setEntries(helper.getUpdatedEntries(since));
             updateRecord.setTimestamp(System.currentTimeMillis());
         } catch(SQLException e) {
             e.printStackTrace();
@@ -83,35 +85,6 @@ public class SyncEndpoint {
         }
 
         return updateRecord;
-    }
-
-    /**
-     * Confirm that the fetch was successful.
-     *
-     * @param user      The user
-     * @param clientId  The database ID of the client
-     * @param timestamp The Unix timestamp of the fetch response with milliseconds
-     * @throws InternalServerErrorException
-     * @throws UnauthorizedException
-     */
-    @ApiMethod(name = "confirmFetch")
-    public void confirm(User user, @Named("clientId") long clientId,
-                        @Named("timestamp") long timestamp)
-            throws InternalServerErrorException, UnauthorizedException {
-        if(user == null) {
-            throw new UnauthorizedException("Unauthorized");
-        }
-        final DatabaseHelper helper = new DatabaseHelper();
-        try {
-            helper.open();
-            helper.setUser(user.getEmail());
-            helper.setLastSync(clientId, timestamp);
-        } catch(SQLException e) {
-            e.printStackTrace();
-            throw new InternalServerErrorException(e);
-        } finally {
-            helper.close();
-        }
     }
 
     /**

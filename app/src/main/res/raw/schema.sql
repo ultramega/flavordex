@@ -84,5 +84,6 @@ CREATE TABLE deleted (
   _id INTEGER PRIMARY KEY,
   type INTEGER,
   cat INTEGER,
-  uuid TEXT
+  uuid TEXT,
+  time INTEGER DEFAULT (CAST((julianday('now') - 2440587.5)*86400000.0 AS INTEGER))
 );
