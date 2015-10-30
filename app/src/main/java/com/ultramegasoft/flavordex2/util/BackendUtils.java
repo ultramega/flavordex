@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.OneoffTask;
 import com.google.android.gms.gcm.Task;
@@ -56,10 +54,7 @@ public class BackendUtils {
                     .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
                     .setService(TaskService.class)
                     .build();
-            if(GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
-                    == ConnectionResult.SUCCESS) {
-                GcmNetworkManager.getInstance(context).schedule(task);
-            }
+            GcmNetworkManager.getInstance(context).schedule(task);
         }
     }
 
