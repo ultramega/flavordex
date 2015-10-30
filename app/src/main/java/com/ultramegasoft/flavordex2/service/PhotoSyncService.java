@@ -6,7 +6,10 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -24,9 +27,11 @@ import com.google.android.gms.drive.metadata.CustomPropertyKey;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
+import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
+import com.ultramegasoft.flavordex2.util.PermissionUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
 import java.io.BufferedInputStream;
@@ -76,6 +81,24 @@ public class PhotoSyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            return;
+        }
+
+        try {
+            if(!PhotoUtils.getMediaStorageDir().canWrite()) {
+                if(!PermissionUtils.hasExternalStoragePerm(this)) {
+                    final SharedPreferences prefs =
+                            PreferenceManager.getDefaultSharedPreferences(this);
+                    prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false).apply();
+                }
+                return;
+            }
+        } catch(IOException e) {
+            Log.e(getClass().getSimpleName(), e.getMessage());
+            return;
+        }
+
         mClient = new GoogleApiClient.Builder(getApplicationContext())
                 .addApi(Drive.API)
                 .addScope(Drive.SCOPE_FILE)
