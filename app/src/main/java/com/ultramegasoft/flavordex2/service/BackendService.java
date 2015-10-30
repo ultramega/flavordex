@@ -25,6 +25,7 @@ import com.ultramegasoft.flavordex2.backend.sync.model.ExtraRecord;
 import com.ultramegasoft.flavordex2.backend.sync.model.FlavorRecord;
 import com.ultramegasoft.flavordex2.backend.sync.model.PhotoRecord;
 import com.ultramegasoft.flavordex2.backend.sync.model.UpdateRecord;
+import com.ultramegasoft.flavordex2.backend.sync.model.UpdateResponse;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
@@ -32,6 +33,7 @@ import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Service for accessing the backend.
@@ -71,11 +73,6 @@ public class BackendService extends IntentService {
      * The error message in case of failure
      */
     private String mError;
-
-    /**
-     * Whether to notify all clients that data has changed
-     */
-    private boolean mNotifyClients;
 
     public BackendService() {
         super("BackendService");
@@ -205,7 +202,6 @@ public class BackendService extends IntentService {
      * Handle journal data synchronization.
      */
     private void doSyncData() {
-        mNotifyClients = false;
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
         final long clientId = BackendUtils.getClientId(this);
@@ -218,13 +214,7 @@ public class BackendService extends IntentService {
 
         final Sync sync = BackendUtils.getSync(credential);
         try {
-            pushCats(sync, clientId);
-            pushEntries(sync, clientId);
-
-            if(mNotifyClients) {
-                sync.notifyClients(clientId).execute();
-            }
-
+            pushUpdates(sync, clientId);
             fetchUpdates(sync, clientId);
 
             BackendUtils.setLastSync(this);
@@ -236,47 +226,85 @@ public class BackendService extends IntentService {
     }
 
     /**
-     * Push all categories that have changed since the last sync to the backend.
+     * Send updated journal data to the backend.
      *
      * @param sync     The Sync endpoint client
      * @param clientId The client ID
      * @throws IOException
      */
-    private void pushCats(Sync sync, long clientId) throws IOException {
+    private void pushUpdates(Sync sync, long clientId) throws IOException {
         final ContentResolver cr = getContentResolver();
-        final CatRecord record = new CatRecord();
+        final long lastSync = BackendUtils.getLastSync(this);
+
+        final UpdateRecord record = new UpdateRecord();
+        record.setCats(getUpdatedCats(cr, lastSync));
+        record.setEntries(getUpdatedEntries(cr, lastSync));
+
+        final UpdateResponse response = sync.pushUpdates(clientId, record).execute();
+
+        if(response.getCatStatuses() != null) {
+            final String where = Tables.Cats.UUID + " = ?";
+            final String[] whereArgs = new String[1];
+            final ContentValues values = new ContentValues();
+            values.put(Tables.Cats.PUBLISHED, true);
+            for(Map.Entry<String, Object> status : response.getCatStatuses().entrySet()) {
+                if((boolean)status.getValue()) {
+                    whereArgs[0] = status.getKey();
+                    cr.update(Tables.Cats.CONTENT_URI, values, where, whereArgs);
+                }
+            }
+        }
+
+        if(response.getEntryStatuses() != null) {
+            final String where = Tables.Entries.UUID + " = ?";
+            final String[] whereArgs = new String[1];
+            final ContentValues values = new ContentValues();
+            values.put(Tables.Entries.PUBLISHED, true);
+            for(Map.Entry<String, Object> status : response.getEntryStatuses().entrySet()) {
+                if((boolean)status.getValue()) {
+                    whereArgs[0] = status.getKey();
+                    cr.update(Tables.Entries.CONTENT_URI, values, where, whereArgs);
+                }
+            }
+        }
+
+        cr.delete(Tables.Deleted.CONTENT_URI, null, null);
+    }
+
+    /**
+     * Get all categories that have changed since the last sync with the backend.
+     *
+     * @param cr    The ContentResolver
+     * @param since The timestamp of the previous sync
+     * @return The list of updated categories
+     */
+    private static ArrayList<CatRecord> getUpdatedCats(ContentResolver cr, long since) {
+        final ArrayList<CatRecord> records = new ArrayList<>();
+        CatRecord record;
 
         String where = Tables.Deleted.TYPE + " = " + Tables.Deleted.TYPE_CAT;
         Cursor cursor = cr.query(Tables.Deleted.CONTENT_URI, null, where, null, null);
-        record.setDeleted(true);
         if(cursor != null) {
             try {
                 while(cursor.moveToNext()) {
-                    mNotifyClients = true;
+                    record = new CatRecord();
+                    record.setDeleted(true);
                     record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Deleted.UUID)));
                     record.setUpdated(cursor.getLong(cursor.getColumnIndex(Tables.Deleted.TIME)));
-                    if(sync.pushCategory(clientId, record).execute().getSuccess()) {
-                        where = Tables.Deleted._ID + " = "
-                                + cursor.getLong(cursor.getColumnIndex(Tables.Deleted._ID));
-                        cr.delete(Tables.Deleted.CONTENT_URI, where, null);
-                    }
+                    records.add(record);
                 }
             } finally {
                 cursor.close();
             }
         }
 
-        where = Tables.Cats.UPDATED + " > " + BackendUtils.getLastSync(this);
+        where = Tables.Cats.UPDATED + " > " + since;
         cursor = cr.query(Tables.Cats.CONTENT_URI, null, where, null, null);
-        record.setDeleted(false);
         if(cursor != null) {
             try {
                 long id;
-                Uri uri;
-                final ContentValues values = new ContentValues();
-                values.put(Tables.Cats.PUBLISHED, true);
                 while(cursor.moveToNext()) {
-                    mNotifyClients = true;
+                    record = new CatRecord();
                     record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Cats.UUID)));
                     record.setName(cursor.getString(cursor.getColumnIndex(Tables.Cats.NAME)));
                     record.setUpdated(cursor.getLong(cursor.getColumnIndex(Tables.Cats.UPDATED)));
@@ -285,15 +313,14 @@ public class BackendService extends IntentService {
                     record.setExtras(getCatExtras(cr, id));
                     record.setFlavors(getCatFlavors(cr, id));
 
-                    if(sync.pushCategory(clientId, record).execute().getSuccess()) {
-                        uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, id);
-                        cr.update(uri, values, null, null);
-                    }
+                    records.add(record);
                 }
             } finally {
                 cursor.close();
             }
         }
+
+        return records;
     }
 
     /**
@@ -360,47 +387,39 @@ public class BackendService extends IntentService {
     }
 
     /**
-     * Push all entries that have changed since the last sync to the backend.
+     * Get all entries that have changed since the last sync with the backend.
      *
-     * @param sync     The Sync endpoint client
-     * @param clientId The client ID
-     * @throws IOException
+     * @param cr    The ContentResolver
+     * @param since The timestamp of the previous sync
+     * @return The list of updated entries
      */
-    private void pushEntries(Sync sync, long clientId) throws IOException {
-        final ContentResolver cr = getContentResolver();
-        final EntryRecord record = new EntryRecord();
+    private static ArrayList<EntryRecord> getUpdatedEntries(ContentResolver cr, long since) {
+        final ArrayList<EntryRecord> records = new ArrayList<>();
+        EntryRecord record;
 
         String where = Tables.Deleted.TYPE + " = " + Tables.Deleted.TYPE_ENTRY;
         Cursor cursor = cr.query(Tables.Deleted.CONTENT_URI, null, where, null, null);
-        record.setDeleted(true);
         if(cursor != null) {
             try {
                 while(cursor.moveToNext()) {
-                    mNotifyClients = true;
+                    record = new EntryRecord();
+                    record.setDeleted(true);
                     record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Deleted.UUID)));
                     record.setUpdated(cursor.getLong(cursor.getColumnIndex(Tables.Deleted.TIME)));
-                    if(sync.pushEntry(clientId, record).execute().getSuccess()) {
-                        where = Tables.Deleted._ID + " = "
-                                + cursor.getLong(cursor.getColumnIndex(Tables.Deleted._ID));
-                        cr.delete(Tables.Deleted.CONTENT_URI, where, null);
-                    }
+                    records.add(record);
                 }
             } finally {
                 cursor.close();
             }
         }
 
-        where = Tables.Entries.UPDATED + " > " + BackendUtils.getLastSync(this);
+        where = Tables.Entries.UPDATED + " > " + since;
         cursor = cr.query(Tables.Entries.CONTENT_URI, null, where, null, null);
-        record.setDeleted(false);
         if(cursor != null) {
             try {
                 long id;
-                Uri uri;
-                final ContentValues values = new ContentValues();
-                values.put(Tables.Entries.PUBLISHED, true);
                 while(cursor.moveToNext()) {
-                    mNotifyClients = true;
+                    record = new EntryRecord();
                     record.setUuid(cursor.getString(cursor.getColumnIndex(Tables.Entries.UUID)));
                     record.setCatUuid(
                             cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT_UUID)));
@@ -422,15 +441,14 @@ public class BackendService extends IntentService {
                     record.setFlavors(getEntryFlavors(cr, id));
                     record.setPhotos(getEntryPhotos(cr, id));
 
-                    if(sync.pushEntry(clientId, record).execute().getSuccess()) {
-                        uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, id);
-                        cr.update(uri, values, null, null);
-                    }
+                    records.add(record);
                 }
             } finally {
                 cursor.close();
             }
         }
+
+        return records;
     }
 
     /**
