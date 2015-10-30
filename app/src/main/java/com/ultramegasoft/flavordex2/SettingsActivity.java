@@ -15,11 +15,13 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.MenuItem;
 
+import com.google.android.gms.gcm.GcmNetworkManager;
 import com.ultramegasoft.flavordex2.dialog.BackendRegistrationDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.DriveConnectDialog;
 import com.ultramegasoft.flavordex2.service.BackendService;
 import com.ultramegasoft.flavordex2.service.PhotoSyncService;
+import com.ultramegasoft.flavordex2.service.TaskService;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
@@ -214,6 +216,8 @@ public class SettingsActivity extends AppCompatActivity {
                 if(sharedPreferences.getBoolean(key, false)) {
                     mPrefSyncData.setChecked(true);
                     BackendUtils.requestSync(getContext());
+                } else {
+                    GcmNetworkManager.getInstance(getContext()).cancelAllTasks(TaskService.class);
                 }
             } else if(FlavordexApp.PREF_SYNC_PHOTOS.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
