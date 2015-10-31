@@ -3,10 +3,13 @@ package com.ultramegasoft.flavordex2.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.Task;
+import com.google.android.gms.iid.InstanceID;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.services.json.AbstractGoogleJsonClient;
@@ -16,17 +19,20 @@ import com.ultramegasoft.flavordex2.backend.registration.Registration;
 import com.ultramegasoft.flavordex2.backend.sync.Sync;
 import com.ultramegasoft.flavordex2.service.TaskService;
 
+import java.io.IOException;
+
 /**
  * Helpers for accessing the backend.
  *
  * @author Steve Guidetti
  */
 public class BackendUtils {
+    private static final String TAG = "BackendUtils";
+
     /**
      * Task tags for the GCM Network Manager
      */
     public static final String TASK_SYNC_DATA = "sync_data";
-    public static final String TASK_SYNC_PHOTOS = "sync_photos";
 
     /**
      * Keys for the backend shared preferences
@@ -35,6 +41,11 @@ public class BackendUtils {
     private static final String PREF_CLIENT_ID = "pref_client_id";
     private static final String PREF_LAST_SYNC = "pref_last_sync";
     private static final String PREF_SYNC_REQUESTED = "pref_sync_requested";
+
+    /**
+     * The API project number
+     */
+    private static final String PROJECT_NUMBER = "1001621163874";
 
     /**
      * The API project ID
@@ -62,30 +73,6 @@ public class BackendUtils {
                     .setService(TaskService.class)
                     .build();
             GcmNetworkManager.getInstance(context).schedule(task);
-        }
-    }
-
-    /**
-     * Schedule the photo sync service to run if it is enabled.
-     *
-     * @param context The Context
-     */
-    public static void setupPhotoSync(Context context) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false)) {
-            final PeriodicTask.Builder builder = new PeriodicTask.Builder()
-                    .setTag(TASK_SYNC_PHOTOS)
-                    .setUpdateCurrent(true)
-                    .setPeriod(75)
-                    .setService(TaskService.class);
-
-            if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS_UNMETERED, true)) {
-                builder.setRequiredNetwork(Task.NETWORK_STATE_UNMETERED);
-            } else {
-                builder.setRequiredNetwork(Task.NETWORK_STATE_CONNECTED);
-            }
-
-            GcmNetworkManager.getInstance(context).schedule(builder.build());
         }
     }
 
@@ -171,6 +158,75 @@ public class BackendUtils {
     public static void setLastSync(Context context) {
         context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit()
                 .putLong(PREF_LAST_SYNC, System.currentTimeMillis()).apply();
+    }
+
+    /**
+     * Register the client with the backend.
+     *
+     * @param context     The Context
+     * @param accountName The name of the account to use
+     * @return Whether the registration was successful
+     */
+    public static boolean registerClient(Context context, String accountName) {
+        if(accountName == null) {
+            return false;
+        }
+
+        final GoogleAccountCredential credential = getCredential(context);
+        credential.setSelectedAccountName(accountName);
+
+        final InstanceID instanceID = InstanceID.getInstance(context);
+
+        try {
+            final String token =
+                    instanceID.getToken(PROJECT_NUMBER, GoogleCloudMessaging.INSTANCE_ID_SCOPE);
+
+            final Registration registration = BackendUtils.getRegistration(credential);
+            final long clientId = registration.register(token).execute().getClientId();
+            if(clientId > 0) {
+                BackendUtils.setClientId(context, clientId);
+                PreferenceManager.getDefaultSharedPreferences(context).edit()
+                        .putString(FlavordexApp.PREF_ACCOUNT_NAME, accountName)
+                        .putBoolean(FlavordexApp.PREF_SYNC_DATA, true).apply();
+
+                return true;
+            }
+        } catch(IOException e) {
+            Log.w(TAG, "Client registration failed", e);
+        }
+
+        return false;
+    }
+
+    /**
+     * Unregister the client from the backend.
+     *
+     * @param context The Context
+     * @return Whether the unregistration was successful
+     */
+    public static boolean unregisterClient(Context context) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
+        if(accountName == null) {
+            return false;
+        }
+
+        final GoogleAccountCredential credential = getCredential(context);
+        credential.setSelectedAccountName(accountName);
+
+        final Registration registration = getRegistration(credential);
+        try {
+            InstanceID.getInstance(context)
+                    .deleteToken(PROJECT_NUMBER, GoogleCloudMessaging.INSTANCE_ID_SCOPE);
+            registration.unregister(getClientId(context)).execute();
+            setClientId(context, 0);
+
+            return true;
+        } catch(IOException e) {
+            Log.w(TAG, "Client unregistration failed", e);
+        }
+
+        return false;
     }
 
     /**

@@ -5,6 +5,7 @@ import android.preference.PreferenceManager;
 
 import com.google.android.gms.iid.InstanceIDListenerService;
 import com.ultramegasoft.flavordex2.FlavordexApp;
+import com.ultramegasoft.flavordex2.util.BackendUtils;
 
 /**
  * Service to handle InstanceID callbacks.
@@ -18,7 +19,12 @@ public class InstanceIDService extends InstanceIDListenerService {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
         if(accountName != null) {
-            BackendService.registerClient(this, accountName);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    BackendUtils.registerClient(getApplicationContext(), accountName);
+                }
+            }).run();
         }
     }
 }

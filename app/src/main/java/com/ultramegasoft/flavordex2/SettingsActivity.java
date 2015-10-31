@@ -1,9 +1,11 @@
 package com.ultramegasoft.flavordex2;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -19,7 +21,6 @@ import com.google.android.gms.gcm.GcmNetworkManager;
 import com.ultramegasoft.flavordex2.dialog.BackendRegistrationDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.DriveConnectDialog;
-import com.ultramegasoft.flavordex2.service.BackendService;
 import com.ultramegasoft.flavordex2.service.TaskService;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
@@ -156,7 +157,7 @@ public class SettingsActivity extends AppCompatActivity {
                         @Override
                         public boolean onPreferenceChange(Preference preference, Object o) {
                             if(!(boolean)o) {
-                                BackendService.unregisterClient(getContext());
+                                new UnregisterTask(getContext()).execute();
                                 return true;
                             }
                             BackendRegistrationDialog.showDialog(getFragmentManager());
@@ -222,14 +223,31 @@ public class SettingsActivity extends AppCompatActivity {
             } else if(FlavordexApp.PREF_SYNC_PHOTOS.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
                     mPrefSyncPhotos.setChecked(true);
-                    BackendUtils.setupPhotoSync(getContext());
-                } else {
-                    GcmNetworkManager.getInstance(getContext())
-                            .cancelTask(BackendUtils.TASK_SYNC_PHOTOS, TaskService.class);
                 }
-            } else if(FlavordexApp.PREF_SYNC_PHOTOS_UNMETERED.equals(key)) {
-                BackendUtils.setupPhotoSync(getContext());
             }
+        }
+    }
+
+    /**
+     * Task to unregister the client in the background.
+     */
+    private static class UnregisterTask extends AsyncTask<Void, Void, Void> {
+        /**
+         * The Context
+         */
+        private final Context mContext;
+
+        /**
+         * @param context The Context
+         */
+        public UnregisterTask(Context context) {
+            mContext = context.getApplicationContext();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            BackendUtils.unregisterClient(mContext);
+            return null;
         }
     }
 }

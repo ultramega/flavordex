@@ -3,24 +3,19 @@ package com.ultramegasoft.flavordex2.dialog;
 import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
-import com.ultramegasoft.flavordex2.service.BackendService;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
@@ -29,27 +24,13 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
  *
  * @author Steve Guidetti
  */
-public class BackendRegistrationDialog extends DialogFragment {
+public class BackendRegistrationDialog extends BackgroundProgressDialog {
     private static final String TAG = "BackendRegistrationDialog";
 
     /**
      * Request codes for external Activities
      */
     private static final int REQUEST_SELECT_ACCOUNT = 900;
-
-    /**
-     * Listener for the BackendService
-     */
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(intent.hasExtra(BackendService.EXTRA_ERROR)) {
-                Toast.makeText(getContext(), R.string.error_register_failed, Toast.LENGTH_LONG)
-                        .show();
-            }
-            dismiss();
-        }
-    };
 
     /**
      * Show the dialog.
@@ -62,14 +43,8 @@ public class BackendRegistrationDialog extends DialogFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setCancelable(false);
-
-        final IntentFilter filter = new IntentFilter(BackendService.ACTION_COMPLETED);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, filter);
-
-        if(savedInstanceState == null && PermissionUtils.checkAccountsPerm(this)) {
+    protected void startTask() {
+        if(PermissionUtils.checkAccountsPerm(this)) {
             selectAccount();
         }
     }
@@ -88,12 +63,6 @@ public class BackendRegistrationDialog extends DialogFragment {
         if(isCancelable()) {
             dismiss();
         }
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -148,6 +117,37 @@ public class BackendRegistrationDialog extends DialogFragment {
      * @param accountName The account name
      */
     private void registerClient(String accountName) {
-        BackendService.registerClient(getContext(), accountName);
+        new RegisterTask(accountName).execute();
+    }
+
+    /**
+     * Task to register the client with the backend.
+     */
+    private class RegisterTask extends AsyncTask<Void, Void, Boolean> {
+        /**
+         * The account name
+         */
+        private final String mAccountName;
+
+        /**
+         * @param accountName The account name
+         */
+        public RegisterTask(String accountName) {
+            mAccountName = accountName;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            return BackendUtils.registerClient(getContext(), mAccountName);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if(!result) {
+                Toast.makeText(getContext(), R.string.error_register_failed, Toast.LENGTH_LONG)
+                        .show();
+            }
+            dismiss();
+        }
     }
 }

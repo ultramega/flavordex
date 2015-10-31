@@ -1,23 +1,17 @@
 package com.ultramegasoft.flavordex2.service;
 
-import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.iid.InstanceID;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.ultramegasoft.flavordex2.FlavordexApp;
-import com.ultramegasoft.flavordex2.backend.registration.Registration;
 import com.ultramegasoft.flavordex2.backend.sync.Sync;
 import com.ultramegasoft.flavordex2.backend.sync.model.CatRecord;
 import com.ultramegasoft.flavordex2.backend.sync.model.EntryRecord;
@@ -36,191 +30,43 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * Service for accessing the backend.
+ * Helper for synchronizing journal data with the backend.
  *
  * @author Steve Guidetti
  */
-public class BackendService extends IntentService {
-    private static final String TAG = "BackendService";
+public class DataSyncHelper {
+    private static final String TAG = "DataSyncHelper";
 
     /**
-     * Action value for broadcast Intents
+     * The Context
      */
-    public static final String ACTION_COMPLETED = "com.ultramegasoft.flavordex2.service.COMPLETE";
+    private final Context mContext;
 
     /**
-     * Keys for broadcast Intent extras
-     */
-    public static final String EXTRA_ERROR = "error";
-
-    /**
-     * Keys for the Intent extras
-     */
-    private static final String EXTRA_COMMAND = "command";
-    private static final String EXTRA_ACCOUNT_NAME = "account_name";
-
-    /**
-     * Commands this service will accept
-     */
-    private static final int COMMAND_REGISTER = 0;
-    private static final int COMMAND_UNREGISTER = 1;
-    private static final int COMMAND_SYNC = 2;
-
-    /**
-     * The API project number
-     */
-    private static final String PROJECT_NUMBER = "1001621163874";
-
-    /**
-     * The error message in case of failure
-     */
-    private String mError;
-
-    public BackendService() {
-        super(TAG);
-    }
-
-    /**
-     * Register the client with the backend.
-     *
-     * @param context     The Context
-     * @param accountName The name of the account to use
-     */
-    public static void registerClient(Context context, String accountName) {
-        final Intent intent = new Intent(context, BackendService.class);
-        intent.putExtra(EXTRA_COMMAND, COMMAND_REGISTER);
-        intent.putExtra(EXTRA_ACCOUNT_NAME, accountName);
-        context.startService(intent);
-    }
-
-    /**
-     * Unregister the client from the backend.
-     *
      * @param context The Context
      */
-    public static void unregisterClient(Context context) {
-        final Intent intent = new Intent(context, BackendService.class);
-        intent.putExtra(EXTRA_COMMAND, COMMAND_UNREGISTER);
-        context.startService(intent);
+    public DataSyncHelper(Context context) {
+        mContext = context;
     }
 
     /**
-     * Sync the journal data with the backend.
-     *
-     * @param context The Context
+     * Sync data with the backend.
      */
-    public static void syncData(Context context) {
-        final Intent intent = new Intent(context, BackendService.class);
-        intent.putExtra(EXTRA_COMMAND, COMMAND_SYNC);
-        context.startService(intent);
-    }
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        switch(intent.getIntExtra(EXTRA_COMMAND, -1)) {
-            case COMMAND_REGISTER:
-                doRegisterClient(intent.getStringExtra(EXTRA_ACCOUNT_NAME));
-                break;
-            case COMMAND_UNREGISTER:
-                doUnregisterClient();
-                break;
-            case COMMAND_SYNC:
-                doSyncData();
-                break;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        final Intent intent = new Intent(ACTION_COMPLETED);
-        if(mError != null) {
-            intent.putExtra(EXTRA_ERROR, mError);
-        }
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
-    /**
-     * Handle client registration.
-     *
-     * @param accountName The name of the account to use
-     */
-    private void doRegisterClient(String accountName) {
-        if(accountName == null) {
-            return;
-        }
-
-        final GoogleAccountCredential credential = BackendUtils.getCredential(this);
-        credential.setSelectedAccountName(accountName);
-
-        final InstanceID instanceID = InstanceID.getInstance(this);
-
-        try {
-            final String token =
-                    instanceID.getToken(PROJECT_NUMBER, GoogleCloudMessaging.INSTANCE_ID_SCOPE);
-
-            final Registration registration = BackendUtils.getRegistration(credential);
-            final long clientId = registration.register(token).execute().getClientId();
-            if(clientId > 0) {
-                BackendUtils.setClientId(this, clientId);
-                PreferenceManager.getDefaultSharedPreferences(this).edit()
-                        .putString(FlavordexApp.PREF_ACCOUNT_NAME, accountName)
-                        .putBoolean(FlavordexApp.PREF_SYNC_DATA, true).apply();
-            }
-        } catch(IOException e) {
-            Log.w(TAG, "Client registration failed", e);
-            mError = e.getMessage();
-        }
-    }
-
-    /**
-     * Handle client unregistration.
-     */
-    private void doUnregisterClient() {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    public void sync() {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
-        if(accountName == null) {
-            return;
-        }
-
-        final GoogleAccountCredential credential = BackendUtils.getCredential(this);
-        credential.setSelectedAccountName(accountName);
-
-        final Registration registration = BackendUtils.getRegistration(credential);
-        try {
-            InstanceID.getInstance(this)
-                    .deleteToken(PROJECT_NUMBER, GoogleCloudMessaging.INSTANCE_ID_SCOPE);
-            registration.unregister(BackendUtils.getClientId(this)).execute();
-        } catch(IOException e) {
-            Log.w(TAG, "Client unregistration failed", e);
-            mError = e.getMessage();
-        }
-
-        BackendUtils.setClientId(this, 0);
-        prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_DATA, false).apply();
-    }
-
-    /**
-     * Handle journal data synchronization.
-     */
-    private void doSyncData() {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
-        final long clientId = BackendUtils.getClientId(this);
+        final long clientId = BackendUtils.getClientId(mContext);
         if(accountName == null || clientId == 0) {
             prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_DATA, false).apply();
             return;
         }
-        final GoogleAccountCredential credential = BackendUtils.getCredential(this);
+        final GoogleAccountCredential credential = BackendUtils.getCredential(mContext);
         credential.setSelectedAccountName(accountName);
 
         final Sync sync = BackendUtils.getSync(credential);
         try {
             pushUpdates(sync, clientId);
             fetchUpdates(sync, clientId);
-
-            BackendUtils.setLastSync(this);
-            BackendUtils.requestSync(this, false);
         } catch(IOException e) {
             Log.w(TAG, "Syncing with the backend failed", e);
         }
@@ -234,8 +80,8 @@ public class BackendService extends IntentService {
      * @throws IOException
      */
     private void pushUpdates(Sync sync, long clientId) throws IOException {
-        final ContentResolver cr = getContentResolver();
-        final long lastSync = BackendUtils.getLastSync(this);
+        final ContentResolver cr = mContext.getContentResolver();
+        final long lastSync = BackendUtils.getLastSync(mContext);
 
         final UpdateRecord record = new UpdateRecord();
         record.setCats(getUpdatedCats(cr, lastSync));
@@ -572,9 +418,9 @@ public class BackendService extends IntentService {
      * @throws IOException
      */
     private void fetchUpdates(Sync sync, long clientId) throws IOException {
-        final ContentResolver cr = getContentResolver();
+        final ContentResolver cr = mContext.getContentResolver();
         final UpdateRecord record =
-                sync.fetchUpdates(clientId, BackendUtils.getLastSync(this)).execute();
+                sync.fetchUpdates(clientId, BackendUtils.getLastSync(mContext)).execute();
 
         if(record.getCats() != null) {
             for(CatRecord catRecord : record.getCats()) {

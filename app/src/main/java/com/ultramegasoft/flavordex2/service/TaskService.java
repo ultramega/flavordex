@@ -21,10 +21,11 @@ public class TaskService extends GcmTaskService {
         Log.i(TAG, "Running Task: " + tag);
         if(BackendUtils.TASK_SYNC_DATA.equals(tag)) {
             if(BackendUtils.isSyncRequested(this)) {
-                BackendService.syncData(this);
+                new DataSyncHelper(this).sync();
+                BackendUtils.setLastSync(this);
+                BackendUtils.requestSync(this, false);
+                new PhotoSyncHelper(this).sync();
             }
-        } else if(BackendUtils.TASK_SYNC_PHOTOS.equals(tag)) {
-            PhotoSyncService.syncPhotos(this);
         }
         return GcmNetworkManager.RESULT_SUCCESS;
     }

@@ -124,7 +124,6 @@ public class FlavordexApp extends Application implements
         }
 
         BackendUtils.setupDataSync(this);
-        BackendUtils.setupPhotoSync(this);
     }
 
     @Override

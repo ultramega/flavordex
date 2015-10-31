@@ -1,11 +1,9 @@
 package com.ultramegasoft.flavordex2.service;
 
-import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Environment;
@@ -44,12 +42,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Service to handle syncing photos with Google Drive.
+ * Helper for synchronizing photos with Google Drive.
  *
  * @author Steve Guidetti
  */
-public class PhotoSyncService extends IntentService {
-    private static final String TAG = "PhotoSyncService";
+public class PhotoSyncHelper {
+    private static final String TAG = "PhotoSyncHelper";
 
     /**
      * The name of the Drive folder to store photos
@@ -68,36 +66,36 @@ public class PhotoSyncService extends IntentService {
     private GoogleApiClient mClient;
 
     /**
-     * Send all local photos that do not exist on Drive to Drive.
-     *
+     * The Context
+     */
+    private final Context mContext;
+
+    /**
      * @param context The Context
      */
-    public static void syncPhotos(Context context) {
-        final Intent intent = new Intent(context, PhotoSyncService.class);
-        context.startService(intent);
+    public PhotoSyncHelper(Context context) {
+        mContext = context;
     }
 
-    public PhotoSyncService() {
-        super(TAG);
-    }
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
+    /**
+     * Sync photos with Google Drive.
+     */
+    public void sync() {
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             return;
         }
 
         if(!Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                 .canWrite()) {
-            if(!PermissionUtils.hasExternalStoragePerm(this)) {
+            if(!PermissionUtils.hasExternalStoragePerm(mContext)) {
                 final SharedPreferences prefs =
-                        PreferenceManager.getDefaultSharedPreferences(this);
+                        PreferenceManager.getDefaultSharedPreferences(mContext);
                 prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false).apply();
             }
             return;
         }
 
-        mClient = new GoogleApiClient.Builder(getApplicationContext())
+        mClient = new GoogleApiClient.Builder(mContext)
                 .addApi(Drive.API)
                 .addScope(Drive.SCOPE_FILE)
                 .build();
@@ -108,14 +106,8 @@ public class PhotoSyncService extends IntentService {
                 syncPhotos(driveFolder);
             }
         }
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if(mClient != null) {
-            mClient.disconnect();
-        }
+        mClient.disconnect();
     }
 
     /**
@@ -177,7 +169,7 @@ public class PhotoSyncService extends IntentService {
      * @param driveFolder The Drive folder
      */
     private void pushPhotos(DriveFolder driveFolder) {
-        final ContentResolver cr = getContentResolver();
+        final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
                 Tables.Photos._ID,
                 Tables.Photos.ENTRY,
@@ -233,7 +225,7 @@ public class PhotoSyncService extends IntentService {
             }
 
             if(changed) {
-                BackendUtils.requestSync(this);
+                BackendUtils.requestSync(mContext);
             }
         } finally {
             cursor.close();
@@ -244,7 +236,7 @@ public class PhotoSyncService extends IntentService {
      * Download all photos without a local path.
      */
     private void fetchPhotos() {
-        final ContentResolver cr = getContentResolver();
+        final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
                 Tables.Photos._ID,
                 Tables.Photos.DRIVE_ID
