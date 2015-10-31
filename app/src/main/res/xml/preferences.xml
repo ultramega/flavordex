@@ -19,6 +19,7 @@
             android:title="@string/pref_sync_data" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:dependency="pref_sync_data"
             android:key="pref_sync_photos"
             android:summary="@string/pref_summary_sync_photos"
             android:title="@string/pref_sync_photos" />
