@@ -817,7 +817,8 @@ public class BackendService extends IntentService {
                 Tables.Photos._ID,
                 Tables.Photos.HASH
         };
-        final Cursor cursor = cr.query(uri, projection, null, null, null);
+        final Cursor cursor =
+                cr.query(uri, projection, Tables.Photos.HASH + " NOT NULL", null, null);
         if(cursor != null) {
             try {
                 long id;
