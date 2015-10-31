@@ -312,7 +312,7 @@ public class EntryUtils {
     }
 
     /**
-     * Set the changed time of an entry.
+     * Set the changed time of an entry and mark it as not synced.
      *
      * @param cr      The ContentResolver
      * @param entryId The entry's database ID
@@ -321,6 +321,7 @@ public class EntryUtils {
         final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId);
         final ContentValues values = new ContentValues();
         values.put(Tables.Entries.UPDATED, System.currentTimeMillis());
+        values.put(Tables.Entries.SYNCED, false);
         cr.update(uri, values, null, null);
     }
 

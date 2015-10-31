@@ -51,6 +51,7 @@ public class Tables {
         public static final String NOTES = "notes";
         public static final String UPDATED = "updated";
         public static final String PUBLISHED = "published";
+        public static final String SYNCED = "synced";
 
         /**
          * Content data types
@@ -370,6 +371,7 @@ public class Tables {
         public static final String PRESET = "preset";
         public static final String UPDATED = "updated";
         public static final String PUBLISHED = "published";
+        public static final String SYNCED = "synced";
         public static final String NUM_ENTRIES = "num_entries";
 
         /**

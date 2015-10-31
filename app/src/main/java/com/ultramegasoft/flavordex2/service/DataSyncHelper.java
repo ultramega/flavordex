@@ -51,8 +51,10 @@ public class DataSyncHelper {
 
     /**
      * Sync data with the backend.
+     *
+     * @return Whether the sync completed successfully
      */
-    public void sync() {
+    public boolean sync() {
         Log.i(TAG, "Starting data sync service.");
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
@@ -60,7 +62,7 @@ public class DataSyncHelper {
         if(accountName == null || clientId == 0) {
             Log.i(TAG, "Client not registered. Aborting and disabling service.");
             prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_DATA, false).apply();
-            return;
+            return false;
         }
         final GoogleAccountCredential credential = BackendUtils.getCredential(mContext);
         credential.setSelectedAccountName(accountName);
@@ -71,9 +73,13 @@ public class DataSyncHelper {
             pushUpdates(sync, clientId);
             fetchUpdates(sync, clientId);
             Log.i(TAG, "Syncing complete.");
+
+            return true;
         } catch(IOException e) {
             Log.w(TAG, "Syncing with the backend failed", e);
         }
+
+        return false;
     }
 
     /**
@@ -85,11 +91,10 @@ public class DataSyncHelper {
      */
     private void pushUpdates(Sync sync, long clientId) throws IOException {
         final ContentResolver cr = mContext.getContentResolver();
-        final long lastSync = BackendUtils.getLastSync(mContext);
 
         final UpdateRecord record = new UpdateRecord();
-        record.setCats(getUpdatedCats(cr, lastSync));
-        record.setEntries(getUpdatedEntries(cr, lastSync));
+        record.setCats(getUpdatedCats(cr));
+        record.setEntries(getUpdatedEntries(cr));
 
         final UpdateResponse response = sync.pushUpdates(clientId, record).execute();
 
@@ -98,6 +103,7 @@ public class DataSyncHelper {
             final String[] whereArgs = new String[1];
             final ContentValues values = new ContentValues();
             values.put(Tables.Cats.PUBLISHED, true);
+            values.put(Tables.Cats.SYNCED, true);
             for(Map.Entry<String, Object> status : response.getCatStatuses().entrySet()) {
                 if((boolean)status.getValue()) {
                     whereArgs[0] = status.getKey();
@@ -111,6 +117,7 @@ public class DataSyncHelper {
             final String[] whereArgs = new String[1];
             final ContentValues values = new ContentValues();
             values.put(Tables.Entries.PUBLISHED, true);
+            values.put(Tables.Entries.SYNCED, true);
             for(Map.Entry<String, Object> status : response.getEntryStatuses().entrySet()) {
                 if((boolean)status.getValue()) {
                     whereArgs[0] = status.getKey();
@@ -125,11 +132,10 @@ public class DataSyncHelper {
     /**
      * Get all categories that have changed since the last sync with the backend.
      *
-     * @param cr    The ContentResolver
-     * @param since The timestamp of the previous sync
+     * @param cr The ContentResolver
      * @return The list of updated categories
      */
-    private static ArrayList<CatRecord> getUpdatedCats(ContentResolver cr, long since) {
+    private static ArrayList<CatRecord> getUpdatedCats(ContentResolver cr) {
         final ArrayList<CatRecord> records = new ArrayList<>();
         CatRecord record;
 
@@ -149,7 +155,7 @@ public class DataSyncHelper {
             }
         }
 
-        where = Tables.Cats.UPDATED + " > " + since;
+        where = Tables.Cats.SYNCED + " = 0";
         cursor = cr.query(Tables.Cats.CONTENT_URI, null, where, null, null);
         if(cursor != null) {
             try {
@@ -240,11 +246,10 @@ public class DataSyncHelper {
     /**
      * Get all entries that have changed since the last sync with the backend.
      *
-     * @param cr    The ContentResolver
-     * @param since The timestamp of the previous sync
+     * @param cr The ContentResolver
      * @return The list of updated entries
      */
-    private static ArrayList<EntryRecord> getUpdatedEntries(ContentResolver cr, long since) {
+    private static ArrayList<EntryRecord> getUpdatedEntries(ContentResolver cr) {
         final ArrayList<EntryRecord> records = new ArrayList<>();
         EntryRecord record;
 
@@ -264,7 +269,7 @@ public class DataSyncHelper {
             }
         }
 
-        where = Tables.Entries.UPDATED + " > " + since;
+        where = Tables.Entries.SYNCED + " = 0";
         cursor = cr.query(Tables.Entries.CONTENT_URI, null, where, null, null);
         if(cursor != null) {
             try {

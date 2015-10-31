@@ -1,4 +1,4 @@
-INSERT INTO cats VALUES (5, '708ba04e-8306-4c80-a763-086b0ea70763', 'Sample', 0, 0, 0);
+INSERT INTO cats VALUES (5, '708ba04e-8306-4c80-a763-086b0ea70763', 'Sample', 0, 0, 0, 0);
 --
 INSERT INTO photos VALUES (1, 1, NULL, '/sdcard/DCIM/Flavordex/20121114_161713.jpg', NULL, 0);
 --
@@ -214,12 +214,12 @@ INSERT INTO entries_extras VALUES (23, 5, 23, 'A Value');
 --
 INSERT INTO entries_extras VALUES (24, 5, 24, '8');
 --
-INSERT INTO entries VALUES (1, 'e030e11e-99c2-4f5e-95c4-6c6740503113', 3, 'Jefferson’s Straight Rye Whiskey', 1, '$36/bottle', 'Home', 1354137274000, 4.0, 'Quick burst of fruit followed by mellow rye spice & dryness, has a grassy linger. There is a certain funk to it that’s VERY subtle, and almost grappa like - very faint and not unpleasant. Makes an above average old fashioned and Manhattan and good neat but not my preferred rye for a session but definitely a dynamic tasting. Chewy linger w/ the grass and leather.', 0, 0);
+INSERT INTO entries VALUES (1, 'e030e11e-99c2-4f5e-95c4-6c6740503113', 3, 'Jefferson’s Straight Rye Whiskey', 1, '$36/bottle', 'Home', 1354137274000, 4.0, 'Quick burst of fruit followed by mellow rye spice & dryness, has a grassy linger. There is a certain funk to it that’s VERY subtle, and almost grappa like - very faint and not unpleasant. Makes an above average old fashioned and Manhattan and good neat but not my preferred rye for a session but definitely a dynamic tasting. Chewy linger w/ the grass and leather.', 0, 0, 0);
 --
-INSERT INTO entries VALUES (2, '3c6c9966-c78a-4a54-93e8-2eb443babdee', 1, 'Pliney The Elder', 2, '$5', 'Bottleworks', 1372219156000, 4.5, 'Profoundly balanced given the alcohol content, hops, and light body. All the characteristics of an imperial but the sum is greater than the parts.', 0, 0);
+INSERT INTO entries VALUES (2, '3c6c9966-c78a-4a54-93e8-2eb443babdee', 1, 'Pliney The Elder', 2, '$5', 'Bottleworks', 1372219156000, 4.5, 'Profoundly balanced given the alcohol content, hops, and light body. All the characteristics of an imperial but the sum is greater than the parts.', 0, 0, 0);
 --
-INSERT INTO entries VALUES (3, 'f414553c-c749-458d-b82b-bc18fd9faedd', 2, '2009 Old Vine Cuvee', 3, '$9', '', 1337526402000, 3.5, 'Rich & mineral heavy but with a brightness & heat bursting through to prevent it from lingering metallic, instead leaving behind rich, concentrated cherry and pleasant warmth.', 0, 0);
+INSERT INTO entries VALUES (3, 'f414553c-c749-458d-b82b-bc18fd9faedd', 2, '2009 Old Vine Cuvee', 3, '$9', '', 1337526402000, 3.5, 'Rich & mineral heavy but with a brightness & heat bursting through to prevent it from lingering metallic, instead leaving behind rich, concentrated cherry and pleasant warmth.', 0, 0, 0);
 --
-INSERT INTO entries VALUES (4, '2ced63c2-0569-449a-a3c6-608f5f39c5e4', 4, 'Ethiopia Gedeo', 4, '$2', 'Herkimer', 1337526009000, 4.0, 'Strong smell and taste of blueberry, balanced, medium body doesn''t overexpose the dark berry flavor - easy. I like turtles.', 0, 0);
+INSERT INTO entries VALUES (4, '2ced63c2-0569-449a-a3c6-608f5f39c5e4', 4, 'Ethiopia Gedeo', 4, '$2', 'Herkimer', 1337526009000, 4.0, 'Strong smell and taste of blueberry, balanced, medium body doesn''t overexpose the dark berry flavor - easy. I like turtles.', 0, 0, 0);
 --
-INSERT INTO entries VALUES (5, 'bd4a150d-bad0-4b7e-9869-5ae4716babcc', 5, 'Sample Entry', 5, '$6', 'Nowhere', 1440701993000, 3.0, 'This is just a sample...', 0, 0);
+INSERT INTO entries VALUES (5, 'bd4a150d-bad0-4b7e-9869-5ae4716babcc', 5, 'Sample Entry', 5, '$6', 'Nowhere', 1440701993000, 3.0, 'This is just a sample...', 0, 0, 0);

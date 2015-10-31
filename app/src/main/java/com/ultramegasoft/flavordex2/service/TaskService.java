@@ -31,9 +31,10 @@ public class TaskService extends GcmTaskService {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if(prefs.getBoolean(FlavordexApp.PREF_SYNC_DATA, false)
                 && BackendUtils.isSyncRequested(this)) {
-            new DataSyncHelper(this).sync();
-            BackendUtils.setLastSync(this);
-            BackendUtils.requestSync(this, false);
+            if(new DataSyncHelper(this).sync()) {
+                BackendUtils.setLastSync(this);
+                BackendUtils.requestSync(this, false);
+            }
         }
         if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false)) {
             new PhotoSyncHelper(this).sync();

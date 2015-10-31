@@ -10,7 +10,8 @@ CREATE TABLE entries (
   rating REAL,
   notes TEXT COLLATE NOCASE,
   updated INTEGER DEFAULT 0,
-  published INTEGER DEFAULT 0
+  published INTEGER DEFAULT 0,
+  synced INTEGER DEFAULT 0
 );
 --
 CREATE TABLE entries_extras (
@@ -77,7 +78,8 @@ CREATE TABLE cats (
   name  TEXT COLLATE NOCASE,
   preset INTEGER DEFAULT 0,
   updated INTEGER DEFAULT 0,
-  published INTEGER DEFAULT 0
+  published INTEGER DEFAULT 0,
+  synced INTEGER DEFAULT 0
 );
 --
 CREATE TABLE deleted (
