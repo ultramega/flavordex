@@ -31,9 +31,6 @@ import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
  * @author Steve Guidetti
  */
 public class AppImportDialog extends ImportDialog implements LoaderManager.LoaderCallbacks<Cursor> {
-    /**
-     * Tag to identify the Fragment
-     */
     private static final String TAG = "AppImportDialog";
 
     /**
@@ -127,9 +124,6 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
      * Fragment for importing the selected entries in the background.
      */
     public static class ImporterFragment extends BackgroundProgressDialog {
-        /**
-         * The tag to identify this Fragment
-         */
         private static final String TAG = "ImporterFragment";
 
         /**

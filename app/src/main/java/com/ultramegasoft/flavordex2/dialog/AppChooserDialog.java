@@ -41,9 +41,6 @@ import java.util.ArrayList;
  * @author Steve Guidetti
  */
 public class AppChooserDialog extends DialogFragment {
-    /**
-     * Tag to identify the Fragment
-     */
     private static final String TAG = "AppChooserDialog";
 
     /**
@@ -279,9 +276,6 @@ public class AppChooserDialog extends DialogFragment {
      * Fragment for importing all entries from the selected apps in the background.
      */
     public static class ImporterFragment extends BackgroundProgressDialog {
-        /**
-         * The tag to identify this Fragment
-         */
         private static final String TAG = "ImporterFragment";
 
         /**

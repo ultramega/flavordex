@@ -16,9 +16,6 @@ import com.ultramegasoft.flavordex2.R;
  * @author Steve Guidetti
  */
 public class MessageDialog extends DialogFragment {
-    /**
-     * Tag to identify the Fragment
-     */
     private static final String TAG = "MessageDialog";
 
     /**

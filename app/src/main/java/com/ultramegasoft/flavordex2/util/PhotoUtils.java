@@ -39,9 +39,6 @@ import java.util.Locale;
  * @author Steve Guidetti
  */
 public class PhotoUtils {
-    /**
-     * The tag to use for logging
-     */
     private static final String TAG = "PhotoUtils";
 
     /**

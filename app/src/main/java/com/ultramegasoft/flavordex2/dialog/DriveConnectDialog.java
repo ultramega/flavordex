@@ -27,9 +27,6 @@ import com.ultramegasoft.flavordex2.R;
  */
 public class DriveConnectDialog extends DialogFragment
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    /**
-     * Tag to identify the Fragment
-     */
     private static final String TAG = "DriveConnectDialog";
 
     /**

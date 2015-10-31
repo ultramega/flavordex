@@ -38,9 +38,6 @@ import java.util.Date;
  */
 public class EntryFilterDialog extends DialogFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
-    /**
-     * Tag to identify the Fragment
-     */
     private static final String TAG = "EntryFilterDialog";
 
     /**

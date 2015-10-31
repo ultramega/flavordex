@@ -39,9 +39,6 @@ import com.ultramegasoft.flavordex2.util.BackendUtils;
  */
 public class CatDeleteDialog extends DialogFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
-    /**
-     * Tag to identify the Fragment
-     */
     private static final String TAG = "CatDeleteDialog";
 
     /**

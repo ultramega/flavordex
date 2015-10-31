@@ -30,9 +30,6 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
  * @author Steve Guidetti
  */
 public class BackendRegistrationDialog extends DialogFragment {
-    /**
-     * Tag to identify the Fragment
-     */
     private static final String TAG = "BackendRegistrationDialog";
 
     /**

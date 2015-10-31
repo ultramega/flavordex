@@ -37,9 +37,6 @@ import java.util.Arrays;
  * @author Steve Guidetti
  */
 public class FileSelectorDialog extends DialogFragment {
-    /**
-     * Tag to identify the Fragment
-     */
     private static final String TAG = "FileSelectorDialog";
 
     /**

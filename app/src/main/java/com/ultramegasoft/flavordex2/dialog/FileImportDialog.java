@@ -32,9 +32,6 @@ import java.util.ArrayList;
  */
 public class FileImportDialog extends ImportDialog
         implements LoaderManager.LoaderCallbacks<CSVUtils.CSVHolder> {
-    /**
-     * Tag to identify the Fragment
-     */
     private static final String TAG = "FileImportDialog";
 
     /**
@@ -155,9 +152,6 @@ public class FileImportDialog extends ImportDialog
      * Fragment for saving the selected entries in the background.
      */
     public static class DataSaverFragment extends BackgroundProgressDialog {
-        /**
-         * The tag to identify this Fragment
-         */
         private static final String TAG = "DataSaverFragment";
 
         /**

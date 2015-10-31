@@ -49,9 +49,6 @@ import au.com.bytecode.opencsv.CSVWriter;
  * @author Steve Guidetti
  */
 public class ExportDialog extends DialogFragment {
-    /**
-     * The tag to identify this Fragment
-     */
     private static final String TAG = "ExportDialog";
 
     /**
@@ -229,9 +226,6 @@ public class ExportDialog extends DialogFragment {
      * Fragment for exporting the selected entries in the background.
      */
     public static class ExporterFragment extends BackgroundProgressDialog {
-        /**
-         * The tag to identify this Fragment
-         */
         private static final String TAG = "ExporterFragment";
 
         /**

@@ -49,9 +49,6 @@ import java.io.OutputStream;
  * @author Steve Guidetti
  */
 public class PhotoSyncService extends IntentService {
-    /**
-     * Tag to identify this service
-     */
     private static final String TAG = "PhotoSyncService";
 
     /**

@@ -347,9 +347,6 @@ public class PermissionUtils {
      * Dialog for showing a permission request rationale to the user.
      */
     public static class PermissionDialog extends DialogFragment {
-        /**
-         * Tag to identify the Fragment
-         */
         private static final String TAG = "PermissionDialog";
 
         /**

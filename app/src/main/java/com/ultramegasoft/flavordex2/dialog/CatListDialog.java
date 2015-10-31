@@ -31,9 +31,6 @@ import com.ultramegasoft.flavordex2.widget.CatListAdapter;
  * @author Steve Guidetti
  */
 public class CatListDialog extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    /**
-     * Tag to identify the Fragment
-     */
     private static final String TAG = "CatListDialog";
 
     /**

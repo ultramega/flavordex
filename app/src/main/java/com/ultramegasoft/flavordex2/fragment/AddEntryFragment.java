@@ -241,9 +241,6 @@ public class AddEntryFragment extends Fragment {
      * Fragment for saving the entry in the background.
      */
     public static class DataSaverFragment extends Fragment {
-        /**
-         * The tag to identify this Fragment
-         */
         private static final String TAG = "DataSaverFragment";
 
         /**

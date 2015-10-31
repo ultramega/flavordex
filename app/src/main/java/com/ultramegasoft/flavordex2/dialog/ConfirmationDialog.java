@@ -20,9 +20,6 @@ import com.ultramegasoft.flavordex2.R;
  * @author Steve Guidetti
  */
 public class ConfirmationDialog extends DialogFragment {
-    /**
-     * Tag to identify the Fragment
-     */
     private static final String TAG = "ConfirmationDialog";
 
     /**
