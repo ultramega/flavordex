@@ -35,9 +35,9 @@ public class TaskService extends GcmTaskService {
                 BackendUtils.setLastSync(this);
                 BackendUtils.requestSync(this, false);
             }
-        }
-        if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false)) {
-            new PhotoSyncHelper(this).sync();
+            if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false)) {
+                new PhotoSyncHelper(this).sync();
+            }
         }
     }
 }
