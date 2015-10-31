@@ -53,6 +53,7 @@ public class DataSyncHelper {
      * Sync data with the backend.
      */
     public void sync() {
+        Log.i(TAG, "Syncing data...");
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
         final long clientId = BackendUtils.getClientId(mContext);

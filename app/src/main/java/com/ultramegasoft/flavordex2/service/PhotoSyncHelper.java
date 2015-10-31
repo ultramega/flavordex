@@ -81,6 +81,7 @@ public class PhotoSyncHelper {
      * Sync photos with Google Drive.
      */
     public void sync() {
+        Log.i(TAG, "Syncing photos...");
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             return;
         }
