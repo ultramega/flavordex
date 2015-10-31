@@ -6,8 +6,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.net.ConnectivityManagerCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -86,14 +88,22 @@ public class PhotoSyncHelper {
             return;
         }
 
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+
         if(!Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                 .canWrite()) {
             if(!PermissionUtils.hasExternalStoragePerm(mContext)) {
-                final SharedPreferences prefs =
-                        PreferenceManager.getDefaultSharedPreferences(mContext);
                 prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false).apply();
             }
             return;
+        }
+
+        if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS_UNMETERED, true)) {
+            final ConnectivityManager cm =
+                    (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if(ConnectivityManagerCompat.isActiveNetworkMetered(cm)) {
+                return;
+            }
         }
 
         mClient = new GoogleApiClient.Builder(mContext)
