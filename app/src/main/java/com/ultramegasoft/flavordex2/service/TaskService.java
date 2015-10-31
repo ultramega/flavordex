@@ -20,7 +20,9 @@ public class TaskService extends GcmTaskService {
         final String tag = params.getTag();
         Log.i(TAG, "Running Task: " + tag);
         if(BackendUtils.TASK_SYNC_DATA.equals(tag)) {
-            BackendService.syncData(this);
+            if(BackendUtils.isSyncRequested(this)) {
+                BackendService.syncData(this);
+            }
         } else if(BackendUtils.TASK_SYNC_PHOTOS.equals(tag)) {
             PhotoSyncService.syncPhotos(this);
         }

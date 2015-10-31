@@ -214,7 +214,7 @@ public class SettingsActivity extends AppCompatActivity {
             } else if(FlavordexApp.PREF_SYNC_DATA.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
                     mPrefSyncData.setChecked(true);
-                    BackendUtils.requestDataSync(getContext());
+                    BackendUtils.setupDataSync(getContext());
                 } else {
                     GcmNetworkManager.getInstance(getContext())
                             .cancelTask(BackendUtils.TASK_SYNC_DATA, TaskService.class);
@@ -222,13 +222,13 @@ public class SettingsActivity extends AppCompatActivity {
             } else if(FlavordexApp.PREF_SYNC_PHOTOS.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
                     mPrefSyncPhotos.setChecked(true);
-                    BackendUtils.requestPhotoSync(getContext());
+                    BackendUtils.setupPhotoSync(getContext());
                 } else {
                     GcmNetworkManager.getInstance(getContext())
                             .cancelTask(BackendUtils.TASK_SYNC_PHOTOS, TaskService.class);
                 }
             } else if(FlavordexApp.PREF_SYNC_PHOTOS_UNMETERED.equals(key)) {
-                BackendUtils.requestPhotoSync(getContext());
+                BackendUtils.setupPhotoSync(getContext());
             }
         }
     }

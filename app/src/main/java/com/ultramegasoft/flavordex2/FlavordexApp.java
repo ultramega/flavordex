@@ -123,8 +123,8 @@ public class FlavordexApp extends Application implements
             setLocationEnabled(true);
         }
 
-        BackendUtils.requestDataSync(this);
-        BackendUtils.requestPhotoSync(this);
+        BackendUtils.setupDataSync(this);
+        BackendUtils.setupPhotoSync(this);
     }
 
     @Override

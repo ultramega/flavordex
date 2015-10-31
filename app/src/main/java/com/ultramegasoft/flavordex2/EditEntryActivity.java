@@ -189,7 +189,7 @@ public class EditEntryActivity extends AppCompatActivity {
 
             updateExtras(uri);
 
-            BackendUtils.requestDataSync(mContext);
+            BackendUtils.requestSync(mContext);
             return null;
         }
 

@@ -220,6 +220,7 @@ public class BackendService extends IntentService {
             fetchUpdates(sync, clientId);
 
             BackendUtils.setLastSync(this);
+            BackendUtils.requestSync(this, false);
         } catch(IOException e) {
             Log.w(TAG, "Syncing with the backend failed", e);
         }
@@ -585,8 +586,6 @@ public class BackendService extends IntentService {
             for(EntryRecord entryRecord : record.getEntries()) {
                 parseEntry(cr, entryRecord);
             }
-
-            BackendUtils.requestPhotoSync(this);
         }
     }
 

@@ -370,7 +370,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
 
             EntryUtils.markChanged(cr, mEntryId);
 
-            BackendUtils.requestDataSync(mContext);
+            BackendUtils.requestSync(mContext);
             return null;
         }
     }

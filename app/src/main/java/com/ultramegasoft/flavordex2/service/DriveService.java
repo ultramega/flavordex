@@ -53,7 +53,7 @@ public class DriveService extends DriveEventService {
                             cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE,
                                     id), values, null, null);
                             EntryUtils.markChanged(cr, entryId);
-                            BackendUtils.requestDataSync(this);
+                            BackendUtils.requestSync(this);
                         }
                     } finally {
                         cursor.close();

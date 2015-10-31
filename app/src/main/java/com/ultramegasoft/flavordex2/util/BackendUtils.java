@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.OneoffTask;
+import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.Task;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -34,6 +34,7 @@ public class BackendUtils {
     private static final String PREFS_KEY = "backend";
     private static final String PREF_CLIENT_ID = "pref_client_id";
     private static final String PREF_LAST_SYNC = "pref_last_sync";
+    private static final String PREF_SYNC_REQUESTED = "pref_sync_requested";
 
     /**
      * The API project ID
@@ -50,13 +51,13 @@ public class BackendUtils {
      *
      * @param context The Context
      */
-    public static void requestDataSync(Context context) {
+    public static void setupDataSync(Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if(prefs.getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
-            final OneoffTask task = new OneoffTask.Builder()
+            final PeriodicTask task = new PeriodicTask.Builder()
                     .setTag(TASK_SYNC_DATA)
                     .setUpdateCurrent(true)
-                    .setExecutionWindow(5, 30)
+                    .setPeriod(30)
                     .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
                     .setService(TaskService.class)
                     .build();
@@ -69,13 +70,13 @@ public class BackendUtils {
      *
      * @param context The Context
      */
-    public static void requestPhotoSync(Context context) {
+    public static void setupPhotoSync(Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false)) {
-            final OneoffTask.Builder builder = new OneoffTask.Builder()
+            final PeriodicTask.Builder builder = new PeriodicTask.Builder()
                     .setTag(TASK_SYNC_PHOTOS)
                     .setUpdateCurrent(true)
-                    .setExecutionWindow(5, 30)
+                    .setPeriod(75)
                     .setService(TaskService.class);
 
             if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS_UNMETERED, true)) {
@@ -86,6 +87,37 @@ public class BackendUtils {
 
             GcmNetworkManager.getInstance(context).schedule(builder.build());
         }
+    }
+
+    /**
+     * Request a data sync.
+     *
+     * @param context The Context
+     */
+    public static void requestSync(Context context) {
+        requestSync(context, true);
+    }
+
+    /**
+     * Set whether a data sync is requested.
+     *
+     * @param context       The Context
+     * @param syncRequested Whether a data sync is requested
+     */
+    public static void requestSync(Context context, boolean syncRequested) {
+        context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit()
+                .putBoolean(PREF_SYNC_REQUESTED, syncRequested).apply();
+    }
+
+    /**
+     * Is a data sync requested.
+     *
+     * @param context The Context
+     * @return Whether a data sync was requested
+     */
+    public static boolean isSyncRequested(Context context) {
+        return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
+                .getBoolean(PREF_SYNC_REQUESTED, true);
     }
 
     /**

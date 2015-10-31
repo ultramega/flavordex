@@ -67,7 +67,7 @@ public class EntryUtils {
         insertFlavors(cr, entryUri, entry);
         insertPhotos(cr, entryUri, entry);
 
-        BackendUtils.requestDataSync(context);
+        BackendUtils.requestSync(context);
 
         return entryUri;
     }
@@ -279,7 +279,7 @@ public class EntryUtils {
         final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, id);
         cr.delete(uri, null, null);
         PhotoUtils.deleteThumb(context, id);
-        BackendUtils.requestDataSync(context);
+        BackendUtils.requestSync(context);
     }
 
     /**
