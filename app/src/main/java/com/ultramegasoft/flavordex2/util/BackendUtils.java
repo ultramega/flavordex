@@ -58,22 +58,19 @@ public class BackendUtils {
     private static final String WEB_CLIENT_ID = "1001621163874-su48pt09eaj7rd4g0mni19ag4vv2g7p7.apps.googleusercontent.com";
 
     /**
-     * Schedule the sync service to run if it is enabled.
+     * Schedule the sync service to run.
      *
      * @param context The Context
      */
     public static void setupDataSync(Context context) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if(prefs.getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
-            final PeriodicTask task = new PeriodicTask.Builder()
-                    .setTag(TASK_SYNC_DATA)
-                    .setUpdateCurrent(true)
-                    .setPeriod(30)
-                    .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
-                    .setService(TaskService.class)
-                    .build();
-            GcmNetworkManager.getInstance(context).schedule(task);
-        }
+        final PeriodicTask task = new PeriodicTask.Builder()
+                .setTag(TASK_SYNC_DATA)
+                .setUpdateCurrent(true)
+                .setPeriod(30)
+                .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
+                .setService(TaskService.class)
+                .build();
+        GcmNetworkManager.getInstance(context).schedule(task);
     }
 
     /**
