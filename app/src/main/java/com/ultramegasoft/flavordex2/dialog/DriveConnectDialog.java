@@ -110,7 +110,7 @@ public class DriveConnectDialog extends DialogFragment
                         + ((getFragmentManager().getFragments().indexOf(this) + 1) << 16);
                 result.startResolutionForResult(getActivity(), requestCode);
             } catch(IntentSender.SendIntentException e) {
-                Log.e(getClass().getSimpleName(), e.getMessage());
+                Log.e(TAG, "Connection to Google Drive failed", e);
                 dismiss();
             }
         } else {

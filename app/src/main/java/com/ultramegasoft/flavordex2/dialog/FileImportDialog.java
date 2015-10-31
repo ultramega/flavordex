@@ -232,7 +232,7 @@ public class FileImportDialog extends ImportDialog
                     try {
                         EntryUtils.insertEntry(mContext, entry);
                     } catch(SQLiteException e) {
-                        Log.e(getClass().getSimpleName(), e.getMessage());
+                        Log.e(TAG, "Failed to insert entry: " + entry.title, e);
                     }
                     publishProgress(++i);
                 }

@@ -12,9 +12,11 @@ import com.ultramegasoft.flavordex2.util.BackendUtils;
  * @author Steve Guidetti
  */
 public class GcmService extends GcmListenerService {
+    private static final String TAG = "GcmService";
+
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        Log.d(getClass().getSimpleName(), "Received Message: " + data.getString("message"));
+        Log.i(TAG, "Received Message: " + data.getString("message"));
         BackendUtils.requestDataSync(this);
     }
 }

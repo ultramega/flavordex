@@ -41,6 +41,8 @@ import java.util.Map;
  * @author Steve Guidetti
  */
 public class BackendService extends IntentService {
+    private static final String TAG = "BackendService";
+
     /**
      * Action value for broadcast Intents
      */
@@ -75,7 +77,7 @@ public class BackendService extends IntentService {
     private String mError;
 
     public BackendService() {
-        super("BackendService");
+        super(TAG);
     }
 
     /**
@@ -166,7 +168,7 @@ public class BackendService extends IntentService {
                         .putBoolean(FlavordexApp.PREF_SYNC_DATA, true).apply();
             }
         } catch(IOException e) {
-            Log.e(getClass().getSimpleName(), e.getMessage());
+            Log.w(TAG, "Client registration failed", e);
             mError = e.getMessage();
         }
     }
@@ -190,7 +192,7 @@ public class BackendService extends IntentService {
                     .deleteToken(PROJECT_NUMBER, GoogleCloudMessaging.INSTANCE_ID_SCOPE);
             registration.unregister(BackendUtils.getClientId(this)).execute();
         } catch(IOException e) {
-            Log.e(getClass().getSimpleName(), e.getMessage());
+            Log.w(TAG, "Client unregistration failed", e);
             mError = e.getMessage();
         }
 
@@ -219,7 +221,7 @@ public class BackendService extends IntentService {
 
             BackendUtils.setLastSync(this);
         } catch(IOException e) {
-            Log.e(getClass().getSimpleName(), e.getMessage());
+            Log.w(TAG, "Syncing with the backend failed", e);
         }
     }
 

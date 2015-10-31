@@ -338,7 +338,7 @@ public class AddEntryFragment extends Fragment {
                     checkLocation(mEntry.location);
                     return Long.valueOf(entryUri.getLastPathSegment());
                 } catch(SQLiteException e) {
-                    Log.e(getClass().getSimpleName(), e.getMessage());
+                    Log.e(TAG, "Failed to insert entry: " + mEntry.title, e);
                 }
 
                 return 0L;

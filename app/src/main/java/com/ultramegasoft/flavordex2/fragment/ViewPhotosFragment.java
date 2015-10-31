@@ -46,6 +46,8 @@ import java.util.ArrayList;
  */
 public class ViewPhotosFragment extends AbsPhotosFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String TAG = "ViewPhotosFragment";
+
     /**
      * Argument for the photo removal confirmation dialog
      */
@@ -353,7 +355,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
                     return true;
                 }
             } catch(SQLiteException e) {
-                Log.e(getClass().getSimpleName(), e.getMessage());
+                Log.e(TAG, "Failed to save photo", e);
             }
 
             return false;

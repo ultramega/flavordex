@@ -28,6 +28,8 @@ import java.util.UUID;
  * @author Steve Guidetti
  */
 public class EntryUtils {
+    private static final String TAG = "EntryUtils";
+
     /**
      * Insert a new journal entry.
      *
@@ -146,7 +148,7 @@ public class EntryUtils {
                 values.put(Tables.EntriesExtras.VALUE, extra.value);
                 cr.insert(uri, values);
             } catch(SQLiteException e) {
-                Log.w(EntryUtils.class.getSimpleName(), e.getMessage());
+                Log.e(TAG, e.getMessage());
             }
         }
     }

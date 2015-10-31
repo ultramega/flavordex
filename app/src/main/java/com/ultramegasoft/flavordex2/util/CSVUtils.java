@@ -41,6 +41,8 @@ import au.com.bytecode.opencsv.CSVWriter;
  * @author Steve Guidetti
  */
 public class CSVUtils {
+    private static final String TAG = "CSVUtils";
+
     /**
      * Formatter for dates in CSV files
      */
@@ -112,8 +114,7 @@ public class CSVUtils {
             if(extra.preset || !TextUtils.isEmpty(extra.value)) {
                 try {
                     object.put(extra.name, extra.value);
-                } catch(JSONException e) {
-                    Log.w(CSVUtils.class.getSimpleName(), e.getMessage());
+                } catch(JSONException ignored) {
                 }
             }
         }
@@ -131,8 +132,7 @@ public class CSVUtils {
         for(RadarHolder flavor : entry.getFlavors()) {
             try {
                 object.put(flavor.name, flavor.value);
-            } catch(JSONException e) {
-                Log.w(CSVUtils.class.getSimpleName(), e.getMessage());
+            } catch(JSONException ignored) {
             }
         }
         fields.add(object.toString());
@@ -191,7 +191,7 @@ public class CSVUtils {
             }
             reader.close();
         } catch(IOException e) {
-            Log.e(CSVUtils.class.getSimpleName(), e.getMessage());
+            Log.e(TAG, "Failed to read from file", e);
         }
 
         return data;
@@ -261,7 +261,7 @@ public class CSVUtils {
                 entry.addExtra(0, name, false, object.optString(name));
             }
         } catch(JSONException e) {
-            Log.w(CSVUtils.class.getSimpleName(), e.getMessage());
+            Log.w(TAG, "Failed to parse extra fields for: " + entry.title, e);
         }
     }
 
@@ -290,7 +290,7 @@ public class CSVUtils {
                 entry.addFlavor(name, value);
             }
         } catch(JSONException e) {
-            Log.w(CSVUtils.class.getSimpleName(), e.getMessage());
+            Log.w(TAG, "Failed to parse flavors for: " + entry.title);
         }
     }
 
@@ -316,7 +316,7 @@ public class CSVUtils {
                 }
             }
         } catch(JSONException e) {
-            Log.w(CSVUtils.class.getSimpleName(), e.getMessage());
+            Log.w(TAG, "Failed to parse photos for: " + entry.title);
         }
     }
 

@@ -61,7 +61,7 @@ public class RegistrationEndpoint {
             return helper.registerClient(gcmId);
         } catch(SQLException e) {
             e.printStackTrace();
-            throw new InternalServerErrorException(e);
+            throw new InternalServerErrorException("Failed to register the client.");
         } finally {
             helper.close();
         }
@@ -88,7 +88,7 @@ public class RegistrationEndpoint {
             helper.unregisterClient(clientId);
         } catch(SQLException e) {
             e.printStackTrace();
-            throw new InternalServerErrorException(e);
+            throw new InternalServerErrorException("Failed to unregister the client.");
         } finally {
             helper.close();
         }

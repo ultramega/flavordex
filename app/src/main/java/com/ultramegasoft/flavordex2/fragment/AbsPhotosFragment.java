@@ -29,6 +29,8 @@ import java.util.ArrayList;
  * @author Steve Guidetti
  */
 public abstract class AbsPhotosFragment extends Fragment {
+    private static final String TAG = "AbsPhotosFragment";
+
     /**
      * Request codes for external Activities
      */
@@ -184,7 +186,7 @@ public abstract class AbsPhotosFragment extends Fragment {
                 return;
             }
         } catch(IOException e) {
-            Log.e(getClass().getSimpleName(), e.getMessage());
+            Log.e(TAG, "Failed to create new file", e);
         }
 
         Toast.makeText(getContext(), R.string.error_camera, Toast.LENGTH_LONG).show();

@@ -13,10 +13,12 @@ import com.ultramegasoft.flavordex2.util.BackendUtils;
  * @author Steve Guidetti
  */
 public class TaskService extends GcmTaskService {
+    private static final String TAG = "TaskService";
+
     @Override
     public int onRunTask(TaskParams params) {
         final String tag = params.getTag();
-        Log.d(getClass().getSimpleName(), "Running Task: " + tag);
+        Log.i(TAG, "Running Task: " + tag);
         if(BackendUtils.TASK_SYNC_DATA.equals(tag)) {
             BackendService.syncData(this);
         } else if(BackendUtils.TASK_SYNC_PHOTOS.equals(tag)) {

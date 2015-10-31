@@ -50,6 +50,11 @@ import java.io.OutputStream;
  */
 public class PhotoSyncService extends IntentService {
     /**
+     * Tag to identify this service
+     */
+    private static final String TAG = "PhotoSyncService";
+
+    /**
      * The name of the Drive folder to store photos
      */
     private static final String DRIVE_FOLDER = "Flavordex Photos";
@@ -76,7 +81,7 @@ public class PhotoSyncService extends IntentService {
     }
 
     public PhotoSyncService() {
-        super("PhotoSyncService");
+        super(TAG);
     }
 
     @Override
@@ -85,17 +90,13 @@ public class PhotoSyncService extends IntentService {
             return;
         }
 
-        try {
-            if(!PhotoUtils.getMediaStorageDir().canWrite()) {
-                if(!PermissionUtils.hasExternalStoragePerm(this)) {
-                    final SharedPreferences prefs =
-                            PreferenceManager.getDefaultSharedPreferences(this);
-                    prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false).apply();
-                }
-                return;
+        if(!Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                .canWrite()) {
+            if(!PermissionUtils.hasExternalStoragePerm(this)) {
+                final SharedPreferences prefs =
+                        PreferenceManager.getDefaultSharedPreferences(this);
+                prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false).apply();
             }
-        } catch(IOException e) {
-            Log.e(getClass().getSimpleName(), e.getMessage());
             return;
         }
 
@@ -319,7 +320,7 @@ public class PhotoSyncService extends IntentService {
             createNewFile(driveFolder, file.getName(), hash, driveContents);
             return null;
         } catch(IOException e) {
-            Log.e(getClass().getSimpleName(), e.getMessage());
+            Log.w(TAG, "Upload failed", e);
         }
 
         driveContents.discard(mClient);
@@ -371,7 +372,7 @@ public class PhotoSyncService extends IntentService {
             }
             return outputFile.getPath();
         } catch(IOException e) {
-            Log.e(getClass().getSimpleName(), e.getMessage());
+            Log.w(TAG, "Download failed", e);
         } finally {
             driveContents.discard(mClient);
         }

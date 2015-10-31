@@ -79,7 +79,7 @@ public class SyncEndpoint {
             updateRecord.setEntries(helper.getUpdatedEntries(since));
         } catch(SQLException e) {
             e.printStackTrace();
-            throw new InternalServerErrorException(e);
+            throw new InternalServerErrorException("Failed to fetch updates.");
         } finally {
             helper.close();
         }
@@ -151,7 +151,7 @@ public class SyncEndpoint {
             }
         } catch(SQLException e) {
             e.printStackTrace();
-            throw new InternalServerErrorException(e);
+            throw new InternalServerErrorException("Failed to save updated data.");
         } finally {
             helper.close();
         }
@@ -163,11 +163,8 @@ public class SyncEndpoint {
      * Notify all clients belonging to the user the a sync is requested.
      *
      * @param helper The DatabaseHelper
-     * @throws InternalServerErrorException
-     * @throws UnauthorizedException
      */
-    private void notifyClients(DatabaseHelper helper)
-            throws InternalServerErrorException, UnauthorizedException {
+    private void notifyClients(DatabaseHelper helper) {
         try {
             final Sender sender = new Sender(GCM_API_KEY);
             final Message message = new Message.Builder().collapseKey("requestKey").build();
@@ -191,9 +188,8 @@ public class SyncEndpoint {
                     }
                 }
             }
-        } catch(IOException | SQLException e) {
+        } catch(IOException | SQLException | UnauthorizedException e) {
             e.printStackTrace();
-            throw new InternalServerErrorException(e);
         }
     }
 }

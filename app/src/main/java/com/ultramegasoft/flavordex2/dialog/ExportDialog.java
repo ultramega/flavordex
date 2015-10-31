@@ -295,7 +295,7 @@ public class ExportDialog extends DialogFragment {
             try {
                 new DataExporter(new CSVWriter(new FileWriter(mFilePath))).execute();
             } catch(IOException e) {
-                Log.e(getClass().getSimpleName(), e.getMessage());
+                Log.e(TAG, "Failed to open new file for writing", e);
                 showError(R.string.error_csv_export_file);
                 dismiss();
             }
@@ -366,7 +366,7 @@ public class ExportDialog extends DialogFragment {
                 try {
                     mWriter.close();
                 } catch(IOException e) {
-                    Log.e(getClass().getSimpleName(), e.getMessage());
+                    Log.e(TAG, "Failed to write to file", e);
                     return false;
                 }
 

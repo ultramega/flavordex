@@ -162,7 +162,7 @@ public class PhotoUtils {
             return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
                     matrix, true);
         } catch(IOException e) {
-            Log.w(TAG, "Failed to read EXIF data");
+            Log.w(TAG, "Failed to read EXIF data", e);
         }
 
         return bitmap;
@@ -247,7 +247,7 @@ public class PhotoUtils {
 
                 sThumbCache.remove(id);
             } catch(IOException e) {
-                Log.w(TAG, "Error writing thumbnail bitmap", e);
+                Log.e(TAG, "Error writing thumbnail bitmap", e);
             }
 
             inputBitmap.recycle();
@@ -504,7 +504,7 @@ public class PhotoUtils {
                 inputStream.close();
             }
         } catch(NoSuchAlgorithmException | IOException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, "Failed to generate MD5 hash", e);
         }
 
         return null;
