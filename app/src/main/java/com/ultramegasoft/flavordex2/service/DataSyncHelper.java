@@ -53,11 +53,12 @@ public class DataSyncHelper {
      * Sync data with the backend.
      */
     public void sync() {
-        Log.i(TAG, "Syncing data...");
+        Log.i(TAG, "Starting data sync service.");
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
         final long clientId = BackendUtils.getClientId(mContext);
         if(accountName == null || clientId == 0) {
+            Log.i(TAG, "Client not registered. Aborting and disabling service.");
             prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_DATA, false).apply();
             return;
         }
@@ -66,8 +67,10 @@ public class DataSyncHelper {
 
         final Sync sync = BackendUtils.getSync(credential);
         try {
+            Log.i(TAG, "Syncing data...");
             pushUpdates(sync, clientId);
             fetchUpdates(sync, clientId);
+            Log.i(TAG, "Syncing complete.");
         } catch(IOException e) {
             Log.w(TAG, "Syncing with the backend failed", e);
         }

@@ -83,8 +83,9 @@ public class PhotoSyncHelper {
      * Sync photos with Google Drive.
      */
     public void sync() {
-        Log.i(TAG, "Syncing photos...");
+        Log.i(TAG, "Starting photo sync service.");
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            Log.i(TAG, "External storage not mounted. Aborting.");
             return;
         }
 
@@ -92,7 +93,9 @@ public class PhotoSyncHelper {
 
         if(!Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                 .canWrite()) {
+            Log.i(TAG, "External storage directory not writable. Aborting.");
             if(!PermissionUtils.hasExternalStoragePerm(mContext)) {
+                Log.i(TAG, "External storage access permission denied. Disabling service.");
                 prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false).apply();
             }
             return;
@@ -102,6 +105,7 @@ public class PhotoSyncHelper {
             final ConnectivityManager cm =
                     (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
             if(ConnectivityManagerCompat.isActiveNetworkMetered(cm)) {
+                Log.i(TAG, "Network is metered. Aborting.");
                 return;
             }
         }
@@ -114,11 +118,13 @@ public class PhotoSyncHelper {
         if(result.isSuccess()) {
             final DriveFolder driveFolder = openDriveFolder();
             if(driveFolder != null) {
+                Log.i(TAG, "Syncing photos...");
                 syncPhotos(driveFolder);
             }
         }
 
         mClient.disconnect();
+        Log.i(TAG, "Syncing complete.");
     }
 
     /**
