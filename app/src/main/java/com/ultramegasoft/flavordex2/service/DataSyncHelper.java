@@ -724,6 +724,8 @@ public class DataSyncHelper {
             }
         }
 
+        PhotoUtils.deleteThumb(mContext, Long.parseLong(entryUri.getLastPathSegment()));
+
         if(!photos.isEmpty()) {
             BackendUtils.requestPhotoSync(mContext);
         }

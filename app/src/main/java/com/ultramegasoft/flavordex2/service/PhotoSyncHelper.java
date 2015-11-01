@@ -264,6 +264,7 @@ public class PhotoSyncHelper {
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
                 Tables.Photos._ID,
+                Tables.Photos.ENTRY,
                 Tables.Photos.DRIVE_ID
         };
         final String where = Tables.Photos.PATH + " IS NULL";
@@ -273,6 +274,7 @@ public class PhotoSyncHelper {
         }
         try {
             long id;
+            long entryId;
             String driveId;
             String filePath;
             final ContentValues values = new ContentValues();
@@ -286,9 +288,11 @@ public class PhotoSyncHelper {
                     continue;
                 }
                 id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
+                entryId = cursor.getLong(cursor.getColumnIndex(Tables.Photos.ENTRY));
                 values.put(Tables.Photos.PATH, filePath);
                 cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id), values,
                         null, null);
+                PhotoUtils.deleteThumb(mContext, entryId);
             }
         } finally {
             cursor.close();
