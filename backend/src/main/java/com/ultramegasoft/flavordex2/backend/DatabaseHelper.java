@@ -164,6 +164,7 @@ public class DatabaseHelper {
         stmt.setLong(1, time);
         stmt.setLong(2, mUserId);
         stmt.setLong(3, mClientId);
+        stmt.executeUpdate();
     }
 
     /**
