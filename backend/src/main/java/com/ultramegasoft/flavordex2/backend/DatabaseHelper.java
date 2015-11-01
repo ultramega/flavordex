@@ -239,7 +239,7 @@ public class DatabaseHelper {
         final ArrayList<EntryRecord> records = new ArrayList<>();
         EntryRecord record;
 
-        String sql = "SELECT uuid, time FROM deleted WHERE user = ? AND client != ? AND sync_time > (SELECT last_sync FROM clients WHERE id = ?)";
+        String sql = "SELECT uuid FROM deleted WHERE user = ? AND client != ? AND sync_time > (SELECT last_sync FROM clients WHERE id = ?)";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
         stmt.setLong(2, mClientId);
@@ -249,7 +249,6 @@ public class DatabaseHelper {
         while(result.next()) {
             record = new EntryRecord();
             record.setUuid(result.getString("uuid"));
-            record.setUpdated(result.getLong("time"));
             record.setDeleted(true);
             records.add(record);
         }
@@ -656,7 +655,7 @@ public class DatabaseHelper {
         final ArrayList<CatRecord> records = new ArrayList<>();
         CatRecord record;
 
-        String sql = "SELECT uuid, time FROM deleted WHERE user = ? AND client != ? AND sync_time > (SELECT last_sync FROM clients WHERE id = ?)";
+        String sql = "SELECT uuid FROM deleted WHERE user = ? AND client != ? AND sync_time > (SELECT last_sync FROM clients WHERE id = ?)";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
         stmt.setLong(2, mClientId);
@@ -666,7 +665,6 @@ public class DatabaseHelper {
         while(result.next()) {
             record = new CatRecord();
             record.setUuid(result.getString("uuid"));
-            record.setUpdated(result.getLong("time"));
             record.setDeleted(true);
             records.add(record);
         }
