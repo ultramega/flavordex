@@ -39,7 +39,6 @@ public class BackendUtils {
      */
     private static final String PREFS_KEY = "backend";
     private static final String PREF_CLIENT_ID = "pref_client_id";
-    private static final String PREF_LAST_SYNC = "pref_last_sync";
     private static final String PREF_DATA_SYNC_REQUESTED = "pref_data_sync_requested";
     private static final String PREF_PHOTO_SYNC_REQUESTED = "pref_photo_sync_requested";
 
@@ -169,27 +168,6 @@ public class BackendUtils {
     public static void setClientId(Context context, long clientId) {
         context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit()
                 .putLong(PREF_CLIENT_ID, clientId).apply();
-    }
-
-    /**
-     * Get the Unix timestamp of the last sync with the backend.
-     *
-     * @param context The Context
-     * @return The Unix timestamp with milliseconds
-     */
-    public static long getLastSync(Context context) {
-        return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
-                .getLong(PREF_LAST_SYNC, -1);
-    }
-
-    /**
-     * Set the time of the last sync with the backend to now.
-     *
-     * @param context The Context
-     */
-    public static void setLastSync(Context context) {
-        context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit()
-                .putLong(PREF_LAST_SYNC, System.currentTimeMillis()).apply();
     }
 
     /**

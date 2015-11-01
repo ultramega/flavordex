@@ -56,14 +56,12 @@ public class SyncEndpoint {
      *
      * @param user     The User
      * @param clientId The database ID of the client
-     * @param since    The timestamp of the previous sync
      * @return The updated data from the server
      * @throws InternalServerErrorException
      * @throws UnauthorizedException
      */
     @ApiMethod(name = "fetchUpdates", httpMethod = ApiMethod.HttpMethod.GET)
-    public UpdateRecord fetch(User user, @Named("clientId") long clientId,
-                              @Named("since") long since)
+    public UpdateRecord fetch(User user, @Named("clientId") long clientId)
             throws InternalServerErrorException, UnauthorizedException {
         if(user == null) {
             throw new UnauthorizedException("Unauthorized");
@@ -75,8 +73,9 @@ public class SyncEndpoint {
             helper.setUser(user.getEmail());
             helper.setClientId(clientId);
 
-            updateRecord.setCats(helper.getUpdatedCats(since));
-            updateRecord.setEntries(helper.getUpdatedEntries(since));
+            updateRecord.setTimestamp(System.currentTimeMillis());
+            updateRecord.setCats(helper.getUpdatedCats());
+            updateRecord.setEntries(helper.getUpdatedEntries());
         } catch(SQLException e) {
             e.printStackTrace();
             throw new InternalServerErrorException("Failed to fetch updates.");
@@ -157,6 +156,34 @@ public class SyncEndpoint {
         }
 
         return response;
+    }
+
+    /**
+     * Confirm that the sync was processed by the client.
+     *
+     * @param user     The User
+     * @param clientId The database ID of the client
+     * @param time     The Unix timestamp of the sync
+     * @throws InternalServerErrorException
+     * @throws UnauthorizedException
+     */
+    @ApiMethod(name = "confirmSync")
+    public void confirm(User user, @Named("clientId") long clientId, @Named("syncTime") long time)
+            throws InternalServerErrorException, UnauthorizedException {
+        if(user == null) {
+            throw new UnauthorizedException("Unauthorized");
+        }
+
+        final DatabaseHelper helper = new DatabaseHelper();
+        try {
+            helper.open();
+            helper.setUser(user.getEmail());
+            helper.setClientId(clientId);
+            helper.setSyncTime(time);
+        } catch(SQLException e) {
+            e.printStackTrace();
+            throw new InternalServerErrorException("Failed to update client sync time.");
+        }
     }
 
     /**

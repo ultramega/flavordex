@@ -458,8 +458,7 @@ public class DataSyncHelper {
      * @throws IOException
      */
     private void fetchUpdates() throws IOException {
-        final UpdateRecord record =
-                mSync.fetchUpdates(mClientId, BackendUtils.getLastSync(mContext)).execute();
+        final UpdateRecord record = mSync.fetchUpdates(mClientId).execute();
 
         if(record.getCats() != null) {
             for(CatRecord catRecord : record.getCats()) {
@@ -472,6 +471,8 @@ public class DataSyncHelper {
                 parseEntry(entryRecord);
             }
         }
+
+        mSync.confirmSync(mClientId, record.getTimestamp());
     }
 
     /**
