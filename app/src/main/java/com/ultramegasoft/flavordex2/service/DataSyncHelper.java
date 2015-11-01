@@ -723,6 +723,10 @@ public class DataSyncHelper {
                 cursor.close();
             }
         }
+
+        if(!photos.isEmpty()) {
+            BackendUtils.requestPhotoSync(mContext);
+        }
     }
 
     /**
