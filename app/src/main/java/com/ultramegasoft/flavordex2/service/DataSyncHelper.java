@@ -390,13 +390,15 @@ public class DataSyncHelper {
                 final ArrayList<PhotoRecord> records = new ArrayList<>();
                 PhotoRecord record;
                 String hash;
+                long id;
                 String path;
                 while(cursor.moveToNext()) {
                     hash = cursor.getString(cursor.getColumnIndex(Tables.Photos.HASH));
                     if(hash == null) {
+                        id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
                         path = cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH));
                         if(path != null) {
-                            hash = PhotoUtils.getMD5Hash(new File(path));
+                            hash = generatePhotoHash(cr, id, path);
                         }
                         if(hash == null) {
                             continue;
@@ -417,6 +419,30 @@ public class DataSyncHelper {
         }
 
         return null;
+    }
+
+    /**
+     * Generate and save the MD5 hash of a photo.
+     *
+     * @param cr       The ContentResolver
+     * @param photoId  The database ID of the photo
+     * @param filePath The path to the photo file
+     * @return The generated MD5 hash
+     */
+    private static String generatePhotoHash(ContentResolver cr, long photoId, String filePath) {
+        if(filePath == null) {
+            return null;
+        }
+
+        final String hash = PhotoUtils.getMD5Hash(new File(filePath));
+        if(hash != null) {
+            final Uri uri = ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, photoId);
+            final ContentValues values = new ContentValues();
+            values.put(Tables.Photos.HASH, hash);
+            cr.update(uri, values, null, null);
+        }
+
+        return hash;
     }
 
     /**
