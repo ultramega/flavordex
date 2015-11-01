@@ -40,7 +40,8 @@ public class BackendUtils {
     private static final String PREFS_KEY = "backend";
     private static final String PREF_CLIENT_ID = "pref_client_id";
     private static final String PREF_LAST_SYNC = "pref_last_sync";
-    private static final String PREF_SYNC_REQUESTED = "pref_sync_requested";
+    private static final String PREF_DATA_SYNC_REQUESTED = "pref_data_sync_requested";
+    private static final String PREF_PHOTO_SYNC_REQUESTED = "pref_photo_sync_requested";
 
     /**
      * The API project number
@@ -62,7 +63,7 @@ public class BackendUtils {
      *
      * @param context The Context
      */
-    public static void setupDataSync(Context context) {
+    public static void setupSync(Context context) {
         final PeriodicTask task = new PeriodicTask.Builder()
                 .setTag(TASK_SYNC_DATA)
                 .setUpdateCurrent(true)
@@ -78,8 +79,8 @@ public class BackendUtils {
      *
      * @param context The Context
      */
-    public static void requestSync(Context context) {
-        requestSync(context, true);
+    public static void requestDataSync(Context context) {
+        requestDataSync(context, true);
     }
 
     /**
@@ -88,20 +89,51 @@ public class BackendUtils {
      * @param context       The Context
      * @param syncRequested Whether a data sync is requested
      */
-    public static void requestSync(Context context, boolean syncRequested) {
+    public static void requestDataSync(Context context, boolean syncRequested) {
         context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit()
-                .putBoolean(PREF_SYNC_REQUESTED, syncRequested).apply();
+                .putBoolean(PREF_DATA_SYNC_REQUESTED, syncRequested).apply();
     }
 
     /**
-     * Is a data sync requested.
+     * Is a data sync requested?
      *
      * @param context The Context
      * @return Whether a data sync was requested
      */
-    public static boolean isSyncRequested(Context context) {
+    public static boolean isDataSyncRequested(Context context) {
         return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
-                .getBoolean(PREF_SYNC_REQUESTED, true);
+                .getBoolean(PREF_PHOTO_SYNC_REQUESTED, true);
+    }
+
+    /**
+     * Request a photo sync.
+     *
+     * @param context The Context
+     */
+    public static void requestPhotoSync(Context context) {
+        requestPhotoSync(context, true);
+    }
+
+    /**
+     * Set whether a photo sync is requested.
+     *
+     * @param context       The Context
+     * @param syncRequested Whether a photo sync is requested
+     */
+    public static void requestPhotoSync(Context context, boolean syncRequested) {
+        context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit()
+                .putBoolean(PREF_PHOTO_SYNC_REQUESTED, syncRequested).apply();
+    }
+
+    /**
+     * Is a photo sync requested?
+     *
+     * @param context The Context
+     * @return Whether a photo sync was requested
+     */
+    public static boolean isPhotoSyncRequested(Context context) {
+        return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
+                .getBoolean(PREF_PHOTO_SYNC_REQUESTED, true);
     }
 
     /**

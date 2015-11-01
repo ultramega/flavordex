@@ -350,7 +350,8 @@ public class ViewPhotosFragment extends AbsPhotosFragment
                 if(uri != null) {
                     mPhoto.id = Long.valueOf(uri.getLastPathSegment());
                     EntryUtils.markChanged(mContext.getContentResolver(), mEntryId);
-                    BackendUtils.requestSync(mContext);
+                    BackendUtils.requestDataSync(mContext);
+                    BackendUtils.requestPhotoSync(mContext);
                     return true;
                 }
             } catch(SQLiteException e) {
@@ -402,7 +403,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         protected Void doInBackground(Void... params) {
             EntryUtils.deletePhoto(mContext, mPhoto.id);
             EntryUtils.markChanged(mContext.getContentResolver(), mEntryId);
-            BackendUtils.requestSync(mContext);
+            BackendUtils.requestDataSync(mContext);
             return null;
         }
     }

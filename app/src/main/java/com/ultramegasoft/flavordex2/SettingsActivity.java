@@ -213,13 +213,13 @@ public class SettingsActivity extends AppCompatActivity {
             } else if(FlavordexApp.PREF_SYNC_DATA.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
                     mPrefSyncData.setChecked(true);
-                    BackendUtils.requestSync(getContext());
-                    BackendUtils.setupDataSync(getContext());
+                    BackendUtils.requestDataSync(getContext());
+                    BackendUtils.setupSync(getContext());
                 }
             } else if(FlavordexApp.PREF_SYNC_PHOTOS.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
                     mPrefSyncPhotos.setChecked(true);
-                    BackendUtils.requestSync(getContext());
+                    BackendUtils.requestPhotoSync(getContext());
                 }
             }
         }

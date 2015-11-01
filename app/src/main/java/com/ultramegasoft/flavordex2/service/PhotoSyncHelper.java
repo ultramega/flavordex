@@ -81,12 +81,14 @@ public class PhotoSyncHelper {
 
     /**
      * Sync photos with Google Drive.
+     *
+     * @return Whether the sync completed successfully
      */
-    public void sync() {
+    public boolean sync() {
         Log.i(TAG, "Starting photo sync service.");
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             Log.i(TAG, "External storage not mounted. Aborting.");
-            return;
+            return false;
         }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -98,7 +100,7 @@ public class PhotoSyncHelper {
                 Log.i(TAG, "External storage access permission denied. Disabling service.");
                 prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false).apply();
             }
-            return;
+            return false;
         }
 
         if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS_UNMETERED, true)) {
@@ -106,7 +108,7 @@ public class PhotoSyncHelper {
                     (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
             if(ConnectivityManagerCompat.isActiveNetworkMetered(cm)) {
                 Log.i(TAG, "Network is metered. Aborting.");
-                return;
+                return false;
             }
         }
 
@@ -114,17 +116,23 @@ public class PhotoSyncHelper {
                 .addApi(Drive.API)
                 .addScope(Drive.SCOPE_FILE)
                 .build();
-        final ConnectionResult result = mClient.blockingConnect();
-        if(result.isSuccess()) {
-            final DriveFolder driveFolder = openDriveFolder();
-            if(driveFolder != null) {
-                Log.i(TAG, "Syncing photos...");
-                syncPhotos(driveFolder);
+        try {
+            final ConnectionResult result = mClient.blockingConnect();
+            if(result.isSuccess()) {
+                final DriveFolder driveFolder = openDriveFolder();
+                if(driveFolder != null) {
+                    Log.i(TAG, "Syncing photos...");
+                    syncPhotos(driveFolder);
+                    Log.i(TAG, "Syncing complete.");
+
+                    return true;
+                }
             }
+        } finally {
+            mClient.disconnect();
         }
 
-        mClient.disconnect();
-        Log.i(TAG, "Syncing complete.");
+        return false;
     }
 
     /**
@@ -242,7 +250,7 @@ public class PhotoSyncHelper {
             }
 
             if(changed) {
-                BackendUtils.requestSync(mContext);
+                BackendUtils.requestDataSync(mContext);
             }
         } finally {
             cursor.close();

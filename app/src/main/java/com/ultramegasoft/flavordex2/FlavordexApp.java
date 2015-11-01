@@ -125,7 +125,7 @@ public class FlavordexApp extends Application implements
             setLocationEnabled(true);
         }
         if(prefs.getBoolean(PREF_SYNC_DATA, false)) {
-            BackendUtils.setupDataSync(this);
+            BackendUtils.setupSync(this);
         }
     }
 
