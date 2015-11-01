@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.events.CompletionEvent;
@@ -19,6 +20,8 @@ import com.ultramegasoft.flavordex2.util.EntryUtils;
  * @author Steve Guidetti
  */
 public class DriveService extends DriveEventService {
+    private static final String TAG = "DriveService";
+
     /**
      * The custom property key to identify photos
      */
@@ -27,9 +30,11 @@ public class DriveService extends DriveEventService {
 
     @Override
     public void onCompletion(CompletionEvent event) {
+        Log.i(TAG, "Received completion event from Drive.");
         if(event.getStatus() == CompletionEvent.STATUS_SUCCESS) {
             final MetadataChangeSet metadata = event.getModifiedMetadataChangeSet();
             final String hash = metadata.getCustomPropertyChangeMap().get(sHashKey);
+            Log.i(TAG, "Photo hash: " + hash);
             if(hash != null) {
                 final ContentResolver cr = getContentResolver();
 
