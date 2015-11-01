@@ -105,7 +105,7 @@ public class BackendUtils {
      */
     public static boolean isDataSyncRequested(Context context) {
         return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
-                .getBoolean(PREF_PHOTO_SYNC_REQUESTED, true);
+                .getBoolean(PREF_DATA_SYNC_REQUESTED, true);
     }
 
     /**
