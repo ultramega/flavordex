@@ -183,6 +183,8 @@ public class SyncEndpoint {
         } catch(SQLException e) {
             e.printStackTrace();
             throw new InternalServerErrorException("Failed to update client sync time.");
+        } finally {
+            helper.close();
         }
     }
 
