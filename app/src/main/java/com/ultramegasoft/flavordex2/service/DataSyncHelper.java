@@ -43,10 +43,21 @@ public class DataSyncHelper {
     private final Context mContext;
 
     /**
+     * The client ID
+     */
+    private final long mClientId;
+
+    /**
+     * The Sync endpoint client
+     */
+    private Sync mSync;
+
+    /**
      * @param context The Context
      */
     public DataSyncHelper(Context context) {
         mContext = context;
+        mClientId = BackendUtils.getClientId(context);
     }
 
     /**
@@ -58,8 +69,7 @@ public class DataSyncHelper {
         Log.i(TAG, "Starting data sync service.");
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
-        final long clientId = BackendUtils.getClientId(mContext);
-        if(accountName == null || clientId == 0) {
+        if(accountName == null || mClientId == 0) {
             Log.i(TAG, "Client not registered. Aborting and disabling service.");
             prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_DATA, false).apply();
             return false;
@@ -67,11 +77,11 @@ public class DataSyncHelper {
         final GoogleAccountCredential credential = BackendUtils.getCredential(mContext);
         credential.setSelectedAccountName(accountName);
 
-        final Sync sync = BackendUtils.getSync(credential);
+        mSync = BackendUtils.getSync(credential);
         try {
             Log.i(TAG, "Syncing data...");
-            pushUpdates(sync, clientId);
-            fetchUpdates(sync, clientId);
+            pushUpdates();
+            fetchUpdates();
             Log.i(TAG, "Syncing complete.");
 
             return true;
@@ -85,18 +95,16 @@ public class DataSyncHelper {
     /**
      * Send updated journal data to the backend.
      *
-     * @param sync     The Sync endpoint client
-     * @param clientId The client ID
      * @throws IOException
      */
-    private void pushUpdates(Sync sync, long clientId) throws IOException {
+    private void pushUpdates() throws IOException {
         final ContentResolver cr = mContext.getContentResolver();
 
         final UpdateRecord record = new UpdateRecord();
-        record.setCats(getUpdatedCats(cr));
-        record.setEntries(getUpdatedEntries(cr));
+        record.setCats(getUpdatedCats());
+        record.setEntries(getUpdatedEntries());
 
-        final UpdateResponse response = sync.pushUpdates(clientId, record).execute();
+        final UpdateResponse response = mSync.pushUpdates(mClientId, record).execute();
 
         if(response.getCatStatuses() != null) {
             final String where = Tables.Cats.UUID + " = ?";
@@ -132,10 +140,10 @@ public class DataSyncHelper {
     /**
      * Get all categories that have changed since the last sync with the backend.
      *
-     * @param cr The ContentResolver
      * @return The list of updated categories
      */
-    private static ArrayList<CatRecord> getUpdatedCats(ContentResolver cr) {
+    private ArrayList<CatRecord> getUpdatedCats() {
+        final ContentResolver cr = mContext.getContentResolver();
         final ArrayList<CatRecord> records = new ArrayList<>();
         CatRecord record;
 
@@ -167,8 +175,8 @@ public class DataSyncHelper {
                     record.setUpdated(cursor.getLong(cursor.getColumnIndex(Tables.Cats.UPDATED)));
 
                     id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
-                    record.setExtras(getCatExtras(cr, id));
-                    record.setFlavors(getCatFlavors(cr, id));
+                    record.setExtras(getCatExtras(id));
+                    record.setFlavors(getCatFlavors(id));
 
                     records.add(record);
                 }
@@ -183,11 +191,11 @@ public class DataSyncHelper {
     /**
      * Get all the extra fields for a category from the local database.
      *
-     * @param cr    The ContentResolver
      * @param catId The local database ID of the category
      * @return A list of extra records
      */
-    private static ArrayList<ExtraRecord> getCatExtras(ContentResolver cr, long catId) {
+    private ArrayList<ExtraRecord> getCatExtras(long catId) {
+        final ContentResolver cr = mContext.getContentResolver();
         final Uri uri = Uri.withAppendedPath(Tables.Cats.CONTENT_ID_URI_BASE, catId + "/extras");
         final Cursor cursor = cr.query(uri, null, null, null, null);
         if(cursor != null) {
@@ -216,11 +224,11 @@ public class DataSyncHelper {
     /**
      * Get all the flavors for a category from the local database.
      *
-     * @param cr    The ContentResolver
      * @param catId The local database ID of the category
      * @return A list of flavor records
      */
-    private static ArrayList<FlavorRecord> getCatFlavors(ContentResolver cr, long catId) {
+    private ArrayList<FlavorRecord> getCatFlavors(long catId) {
+        final ContentResolver cr = mContext.getContentResolver();
         final Uri uri = Uri.withAppendedPath(Tables.Cats.CONTENT_ID_URI_BASE, catId + "/flavor");
         final Cursor cursor = cr.query(uri, null, null, null, null);
         if(cursor != null) {
@@ -246,10 +254,10 @@ public class DataSyncHelper {
     /**
      * Get all entries that have changed since the last sync with the backend.
      *
-     * @param cr The ContentResolver
      * @return The list of updated entries
      */
-    private static ArrayList<EntryRecord> getUpdatedEntries(ContentResolver cr) {
+    private ArrayList<EntryRecord> getUpdatedEntries() {
+        final ContentResolver cr = mContext.getContentResolver();
         final ArrayList<EntryRecord> records = new ArrayList<>();
         EntryRecord record;
 
@@ -293,9 +301,9 @@ public class DataSyncHelper {
                             cursor.getLong(cursor.getColumnIndex(Tables.Entries.UPDATED)));
 
                     id = cursor.getLong(cursor.getColumnIndex(Tables.Entries._ID));
-                    record.setExtras(getEntryExtras(cr, id));
-                    record.setFlavors(getEntryFlavors(cr, id));
-                    record.setPhotos(getEntryPhotos(cr, id));
+                    record.setExtras(getEntryExtras(id));
+                    record.setFlavors(getEntryFlavors(id));
+                    record.setPhotos(getEntryPhotos(id));
 
                     records.add(record);
                 }
@@ -310,11 +318,11 @@ public class DataSyncHelper {
     /**
      * Get all the extra fields for an entry from the local database.
      *
-     * @param cr      The ContentResolver
      * @param entryId The local database ID of the entry
      * @return A list of extra records
      */
-    private static ArrayList<ExtraRecord> getEntryExtras(ContentResolver cr, long entryId) {
+    private ArrayList<ExtraRecord> getEntryExtras(long entryId) {
+        final ContentResolver cr = mContext.getContentResolver();
         final Uri uri =
                 Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, entryId + "/extras");
         final Cursor cursor = cr.query(uri, null, null, null, null);
@@ -343,11 +351,11 @@ public class DataSyncHelper {
     /**
      * Get all the flavors for an entry from the local database.
      *
-     * @param cr      The ContentResolver
      * @param entryId The local database ID of the entry
      * @return A list of flavor records
      */
-    private static ArrayList<FlavorRecord> getEntryFlavors(ContentResolver cr, long entryId) {
+    private ArrayList<FlavorRecord> getEntryFlavors(long entryId) {
+        final ContentResolver cr = mContext.getContentResolver();
         final Uri uri =
                 Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, entryId + "/flavor");
         final Cursor cursor = cr.query(uri, null, null, null, null);
@@ -377,11 +385,11 @@ public class DataSyncHelper {
     /**
      * Get all the photos for an entry from the local database.
      *
-     * @param cr      The ContentResolver
      * @param entryId The local database ID of the entry
      * @return A list of photo records
      */
-    private static ArrayList<PhotoRecord> getEntryPhotos(ContentResolver cr, long entryId) {
+    private ArrayList<PhotoRecord> getEntryPhotos(long entryId) {
+        final ContentResolver cr = mContext.getContentResolver();
         final Uri uri =
                 Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, entryId + "/photos");
         final Cursor cursor = cr.query(uri, null, null, null, null);
@@ -398,7 +406,7 @@ public class DataSyncHelper {
                         id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
                         path = cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH));
                         if(path != null) {
-                            hash = generatePhotoHash(cr, id, path);
+                            hash = generatePhotoHash(id, path);
                         }
                         if(hash == null) {
                             continue;
@@ -424,12 +432,11 @@ public class DataSyncHelper {
     /**
      * Generate and save the MD5 hash of a photo.
      *
-     * @param cr       The ContentResolver
      * @param photoId  The database ID of the photo
      * @param filePath The path to the photo file
      * @return The generated MD5 hash
      */
-    private static String generatePhotoHash(ContentResolver cr, long photoId, String filePath) {
+    private String generatePhotoHash(long photoId, String filePath) {
         if(filePath == null) {
             return null;
         }
@@ -439,7 +446,7 @@ public class DataSyncHelper {
             final Uri uri = ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, photoId);
             final ContentValues values = new ContentValues();
             values.put(Tables.Photos.HASH, hash);
-            cr.update(uri, values, null, null);
+            mContext.getContentResolver().update(uri, values, null, null);
         }
 
         return hash;
@@ -448,24 +455,21 @@ public class DataSyncHelper {
     /**
      * Fetch all the changed records from the backend.
      *
-     * @param sync     The Sync endpoint client
-     * @param clientId The client ID
      * @throws IOException
      */
-    private void fetchUpdates(Sync sync, long clientId) throws IOException {
-        final ContentResolver cr = mContext.getContentResolver();
+    private void fetchUpdates() throws IOException {
         final UpdateRecord record =
-                sync.fetchUpdates(clientId, BackendUtils.getLastSync(mContext)).execute();
+                mSync.fetchUpdates(mClientId, BackendUtils.getLastSync(mContext)).execute();
 
         if(record.getCats() != null) {
             for(CatRecord catRecord : record.getCats()) {
-                parseCat(cr, catRecord);
+                parseCat(catRecord);
             }
         }
 
         if(record.getEntries() != null) {
             for(EntryRecord entryRecord : record.getEntries()) {
-                parseEntry(cr, entryRecord);
+                parseEntry(entryRecord);
             }
         }
     }
@@ -473,11 +477,11 @@ public class DataSyncHelper {
     /**
      * Parse a category record and save the category to the local database.
      *
-     * @param cr     The ContentResolver
      * @param record The category record
      */
-    private static void parseCat(ContentResolver cr, CatRecord record) {
-        final long catId = getCatId(cr, record.getUuid());
+    private void parseCat(CatRecord record) {
+        final ContentResolver cr = mContext.getContentResolver();
+        final long catId = getCatId(record.getUuid());
         Uri uri;
         final ContentValues values = new ContentValues();
         if(record.getDeleted()) {
@@ -499,25 +503,26 @@ public class DataSyncHelper {
                 uri = cr.insert(uri, values);
             }
 
-            parseCatExtras(cr, uri, record);
-            parseCatFlavors(cr, uri, record);
+            parseCatExtras(uri, record);
+            parseCatFlavors(uri, record);
         }
     }
 
     /**
      * Parse the extra fields from a category record and save them to the local database.
      *
-     * @param cr     The ContentResolver
      * @param catUri The category Uri
      * @param record The category record
      */
-    private static void parseCatExtras(ContentResolver cr, Uri catUri, CatRecord record) {
+    private void parseCatExtras(Uri catUri, CatRecord record) {
         final ArrayList<ExtraRecord> extras = (ArrayList<ExtraRecord>)record.getExtras();
         if(extras == null) {
             return;
         }
 
+        final ContentResolver cr = mContext.getContentResolver();
         Uri uri = Uri.withAppendedPath(catUri, "extras");
+
         cr.delete(uri, null, null);
 
         final ContentValues values = new ContentValues();
@@ -528,7 +533,7 @@ public class DataSyncHelper {
             values.put(Tables.Extras.POS, extra.getPos());
             values.put(Tables.Extras.DELETED, extra.getDeleted());
 
-            id = getExtraId(cr, extra.getUuid());
+            id = getExtraId(extra.getUuid());
             if(id > 0) {
                 uri = ContentUris.withAppendedId(Tables.Extras.CONTENT_ID_URI_BASE, id);
                 cr.update(uri, values, null, null);
@@ -542,17 +547,18 @@ public class DataSyncHelper {
     /**
      * Parse the flavors from a category record and save them to the local database.
      *
-     * @param cr     The ContentResolver
      * @param catUri The category Uri
      * @param record The category record
      */
-    private static void parseCatFlavors(ContentResolver cr, Uri catUri, CatRecord record) {
+    private void parseCatFlavors(Uri catUri, CatRecord record) {
         final ArrayList<FlavorRecord> flavors = (ArrayList<FlavorRecord>)record.getFlavors();
         if(flavors == null) {
             return;
         }
 
+        final ContentResolver cr = mContext.getContentResolver();
         final Uri uri = Uri.withAppendedPath(catUri, "flavor");
+
         cr.delete(uri, null, null);
 
         final ContentValues values = new ContentValues();
@@ -566,11 +572,11 @@ public class DataSyncHelper {
     /**
      * Parse an entry record and save the entry to the local database.
      *
-     * @param cr     The ContentResolver
      * @param record The entry record
      */
-    private static void parseEntry(ContentResolver cr, EntryRecord record) {
-        final long entryId = getEntryId(cr, record.getUuid());
+    private void parseEntry(EntryRecord record) {
+        final ContentResolver cr = mContext.getContentResolver();
+        final long entryId = getEntryId(record.getUuid());
         Uri uri;
         final ContentValues values = new ContentValues();
         if(record.getDeleted()) {
@@ -581,7 +587,7 @@ public class DataSyncHelper {
                 cr.delete(uri, null, null);
             }
         } else {
-            final long catId = getCatId(cr, record.getCatUuid());
+            final long catId = getCatId(record.getCatUuid());
             if(catId == 0) {
                 return;
             }
@@ -604,32 +610,33 @@ public class DataSyncHelper {
                 uri = cr.insert(uri, values);
             }
 
-            parseEntryExtras(cr, uri, record);
-            parseEntryFlavors(cr, uri, record);
-            parseEntryPhotos(cr, uri, record);
+            parseEntryExtras(uri, record);
+            parseEntryFlavors(uri, record);
+            parseEntryPhotos(uri, record);
         }
     }
 
     /**
      * Parse the extra fields from an entry record and save them to the local database.
      *
-     * @param cr       The ContentResolver
      * @param entryUri The entry Uri
      * @param record   The entry record
      */
-    private static void parseEntryExtras(ContentResolver cr, Uri entryUri, EntryRecord record) {
+    private void parseEntryExtras(Uri entryUri, EntryRecord record) {
         final ArrayList<ExtraRecord> extras = (ArrayList<ExtraRecord>)record.getExtras();
         if(extras == null) {
             return;
         }
 
+        final ContentResolver cr = mContext.getContentResolver();
         final Uri uri = Uri.withAppendedPath(entryUri, "extras");
+
         cr.delete(uri, null, null);
 
         long extraId;
         final ContentValues values = new ContentValues();
         for(ExtraRecord extra : extras) {
-            extraId = getExtraId(cr, extra.getUuid());
+            extraId = getExtraId(extra.getUuid());
             if(extraId > 0) {
                 values.put(Tables.EntriesExtras.EXTRA, extraId);
                 values.put(Tables.EntriesExtras.VALUE, extra.getValue());
@@ -641,17 +648,18 @@ public class DataSyncHelper {
     /**
      * Parse the flavors from an entry record and save them to the local database.
      *
-     * @param cr       The ContentResolver
      * @param entryUri The entry Uri
      * @param record   The entry record
      */
-    private static void parseEntryFlavors(ContentResolver cr, Uri entryUri, EntryRecord record) {
+    private void parseEntryFlavors(Uri entryUri, EntryRecord record) {
         final ArrayList<FlavorRecord> flavors = (ArrayList<FlavorRecord>)record.getFlavors();
         if(flavors == null) {
             return;
         }
 
+        final ContentResolver cr = mContext.getContentResolver();
         final Uri uri = Uri.withAppendedPath(entryUri, "flavor");
+
         cr.delete(uri, null, null);
 
         final ContentValues values = new ContentValues();
@@ -666,20 +674,19 @@ public class DataSyncHelper {
     /**
      * Parse the photos from an entry record and save them to the local database.
      *
-     * @param cr       The ContentResolver
      * @param entryUri The entry Uri
      * @param record   The entry record
      */
-    private static void parseEntryPhotos(ContentResolver cr, Uri entryUri, EntryRecord record) {
+    private void parseEntryPhotos(Uri entryUri, EntryRecord record) {
         final ArrayList<PhotoRecord> photos = (ArrayList<PhotoRecord>)record.getPhotos();
         if(photos == null) {
             return;
         }
 
-        final ArrayList<String> photoHashes = new ArrayList<>();
-
+        final ContentResolver cr = mContext.getContentResolver();
         final Uri uri = Uri.withAppendedPath(entryUri, "photos");
 
+        final ArrayList<String> photoHashes = new ArrayList<>();
         final ContentValues values = new ContentValues();
         final String where = Tables.Photos.HASH + " = ?";
         final String[] whereArgs = new String[1];
@@ -721,14 +728,16 @@ public class DataSyncHelper {
     /**
      * Get the local database ID of a category based on the UUID.
      *
-     * @param cr   The ContentResolver
      * @param uuid The UUID of the category
      * @return The local database ID of the category or 0 if not found
      */
-    private static long getCatId(ContentResolver cr, String uuid) {
+    private long getCatId(String uuid) {
         if(uuid == null) {
             return 0;
         }
+
+        final ContentResolver cr = mContext.getContentResolver();
+
         final String[] projection = new String[] {Tables.Cats._ID};
         final String where = Tables.Cats.UUID + " = ?";
         final String[] whereArgs = new String[] {uuid};
@@ -749,14 +758,16 @@ public class DataSyncHelper {
     /**
      * Get the local database ID of an entry based on the UUID.
      *
-     * @param cr   The ContentResolver
      * @param uuid The UUID of the entry
      * @return The local database ID of the entry or 0 if not found
      */
-    private static long getEntryId(ContentResolver cr, String uuid) {
+    private long getEntryId(String uuid) {
         if(uuid == null) {
             return 0;
         }
+
+        final ContentResolver cr = mContext.getContentResolver();
+
         final String[] projection = new String[] {Tables.Entries._ID};
         final String where = Tables.Entries.UUID + " = ?";
         final String[] whereArgs = new String[] {uuid};
@@ -778,14 +789,16 @@ public class DataSyncHelper {
     /**
      * Get the local database ID of an extra field based on the UUID.
      *
-     * @param cr   The ContentResolver
      * @param uuid The UUID of the extra field
      * @return The local database ID of the extra field or 0 if not found
      */
-    private static long getExtraId(ContentResolver cr, String uuid) {
+    private long getExtraId(String uuid) {
         if(uuid == null) {
             return 0;
         }
+
+        final ContentResolver cr = mContext.getContentResolver();
+
         final String[] projection = new String[] {Tables.Extras._ID};
         final String where = Tables.Extras.UUID + " = ?";
         final String[] whereArgs = new String[] {uuid};
