@@ -472,7 +472,7 @@ public class DataSyncHelper {
             }
         }
 
-        mSync.confirmSync(mClientId, record.getTimestamp());
+        mSync.confirmSync(mClientId, record.getTimestamp()).execute();
     }
 
     /**
