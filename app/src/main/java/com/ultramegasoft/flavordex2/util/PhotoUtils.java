@@ -288,6 +288,8 @@ public class PhotoUtils {
             sThumbCache.remove(id);
             //noinspection ResultOfMethodCallIgnored
             file.delete();
+            final ContentResolver cr = context.getContentResolver();
+            cr.notifyChange(Tables.Entries.CONTENT_URI, null);
         }
     }
 
