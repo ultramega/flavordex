@@ -219,6 +219,7 @@ public class SettingsActivity extends AppCompatActivity {
             } else if(FlavordexApp.PREF_SYNC_PHOTOS.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
                     mPrefSyncPhotos.setChecked(true);
+                    BackendUtils.requestSync(getContext());
                 }
             }
         }
