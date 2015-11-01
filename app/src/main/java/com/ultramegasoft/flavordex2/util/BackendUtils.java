@@ -72,6 +72,9 @@ public class BackendUtils {
                 .setService(TaskService.class)
                 .build();
         GcmNetworkManager.getInstance(context).schedule(task);
+
+        requestDataSync(context);
+        requestPhotoSync(context);
     }
 
     /**
