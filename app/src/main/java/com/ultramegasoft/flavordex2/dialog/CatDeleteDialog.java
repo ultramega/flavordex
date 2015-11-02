@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
+import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
 /**
  * Dialog for confirming the deletion of a category. This also handles the deleting of the
@@ -247,6 +248,19 @@ public class CatDeleteDialog extends DialogFragment
         protected Void doInBackground(Void... params) {
             final ContentResolver cr = mContext.getContentResolver();
             final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
+
+            final Cursor cursor = cr.query(Uri.withAppendedPath(uri, "entries"),
+                    new String[] {Tables.Entries._ID}, null, null, null);
+            if(cursor != null) {
+                try {
+                    while(cursor.moveToNext()) {
+                        PhotoUtils.deleteThumb(mContext, cursor.getLong(0));
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+
             cr.delete(uri, null, null);
             cr.notifyChange(Tables.Entries.CONTENT_URI, null);
             BackendUtils.requestDataSync(mContext);
