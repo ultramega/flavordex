@@ -218,7 +218,7 @@ public class PhotoUtils {
                 if(cursor.moveToFirst()) {
                     generateThumb(context, cursor.getString(0), id);
                 } else {
-                    deleteThumb(context, id);
+                    generateThumb(context, null, id);
                 }
             } finally {
                 cursor.close();
@@ -234,20 +234,25 @@ public class PhotoUtils {
      * @param id      The ID of the entry the image belongs to
      */
     private static void generateThumb(Context context, String path, long id) {
-        final Bitmap inputBitmap = loadBitmap(path, THUMB_SIZE, THUMB_SIZE);
+        try {
+            if(path == null) {
+                //noinspection ResultOfMethodCallIgnored
+                getThumbFile(context, id).createNewFile();
+                return;
+            }
 
-        if(inputBitmap != null) {
-            try {
+            final Bitmap inputBitmap = loadBitmap(path, THUMB_SIZE, THUMB_SIZE);
+
+            if(inputBitmap != null) {
                 final FileOutputStream os = new FileOutputStream(getThumbFile(context, id));
                 inputBitmap.compress(Bitmap.CompressFormat.JPEG, 90, os);
                 os.close();
 
                 sThumbCache.remove(id);
-            } catch(IOException e) {
-                Log.e(TAG, "Error writing thumbnail bitmap", e);
+                inputBitmap.recycle();
             }
-
-            inputBitmap.recycle();
+        } catch(IOException e) {
+            Log.e(TAG, "Error writing thumbnail bitmap", e);
         }
     }
 
@@ -289,7 +294,8 @@ public class PhotoUtils {
             //noinspection ResultOfMethodCallIgnored
             file.delete();
             final ContentResolver cr = context.getContentResolver();
-            cr.notifyChange(Tables.Entries.CONTENT_URI, null);
+            final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, id);
+            cr.notifyChange(uri, null);
         }
     }
 
