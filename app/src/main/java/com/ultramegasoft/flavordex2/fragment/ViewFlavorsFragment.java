@@ -296,8 +296,10 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                     flavorValues.add(new RadarHolder(name, value));
                 }
                 mData = flavorValues;
-                mRadarView.startAnimation(AnimationUtils.loadAnimation(getContext(),
-                        android.R.anim.fade_in));
+                if(mRadarView.getVisibility() != View.VISIBLE) {
+                    mRadarView.startAnimation(AnimationUtils.loadAnimation(getContext(),
+                            android.R.anim.fade_in));
+                }
                 break;
             case LOADER_DEFAULT_FLAVOR:
                 while(data.moveToNext()) {
@@ -312,10 +314,10 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                 }
                 break;
         }
-        mRadarView.setData(flavorValues);
+        if(!mEditMode) {
+            mRadarView.setData(flavorValues);
+        }
         mRadarView.setVisibility(View.VISIBLE);
-
-        getLoaderManager().destroyLoader(loader.getId());
     }
 
     @Override

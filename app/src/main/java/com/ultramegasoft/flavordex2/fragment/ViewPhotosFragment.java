@@ -255,18 +255,14 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         final ArrayList<PhotoHolder> photos = getPhotos();
         photos.clear();
-        if(data.getCount() > 0) {
-            while(data.moveToNext()) {
-                final String path = data.getString(1);
-                if(path != null && new File(path).exists()) {
-                    photos.add(new PhotoHolder(data.getLong(0), path, data.getInt(2)));
-                }
+        while(data.moveToNext()) {
+            final String path = data.getString(1);
+            if(path != null && new File(path).exists()) {
+                photos.add(new PhotoHolder(data.getLong(0), path, data.getInt(2)));
             }
         }
 
         notifyDataChanged();
-
-        getLoaderManager().destroyLoader(0);
     }
 
     @Override
