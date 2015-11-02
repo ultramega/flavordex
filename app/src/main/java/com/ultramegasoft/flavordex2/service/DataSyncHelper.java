@@ -43,6 +43,11 @@ public class DataSyncHelper {
     private final Context mContext;
 
     /**
+     * Helper for syncing photos
+     */
+    private final PhotoSyncHelper mPhotoSyncHelper;
+
+    /**
      * The client ID
      */
     private final long mClientId;
@@ -53,10 +58,12 @@ public class DataSyncHelper {
     private Sync mSync;
 
     /**
-     * @param context The Context
+     * @param context         The Context
+     * @param photoSyncHelper Helper for syncing photos
      */
-    public DataSyncHelper(Context context) {
+    public DataSyncHelper(Context context, PhotoSyncHelper photoSyncHelper) {
         mContext = context;
+        mPhotoSyncHelper = photoSyncHelper;
         mClientId = BackendUtils.getClientId(context);
     }
 
@@ -727,11 +734,22 @@ public class DataSyncHelper {
             }
         }
 
-        PhotoUtils.deleteThumb(mContext, Long.parseLong(entryUri.getLastPathSegment()));
-
         if(!photos.isEmpty()) {
-            BackendUtils.requestPhotoSync(mContext);
+            requestPhotoSync();
         }
+    }
+
+    /**
+     * Request a photo sync.
+     */
+    private void requestPhotoSync() {
+        if(mPhotoSyncHelper != null) {
+            if(mPhotoSyncHelper.isConnected() || mPhotoSyncHelper.connect()) {
+                mPhotoSyncHelper.fetchPhotos();
+                return;
+            }
+        }
+        BackendUtils.requestPhotoSync(mContext);
     }
 
     /**

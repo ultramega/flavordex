@@ -68,6 +68,11 @@ public class PhotoSyncHelper {
     private GoogleApiClient mClient;
 
     /**
+     * The Drive folder for the application
+     */
+    private DriveFolder mDriveFolder;
+
+    /**
      * The Context
      */
     private final Context mContext;
@@ -80,12 +85,12 @@ public class PhotoSyncHelper {
     }
 
     /**
-     * Sync photos with Google Drive.
+     * Connect to Google Drive.
      *
-     * @return Whether the sync completed successfully
+     * @return Whether the client connected successfully
      */
-    public boolean sync() {
-        Log.i(TAG, "Starting photo sync service.");
+    public boolean connect() {
+        Log.i(TAG, "Connecting to Google Drive...");
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             Log.i(TAG, "External storage not mounted. Aborting.");
             return false;
@@ -116,23 +121,37 @@ public class PhotoSyncHelper {
                 .addApi(Drive.API)
                 .addScope(Drive.SCOPE_FILE)
                 .build();
-        try {
-            final ConnectionResult result = mClient.blockingConnect();
-            if(result.isSuccess()) {
-                final DriveFolder driveFolder = openDriveFolder();
-                if(driveFolder != null) {
-                    Log.i(TAG, "Syncing photos...");
-                    syncPhotos(driveFolder);
-                    Log.i(TAG, "Syncing complete.");
-
-                    return true;
-                }
+        final ConnectionResult result = mClient.blockingConnect();
+        if(result.isSuccess()) {
+            final DriveFolder driveFolder = openDriveFolder();
+            if(driveFolder != null) {
+                mDriveFolder = driveFolder;
+                Log.i(TAG, "Connected.");
+                return true;
             }
-        } finally {
-            mClient.disconnect();
         }
 
+        mClient.disconnect();
         return false;
+    }
+
+    /**
+     * Disconnect the client from Google Drive.
+     */
+    public void disconnect() {
+        if(mClient != null) {
+            mClient.disconnect();
+            Log.i(TAG, "Disconnected.");
+        }
+    }
+
+    /**
+     * Is this client connected?
+     *
+     * @return Whether the client is connected
+     */
+    public boolean isConnected() {
+        return mDriveFolder != null;
     }
 
     /**
@@ -179,21 +198,10 @@ public class PhotoSyncHelper {
     }
 
     /**
-     * Sync all photos with Drive.
-     *
-     * @param driveFolder The Drive folder
-     */
-    private void syncPhotos(DriveFolder driveFolder) {
-        pushPhotos(driveFolder);
-        fetchPhotos();
-    }
-
-    /**
      * Upload photos without a Drive ID.
-     *
-     * @param driveFolder The Drive folder
      */
-    private void pushPhotos(DriveFolder driveFolder) {
+    public void pushPhotos() {
+        Log.i(TAG, "Pushing photos...");
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
                 Tables.Photos._ID,
@@ -233,7 +241,7 @@ public class PhotoSyncHelper {
                     values.put(Tables.Photos.HASH, hash);
                 }
 
-                driveFile = uploadFile(driveFolder, file, hash);
+                driveFile = uploadFile(file, hash);
                 if(driveFile != null) {
                     values.put(Tables.Photos.DRIVE_ID, driveFile.getDriveId().encodeToString());
                 }
@@ -260,7 +268,8 @@ public class PhotoSyncHelper {
     /**
      * Download all photos without a local path.
      */
-    private void fetchPhotos() {
+    public void fetchPhotos() {
+        Log.i(TAG, "Fetching photos...");
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
                 Tables.Photos._ID,
@@ -302,13 +311,12 @@ public class PhotoSyncHelper {
     /**
      * Upload a file to Drive if it does not already exist.
      *
-     * @param driveFolder The Drive folder
-     * @param file        The local file
-     * @param hash        The file hash
+     * @param file The local file
+     * @param hash The file hash
      * @return The DriveFile
      */
-    private DriveFile uploadFile(DriveFolder driveFolder, File file, String hash) {
-        DriveFile driveFile = getDriveFile(driveFolder, hash);
+    private DriveFile uploadFile(File file, String hash) {
+        DriveFile driveFile = getDriveFile(hash);
         if(driveFile != null) {
             return driveFile;
         }
@@ -335,7 +343,7 @@ public class PhotoSyncHelper {
                 outputStream.close();
             }
 
-            createNewFile(driveFolder, file.getName(), hash, driveContents);
+            createNewFile(file.getName(), hash, driveContents);
             return null;
         } catch(IOException e) {
             Log.w(TAG, "Upload failed", e);
@@ -401,15 +409,14 @@ public class PhotoSyncHelper {
     /**
      * Get a file from the Drive folder.
      *
-     * @param driveFolder The Drive folder
-     * @param hash        The file hash
+     * @param hash The file hash
      * @return The DriveFile or null if it doesn't exist.
      */
-    private DriveFile getDriveFile(DriveFolder driveFolder, String hash) {
+    private DriveFile getDriveFile(String hash) {
         final Query query = new Query.Builder()
                 .addFilter(Filters.eq(sHashKey, hash)).build();
         final DriveApi.MetadataBufferResult result =
-                driveFolder.queryChildren(mClient, query).await();
+                mDriveFolder.queryChildren(mClient, query).await();
         try {
             final MetadataBuffer buffer = result.getMetadataBuffer();
             if(buffer != null && buffer.getCount() > 0) {
@@ -424,18 +431,16 @@ public class PhotoSyncHelper {
     /**
      * Create a new file on Drive.
      *
-     * @param driveFolder The Drive folder
-     * @param title       The name of the file
-     * @param hash        The file hash
-     * @param contents    The file content
+     * @param title    The name of the file
+     * @param hash     The file hash
+     * @param contents The file content
      */
-    private void createNewFile(DriveFolder driveFolder, String title, String hash,
-                               DriveContents contents) {
+    private void createNewFile(String title, String hash, DriveContents contents) {
         final MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
                 .setTitle(title)
                 .setCustomProperty(sHashKey, hash).build();
         final ExecutionOptions options = new ExecutionOptions.Builder()
                 .setNotifyOnCompletion(true).build();
-        driveFolder.createFile(mClient, changeSet, contents, options).await();
+        mDriveFolder.createFile(mClient, changeSet, contents, options).await();
     }
 }
