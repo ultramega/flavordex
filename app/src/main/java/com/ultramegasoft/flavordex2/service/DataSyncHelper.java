@@ -624,15 +624,15 @@ public class DataSyncHelper {
      * @param record   The entry record
      */
     private void parseEntryExtras(Uri entryUri, EntryRecord record) {
-        final ArrayList<ExtraRecord> extras = (ArrayList<ExtraRecord>)record.getExtras();
-        if(extras == null) {
-            return;
-        }
-
         final ContentResolver cr = mContext.getContentResolver();
         final Uri uri = Uri.withAppendedPath(entryUri, "extras");
 
         cr.delete(uri, null, null);
+
+        final ArrayList<ExtraRecord> extras = (ArrayList<ExtraRecord>)record.getExtras();
+        if(extras == null) {
+            return;
+        }
 
         long extraId;
         final ContentValues values = new ContentValues();
@@ -653,15 +653,15 @@ public class DataSyncHelper {
      * @param record   The entry record
      */
     private void parseEntryFlavors(Uri entryUri, EntryRecord record) {
-        final ArrayList<FlavorRecord> flavors = (ArrayList<FlavorRecord>)record.getFlavors();
-        if(flavors == null) {
-            return;
-        }
-
         final ContentResolver cr = mContext.getContentResolver();
         final Uri uri = Uri.withAppendedPath(entryUri, "flavor");
 
         cr.delete(uri, null, null);
+
+        final ArrayList<FlavorRecord> flavors = (ArrayList<FlavorRecord>)record.getFlavors();
+        if(flavors == null) {
+            return;
+        }
 
         final ContentValues values = new ContentValues();
         for(FlavorRecord flavor : flavors) {
@@ -680,12 +680,14 @@ public class DataSyncHelper {
      */
     private void parseEntryPhotos(Uri entryUri, EntryRecord record) {
         final ArrayList<PhotoRecord> photos = (ArrayList<PhotoRecord>)record.getPhotos();
-        if(photos == null) {
-            return;
-        }
 
         final ContentResolver cr = mContext.getContentResolver();
         final Uri uri = Uri.withAppendedPath(entryUri, "photos");
+
+        if(photos == null) {
+            cr.delete(uri, null, null);
+            return;
+        }
 
         final ArrayList<String> photoHashes = new ArrayList<>();
         final ContentValues values = new ContentValues();
