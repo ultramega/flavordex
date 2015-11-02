@@ -222,7 +222,7 @@ public abstract class AbsPhotosFragment extends Fragment {
             if(path.equals(photo.path)) {
                 return;
             }
-            if(photo.pos > pos) {
+            if(photo.pos >= pos) {
                 pos = photo.pos + 1;
             }
         }
