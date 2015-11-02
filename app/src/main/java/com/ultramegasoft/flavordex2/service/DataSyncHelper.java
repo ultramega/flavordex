@@ -585,6 +585,8 @@ public class DataSyncHelper {
     private void parseEntry(EntryRecord record) {
         final ContentResolver cr = mContext.getContentResolver();
         final long entryId = getEntryId(record.getUuid());
+        PhotoUtils.deleteThumb(mContext, entryId);
+
         Uri uri;
         final ContentValues values = new ContentValues();
         if(record.getDeleted()) {
@@ -621,8 +623,6 @@ public class DataSyncHelper {
             parseEntryExtras(uri, record);
             parseEntryFlavors(uri, record);
             parseEntryPhotos(uri, record);
-
-            PhotoUtils.deleteThumb(mContext, entryId);
         }
     }
 
