@@ -621,6 +621,8 @@ public class DataSyncHelper {
             parseEntryExtras(uri, record);
             parseEntryFlavors(uri, record);
             parseEntryPhotos(uri, record);
+
+            PhotoUtils.deleteThumb(mContext, entryId);
         }
     }
 
