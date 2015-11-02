@@ -345,6 +345,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
                 uri = mContext.getContentResolver().insert(uri, values);
                 if(uri != null) {
                     mPhoto.id = Long.valueOf(uri.getLastPathSegment());
+                    PhotoUtils.deleteThumb(mContext, mEntryId);
                     EntryUtils.markChanged(mContext.getContentResolver(), mEntryId);
                     BackendUtils.requestDataSync(mContext);
                     BackendUtils.requestPhotoSync(mContext);

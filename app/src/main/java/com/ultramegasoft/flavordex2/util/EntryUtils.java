@@ -304,7 +304,7 @@ public class EntryUtils {
                     cr.delete(uri, null, null);
 
                     final long entryId = cursor.getLong(0);
-                    PhotoUtils.generateThumb(context, entryId);
+                    PhotoUtils.deleteThumb(context, entryId);
                     cr.notifyChange(ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE,
                             entryId), null);
                 }
