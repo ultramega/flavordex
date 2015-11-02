@@ -116,6 +116,12 @@ public class DatabaseHelper {
         while(result.next()) {
             if(gcmId.equals(result.getString(2))) {
                 record.setClientId(result.getLong(1));
+
+                sql = "UPDATE clients SET last_sync = 0 WHERE id = ?";
+                stmt = mConnection.prepareStatement(sql);
+                stmt.setLong(1, record.getClientId());
+                stmt.executeUpdate();
+
                 return record;
             }
         }
