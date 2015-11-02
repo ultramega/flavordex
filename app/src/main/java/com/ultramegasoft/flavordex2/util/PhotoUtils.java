@@ -268,9 +268,10 @@ public class PhotoUtils {
 
         if(!file.exists()) {
             generateThumb(context, id);
-            if(!file.exists()) {
-                return null;
-            }
+        }
+
+        if(file.length() == 0) {
+            return null;
         }
 
         try {
