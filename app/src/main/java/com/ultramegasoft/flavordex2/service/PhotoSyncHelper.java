@@ -21,6 +21,7 @@ import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.ExecutionOptions;
+import com.google.android.gms.drive.Metadata;
 import com.google.android.gms.drive.MetadataBuffer;
 import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.metadata.CustomPropertyKey;
@@ -377,11 +378,15 @@ public class PhotoSyncHelper {
         }
 
         try {
-            final String fileName =
-                    driveFile.getMetadata(mClient).await().getMetadata().getOriginalFilename();
-            final File outputFile = new File(PhotoUtils.getMediaStorageDir(), fileName);
+            final Metadata metadata = driveFile.getMetadata(mClient).await().getMetadata();
+            final String fileName = metadata.getOriginalFilename();
+            File outputFile = new File(PhotoUtils.getMediaStorageDir(), fileName);
             if(outputFile.exists()) {
-                return outputFile.getPath();
+                final String hash = metadata.getCustomProperties().get(sHashKey);
+                if(hash != null && hash.equals(PhotoUtils.getMD5Hash(outputFile))) {
+                    return outputFile.getPath();
+                }
+                outputFile = getUniqueFile(outputFile);
             }
             final OutputStream outputStream =
                     new BufferedOutputStream(new FileOutputStream(outputFile));
@@ -442,5 +447,29 @@ public class PhotoSyncHelper {
         final ExecutionOptions options = new ExecutionOptions.Builder()
                 .setNotifyOnCompletion(true).build();
         mDriveFolder.createFile(mClient, changeSet, contents, options).await();
+    }
+
+    /**
+     * Create a unique file name in case of conflicts.
+     *
+     * @param original The original file
+     * @return The uniquely named file
+     */
+    private static File getUniqueFile(File original) {
+        final String origName = original.getName();
+        final int extPos = origName.lastIndexOf('.');
+        final String name, ext;
+        if(extPos == -1) {
+            name = origName;
+            ext = "";
+        } else {
+            name = origName.substring(0, extPos);
+            ext = origName.substring(extPos);
+        }
+        int num = 1;
+        while(original.exists()) {
+            original = new File(original.getParentFile(), name + " (" + num++ + ")" + ext);
+        }
+        return original;
     }
 }
