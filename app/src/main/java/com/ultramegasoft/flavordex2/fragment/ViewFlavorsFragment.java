@@ -300,6 +300,9 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                     mRadarView.startAnimation(AnimationUtils.loadAnimation(getContext(),
                             android.R.anim.fade_in));
                 }
+                if(!mEditMode) {
+                    mRadarView.setData(flavorValues);
+                }
                 break;
             case LOADER_DEFAULT_FLAVOR:
                 while(data.moveToNext()) {
@@ -307,15 +310,13 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                     flavorValues.add(new RadarHolder(name, 0));
                 }
 
+                mRadarView.setData(flavorValues);
                 if(!mEditMode) {
                     setEditMode(true, true);
                 } else {
                     mRadarView.turnTo(0);
                 }
                 break;
-        }
-        if(!mEditMode) {
-            mRadarView.setData(flavorValues);
         }
         mRadarView.setVisibility(View.VISIBLE);
     }
