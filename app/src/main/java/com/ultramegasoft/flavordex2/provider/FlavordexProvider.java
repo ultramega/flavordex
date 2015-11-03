@@ -361,6 +361,25 @@ public class FlavordexProvider extends ContentProvider {
     }
 
     @Override
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        String table;
+        switch(sUriMatcher.match(uri)) {
+            case ENTRIES_FLAVOR:
+                table = Tables.EntriesFlavors.TABLE_NAME;
+                final long entryId = Long.parseLong(uri.getPathSegments().get(1));
+                db.delete(table, Tables.EntriesFlavors.ENTRY + " = " + entryId, null);
+                for(ContentValues value : values) {
+                    value.put(Tables.EntriesFlavors.ENTRY, entryId);
+                    db.insert(table, null, value);
+                }
+                mResolver.notifyChange(uri, null);
+                return values.length;
+        }
+        return super.bulkInsert(uri, values);
+    }
+
+    @Override
     public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
         String table;

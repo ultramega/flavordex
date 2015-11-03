@@ -359,16 +359,18 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
             final ContentResolver cr = mContext.getContentResolver();
             Uri uri =
                     Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/flavor");
-            cr.delete(uri, null, null);
-            final ContentValues values = new ContentValues();
+            final ContentValues[] valuesArray = new ContentValues[mData.size()];
+            ContentValues values;
             RadarHolder item;
-            for(int i = 0; i < mData.size(); i++) {
+            for(int i = 0; i < valuesArray.length; i++) {
                 item = mData.get(i);
+                values = new ContentValues();
                 values.put(Tables.EntriesFlavors.FLAVOR, item.name);
                 values.put(Tables.EntriesFlavors.VALUE, item.value);
                 values.put(Tables.EntriesFlavors.POS, i);
-                cr.insert(uri, values);
+                valuesArray[i] = values;
             }
+            cr.bulkInsert(uri, valuesArray);
 
             EntryUtils.markChanged(cr, mEntryId);
 

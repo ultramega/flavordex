@@ -665,20 +665,23 @@ public class DataSyncHelper {
         final ContentResolver cr = mContext.getContentResolver();
         final Uri uri = Uri.withAppendedPath(entryUri, "flavor");
 
-        cr.delete(uri, null, null);
-
         final ArrayList<FlavorRecord> flavors = (ArrayList<FlavorRecord>)record.getFlavors();
         if(flavors == null) {
             return;
         }
 
-        final ContentValues values = new ContentValues();
-        for(FlavorRecord flavor : flavors) {
+        final ContentValues[] valuesArray = new ContentValues[flavors.size()];
+        ContentValues values;
+        FlavorRecord flavor;
+        for(int i = 0; i < valuesArray.length; i++) {
+            flavor = flavors.get(i);
+            values = new ContentValues();
             values.put(Tables.EntriesFlavors.FLAVOR, flavor.getName());
             values.put(Tables.EntriesFlavors.VALUE, flavor.getValue());
             values.put(Tables.EntriesFlavors.POS, flavor.getPos());
-            cr.insert(uri, values);
+            valuesArray[i] = values;
         }
+        cr.bulkInsert(uri, valuesArray);
     }
 
     /**
