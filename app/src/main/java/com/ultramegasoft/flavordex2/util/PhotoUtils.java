@@ -355,6 +355,25 @@ public class PhotoUtils {
         return albumDir;
     }
 
+    public static String getName(ContentResolver cr, Uri uri) {
+        if("file".equals(uri.getScheme())) {
+            return uri.getLastPathSegment();
+        } else {
+            final String[] projection = new String[] {MediaStore.MediaColumns.TITLE};
+            final Cursor cursor = cr.query(uri, projection, null, null, null);
+            if(cursor != null) {
+                try {
+                    if(cursor.moveToFirst()) {
+                        return cursor.getString(0);
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Get the MD5 hash of a file as a 32 character hex string.
      *

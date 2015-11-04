@@ -10,7 +10,6 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.support.v4.net.ConnectivityManagerCompat;
 import android.util.Log;
 
@@ -273,19 +272,8 @@ public class PhotoSyncHelper {
         }
 
         final ContentResolver cr = mContext.getContentResolver();
-        String name = null;
-        final String[] projection = new String[] {MediaStore.MediaColumns.TITLE};
-        final Cursor cursor = cr.query(uri, projection, null, null, null);
-        if(cursor != null) {
-            try {
-                if(cursor.moveToFirst()) {
-                    name = cursor.getString(0);
-                }
-            } finally {
-                cursor.close();
-            }
-        }
 
+        final String name = PhotoUtils.getName(cr, uri);
         if(name == null) {
             return null;
         }
