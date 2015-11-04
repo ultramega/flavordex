@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.CSVUtils;
+import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 
 import java.io.File;
@@ -457,7 +458,7 @@ public class ExportDialog extends DialogFragment {
                         String path;
                         while(cursor.moveToNext()) {
                             path = cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH));
-                            entry.addPhoto(0, path);
+                            entry.addPhoto(0, null, PhotoUtils.parsePath(path));
                         }
                     } finally {
                         cursor.close();

@@ -1,6 +1,7 @@
 package com.ultramegasoft.flavordex2.fragment;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -92,7 +93,7 @@ public class AddPhotosFragment extends AbsPhotosFragment {
      */
     public void getData(EntryHolder entry) {
         for(PhotoHolder photo : getPhotos()) {
-            entry.addPhoto(photo.id, photo.path);
+            entry.addPhoto(photo.id, photo.hash, photo.uri);
         }
     }
 
@@ -103,7 +104,7 @@ public class AddPhotosFragment extends AbsPhotosFragment {
 
     @Override
     protected void onPhotoRemoved(PhotoHolder photo) {
-        mCache.remove(photo.path);
+        mCache.remove(photo.uri);
         mAdapter.notifyDataSetChanged();
     }
 
@@ -120,7 +121,7 @@ public class AddPhotosFragment extends AbsPhotosFragment {
         /**
          * Empty PhotoHolder to serve as a placeholder for the add button
          */
-        private final PhotoHolder mPlaceholder = new PhotoHolder(null, -1);
+        private final PhotoHolder mPlaceholder = new PhotoHolder(0, null, Uri.EMPTY, -1);
 
         /**
          * The data backing the Adapter
@@ -179,9 +180,9 @@ public class AddPhotosFragment extends AbsPhotosFragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            final String path = mData.get(position).path;
+            final Uri uri = mData.get(position).uri;
 
-            if(path == null) {
+            if(uri == Uri.EMPTY) {
                 return getAddLayout(parent);
             }
 
@@ -196,7 +197,7 @@ public class AddPhotosFragment extends AbsPhotosFragment {
             }
 
             final Holder holder = (Holder)convertView.getTag();
-            loadImage(holder.image, path);
+            loadImage(holder.image, uri);
 
             holder.removeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -254,13 +255,13 @@ public class AddPhotosFragment extends AbsPhotosFragment {
          * Load a Bitmap in the background.
          *
          * @param view The ImageView to hold the Bitmap
-         * @param path The path to the photo to load
+         * @param uri  The Uri to the photo to load
          */
-        private void loadImage(ImageView view, String path) {
-            final Bitmap bitmap = mCache.get(path);
+        private void loadImage(ImageView view, Uri uri) {
+            final Bitmap bitmap = mCache.get(uri);
             view.setImageBitmap(bitmap);
             if(bitmap == null) {
-                new ImageLoader(view, mFrameSize, mFrameSize, path, mCache).execute();
+                new ImageLoader(view, mFrameSize, mFrameSize, uri, mCache).execute();
             }
         }
     }

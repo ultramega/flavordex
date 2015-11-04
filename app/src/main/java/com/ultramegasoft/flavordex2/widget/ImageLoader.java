@@ -1,6 +1,8 @@
 package com.ultramegasoft.flavordex2.widget;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
@@ -31,9 +33,9 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
     private final int mHeight;
 
     /**
-     * The path to the photo file to load from disk
+     * The Uri to the photo file to load from disk
      */
-    private final String mPath;
+    private final Uri mUri;
 
     /**
      * The cache to store loaded Bitmaps
@@ -41,35 +43,41 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
     private final BitmapCache mCache;
 
     /**
+     * The Context
+     */
+    private final Context mContext;
+
+    /**
      * @param imageView The ImageView to hold the image
      * @param width     The width of the container
      * @param height    The height of the container
-     * @param path      The path to the photo file to load from disk
+     * @param uri       The Uri to the photo file to load from disk
      * @param cache     The cache to store loaded Bitmaps
      */
-    public ImageLoader(ImageView imageView, int width, int height, String path, BitmapCache cache) {
+    public ImageLoader(ImageView imageView, int width, int height, Uri uri, BitmapCache cache) {
         mImageViewReference = new WeakReference<>(imageView);
         mWidth = width;
         mHeight = height;
-        mPath = path;
+        mUri = uri;
         mCache = cache;
+        mContext = imageView.getContext().getApplicationContext();
     }
 
     /**
      * @param imageView The ImageView to hold the image
      * @param width     The width of the container
      * @param height    The height of the container
-     * @param path      The path to the photo file to load from disk
+     * @param uri       The Uri to the photo file to load from disk
      */
-    public ImageLoader(ImageView imageView, int width, int height, String path) {
-        this(imageView, width, height, path, null);
+    public ImageLoader(ImageView imageView, int width, int height, Uri uri) {
+        this(imageView, width, height, uri, null);
     }
 
     @Override
     protected Bitmap doInBackground(Void... args) {
-        final Bitmap bitmap = PhotoUtils.loadBitmap(mPath, mWidth, mHeight);
+        final Bitmap bitmap = PhotoUtils.loadBitmap(mContext, mUri, mWidth, mHeight);
         if(mCache != null) {
-            mCache.put(mPath, bitmap);
+            mCache.put(mUri, bitmap);
         }
         return bitmap;
     }

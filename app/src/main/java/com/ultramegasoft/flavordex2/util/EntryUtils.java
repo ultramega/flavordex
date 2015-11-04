@@ -18,7 +18,6 @@ import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -249,8 +248,8 @@ public class EntryUtils {
         PhotoHolder photo;
         for(int i = 0; i < photos.size(); i++) {
             photo = photos.get(i);
-            values.put(Tables.Photos.HASH, PhotoUtils.getMD5Hash(new File(photo.path)));
-            values.put(Tables.Photos.PATH, photo.path);
+            values.put(Tables.Photos.HASH, photo.hash);
+            values.put(Tables.Photos.PATH, photo.uri.toString());
             values.put(Tables.Photos.POS, i);
             cr.insert(uri, values);
         }

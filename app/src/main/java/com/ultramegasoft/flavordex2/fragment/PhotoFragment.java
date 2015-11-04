@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2.fragment;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,13 +23,13 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
     /**
      * Argument for the path to the image file
      */
-    public static final String ARG_PATH = "path";
+    public static final String ARG_URI = "uri";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final String path = getArguments().getString(ARG_PATH);
-        if(path == null) {
+        final Uri uri = getArguments().getParcelable(ARG_URI);
+        if(uri == null) {
             return null;
         }
 
@@ -42,7 +43,7 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
                         final int width = imageView.getWidth();
                         final int height = imageView.getHeight();
                         if(width > 0) {
-                            new ImageLoader(imageView, width, height, path).execute();
+                            new ImageLoader(imageView, width, height, uri).execute();
                             //noinspection deprecation
                             imageView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                         }

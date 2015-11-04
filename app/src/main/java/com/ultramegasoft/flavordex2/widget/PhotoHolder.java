@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2.widget;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -27,9 +28,14 @@ public class PhotoHolder implements Parcelable {
     public long id;
 
     /**
-     * The path to the photo file
+     * The MD5 hash of the photo file
      */
-    public final String path;
+    public final String hash;
+
+    /**
+     * The Uri to the photo file
+     */
+    public final Uri uri;
 
     /**
      * The sort position of the photo
@@ -38,25 +44,19 @@ public class PhotoHolder implements Parcelable {
 
     /**
      * @param id   The database ID for this photo
-     * @param path The path to the photo file
+     * @param hash The MD5 hash of the photo
+     * @param uri  The Uri to the photo file
      * @param pos  The sort position of the photo
      */
-    public PhotoHolder(long id, String path, int pos) {
+    public PhotoHolder(long id, String hash, Uri uri, int pos) {
         this.id = id;
-        this.path = path;
+        this.hash = hash;
+        this.uri = uri;
         this.pos = pos;
     }
 
-    /**
-     * @param path The path to the photo file
-     * @param pos  The sort position of the photo
-     */
-    public PhotoHolder(String path, int pos) {
-        this(0, path, pos);
-    }
-
     private PhotoHolder(Parcel in) {
-        this(in.readLong(), in.readString(), in.readInt());
+        this(in.readLong(), in.readString(), (Uri)in.readParcelable(null), in.readInt());
     }
 
     @Override
@@ -67,7 +67,8 @@ public class PhotoHolder implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
-        dest.writeString(path);
+        dest.writeString(hash);
+        dest.writeParcelable(uri, 0);
         dest.writeInt(pos);
     }
 }

@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v4.net.ConnectivityManagerCompat;
 import android.util.Log;
 
@@ -35,10 +37,7 @@ import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -221,7 +220,7 @@ public class PhotoSyncHelper {
             long entryId;
             String hash;
             String filePath;
-            File file;
+            Uri uri;
             DriveFile driveFile;
             final ContentValues values = new ContentValues();
             while(cursor.moveToNext()) {
@@ -229,20 +228,20 @@ public class PhotoSyncHelper {
                 if(filePath == null) {
                     continue;
                 }
-                file = new File(filePath);
+                uri = PhotoUtils.parsePath(filePath);
 
                 values.clear();
 
                 hash = cursor.getString(cursor.getColumnIndex(Tables.Photos.HASH));
                 if(hash == null) {
-                    hash = PhotoUtils.getMD5Hash(file);
+                    hash = PhotoUtils.getMD5Hash(cr, uri);
                     if(hash == null) {
                         continue;
                     }
                     values.put(Tables.Photos.HASH, hash);
                 }
 
-                driveFile = uploadFile(file, hash);
+                driveFile = uploadFile(uri, hash);
                 if(driveFile != null) {
                     values.put(Tables.Photos.DRIVE_ID, driveFile.getDriveId().encodeToString());
                 }
@@ -312,14 +311,32 @@ public class PhotoSyncHelper {
     /**
      * Upload a file to Drive if it does not already exist.
      *
-     * @param file The local file
+     * @param uri  The Uri to the image file
      * @param hash The file hash
      * @return The DriveFile
      */
-    private DriveFile uploadFile(File file, String hash) {
+    private DriveFile uploadFile(Uri uri, String hash) {
         DriveFile driveFile = getDriveFile(hash);
         if(driveFile != null) {
             return driveFile;
+        }
+
+        final ContentResolver cr = mContext.getContentResolver();
+        String name = null;
+        final String[] projection = new String[] {MediaStore.MediaColumns.TITLE};
+        final Cursor cursor = cr.query(uri, projection, null, null, null);
+        if(cursor != null) {
+            try {
+                if(cursor.moveToFirst()) {
+                    name = cursor.getString(0);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+
+        if(name == null) {
+            return null;
         }
 
         final DriveApi.DriveContentsResult result =
@@ -330,9 +347,11 @@ public class PhotoSyncHelper {
 
         final DriveContents driveContents = result.getDriveContents();
         try {
-            final InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-            final OutputStream outputStream =
-                    new BufferedOutputStream(driveContents.getOutputStream());
+            final InputStream inputStream = cr.openInputStream(uri);
+            if(inputStream == null) {
+                return null;
+            }
+            final OutputStream outputStream = driveContents.getOutputStream();
             try {
                 final byte[] buffer = new byte[8192];
                 int read;
@@ -344,7 +363,7 @@ public class PhotoSyncHelper {
                 outputStream.close();
             }
 
-            createNewFile(file.getName(), hash, driveContents);
+            createNewFile(name, hash, driveContents);
             return null;
         } catch(IOException e) {
             Log.w(TAG, "Upload failed", e);
@@ -383,14 +402,14 @@ public class PhotoSyncHelper {
             File outputFile = new File(PhotoUtils.getMediaStorageDir(), fileName);
             if(outputFile.exists()) {
                 final String hash = metadata.getCustomProperties().get(sHashKey);
-                if(hash != null && hash.equals(PhotoUtils.getMD5Hash(outputFile))) {
+                if(hash != null && hash.equals(PhotoUtils.getMD5Hash(mContext.getContentResolver(),
+                        Uri.fromFile(outputFile)))) {
                     return outputFile.getPath();
                 }
                 outputFile = getUniqueFile(outputFile);
             }
-            final OutputStream outputStream =
-                    new BufferedOutputStream(new FileOutputStream(outputFile));
-            final InputStream inputStream = new BufferedInputStream(driveContents.getInputStream());
+            final OutputStream outputStream = new FileOutputStream(outputFile);
+            final InputStream inputStream = driveContents.getInputStream();
             try {
                 final byte[] buffer = new byte[8192];
                 int read;

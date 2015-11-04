@@ -3,6 +3,7 @@ package com.ultramegasoft.flavordex2.util;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -147,7 +148,7 @@ public class CSVUtils {
     private static void addPhotos(ArrayList<String> fields, EntryHolder entry) {
         final JSONArray array = new JSONArray();
         for(PhotoHolder photo : entry.getPhotos()) {
-            array.put(photo.path);
+            array.put(photo.uri.toString());
         }
         fields.add(array.toString());
     }
@@ -180,7 +181,7 @@ public class CSVUtils {
                     for(int i = 0; i < line.length; i++) {
                         rowMap.put(fields.get(i), line[i]);
                     }
-                    entry = readCSVRow(rowMap);
+                    entry = readCSVRow(cr, rowMap);
 
                     if(TextUtils.isEmpty(entry.title) || TextUtils.isEmpty(entry.catName)) {
                         continue;
@@ -200,10 +201,11 @@ public class CSVUtils {
     /**
      * Read a row from a CSV file into an EntryHolder object.
      *
+     * @param cr     The ContentResolver
      * @param rowMap A map of column names to values
      * @return The entry
      */
-    private static EntryHolder readCSVRow(HashMap<String, String> rowMap) {
+    private static EntryHolder readCSVRow(ContentResolver cr, HashMap<String, String> rowMap) {
         final EntryHolder entry = new EntryHolder();
         entry.title = rowMap.get(Tables.Entries.TITLE);
         entry.catName = rowMap.get(Tables.Entries.CAT);
@@ -235,7 +237,7 @@ public class CSVUtils {
 
         readExtras(entry, rowMap);
         readFlavors(entry, rowMap);
-        readPhotos(entry, rowMap);
+        readPhotos(cr, entry, rowMap);
 
         return entry;
     }
@@ -297,10 +299,12 @@ public class CSVUtils {
     /**
      * Parse the photos field from the CSV row.
      *
+     * @param cr     The ContentResolver
      * @param entry  The entry
      * @param rowMap The map of fields from the row
      */
-    private static void readPhotos(EntryHolder entry, HashMap<String, String> rowMap) {
+    private static void readPhotos(ContentResolver cr, EntryHolder entry,
+                                   HashMap<String, String> rowMap) {
         final String photosField = rowMap.get(Tables.Photos.TABLE_NAME);
         if(TextUtils.isEmpty(photosField)) {
             return;
@@ -308,11 +312,13 @@ public class CSVUtils {
 
         try {
             final JSONArray array = new JSONArray(photosField);
-            String photo;
+            Uri uri;
+            String hash;
             for(int i = 0; i < array.length(); i++) {
-                photo = array.optString(i);
-                if(new File(photo).canRead()) {
-                    entry.addPhoto(0, photo);
+                uri = PhotoUtils.parsePath(array.optString(i));
+                hash = PhotoUtils.getMD5Hash(cr, uri);
+                if(hash != null) {
+                    entry.addPhoto(0, hash, uri);
                 }
             }
         } catch(JSONException e) {

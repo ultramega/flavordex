@@ -24,7 +24,6 @@ import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -448,12 +447,13 @@ public class DataSyncHelper {
             return null;
         }
 
-        final String hash = PhotoUtils.getMD5Hash(new File(filePath));
+        final ContentResolver cr = mContext.getContentResolver();
+        final String hash = PhotoUtils.getMD5Hash(cr, PhotoUtils.parsePath(filePath));
         if(hash != null) {
             final Uri uri = ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, photoId);
             final ContentValues values = new ContentValues();
             values.put(Tables.Photos.HASH, hash);
-            mContext.getContentResolver().update(uri, values, null, null);
+            cr.update(uri, values, null, null);
         }
 
         return hash;

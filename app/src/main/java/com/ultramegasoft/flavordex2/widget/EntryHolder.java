@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2.widget;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -124,11 +125,11 @@ public class EntryHolder implements Parcelable {
     /**
      * Add a photo to this entry.
      *
-     * @param id   The database ID for this photo
-     * @param path The path to the photo file
+     * @param id  The database ID for this photo
+     * @param uri The Uri to the photo file
      */
-    public void addPhoto(long id, String path) {
-        mPhotos.add(new PhotoHolder(id, path, 0));
+    public void addPhoto(long id, String hash, Uri uri) {
+        mPhotos.add(new PhotoHolder(id, hash, uri, 0));
     }
 
     /**

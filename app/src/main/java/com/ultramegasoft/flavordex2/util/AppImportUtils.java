@@ -305,9 +305,11 @@ public class AppImportUtils {
         if(cursor != null) {
             try {
                 String path;
+                Uri uri;
                 while(cursor.moveToNext()) {
                     path = cursor.getString(cursor.getColumnIndex(PhotosColumns.PATH));
-                    entry.addPhoto(0, path);
+                    uri = PhotoUtils.parsePath(path);
+                    entry.addPhoto(0, PhotoUtils.getMD5Hash(cr, uri), uri);
                 }
             } finally {
                 cursor.close();

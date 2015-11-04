@@ -1,6 +1,7 @@
 package com.ultramegasoft.flavordex2.fragment;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -36,7 +37,6 @@ import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -244,22 +244,30 @@ public class ViewPhotosFragment extends AbsPhotosFragment
                 Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/photos");
         final String[] projection = new String[] {
                 Tables.Photos._ID,
+                Tables.Photos.HASH,
                 Tables.Photos.PATH,
                 Tables.Photos.POS
         };
-        return new CursorLoader(getContext(), uri, projection, null, null,
-                Tables.Photos.POS + " ASC");
+        final String where = Tables.Photos.PATH + " NOT NULL";
+        final String order = Tables.Photos.POS + " ASC";
+        return new CursorLoader(getContext(), uri, projection, where, null, order);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         final ArrayList<PhotoHolder> photos = getPhotos();
         photos.clear();
+        long id;
+        String hash, path;
+        int pos;
+        Uri uri;
         while(data.moveToNext()) {
-            final String path = data.getString(1);
-            if(path != null && new File(path).exists()) {
-                photos.add(new PhotoHolder(data.getLong(0), path, data.getInt(2)));
-            }
+            id = data.getLong(data.getColumnIndex(Tables.Photos._ID));
+            hash = data.getString(data.getColumnIndex(Tables.Photos.HASH));
+            path = data.getString(data.getColumnIndex(Tables.Photos.PATH));
+            pos = data.getInt(data.getColumnIndex(Tables.Photos.POS));
+            uri = PhotoUtils.parsePath(path);
+            photos.add(new PhotoHolder(id, hash, uri, pos));
         }
 
         notifyDataChanged();
@@ -286,7 +294,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         @Override
         public Fragment getItem(int position) {
             final Bundle args = new Bundle();
-            args.putString(PhotoFragment.ARG_PATH, mData.get(position).path);
+            args.putParcelable(PhotoFragment.ARG_URI, mData.get(position).uri);
             return instantiate(getContext(), PhotoFragment.class.getName(), args);
         }
 
@@ -333,20 +341,21 @@ public class ViewPhotosFragment extends AbsPhotosFragment
 
         @Override
         protected Boolean doInBackground(Void... params) {
+            final ContentResolver cr = mContext.getContentResolver();
             Uri uri =
                     Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/photos");
 
             final ContentValues values = new ContentValues();
-            values.put(Tables.Photos.HASH, PhotoUtils.getMD5Hash(new File(mPhoto.path)));
-            values.put(Tables.Photos.PATH, mPhoto.path);
+            values.put(Tables.Photos.HASH, PhotoUtils.getMD5Hash(cr, mPhoto.uri));
+            values.put(Tables.Photos.PATH, mPhoto.uri.toString());
             values.put(Tables.Photos.POS, mPhoto.pos);
 
             try {
-                uri = mContext.getContentResolver().insert(uri, values);
+                uri = cr.insert(uri, values);
                 if(uri != null) {
                     mPhoto.id = Long.valueOf(uri.getLastPathSegment());
                     PhotoUtils.deleteThumb(mContext, mEntryId);
-                    EntryUtils.markChanged(mContext.getContentResolver(), mEntryId);
+                    EntryUtils.markChanged(cr, mEntryId);
                     BackendUtils.requestDataSync(mContext);
                     BackendUtils.requestPhotoSync(mContext);
                     return true;

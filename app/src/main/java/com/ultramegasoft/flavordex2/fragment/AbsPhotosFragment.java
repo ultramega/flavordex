@@ -1,11 +1,14 @@
 package com.ultramegasoft.flavordex2.fragment;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +23,8 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -41,7 +46,7 @@ public abstract class AbsPhotosFragment extends Fragment {
      * Keys for the saved state
      */
     private static final String STATE_PHOTOS = "photos";
-    private static final String STATE_CAPTURE_URI = "capture_uri";
+    private static final String STATE_CAPTURE_FILE = "capture_file";
 
     /**
      * Whether the external storage is readable
@@ -54,9 +59,9 @@ public abstract class AbsPhotosFragment extends Fragment {
     private boolean mHasCamera;
 
     /**
-     * Uri to the image currently being captured
+     * The image file currently being captured
      */
-    private Uri mCapturedPhoto;
+    private File mCapturedPhoto;
 
     /**
      * The information about each photo
@@ -77,12 +82,13 @@ public abstract class AbsPhotosFragment extends Fragment {
 
         if(savedInstanceState != null) {
             mPhotos = savedInstanceState.getParcelableArrayList(STATE_PHOTOS);
-            mCapturedPhoto = savedInstanceState.getParcelable(STATE_CAPTURE_URI);
+            mCapturedPhoto = (File)savedInstanceState.getSerializable(STATE_CAPTURE_FILE);
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         if(!mMediaReadable) {
             final View root = inflater.inflate(R.layout.no_media, container, false);
 
@@ -111,7 +117,7 @@ public abstract class AbsPhotosFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(STATE_PHOTOS, mPhotos);
-        outState.putParcelable(STATE_CAPTURE_URI, mCapturedPhoto);
+        outState.putSerializable(STATE_CAPTURE_FILE, mCapturedPhoto);
     }
 
     @Override
@@ -130,19 +136,31 @@ public abstract class AbsPhotosFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == Activity.RESULT_OK) {
+            final ContentResolver cr = getContext().getContentResolver();
+            Uri uri = null;
             switch(requestCode) {
                 case REQUEST_CAPTURE_IMAGE:
-                    final Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                    scanIntent.setData(mCapturedPhoto);
-                    getContext().sendBroadcast(scanIntent);
-
-                    addPhoto(mCapturedPhoto);
+                    try {
+                        final File file = mCapturedPhoto;
+                        final String uriString = MediaStore.Images.Media.insertImage(cr,
+                                file.getPath(), file.getName(), file.getName());
+                        uri = Uri.parse(uriString);
+                    } catch(FileNotFoundException e) {
+                        Log.e(TAG, "Failed to save file", e);
+                    }
                     break;
                 case REQUEST_SELECT_IMAGE:
                     if(data != null) {
-                        addPhoto(data.getData());
+                        uri = data.getData();
                     }
                     break;
+            }
+
+            if(uri != null) {
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    cr.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                }
+                addPhoto(uri);
             }
         }
     }
@@ -179,7 +197,7 @@ public abstract class AbsPhotosFragment extends Fragment {
      */
     final void takePhoto() {
         try {
-            mCapturedPhoto = PhotoUtils.getOutputMediaUri();
+            mCapturedPhoto = PhotoUtils.getOutputMediaFile();
             final Intent intent = PhotoUtils.getTakePhotoIntent(mCapturedPhoto);
             if(intent.resolveActivity(getContext().getPackageManager()) != null) {
                 getParentFragment().startActivityForResult(intent, REQUEST_CAPTURE_IMAGE);
@@ -212,14 +230,14 @@ public abstract class AbsPhotosFragment extends Fragment {
             return;
         }
 
-        final String path = PhotoUtils.getPath(getContext(), uri);
-        if(path == null) {
+        final String hash = PhotoUtils.getMD5Hash(getContext().getContentResolver(), uri);
+        if(hash == null) {
             return;
         }
 
         int pos = 0;
         for(PhotoHolder photo : mPhotos) {
-            if(path.equals(photo.path)) {
+            if(hash.equals(photo.hash)) {
                 return;
             }
             if(photo.pos >= pos) {
@@ -227,7 +245,7 @@ public abstract class AbsPhotosFragment extends Fragment {
             }
         }
 
-        final PhotoHolder photo = new PhotoHolder(path, pos);
+        final PhotoHolder photo = new PhotoHolder(0, hash, uri, pos);
         mPhotos.add(photo);
         onPhotoAdded(photo);
     }
