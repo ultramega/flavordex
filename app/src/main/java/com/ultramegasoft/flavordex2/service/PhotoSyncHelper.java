@@ -112,7 +112,6 @@ public class PhotoSyncHelper {
 
         mClient = new GoogleApiClient.Builder(mContext)
                 .addApi(Drive.API)
-                .addScope(Drive.SCOPE_FILE)
                 .addScope(Drive.SCOPE_APPFOLDER)
                 .build();
         final ConnectionResult result = mClient.blockingConnect();
