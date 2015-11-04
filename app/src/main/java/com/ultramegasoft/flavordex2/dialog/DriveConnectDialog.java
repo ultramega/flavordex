@@ -55,6 +55,7 @@ public class DriveConnectDialog extends DialogFragment
         mClient = new GoogleApiClient.Builder(getContext(), this, this)
                 .addApi(Drive.API)
                 .addScope(Drive.SCOPE_FILE)
+                .addScope(Drive.SCOPE_APPFOLDER)
                 .build();
         if(savedInstanceState == null) {
             mClient.connect();

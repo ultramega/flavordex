@@ -29,7 +29,6 @@ import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.metadata.CustomPropertyKey;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
-import com.google.android.gms.drive.query.SearchableField;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
@@ -50,11 +49,6 @@ import java.io.OutputStream;
  */
 public class PhotoSyncHelper {
     private static final String TAG = "PhotoSyncHelper";
-
-    /**
-     * The name of the Drive folder to store photos
-     */
-    private static final String DRIVE_FOLDER = "Flavordex Photos";
 
     /**
      * The custom property key to identify photos
@@ -120,12 +114,12 @@ public class PhotoSyncHelper {
         mClient = new GoogleApiClient.Builder(mContext)
                 .addApi(Drive.API)
                 .addScope(Drive.SCOPE_FILE)
+                .addScope(Drive.SCOPE_APPFOLDER)
                 .build();
         final ConnectionResult result = mClient.blockingConnect();
         if(result.isSuccess()) {
-            final DriveFolder driveFolder = openDriveFolder();
-            if(driveFolder != null) {
-                mDriveFolder = driveFolder;
+            mDriveFolder = Drive.DriveApi.getAppFolder(mClient);
+            if(mDriveFolder != null) {
                 Log.i(TAG, "Connected.");
                 return true;
             }
@@ -152,49 +146,6 @@ public class PhotoSyncHelper {
      */
     public boolean isConnected() {
         return mDriveFolder != null;
-    }
-
-    /**
-     * Get a reference to the Drive folder, creating it if necessary.
-     *
-     * @return The Drive folder
-     */
-    private DriveFolder openDriveFolder() {
-        final DriveFolder rootFolder = Drive.DriveApi.getRootFolder(mClient);
-        final Query query = new Query.Builder()
-                .addFilter(Filters.eq(SearchableField.TITLE, DRIVE_FOLDER))
-                .addFilter(Filters.eq(SearchableField.TRASHED, false)).build();
-        final DriveApi.MetadataBufferResult result =
-                rootFolder.queryChildren(mClient, query).await();
-        try {
-            final MetadataBuffer buffer = result.getMetadataBuffer();
-            if(buffer != null && buffer.getCount() > 0) {
-                return buffer.get(0).getDriveId().asDriveFolder();
-            } else {
-                return createDriveFolder(rootFolder);
-            }
-        } finally {
-            result.release();
-        }
-    }
-
-    /**
-     * Create the Drive folder.
-     *
-     * @param rootFolder The Drive root folder
-     * @return The new Drive folder
-     */
-    private DriveFolder createDriveFolder(DriveFolder rootFolder) {
-        final MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(DRIVE_FOLDER)
-                .build();
-        final DriveFolder.DriveFolderResult result =
-                rootFolder.createFolder(mClient, changeSet).await();
-
-        if(result.getStatus().isSuccess()) {
-            return result.getDriveFolder();
-        }
-
-        return null;
     }
 
     /**
@@ -437,8 +388,7 @@ public class PhotoSyncHelper {
      * @return The DriveFile or null if it doesn't exist.
      */
     private DriveFile getDriveFile(String hash) {
-        final Query query = new Query.Builder()
-                .addFilter(Filters.eq(sHashKey, hash)).build();
+        final Query query = new Query.Builder().addFilter(Filters.eq(sHashKey, hash)).build();
         final DriveApi.MetadataBufferResult result =
                 mDriveFolder.queryChildren(mClient, query).await();
         try {
