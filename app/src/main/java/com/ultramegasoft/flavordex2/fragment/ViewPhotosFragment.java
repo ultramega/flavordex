@@ -271,6 +271,8 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         }
 
         notifyDataChanged();
+
+        getLoaderManager().destroyLoader(0);
     }
 
     @Override
