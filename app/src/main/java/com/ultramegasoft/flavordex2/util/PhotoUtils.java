@@ -9,10 +9,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -134,30 +136,75 @@ public class PhotoUtils {
     /**
      * Rotate an image according to its EXIF data.
      *
-     * @param cr     The ContentResolver
-     * @param uri    The Uri to the image file
-     * @param bitmap The Bitmap to rotate
+     * @param context The Context
+     * @param uri     The Uri to the image file
+     * @param bitmap  The Bitmap to rotate
      * @return The rotated Bitmap
      */
-    private static Bitmap rotatePhoto(ContentResolver cr, Uri uri, Bitmap bitmap) {
-        final String[] projection = new String[] {MediaStore.Images.ImageColumns.ORIENTATION};
-        final Cursor cursor = cr.query(uri, projection, null, null, null);
-        if(cursor != null) {
+    private static Bitmap rotatePhoto(Context context, Uri uri, Bitmap bitmap) {
+        uri = getImageUri(context, uri);
+        int rotation = 0;
+
+        if("file".equals(uri.getScheme())) {
             try {
-                if(cursor.moveToFirst()) {
-                    final int rotation = cursor.getInt(0);
-                    if(rotation != 0) {
-                        final Matrix matrix = new Matrix();
-                        matrix.postRotate(rotation);
-                        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-                                bitmap.getHeight(), matrix, true);
-                    }
+                final ExifInterface exif = new ExifInterface(uri.getPath());
+                switch(exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0)) {
+                    case ExifInterface.ORIENTATION_ROTATE_90:
+                        rotation = 90;
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_180:
+                        rotation = 180;
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_270:
+                        rotation = 270;
                 }
-            } finally {
-                cursor.close();
+            } catch(IOException e) {
+                Log.e(TAG, "Failed to read EXIF data for " + uri.toString(), e);
+            }
+        } else {
+            final ContentResolver cr = context.getContentResolver();
+            final String[] projection = new String[] {MediaStore.Images.ImageColumns.ORIENTATION};
+            final Cursor cursor = cr.query(uri, projection, null, null, null);
+            if(cursor != null) {
+                try {
+                    if(cursor.moveToFirst()) {
+                        rotation = cursor.getInt(0);
+                    }
+                } finally {
+                    cursor.close();
+                }
             }
         }
+
+        if(rotation != 0) {
+            final Matrix matrix = new Matrix();
+            matrix.postRotate(rotation);
+            return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix,
+                    true);
+        }
+
         return bitmap;
+    }
+
+    /**
+     * Get an image media or file Uri based on its document Uri.
+     *
+     * @param context The Context
+     * @param uri     The Uri to convert
+     * @return The image or file Uri or the original Uri if it could not be converted
+     */
+    private static Uri getImageUri(Context context, Uri uri) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+                && DocumentsContract.isDocumentUri(context, uri)) {
+            final String docId = DocumentsContract.getDocumentId(uri);
+            final String[] parts = docId.split(":");
+            if("image".equals(parts[0])) {
+                return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, parts[1]);
+            } else if("com.android.externalstorage.documents".equals(uri.getAuthority())) {
+                return Uri.fromFile(new File(Environment.getExternalStorageDirectory(), parts[1]));
+            }
+        }
+        return uri;
     }
 
     /**
@@ -189,7 +236,7 @@ public class PhotoUtils {
                 final Bitmap bitmap =
                         BitmapFactory.decodeFileDescriptor(fileDescriptor, null, opts);
                 if("image/jpeg".equals(opts.outMimeType)) {
-                    return rotatePhoto(cr, uri, bitmap);
+                    return rotatePhoto(context, uri, bitmap);
                 }
                 return bitmap;
             } catch(OutOfMemoryError e) {
