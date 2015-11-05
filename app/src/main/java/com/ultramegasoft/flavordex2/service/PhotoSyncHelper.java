@@ -217,7 +217,7 @@ public class PhotoSyncHelper {
                             values, null, null);
 
                     EntryUtils.markChanged(cr, entryId);
-                } else {
+                } else if(!mShouldSync || !mMediaMounted) {
                     requestSync = true;
                 }
             }
