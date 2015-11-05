@@ -52,6 +52,11 @@ public class DataSyncHelper {
     private final long mClientId;
 
     /**
+     * Whether to request a photo sync
+     */
+    private boolean mRequestPhotoSync;
+
+    /**
      * The Sync endpoint client
      */
     private Sync mSync;
@@ -141,8 +146,6 @@ public class DataSyncHelper {
         }
 
         cr.delete(Tables.Deleted.CONTENT_URI, Tables.Deleted.TYPE + " < 2", null);
-
-        requestPhotoSync();
     }
 
     /**
@@ -482,6 +485,10 @@ public class DataSyncHelper {
         }
 
         mSync.confirmSync(mClientId, record.getTimestamp()).execute();
+
+        if(mRequestPhotoSync) {
+            requestPhotoSync();
+        }
     }
 
     /**
@@ -740,14 +747,18 @@ public class DataSyncHelper {
                 cursor.close();
             }
         }
+
+        if(!photos.isEmpty()) {
+            mRequestPhotoSync = true;
+        }
     }
 
     /**
      * Request a photo sync.
      */
     private void requestPhotoSync() {
+        mRequestPhotoSync = false;
         if(mPhotoSyncHelper != null && mPhotoSyncHelper.connect()) {
-            mPhotoSyncHelper.deletePhotos();
             mPhotoSyncHelper.fetchPhotos();
             return;
         }
