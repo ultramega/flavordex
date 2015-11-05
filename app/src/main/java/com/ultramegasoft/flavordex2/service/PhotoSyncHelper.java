@@ -66,6 +66,16 @@ public class PhotoSyncHelper {
     private DriveFolder mDriveFolder;
 
     /**
+     * Whether to sync the photo files
+     */
+    private boolean mShouldSync = true;
+
+    /**
+     * Whether the external storage is available
+     */
+    private boolean mMediaMounted = true;
+
+    /**
      * The Context
      */
     private final Context mContext;
@@ -88,28 +98,27 @@ public class PhotoSyncHelper {
         }
         Log.i(TAG, "Connecting to Google Drive...");
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            Log.i(TAG, "External storage not mounted. Aborting.");
-            return false;
+            mShouldSync = false;
+            mMediaMounted = false;
         }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
 
         if(!Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                 .canWrite()) {
-            Log.i(TAG, "External storage directory not writable. Aborting.");
             if(!PermissionUtils.hasExternalStoragePerm(mContext)) {
-                Log.i(TAG, "External storage access permission denied. Disabling service.");
                 prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false).apply();
+                return false;
             }
-            return false;
+            mShouldSync = false;
+            mMediaMounted = false;
         }
 
         if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS_UNMETERED, true)) {
             final ConnectivityManager cm =
                     (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
             if(ConnectivityManagerCompat.isActiveNetworkMetered(cm)) {
-                Log.i(TAG, "Network is metered. Aborting.");
-                return false;
+                mShouldSync = false;
             }
         }
 
@@ -121,7 +130,6 @@ public class PhotoSyncHelper {
         if(result.isSuccess()) {
             mDriveFolder = Drive.DriveApi.getAppFolder(mClient);
             if(mDriveFolder != null) {
-                Log.i(TAG, "Connected.");
                 return true;
             }
         }
@@ -137,7 +145,6 @@ public class PhotoSyncHelper {
         if(mClient != null) {
             mDriveFolder = null;
             mClient.disconnect();
-            Log.i(TAG, "Disconnected.");
         }
     }
 
@@ -154,7 +161,6 @@ public class PhotoSyncHelper {
      * Upload photos without a Drive ID.
      */
     public void pushPhotos() {
-        Log.i(TAG, "Pushing photos...");
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
                 Tables.Photos._ID,
@@ -168,6 +174,7 @@ public class PhotoSyncHelper {
             return;
         }
         try {
+            boolean requestSync = false;
             boolean changed = false;
             long id;
             long entryId;
@@ -187,8 +194,11 @@ public class PhotoSyncHelper {
 
                 hash = cursor.getString(cursor.getColumnIndex(Tables.Photos.HASH));
                 if(hash == null) {
-                    hash = PhotoUtils.getMD5Hash(cr, uri);
+                    if(mMediaMounted) {
+                        hash = PhotoUtils.getMD5Hash(cr, uri);
+                    }
                     if(hash == null) {
+                        requestSync = true;
                         continue;
                     }
                     values.put(Tables.Photos.HASH, hash);
@@ -207,7 +217,13 @@ public class PhotoSyncHelper {
                             values, null, null);
 
                     EntryUtils.markChanged(cr, entryId);
+                } else {
+                    requestSync = true;
                 }
+            }
+
+            if(requestSync) {
+                BackendUtils.requestPhotoSync(mContext);
             }
 
             if(changed) {
@@ -253,19 +269,24 @@ public class PhotoSyncHelper {
      * Download all photos without a local path.
      */
     public void fetchPhotos() {
-        Log.i(TAG, "Fetching photos...");
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
                 Tables.Photos._ID,
                 Tables.Photos.ENTRY,
                 Tables.Photos.DRIVE_ID
         };
-        final String where = Tables.Photos.PATH + " IS NULL";
+        final String where = Tables.Photos.PATH + " IS NULL AND " + Tables.Photos.DRIVE_ID
+                + " NOT NULL";
         final Cursor cursor = cr.query(Tables.Photos.CONTENT_URI, projection, where, null, null);
         if(cursor == null) {
             return;
         }
         try {
+            if(!mMediaMounted && cursor.getCount() > 0) {
+                BackendUtils.requestPhotoSync(mContext);
+                return;
+            }
+            boolean requestSync = false;
             long id;
             long entryId;
             String driveId;
@@ -273,11 +294,9 @@ public class PhotoSyncHelper {
             final ContentValues values = new ContentValues();
             while(cursor.moveToNext()) {
                 driveId = cursor.getString(cursor.getColumnIndex(Tables.Photos.DRIVE_ID));
-                if(driveId == null) {
-                    continue;
-                }
                 filePath = downloadPhoto(driveId);
                 if(filePath == null) {
+                    requestSync = true;
                     continue;
                 }
                 id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
@@ -286,6 +305,10 @@ public class PhotoSyncHelper {
                 cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id), values,
                         null, null);
                 PhotoUtils.deleteThumb(mContext, entryId);
+            }
+
+            if(requestSync) {
+                BackendUtils.requestPhotoSync(mContext);
             }
         } finally {
             cursor.close();
@@ -303,6 +326,10 @@ public class PhotoSyncHelper {
         DriveFile driveFile = getDriveFile(hash);
         if(driveFile != null) {
             return driveFile;
+        }
+
+        if(!mShouldSync || !mMediaMounted) {
+            return null;
         }
 
         final ContentResolver cr = mContext.getContentResolver();
@@ -353,6 +380,10 @@ public class PhotoSyncHelper {
      * @return The path to the downloaded file
      */
     private String downloadPhoto(String driveId) {
+        if(!mMediaMounted) {
+            return null;
+        }
+
         final DriveFile driveFile = DriveId.decodeFromString(driveId).asDriveFile();
         if(driveFile == null) {
             return null;
@@ -379,7 +410,13 @@ public class PhotoSyncHelper {
                         Uri.fromFile(outputFile)))) {
                     return outputFile.getPath();
                 }
+                if(!mShouldSync) {
+                    return null;
+                }
                 outputFile = getUniqueFile(outputFile);
+            }
+            if(!mShouldSync) {
+                return null;
             }
             final OutputStream outputStream = new FileOutputStream(outputFile);
             final InputStream inputStream = driveContents.getInputStream();
