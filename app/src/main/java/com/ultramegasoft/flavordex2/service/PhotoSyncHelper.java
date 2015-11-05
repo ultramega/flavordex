@@ -40,6 +40,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 /**
  * Helper for synchronizing photos with Google Drive.
@@ -269,6 +270,7 @@ public class PhotoSyncHelper {
      * Download all photos without a local path.
      */
     public void fetchPhotos() {
+        validateDriveIds();
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
                 Tables.Photos._ID,
@@ -309,6 +311,49 @@ public class PhotoSyncHelper {
 
             if(requestSync) {
                 BackendUtils.requestPhotoSync(mContext);
+            }
+        } finally {
+            cursor.close();
+        }
+    }
+
+    /**
+     * Ensure that the local Drive IDs exists in the Drive folder.
+     */
+    public void validateDriveIds() {
+        final ContentResolver cr = mContext.getContentResolver();
+        final String[] projection = new String[] {
+                Tables.Photos._ID,
+                Tables.Photos.DRIVE_ID
+        };
+        final String where = Tables.Photos.DRIVE_ID + " NOT NULL";
+        final Cursor cursor = cr.query(Tables.Photos.CONTENT_URI, projection, where, null, null);
+        if(cursor == null) {
+            return;
+        }
+        try {
+            final ArrayList<String> driveIds = new ArrayList<>();
+            final DriveApi.MetadataBufferResult result = mDriveFolder.listChildren(mClient).await();
+            try {
+                final MetadataBuffer buffer = result.getMetadataBuffer();
+                for(Metadata metadata : buffer) {
+                    driveIds.add(metadata.getDriveId().encodeToString());
+                }
+            } finally {
+                result.release();
+            }
+
+            long id;
+            String driveId;
+            final ContentValues values = new ContentValues();
+            values.put(Tables.Photos.DRIVE_ID, (String)null);
+            while(cursor.moveToNext()) {
+                driveId = cursor.getString(cursor.getColumnIndex(Tables.Photos.DRIVE_ID));
+                if(!driveIds.contains(driveId)) {
+                    id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
+                    cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id),
+                            values, null, null);
+                }
             }
         } finally {
             cursor.close();

@@ -39,8 +39,8 @@ public class TaskService extends GcmTaskService {
                     BackendUtils.requestPhotoSync(this, false);
                     if(photoSyncHelper.connect()) {
                         photoSyncHelper.deletePhotos();
-                        photoSyncHelper.pushPhotos();
                         photoSyncHelper.fetchPhotos();
+                        photoSyncHelper.pushPhotos();
                     } else {
                         BackendUtils.requestPhotoSync(this);
                     }
