@@ -140,7 +140,9 @@ public class DataSyncHelper {
             }
         }
 
-        cr.delete(Tables.Deleted.CONTENT_URI, null, null);
+        cr.delete(Tables.Deleted.CONTENT_URI, Tables.Deleted.TYPE + " < 2", null);
+
+        requestPhotoSync();
     }
 
     /**
@@ -738,21 +740,16 @@ public class DataSyncHelper {
                 cursor.close();
             }
         }
-
-        if(!photos.isEmpty()) {
-            requestPhotoSync();
-        }
     }
 
     /**
      * Request a photo sync.
      */
     private void requestPhotoSync() {
-        if(mPhotoSyncHelper != null) {
-            if(mPhotoSyncHelper.isConnected() || mPhotoSyncHelper.connect()) {
-                mPhotoSyncHelper.fetchPhotos();
-                return;
-            }
+        if(mPhotoSyncHelper != null && mPhotoSyncHelper.connect()) {
+            mPhotoSyncHelper.deletePhotos();
+            mPhotoSyncHelper.fetchPhotos();
+            return;
         }
         BackendUtils.requestPhotoSync(mContext);
     }

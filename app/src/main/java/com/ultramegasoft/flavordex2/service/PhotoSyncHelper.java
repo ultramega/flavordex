@@ -83,6 +83,9 @@ public class PhotoSyncHelper {
      * @return Whether the client connected successfully
      */
     public boolean connect() {
+        if(isConnected()) {
+            return true;
+        }
         Log.i(TAG, "Connecting to Google Drive...");
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             Log.i(TAG, "External storage not mounted. Aborting.");
@@ -132,6 +135,7 @@ public class PhotoSyncHelper {
      */
     public void disconnect() {
         if(mClient != null) {
+            mDriveFolder = null;
             mClient.disconnect();
             Log.i(TAG, "Disconnected.");
         }
@@ -211,6 +215,37 @@ public class PhotoSyncHelper {
             }
         } finally {
             cursor.close();
+        }
+    }
+
+    /**
+     * Delete photos from Drive that were removed from the app.
+     */
+    public void deletePhotos() {
+        final ContentResolver cr = mContext.getContentResolver();
+        final String[] projection = new String[] {
+                Tables.Deleted._ID,
+                Tables.Deleted.UUID
+        };
+        final String where = Tables.Deleted.TYPE + " = " + Tables.Deleted.TYPE_PHOTO;
+        final Cursor cursor = cr.query(Tables.Deleted.CONTENT_URI, projection, where, null, null);
+        if(cursor != null) {
+            try {
+                DriveFile driveFile;
+                long id;
+                String hash;
+                while(cursor.moveToNext()) {
+                    hash = cursor.getString(cursor.getColumnIndex(Tables.Deleted.UUID));
+                    driveFile = getDriveFile(hash);
+                    if(driveFile != null && !driveFile.delete(mClient).await().isSuccess()) {
+                        continue;
+                    }
+                    id = cursor.getLong(cursor.getColumnIndex(Tables.Deleted._ID));
+                    cr.delete(Tables.Deleted.CONTENT_URI, Tables.Deleted._ID + " = " + id, null);
+                }
+            } finally {
+                cursor.close();
+            }
         }
     }
 

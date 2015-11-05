@@ -50,3 +50,22 @@ BEGIN
     UPDATE extras SET deleted = 1 WHERE _id = OLD._id;
     SELECT RAISE(IGNORE) WHERE EXISTS (SELECT 1 FROM entries_extras WHERE extra = OLD._id);
 END;
+--
+CREATE TRIGGER IF NOT EXISTS delete_photo AFTER DELETE ON photos
+WHEN OLD.drive_id NOT NULL AND OLD.hash NOT NULL
+ AND NOT EXISTS (SELECT 1 FROM photos WHERE hash = OLD.hash)
+BEGIN
+    INSERT INTO deleted (type, uuid) VALUES (2, OLD.hash);
+END;
+--
+CREATE TRIGGER IF NOT EXISTS insert_photo AFTER INSERT ON photos
+WHEN NEW.hash NOT NULL
+BEGIN
+    DELETE FROM deleted WHERE type = 2 AND uuid = NEW.hash;
+END;
+--
+CREATE TRIGGER IF NOT EXISTS update_photo AFTER UPDATE ON photos
+WHEN NEW.hash NOT NULL
+BEGIN
+    DELETE FROM deleted WHERE type = 2 AND uuid = NEW.hash;
+END;

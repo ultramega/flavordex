@@ -416,6 +416,7 @@ public class Tables {
          */
         public static final int TYPE_CAT = 0;
         public static final int TYPE_ENTRY = 1;
+        public static final int TYPE_PHOTO = 2;
 
         /**
          * Content data types
