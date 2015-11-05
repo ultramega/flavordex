@@ -406,7 +406,7 @@ public class PhotoUtils {
         if("file".equals(uri.getScheme())) {
             return uri.getLastPathSegment();
         } else {
-            final String[] projection = new String[] {MediaStore.MediaColumns.TITLE};
+            final String[] projection = new String[] {MediaStore.MediaColumns.DISPLAY_NAME};
             final Cursor cursor = cr.query(uri, projection, null, null, null);
             if(cursor != null) {
                 try {
