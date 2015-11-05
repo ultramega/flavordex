@@ -143,7 +143,7 @@ public abstract class AbsPhotosFragment extends Fragment {
                     try {
                         final File file = mCapturedPhoto;
                         final String uriString = MediaStore.Images.Media.insertImage(cr,
-                                file.getPath(), file.getName(), file.getName());
+                                file.getPath(), file.getName(), null);
                         uri = Uri.parse(uriString);
                     } catch(FileNotFoundException e) {
                         Log.e(TAG, "Failed to save file", e);
