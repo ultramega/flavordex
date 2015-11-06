@@ -257,15 +257,14 @@ public abstract class AbsPhotosFragment extends Fragment {
             return;
         }
 
-        int pos = 0;
         for(PhotoHolder photo : mPhotos) {
             if(newPhoto.hash.equals(photo.hash)) {
                 Toast.makeText(getContext(), R.string.message_duplicate_photo, Toast.LENGTH_LONG)
                         .show();
                 return;
             }
-            if(photo.pos >= pos) {
-                pos = photo.pos + 1;
+            if(photo.pos >= newPhoto.pos) {
+                newPhoto.pos = photo.pos + 1;
             }
         }
 
