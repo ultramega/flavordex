@@ -61,6 +61,7 @@ public class CSVUtils {
      */
     public static void writeCSVHeader(CSVWriter writer) {
         final String[] fields = new String[] {
+                Tables.Entries.UUID,
                 Tables.Entries.TITLE,
                 Tables.Entries.CAT,
                 Tables.Entries.MAKER,
@@ -86,6 +87,7 @@ public class CSVUtils {
     public static void writeEntry(CSVWriter writer, EntryHolder entry) {
         final ArrayList<String> fields = new ArrayList<>();
 
+        fields.add(entry.uuid);
         fields.add(entry.title);
         fields.add(entry.catName);
         fields.add(entry.maker);
@@ -207,6 +209,7 @@ public class CSVUtils {
      */
     private static EntryHolder readCSVRow(ContentResolver cr, HashMap<String, String> rowMap) {
         final EntryHolder entry = new EntryHolder();
+        entry.uuid = rowMap.get(Tables.Entries.UUID);
         entry.title = rowMap.get(Tables.Entries.TITLE);
         entry.catName = rowMap.get(Tables.Entries.CAT);
         entry.maker = rowMap.get(Tables.Entries.MAKER);
@@ -327,16 +330,19 @@ public class CSVUtils {
     }
 
     /**
-     * Is the item a duplicate? Checks the database for an entry with the same name.
+     * Is the item a duplicate? Checks the database for an entry with the same UUID.
      *
      * @param cr    The ContentResolver to use
      * @param entry The entry
-     * @return Whether the entry is a possible duplicate
+     * @return Whether the entry is a duplicate
      */
     private static boolean isDuplicate(ContentResolver cr, EntryHolder entry) {
+        if(entry.uuid == null) {
+            return false;
+        }
         final String[] projection = new String[] {Tables.Entries._ID};
-        final String where = Tables.Entries.TITLE + " = ?";
-        final String[] whereArgs = new String[] {entry.title};
+        final String where = Tables.Entries.UUID + " = ?";
+        final String[] whereArgs = new String[] {entry.uuid};
         final Cursor cursor =
                 cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs, null);
         if(cursor != null) {
