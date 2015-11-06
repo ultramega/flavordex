@@ -232,12 +232,15 @@ public abstract class AbsPhotosFragment extends Fragment {
 
         final String hash = PhotoUtils.getMD5Hash(getContext().getContentResolver(), uri);
         if(hash == null) {
+            Toast.makeText(getContext(), R.string.error_insert_photo, Toast.LENGTH_LONG).show();
             return;
         }
 
         int pos = 0;
         for(PhotoHolder photo : mPhotos) {
             if(hash.equals(photo.hash)) {
+                Toast.makeText(getContext(), R.string.message_duplicate_photo, Toast.LENGTH_LONG)
+                        .show();
                 return;
             }
             if(photo.pos >= pos) {
