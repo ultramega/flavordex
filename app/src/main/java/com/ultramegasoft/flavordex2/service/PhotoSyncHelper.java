@@ -135,6 +135,23 @@ public class PhotoSyncHelper {
                 return true;
             }
             Log.w(TAG, "Failed to get application folder.");
+        } else {
+            switch(result.getErrorCode()) {
+                case ConnectionResult.SIGN_IN_REQUIRED:
+                case ConnectionResult.SIGN_IN_FAILED:
+                case ConnectionResult.INVALID_ACCOUNT:
+                    Log.i(TAG, "User not signed in. Disabling photo syncing.");
+                    prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false).apply();
+                    break;
+                case ConnectionResult.API_UNAVAILABLE:
+                case ConnectionResult.LICENSE_CHECK_FAILED:
+                case ConnectionResult.SERVICE_DISABLED:
+                case ConnectionResult.SERVICE_MISSING:
+                case ConnectionResult.SERVICE_INVALID:
+                case ConnectionResult.SERVICE_MISSING_PERMISSION:
+                    Log.i(TAG, "Google Drive service unavailable. Disabling photo syncing.");
+                    prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false).apply();
+            }
         }
 
         Log.w(TAG, "Connection failed! Reason: " + result.getErrorMessage());
