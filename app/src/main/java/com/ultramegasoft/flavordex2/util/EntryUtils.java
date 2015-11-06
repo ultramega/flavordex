@@ -45,7 +45,8 @@ public class EntryUtils {
                 //noinspection ResultOfMethodCallIgnored
                 UUID.fromString(entry.uuid);
                 values.put(Tables.Entries.UUID, entry.uuid);
-            } catch(IllegalArgumentException ignored) {
+            } catch(IllegalArgumentException e) {
+                Log.w(TAG, entry.uuid + " is not a valid UUID. Ignoring.");
             }
         }
         values.put(Tables.Entries.TITLE, getUniqueTitle(cr, entry.title));
