@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -92,6 +93,24 @@ public class FileImportDialog extends ImportDialog
     }
 
     @Override
+    protected void uncheckDuplicates() {
+        final ListView listView = getListView();
+        for(int i = 0; i < mData.entries.size(); i++) {
+            listView.setItemChecked(i, !mData.duplicates.contains(mData.entries.get(i)));
+        }
+
+        final int numDuplicates = mData.duplicates.size();
+        if(numDuplicates > 0) {
+            final String duplicates =
+                    getResources().getQuantityString(R.plurals.duplicates, numDuplicates);
+            final String were = getResources().getQuantityString(R.plurals.were, numDuplicates);
+            final String message = getString(R.string.message_duplicates_unchecked,
+                    numDuplicates, duplicates, were);
+            Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
     protected void insertSelected() {
         final CSVListAdapter adapter = (CSVListAdapter)getListAdapter();
         final ArrayList<EntryHolder> entries = new ArrayList<>();
@@ -120,17 +139,17 @@ public class FileImportDialog extends ImportDialog
 
             final ListView listView = getListView();
             for(int i = 0; i < data.entries.size(); i++) {
-                listView.setItemChecked(i, !data.duplicates.contains(data.entries.get(i)));
+                listView.setItemChecked(i, true);
             }
 
             final int numDuplicates = data.duplicates.size();
             if(numDuplicates > 0) {
-                final String duplicates =
-                        getResources().getQuantityString(R.plurals.duplicates, numDuplicates);
-                final String were = getResources().getQuantityString(R.plurals.were, numDuplicates);
-                final String message = getString(R.string.message_duplicates_unchecked,
-                        numDuplicates, duplicates, were);
-                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        showDuplicatesDialog(numDuplicates);
+                    }
+                });
             }
 
             mData = data;

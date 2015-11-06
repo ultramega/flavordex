@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name" translatable="false">Flavordex</string>
     <string name="date_format" translatable="false">MMM dd, yyyy</string>
     <string name="date_time_format" translatable="false">MMM dd, yyyy h:mm a</string>
@@ -35,6 +35,7 @@
     <string name="title_select_file">Select File</string>
     <string name="title_importing">Importing…</string>
     <string name="title_exporting">Exporting…</string>
+    <string name="title_duplicates">Duplicates Detected</string>
     <string name="title_settings">Application Settings</string>
     <string name="title_permission">Permission Requested</string>
     <string name="title_reset_flavor">Reset Flavor Chart</string>
@@ -97,6 +98,8 @@
     <string name="button_remove_flavor">Remove Flavor</string>
     <string name="button_grant_permission">Grant Permission</string>
     <string name="button_import">Import Selected</string>
+    <string name="button_ignore">Ignore</string>
+    <string name="button_uncheck_duplicates">Uncheck %s</string>
     <string name="button_export">Export</string>
     <string name="button_create_cat">Create Category</string>
 
@@ -145,7 +148,8 @@
     <string name="message_import_no_data">No valid entries were found.</string>
     <string name="message_import_complete">Import complete.</string>
     <string name="message_export_complete">Export complete.</string>
-    <string name="message_duplicates_unchecked" tools:ignore="PluralsCandidate">%1$d possible %2$s %3$s unchecked.</string>
+    <string name="message_duplicates_unchecked">%1$d %2$s %3$s unchecked.</string>
+    <string name="message_duplicates_detected">%1$d %2$s %3$s detected. What would you like to do?</string>
     <string name="message_confirm_delete_cat">Are you sure you want to delete the &lt;b>%s&lt;/b> category?</string>
     <string name="message_delete_cat_entries">Delete &lt;b>%1$d %2$s&lt;/b> from this category.</string>
     <string name="message_request_storage">Flavordex requires external storage access to enable photo features.</string>
