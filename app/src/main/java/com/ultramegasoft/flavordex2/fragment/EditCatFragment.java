@@ -562,7 +562,7 @@ public class EditCatFragment extends LoadingProgressFragment
         /**
          * The category ID
          */
-        private long mCatId;
+        private final long mCatId;
 
         /**
          * @param context The Context
@@ -668,12 +668,12 @@ public class EditCatFragment extends LoadingProgressFragment
             /**
              * The list of extra fields for the category
              */
-            public ArrayList<Field> extras = new ArrayList<>();
+            public final ArrayList<Field> extras = new ArrayList<>();
 
             /**
              * The list of flavors for the category
              */
-            public ArrayList<Field> flavors = new ArrayList<>();
+            public final ArrayList<Field> flavors = new ArrayList<>();
         }
     }
 

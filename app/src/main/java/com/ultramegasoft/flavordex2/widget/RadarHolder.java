@@ -24,7 +24,7 @@ public class RadarHolder implements Parcelable {
     /**
      * The label for this item
      */
-    public String name;
+    public final String name;
 
     /**
      * The value of this item
