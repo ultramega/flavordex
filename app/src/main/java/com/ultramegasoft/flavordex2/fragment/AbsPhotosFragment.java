@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -47,6 +48,7 @@ public abstract class AbsPhotosFragment extends Fragment {
      */
     private static final String STATE_PHOTOS = "photos";
     private static final String STATE_CAPTURE_FILE = "capture_file";
+    private static final String STATE_LOADING_URI = "loading_uri";
 
     /**
      * Whether the external storage is readable
@@ -62,6 +64,11 @@ public abstract class AbsPhotosFragment extends Fragment {
      * The image file currently being captured
      */
     private File mCapturedPhoto;
+
+    /**
+     * The currently running photo loader
+     */
+    private PhotoLoader mPhotoLoader;
 
     /**
      * The information about each photo
@@ -83,6 +90,11 @@ public abstract class AbsPhotosFragment extends Fragment {
         if(savedInstanceState != null) {
             mPhotos = savedInstanceState.getParcelableArrayList(STATE_PHOTOS);
             mCapturedPhoto = (File)savedInstanceState.getSerializable(STATE_CAPTURE_FILE);
+            final Uri loadingUri = savedInstanceState.getParcelable(STATE_LOADING_URI);
+            if(loadingUri != null) {
+                mPhotoLoader = new PhotoLoader(loadingUri);
+                mPhotoLoader.execute();
+            }
         }
     }
 
@@ -118,6 +130,18 @@ public abstract class AbsPhotosFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(STATE_PHOTOS, mPhotos);
         outState.putSerializable(STATE_CAPTURE_FILE, mCapturedPhoto);
+        if(mPhotoLoader != null) {
+            outState.putParcelable(STATE_LOADING_URI, mPhotoLoader.getUri());
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(mPhotoLoader != null) {
+            mPhotoLoader.cancel(true);
+            mPhotoLoader = null;
+        }
     }
 
     @Override
@@ -160,7 +184,8 @@ public abstract class AbsPhotosFragment extends Fragment {
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     cr.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 }
-                addPhoto(uri);
+                mPhotoLoader = new PhotoLoader(uri);
+                mPhotoLoader.execute();
             }
         }
     }
@@ -223,22 +248,18 @@ public abstract class AbsPhotosFragment extends Fragment {
     /**
      * Add a photo to this entry.
      *
-     * @param uri The Uri to the image file
+     * @param newPhoto The photo being added
      */
-    private void addPhoto(Uri uri) {
-        if(uri == null) {
-            return;
-        }
-
-        final String hash = PhotoUtils.getMD5Hash(getContext().getContentResolver(), uri);
-        if(hash == null) {
+    private void addPhoto(PhotoHolder newPhoto) {
+        mPhotoLoader = null;
+        if(newPhoto.hash == null) {
             Toast.makeText(getContext(), R.string.error_insert_photo, Toast.LENGTH_LONG).show();
             return;
         }
 
         int pos = 0;
         for(PhotoHolder photo : mPhotos) {
-            if(hash.equals(photo.hash)) {
+            if(newPhoto.hash.equals(photo.hash)) {
                 Toast.makeText(getContext(), R.string.message_duplicate_photo, Toast.LENGTH_LONG)
                         .show();
                 return;
@@ -248,9 +269,8 @@ public abstract class AbsPhotosFragment extends Fragment {
             }
         }
 
-        final PhotoHolder photo = new PhotoHolder(0, hash, uri, pos);
-        mPhotos.add(photo);
-        onPhotoAdded(photo);
+        mPhotos.add(newPhoto);
+        onPhotoAdded(newPhoto);
     }
 
     /**
@@ -282,4 +302,44 @@ public abstract class AbsPhotosFragment extends Fragment {
      * @param photo The removed photo
      */
     protected abstract void onPhotoRemoved(PhotoHolder photo);
+
+    /**
+     * Task for loading new photos in the background.
+     */
+    private class PhotoLoader extends AsyncTask<Void, Void, PhotoHolder> {
+        /**
+         * The Uri to load
+         */
+        private final Uri mUri;
+
+        /**
+         * @param uri The Uri to load
+         */
+        public PhotoLoader(Uri uri) {
+            mUri = uri;
+        }
+
+        /**
+         * Get the Uri being loaded
+         *
+         * @return The Uri being loaded
+         */
+        public Uri getUri() {
+            return mUri;
+        }
+
+        @Override
+        protected PhotoHolder doInBackground(Void... params) {
+            final String hash = PhotoUtils.getMD5Hash(getContext().getContentResolver(), mUri);
+            return new PhotoHolder(0, hash, mUri, 0);
+        }
+
+        @Override
+        protected void onPostExecute(PhotoHolder holder) {
+            if(isCancelled()) {
+                return;
+            }
+            addPhoto(holder);
+        }
+    }
 }
