@@ -77,7 +77,6 @@ public class DataSyncHelper {
      * @return Whether the sync completed successfully
      */
     public boolean sync() {
-        Log.i(TAG, "Starting data sync service.");
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
         if(accountName == null || mClientId == 0) {
@@ -90,10 +89,10 @@ public class DataSyncHelper {
 
         mSync = BackendUtils.getSync(credential);
         try {
-            Log.i(TAG, "Syncing data...");
+            Log.d(TAG, "Syncing...");
             pushUpdates();
             fetchUpdates();
-            Log.i(TAG, "Syncing complete.");
+            Log.d(TAG, "Syncing complete.");
 
             return true;
         } catch(IOException e) {

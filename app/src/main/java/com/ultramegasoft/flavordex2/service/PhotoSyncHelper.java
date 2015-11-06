@@ -97,7 +97,6 @@ public class PhotoSyncHelper {
         if(isConnected()) {
             return true;
         }
-        Log.i(TAG, "Connecting to Google Drive...");
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             mShouldSync = false;
             mMediaMounted = false;
@@ -108,6 +107,7 @@ public class PhotoSyncHelper {
         if(!Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                 .canWrite()) {
             if(!PermissionUtils.hasExternalStoragePerm(mContext)) {
+                Log.i(TAG, "External storage access permission denied. Disabling photo syncing.");
                 prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false).apply();
                 return false;
             }
@@ -129,12 +129,15 @@ public class PhotoSyncHelper {
                 .build();
         final ConnectionResult result = mClient.blockingConnect();
         if(result.isSuccess()) {
+            Log.d(TAG, "Connection successful. sync: " + mShouldSync + " media: " + mMediaMounted);
             mDriveFolder = Drive.DriveApi.getAppFolder(mClient);
             if(mDriveFolder != null) {
                 return true;
             }
+            Log.w(TAG, "Failed to get application folder.");
         }
 
+        Log.w(TAG, "Connection failed! Reason: " + result.getErrorMessage());
         mClient.disconnect();
         return false;
     }
@@ -162,6 +165,7 @@ public class PhotoSyncHelper {
      * Upload photos without a Drive ID.
      */
     public void pushPhotos() {
+        Log.d(TAG, "Pushing photos.");
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
                 Tables.Photos._ID,
@@ -239,6 +243,7 @@ public class PhotoSyncHelper {
      * Delete photos from Drive that were removed from the app.
      */
     public void deletePhotos() {
+        Log.d(TAG, "Deleting photos.");
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
                 Tables.Deleted._ID,
@@ -271,6 +276,7 @@ public class PhotoSyncHelper {
      */
     public void fetchPhotos() {
         validateDriveIds();
+        Log.d(TAG, "Fetching photos.");
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
                 Tables.Photos._ID,
@@ -321,6 +327,7 @@ public class PhotoSyncHelper {
      * Ensure that the local Drive IDs exists in the Drive folder.
      */
     public void validateDriveIds() {
+        Log.d(TAG, "Validating Drive IDs.");
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
                 Tables.Photos._ID,
