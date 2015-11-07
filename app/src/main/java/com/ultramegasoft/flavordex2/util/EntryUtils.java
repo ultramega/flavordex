@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -40,6 +41,10 @@ public class EntryUtils {
     public static Uri insertEntry(Context context, EntryHolder entry) throws SQLiteException {
         final ContentResolver cr = context.getContentResolver();
         final ContentValues values = new ContentValues();
+
+        final Uri catUri = getCatUri(cr, entry);
+        values.put(Tables.Entries.CAT, entry.catId);
+
         if(entry.uuid != null) {
             try {
                 //noinspection ResultOfMethodCallIgnored
@@ -58,9 +63,6 @@ public class EntryUtils {
         values.put(Tables.Entries.RATING, entry.rating);
         values.put(Tables.Entries.NOTES, entry.notes);
         values.put(Tables.Entries.UPDATED, System.currentTimeMillis());
-
-        final Uri catUri = getCatUri(cr, entry);
-        values.put(Tables.Entries.CAT, entry.catId);
 
         final Uri entryUri = cr.insert(Tables.Entries.CONTENT_URI, values);
         insertExtras(cr, catUri, entryUri, entry);
@@ -116,11 +118,15 @@ public class EntryUtils {
      * @param cr    The ContentResolver
      * @param entry The entry
      * @return The Uri for the category
+     * @throws SQLiteException
      */
-    private static Uri getCatUri(ContentResolver cr, EntryHolder entry) {
+    private static Uri getCatUri(ContentResolver cr, EntryHolder entry) throws SQLiteException {
         if(entry.catId > 0) {
             return ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, entry.catId);
+        } else if(TextUtils.isEmpty(entry.catName)) {
+            throw new SQLiteException("Category ID or name is required");
         }
+
         final Uri uri = Tables.Cats.CONTENT_URI;
         final String[] projection = new String[] {Tables.Cats._ID};
         final String where = Tables.Cats.NAME + " = ?";
