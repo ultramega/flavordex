@@ -200,9 +200,14 @@ public class FileImportDialog extends ImportDialog
                 }
             });
         } else {
-            MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
-                    getString(R.string.error_csv_parse), R.drawable.ic_warning);
-            dismiss();
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
+                            getString(R.string.error_csv_parse), R.drawable.ic_warning);
+                    dismiss();
+                }
+            });
         }
 
         getLoaderManager().destroyLoader(0);
