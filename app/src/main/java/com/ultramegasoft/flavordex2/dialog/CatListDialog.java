@@ -2,6 +2,7 @@ package com.ultramegasoft.flavordex2.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -103,7 +104,12 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
                 .setTitle(R.string.title_select_cat)
                 .setIcon(R.drawable.ic_list)
                 .setView(getLayout())
-                .setNegativeButton(R.string.button_cancel, null)
+                .setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
                 .create();
     }
 
@@ -169,6 +175,15 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
 
         if(mAdapter.getItem(info.position).preset) {
             delete.setEnabled(false).setVisible(false);
+        }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        final Fragment target = getTargetFragment();
+        if(target != null) {
+            target.onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, null);
         }
     }
 

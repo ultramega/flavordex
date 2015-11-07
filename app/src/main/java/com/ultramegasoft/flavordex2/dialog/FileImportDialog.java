@@ -1,14 +1,19 @@
 package com.ultramegasoft.flavordex2.dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -39,6 +44,12 @@ public class FileImportDialog extends ImportDialog
      * Keys for the Fragment arguments
      */
     private static final String ARG_FILE_PATH = "file_path";
+
+    /**
+     * Request codes for external Activities
+     */
+    private static final int REQUEST_DUPLICATES = 1000;
+    private static final int REQUEST_SET_CATEGORY = 1001;
 
     /**
      * Keys for the saved state
@@ -93,7 +104,33 @@ public class FileImportDialog extends ImportDialog
     }
 
     @Override
-    protected void uncheckDuplicates() {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            case REQUEST_DUPLICATES:
+                if(resultCode == Activity.RESULT_OK) {
+                    uncheckDuplicates();
+                }
+                break;
+            case REQUEST_SET_CATEGORY:
+                CatListDialog.closeDialog(getFragmentManager());
+                if(resultCode == Activity.RESULT_OK && data != null) {
+                    final long catId = data.getLongExtra(CatListDialog.EXTRA_CAT_ID, 0);
+                    for(EntryHolder entry : mData.entries) {
+                        entry.catId = catId;
+                    }
+                    mData.hasCategory = true;
+                    validateData();
+                } else {
+                    dismiss();
+                }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * Uncheck duplicate entries.
+     */
+    private void uncheckDuplicates() {
         final ListView listView = getListView();
         for(int i = 0; i < mData.entries.size(); i++) {
             listView.setItemChecked(i, !mData.duplicates.contains(mData.entries.get(i)));
@@ -131,6 +168,19 @@ public class FileImportDialog extends ImportDialog
         };
     }
 
+    /**
+     * Check the data and prompt the user for input as needed.
+     */
+    private void validateData() {
+        invalidateButtons();
+        if(!mData.hasCategory) {
+            CatListDialog.showDialog(getFragmentManager(), this, REQUEST_SET_CATEGORY);
+        } else if(!mData.duplicates.isEmpty()) {
+            DuplicatesDialog.showDialog(getFragmentManager(), this, REQUEST_DUPLICATES,
+                    mData.duplicates.size());
+        }
+    }
+
     @Override
     public void onLoadFinished(Loader<CSVUtils.CSVHolder> loader, CSVUtils.CSVHolder data) {
         if(data != null) {
@@ -142,18 +192,13 @@ public class FileImportDialog extends ImportDialog
                 listView.setItemChecked(i, true);
             }
 
-            final int numDuplicates = data.duplicates.size();
-            if(numDuplicates > 0) {
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        showDuplicatesDialog(numDuplicates);
-                    }
-                });
-            }
-
             mData = data;
-            invalidateButtons();
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    validateData();
+                }
+            });
         } else {
             MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
                     getString(R.string.error_csv_parse), R.drawable.ic_warning);
@@ -165,6 +210,70 @@ public class FileImportDialog extends ImportDialog
 
     @Override
     public void onLoaderReset(Loader<CSVUtils.CSVHolder> loader) {
+    }
+
+    /**
+     * Dialog to show the user when duplicate entries are detected.
+     */
+    public static class DuplicatesDialog extends DialogFragment {
+        private static final String TAG = "DuplicatesDialog";
+
+        /**
+         * Keys for the Fragment arguments
+         */
+        private static final String ARG_NUM = "num";
+
+        /**
+         * Show the dialog.
+         *
+         * @param fm          The FragmentManager to use
+         * @param target      The Fragment to notify of the result
+         * @param requestCode A number to identify this request
+         * @param num         The number of duplicates
+         */
+        public static void showDialog(FragmentManager fm, Fragment target, int requestCode, int num) {
+            final DialogFragment fragment = new DuplicatesDialog();
+            fragment.setTargetFragment(target, requestCode);
+
+            final Bundle args = new Bundle();
+            args.putInt(ARG_NUM, num);
+            fragment.setArguments(args);
+
+            fragment.show(fm, TAG);
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final int num = getArguments().getInt(ARG_NUM);
+
+            final Resources res = getResources();
+            final String duplicates = res.getQuantityString(R.plurals.duplicates, num);
+            final String duplicatesCapitalized =
+                    Character.toUpperCase(duplicates.charAt(0)) + duplicates.substring(1);
+            final String were = res.getQuantityString(R.plurals.were, num);
+
+            final String message =
+                    getString(R.string.message_duplicates_detected, num, duplicates, were);
+            final String button =
+                    getString(R.string.button_uncheck_duplicates, duplicatesCapitalized);
+            return new android.app.AlertDialog.Builder(getContext())
+                    .setTitle(R.string.title_duplicates)
+                    .setIcon(R.drawable.ic_info)
+                    .setMessage(message)
+                    .setPositiveButton(button, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            final Fragment fragment = getTargetFragment();
+                            if(fragment != null) {
+                                fragment.onActivityResult(getTargetRequestCode(),
+                                        Activity.RESULT_OK, null);
+                            }
+                        }
+                    })
+                    .setNegativeButton(R.string.button_ignore, null)
+                    .create();
+        }
     }
 
     /**

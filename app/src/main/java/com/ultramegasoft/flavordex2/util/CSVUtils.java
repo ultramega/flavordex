@@ -170,9 +170,10 @@ public class CSVUtils {
             if((line = reader.readNext()) != null) {
                 data = new CSVHolder();
                 final List<String> fields = Arrays.asList(line);
-                if(!fields.contains(Tables.Entries.TITLE) || !fields.contains(Tables.Entries.CAT)) {
+                if(!fields.contains(Tables.Entries.TITLE)) {
                     return data;
                 }
+                data.hasCategory = fields.contains(Tables.Entries.CAT);
 
                 final ContentResolver cr = context.getContentResolver();
 
@@ -185,7 +186,8 @@ public class CSVUtils {
                     }
                     entry = readCSVRow(cr, rowMap);
 
-                    if(TextUtils.isEmpty(entry.title) || TextUtils.isEmpty(entry.catName)) {
+                    if(TextUtils.isEmpty(entry.title)
+                            || (data.hasCategory && TextUtils.isEmpty(entry.catName))) {
                         continue;
                     }
 
@@ -381,6 +383,11 @@ public class CSVUtils {
          * List of entries that are possible duplicate
          */
         public final ArrayList<EntryHolder> duplicates;
+
+        /**
+         * Whether the CSV file has a category column
+         */
+        public boolean hasCategory;
 
         public CSVHolder() {
             entries = new ArrayList<>();
