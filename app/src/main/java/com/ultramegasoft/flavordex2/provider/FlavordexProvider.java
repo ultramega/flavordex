@@ -41,18 +41,19 @@ public class FlavordexProvider extends ContentProvider {
     private static final int CATS_EXTRAS = 9;
     private static final int CATS_FLAVOR = 10;
     private static final int CATS_ENTRIES = 11;
-    private static final int EXTRAS = 12;
-    private static final int EXTRAS_ID = 13;
-    private static final int FLAVORS = 14;
-    private static final int FLAVORS_ID = 15;
-    private static final int PHOTOS = 16;
-    private static final int PHOTOS_ID = 17;
-    private static final int MAKERS = 18;
-    private static final int MAKERS_ID = 19;
-    private static final int MAKERS_FILTER = 20;
-    private static final int LOCATIONS = 21;
-    private static final int LOCATIONS_ID = 22;
-    private static final int DELETED = 23;
+    private static final int CATS_ENTRIES_FILTER = 12;
+    private static final int EXTRAS = 13;
+    private static final int EXTRAS_ID = 14;
+    private static final int FLAVORS = 15;
+    private static final int FLAVORS_ID = 16;
+    private static final int PHOTOS = 17;
+    private static final int PHOTOS_ID = 18;
+    private static final int MAKERS = 19;
+    private static final int MAKERS_ID = 20;
+    private static final int MAKERS_FILTER = 21;
+    private static final int LOCATIONS = 22;
+    private static final int LOCATIONS_ID = 23;
+    private static final int DELETED = 24;
 
     /**
      * The UriMatcher to use
@@ -71,6 +72,7 @@ public class FlavordexProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "cats/#/extras", CATS_EXTRAS);
         sUriMatcher.addURI(AUTHORITY, "cats/#/flavor", CATS_FLAVOR);
         sUriMatcher.addURI(AUTHORITY, "cats/#/entries", CATS_ENTRIES);
+        sUriMatcher.addURI(AUTHORITY, "cats/#/entries/filter/*", CATS_ENTRIES_FILTER);
         sUriMatcher.addURI(AUTHORITY, "extras", EXTRAS);
         sUriMatcher.addURI(AUTHORITY, "extras/#", EXTRAS_ID);
         sUriMatcher.addURI(AUTHORITY, "flavors", FLAVORS);
@@ -115,6 +117,7 @@ public class FlavordexProvider extends ContentProvider {
             case ENTRIES:
             case ENTRIES_FILTER:
             case CATS_ENTRIES:
+            case CATS_ENTRIES_FILTER:
                 return Tables.Entries.DATA_TYPE;
             case ENTRIES_ID:
                 return Tables.Entries.DATA_TYPE_ITEM;
@@ -176,6 +179,12 @@ public class FlavordexProvider extends ContentProvider {
             case CATS_ENTRIES:
                 queryBuilder.setTables(Tables.Entries.VIEW_NAME);
                 queryBuilder.appendWhere(Tables.Entries.CAT + " = " + uri.getPathSegments().get(1));
+                break;
+            case CATS_ENTRIES_FILTER:
+                queryBuilder.setTables(Tables.Entries.VIEW_NAME);
+                queryBuilder.appendWhere(Tables.Entries.CAT + " = " + uri.getPathSegments().get(1));
+                queryBuilder.appendWhere(Tables.Entries.TITLE + " LIKE ");
+                queryBuilder.appendWhereEscapeString("%" + uri.getLastPathSegment() + "%");
                 break;
             case CATS:
                 queryBuilder.setTables(Tables.Cats.VIEW_NAME);
@@ -337,6 +346,7 @@ public class FlavordexProvider extends ContentProvider {
                 throw new IllegalArgumentException("Insert not permitted on: " + uri.toString());
             case ENTRIES_FILTER:
             case CATS_ENTRIES:
+            case CATS_ENTRIES_FILTER:
             case MAKERS:
             case MAKERS_ID:
             case MAKERS_FILTER:
@@ -470,6 +480,7 @@ public class FlavordexProvider extends ContentProvider {
                 throw new IllegalArgumentException("Update not permitted on: " + uri.toString());
             case ENTRIES_FILTER:
             case CATS_ENTRIES:
+            case CATS_ENTRIES_FILTER:
             case MAKERS:
             case MAKERS_ID:
             case MAKERS_FILTER:
@@ -574,6 +585,7 @@ public class FlavordexProvider extends ContentProvider {
                 throw new IllegalArgumentException("Delete not permitted on: " + uri.toString());
             case ENTRIES_FILTER:
             case CATS_ENTRIES:
+            case CATS_ENTRIES_FILTER:
             case MAKERS:
             case MAKERS_ID:
             case MAKERS_FILTER:
