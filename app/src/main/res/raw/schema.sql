@@ -1,3 +1,14 @@
+CREATE TABLE cats (
+  _id INTEGER PRIMARY KEY,
+  uuid TEXT,
+  name  TEXT COLLATE NOCASE,
+  preset INTEGER DEFAULT 0,
+  updated INTEGER DEFAULT 0,
+  published INTEGER DEFAULT 0,
+  synced INTEGER DEFAULT 0,
+  UNIQUE(uuid) ON CONFLICT FAIL
+);
+--
 CREATE TABLE entries (
   _id INTEGER PRIMARY KEY,
   uuid TEXT,
@@ -11,7 +22,8 @@ CREATE TABLE entries (
   notes TEXT COLLATE NOCASE,
   updated INTEGER DEFAULT 0,
   published INTEGER DEFAULT 0,
-  synced INTEGER DEFAULT 0
+  synced INTEGER DEFAULT 0,
+  UNIQUE(uuid) ON CONFLICT FAIL
 );
 --
 CREATE TABLE entries_extras (
@@ -37,7 +49,8 @@ CREATE TABLE extras (
   name TEXT,
   pos INTEGER DEFAULT 0,
   preset INTEGER DEFAULT 0,
-  deleted INTEGER DEFAULT 0
+  deleted INTEGER DEFAULT 0,
+  UNIQUE(uuid) ON CONFLICT FAIL
 );
 --
 CREATE TABLE flavors (
@@ -70,16 +83,6 @@ CREATE TABLE photos (
   drive_id TEXT,
   pos INTEGER DEFAULT 0,
   UNIQUE(entry, hash) ON CONFLICT IGNORE
-);
---
-CREATE TABLE cats (
-  _id INTEGER PRIMARY KEY,
-  uuid TEXT,
-  name  TEXT COLLATE NOCASE,
-  preset INTEGER DEFAULT 0,
-  updated INTEGER DEFAULT 0,
-  published INTEGER DEFAULT 0,
-  synced INTEGER DEFAULT 0
 );
 --
 CREATE TABLE deleted (
