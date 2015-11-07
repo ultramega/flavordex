@@ -1,6 +1,7 @@
 package com.ultramegasoft.flavordex2.provider;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -68,6 +69,39 @@ public class Tables {
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
         public static final Uri CONTENT_FILTER_URI_BASE =
                 Uri.parse(URI_BASE + TABLE_NAME + "/filter/");
+
+        /**
+         * Get the Uri for an entry's extra fields.
+         *
+         * @param entryId The entry ID
+         * @return The Uri for the entry's extra fields
+         */
+        public static Uri getExtrasUri(long entryId) {
+            final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, entryId);
+            return Uri.withAppendedPath(baseUri, "extras");
+        }
+
+        /**
+         * Get the Uri for an entry's flavors.
+         *
+         * @param entryId The entry ID
+         * @return The Uri for the entry's flavors
+         */
+        public static Uri getFlavorUri(long entryId) {
+            final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, entryId);
+            return Uri.withAppendedPath(baseUri, "flavor");
+        }
+
+        /**
+         * Get the Uri for an entry's photos.
+         *
+         * @param entryId The entry ID
+         * @return The Uri for the entry's photos
+         */
+        public static Uri getPhotoUri(long entryId) {
+            final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, entryId);
+            return Uri.withAppendedPath(baseUri, "photos");
+        }
 
         private Entries() {
         }
@@ -387,6 +421,51 @@ public class Tables {
          */
         public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
+
+        /**
+         * Get the Uri for an category's extra fields.
+         *
+         * @param catId The category ID
+         * @return The Uri for the category's extra fields
+         */
+        public static Uri getExtrasUri(long catId) {
+            final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, catId);
+            return Uri.withAppendedPath(baseUri, "extras");
+        }
+
+        /**
+         * Get the Uri for an category's flavors.
+         *
+         * @param catId The category ID
+         * @return The Uri for the category's flavors
+         */
+        public static Uri getFlavorUri(long catId) {
+            final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, catId);
+            return Uri.withAppendedPath(baseUri, "flavor");
+        }
+
+        /**
+         * Get the Uri for an category's entries.
+         *
+         * @param catId The category ID
+         * @return The Uri for the category's entries
+         */
+        public static Uri getEntriesUri(long catId) {
+            final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, catId);
+            return Uri.withAppendedPath(baseUri, "entries");
+        }
+
+        /**
+         * Create a category entry filter Uri.
+         *
+         * @param catId      The category ID
+         * @param filterText The filter text
+         * @return The category filter Uri
+         */
+        public static Uri getFilterUri(long catId, String filterText) {
+            final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, catId);
+            return Uri.withAppendedPath(baseUri, "entries/filter/" + filterText);
+        }
 
         private Cats() {
         }
