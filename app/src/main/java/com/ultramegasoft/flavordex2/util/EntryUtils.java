@@ -111,13 +111,16 @@ public class EntryUtils {
     }
 
     /**
-     * Find the ID for a category, creating one if it doesn't exist.
+     * Find the Uri for a category, creating one if it doesn't exist.
      *
      * @param cr    The ContentResolver
      * @param entry The entry
      * @return The Uri for the category
      */
     private static Uri getCatUri(ContentResolver cr, EntryHolder entry) {
+        if(entry.catId > 0) {
+            return ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, entry.catId);
+        }
         final Uri uri = Tables.Cats.CONTENT_URI;
         final String[] projection = new String[] {Tables.Cats._ID};
         final String where = Tables.Cats.NAME + " = ?";
