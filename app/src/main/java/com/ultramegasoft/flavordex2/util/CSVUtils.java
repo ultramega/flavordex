@@ -349,7 +349,10 @@ public class CSVUtils {
                 cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs, null);
         if(cursor != null) {
             try {
-                return cursor.moveToFirst();
+                if(cursor.moveToFirst()) {
+                    entry.uuid = null;
+                    return true;
+                }
             } finally {
                 cursor.close();
             }
