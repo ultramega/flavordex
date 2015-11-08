@@ -146,11 +146,7 @@ public class EntryListActivity extends AppCompatActivity
         args.putBoolean(EntryListFragment.ARG_TWO_PANE, mTwoPane);
         args.putBoolean(EntryListFragment.ARG_EXPORT_MODE, exportMode);
         fragment.setArguments(args);
-        getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.fragment_in_left, R.anim.fragment_out_left,
-                        R.anim.fragment_in_right, R.anim.fragment_out_right)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.entry_list, fragment)
+        getSupportFragmentManager().beginTransaction().replace(R.id.entry_list, fragment)
                 .addToBackStack(null).commit();
     }
 

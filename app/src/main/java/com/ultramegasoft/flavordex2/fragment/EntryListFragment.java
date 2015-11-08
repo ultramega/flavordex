@@ -252,6 +252,15 @@ public class EntryListFragment extends ListFragment
     }
 
     @Override
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        if(enter) {
+            return AnimationUtils.loadAnimation(getContext(), R.anim.fragment_in_from_right);
+        } else {
+            return AnimationUtils.loadAnimation(getContext(), R.anim.fragment_out_to_right);
+        }
+    }
+
+    @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
         if(mExportMode) {

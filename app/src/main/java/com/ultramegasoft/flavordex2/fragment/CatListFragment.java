@@ -10,6 +10,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ListView;
 
 import com.ultramegasoft.flavordex2.EntryListActivity;
@@ -37,6 +39,15 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
             }
         }
         getLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        if(enter) {
+            return AnimationUtils.loadAnimation(getContext(), R.anim.fragment_in_from_left);
+        } else {
+            return AnimationUtils.loadAnimation(getContext(), R.anim.fragment_out_to_left);
+        }
     }
 
     @Override
