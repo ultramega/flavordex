@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -38,20 +37,13 @@ import com.ultramegasoft.flavordex2.EditEntryActivity;
 import com.ultramegasoft.flavordex2.EntryListActivity;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
-import com.ultramegasoft.flavordex2.SettingsActivity;
-import com.ultramegasoft.flavordex2.dialog.AboutDialog;
-import com.ultramegasoft.flavordex2.dialog.AppChooserDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.dialog.EntryFilterDialog;
 import com.ultramegasoft.flavordex2.dialog.ExportDialog;
-import com.ultramegasoft.flavordex2.dialog.FileImportDialog;
-import com.ultramegasoft.flavordex2.dialog.FileSelectorDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.util.AppImportUtils;
 import com.ultramegasoft.flavordex2.util.EntryDeleter;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
-import com.ultramegasoft.flavordex2.util.PermissionUtils;
 import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
 
 /**
@@ -73,9 +65,8 @@ public class EntryListFragment extends ListFragment
      */
     private static final int REQUEST_SET_FILTERS = 300;
     private static final int REQUEST_ADD_ENTRY = 301;
-    private static final int REQUEST_IMPORT_FILE = 302;
-    private static final int REQUEST_DELETE_ENTRY = 303;
-    private static final int REQUEST_SELECT_CAT = 304;
+    private static final int REQUEST_DELETE_ENTRY = 302;
+    private static final int REQUEST_SELECT_CAT = 303;
 
     /**
      * Extras for Activity results
@@ -190,6 +181,11 @@ public class EntryListFragment extends ListFragment
     private long mCatId = 0;
 
     /**
+     * The category name
+     */
+    private String mCatName;
+
+    /**
      * The Adapter for the ListView
      */
     private EntryListAdapter mAdapter;
@@ -220,11 +216,12 @@ public class EntryListFragment extends ListFragment
 
         final Bundle args = getArguments();
         mCatId = args.getLong(ARG_CAT, mCatId);
+        mCatName = args.getString(ARG_CAT_NAME);
         mTwoPane = args.getBoolean(ARG_TWO_PANE, mTwoPane);
         setActivateOnItemClick(mTwoPane);
 
         setupToolbar();
-        setCatName(args.getString(ARG_CAT_NAME));
+        setCatName();
         registerForContextMenu(getListView());
 
         updateFilterToolbar(false);
@@ -280,23 +277,10 @@ public class EntryListFragment extends ListFragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.main_menu, menu);
         if(mToolbar == null) {
             inflater.inflate(R.menu.entry_list_menu, menu);
             setupMenu(menu);
         }
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        final boolean showFileXport = Environment.getExternalStorageDirectory().canWrite()
-                || PermissionUtils.shouldAskExternalStoragePerm(getActivity());
-        final boolean showAppImport = AppImportUtils.isAnyAppInstalled(getContext());
-        menu.findItem(R.id.menu_xport).setVisible(showFileXport || showAppImport);
-        menu.findItem(R.id.menu_import).setVisible(showFileXport);
-        menu.findItem(R.id.menu_export).setVisible(showFileXport);
-        menu.findItem(R.id.menu_import_app).setVisible(showAppImport);
     }
 
     @Override
@@ -319,34 +303,11 @@ public class EntryListFragment extends ListFragment
                 setSort(Tables.Entries.RATING);
                 return true;
             case R.id.menu_add_entry:
-                CatListDialog.showDialog(getFragmentManager(), this, REQUEST_SELECT_CAT, true);
-                return true;
-            case R.id.menu_import:
-                if(!PermissionUtils.checkExternalStoragePerm(getActivity(),
-                        R.string.message_request_storage_xport)) {
-                    return true;
+                if(mCatId > 0) {
+                    addEntry(mCatId, mCatName);
+                } else {
+                    CatListDialog.showDialog(getFragmentManager(), this, REQUEST_SELECT_CAT, true);
                 }
-                final String rootPath = Environment.getExternalStorageDirectory().getPath();
-                FileSelectorDialog.showDialog(getFragmentManager(), this, REQUEST_IMPORT_FILE,
-                        rootPath, false, ".csv");
-                return true;
-            case R.id.menu_import_app:
-                AppChooserDialog.showDialog(getFragmentManager(), false);
-                return true;
-            case R.id.menu_export:
-                if(!PermissionUtils.checkExternalStoragePerm(getActivity(),
-                        R.string.message_request_storage_xport)) {
-                    return true;
-                }
-                if(!mExportMode) {
-                    setExportMode(true, true);
-                }
-                return true;
-            case R.id.menu_settings:
-                startActivity(new Intent(getContext(), SettingsActivity.class));
-                return true;
-            case R.id.menu_about:
-                AboutDialog.showDialog(getFragmentManager());
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -402,10 +363,8 @@ public class EntryListFragment extends ListFragment
                     setFilters(data);
                     break;
                 case REQUEST_SELECT_CAT:
-                    final Intent addIntent = AddEntryActivity.getIntent(getContext(),
-                            data.getLongExtra(CatListDialog.EXTRA_CAT_ID, 0),
+                    addEntry(data.getLongExtra(CatListDialog.EXTRA_CAT_ID, 0),
                             data.getStringExtra(CatListDialog.EXTRA_CAT_NAME));
-                    startActivityForResult(addIntent, REQUEST_ADD_ENTRY);
                     break;
                 case REQUEST_ADD_ENTRY:
                     CatListDialog.closeDialog(getFragmentManager());
@@ -417,16 +376,23 @@ public class EntryListFragment extends ListFragment
                                 data.getLongExtra(AddEntryActivity.EXTRA_ENTRY_CAT_ID, 0));
                     }
                     break;
-                case REQUEST_IMPORT_FILE:
-                    FileImportDialog.showDialog(getFragmentManager(),
-                            data.getStringExtra(FileSelectorDialog.EXTRA_PATH));
-                    break;
                 case REQUEST_DELETE_ENTRY:
                     final long id = data.getLongExtra(EXTRA_ENTRY_ID, 0);
                     new EntryDeleter(getContext(), id).execute();
                     break;
             }
         }
+    }
+
+    /**
+     * Start the Add Entry Activity.
+     *
+     * @param catId   The category ID
+     * @param catName The category name
+     */
+    private void addEntry(long catId, String catName) {
+        final Intent addIntent = AddEntryActivity.getIntent(getContext(), catId, catName);
+        startActivityForResult(addIntent, REQUEST_ADD_ENTRY);
     }
 
     /**
@@ -700,17 +666,15 @@ public class EntryListFragment extends ListFragment
     }
 
     /**
-     * Set the subtitle. This will will display as the title of the list Toolbar or as the ActionBar
-     * subtitle.
-     *
-     * @param catName The category name
+     * Set the subtitle. This will display the category name as the title of the list Toolbar or as
+     * the ActionBar subtitle.
      */
-    private void setCatName(String catName) {
+    private void setCatName() {
         final String subtitle;
-        if(catName == null) {
+        if(mCatName == null) {
             subtitle = getString(R.string.title_all_entries);
         } else {
-            subtitle = getString(R.string.title_cat_entries, catName);
+            subtitle = getString(R.string.title_cat_entries, mCatName);
         }
         if(mToolbar != null) {
             mToolbar.setTitle(subtitle);
