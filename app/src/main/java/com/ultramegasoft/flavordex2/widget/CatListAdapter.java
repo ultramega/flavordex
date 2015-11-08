@@ -42,11 +42,6 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
     private final int mDropDownResource;
 
     /**
-     * The ID for the TextView within the layout
-     */
-    private final int mTextViewId;
-
-    /**
      * Helper for the ThemedSpinnerAdapter
      */
     private final ThemedSpinnerAdapter.Helper mHelper;
@@ -61,26 +56,23 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
      * @param cursor           The Cursor from the database query
      * @param resource         The layout resource ID to use for each list item
      * @param dropDownResource The layout resource ID to use for dropdown items
-     * @param textViewId       The ID for the TextView within the layout
      */
-    public CatListAdapter(Context context, Cursor cursor, int resource, int dropDownResource, int textViewId) {
+    public CatListAdapter(Context context, Cursor cursor, int resource, int dropDownResource) {
         mContext = context;
         mResource = resource;
         mDropDownResource = dropDownResource;
-        mTextViewId = textViewId;
         mHelper = new Helper(context);
 
         swapCursor(cursor);
     }
 
     /**
-     * @param context    The Context
-     * @param cursor     The Cursor from the database query
-     * @param resource   The layout resource ID to use for each list item
-     * @param textViewId The ID for the TextView within the layout
+     * @param context  The Context
+     * @param cursor   The Cursor from the database query
+     * @param resource The layout resource ID to use for each list item
      */
-    public CatListAdapter(Context context, Cursor cursor, int resource, int textViewId) {
-        this(context, cursor, resource, resource, textViewId);
+    public CatListAdapter(Context context, Cursor cursor, int resource) {
+        this(context, cursor, resource, resource);
     }
 
     /**
@@ -173,16 +165,22 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
             convertView = inflater.inflate(layoutId, parent, false);
 
             final Holder holder = new Holder();
-            holder.textView = (TextView)convertView.findViewById(mTextViewId);
+            holder.textView = (TextView)convertView.findViewById(android.R.id.text1);
+            holder.textView2 = (TextView)convertView.findViewById(android.R.id.text2);
             convertView.setTag(holder);
         }
 
         final Category cat = getItem(position);
-        final String text =
-                mContext.getString(R.string.list_item_cat, cat.realName, cat.numEntries);
 
         final Holder holder = (Holder)convertView.getTag();
-        holder.textView.setText(text);
+        holder.textView.setText(cat.realName);
+        if(holder.textView2 != null) {
+            final String entries =
+                    mContext.getResources().getQuantityString(R.plurals.entries, cat.numEntries);
+            final String numEntries =
+                    mContext.getString(R.string.cat_num_entries, cat.numEntries, entries);
+            holder.textView2.setText(numEntries);
+        }
 
         return convertView;
     }
@@ -258,5 +256,6 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
      */
     private static class Holder {
         public TextView textView;
+        public TextView textView2;
     }
 }

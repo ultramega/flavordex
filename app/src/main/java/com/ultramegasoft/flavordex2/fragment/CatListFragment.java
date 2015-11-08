@@ -64,8 +64,7 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        setListAdapter(new CatListAdapter(getContext(), data, android.R.layout.simple_list_item_1,
-                android.R.id.text1));
+        setListAdapter(new CatListAdapter(getContext(), data, android.R.layout.simple_list_item_2));
     }
 
     @Override

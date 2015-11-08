@@ -92,8 +92,7 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAdapter = new CatListAdapter(getContext(), null, android.R.layout.simple_list_item_1,
-                android.R.id.text1);
+        mAdapter = new CatListAdapter(getContext(), null, android.R.layout.simple_list_item_1);
         getLoaderManager().initLoader(0, null, this);
     }
 
