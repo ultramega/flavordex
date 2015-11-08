@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 
 import com.ultramegasoft.flavordex2.dialog.AppChooserDialog;
+import com.ultramegasoft.flavordex2.fragment.CatListFragment;
 import com.ultramegasoft.flavordex2.fragment.EntryListFragment;
 import com.ultramegasoft.flavordex2.fragment.ViewEntryFragment;
 import com.ultramegasoft.flavordex2.fragment.WelcomeFragment;
@@ -43,11 +44,11 @@ public class EntryListActivity extends AppCompatActivity {
         if(findViewById(R.id.entry_detail_container) != null) {
             mTwoPane = true;
             mWelcomeFragment = new WelcomeFragment();
-            ((EntryListFragment)getSupportFragmentManager().findFragmentById(R.id.entry_list))
-                    .setTwoPane(true);
         }
 
         if(savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.entry_list, new CatListFragment()).commit();
             if(mTwoPane) {
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.entry_detail_container, mWelcomeFragment).commit();
@@ -72,7 +73,27 @@ public class EntryListActivity extends AppCompatActivity {
     }
 
     /**
-     * Called by the ListFragment when an item is selected.
+     * Called by the CatListFragment when an item is selected.
+     *
+     * @param id The category ID
+     */
+    public void onCatSelected(long id, String catName) {
+        final Fragment fragment = new EntryListFragment();
+        final Bundle args = new Bundle();
+        args.putLong(EntryListFragment.ARG_CAT, id);
+        args.putString(EntryListFragment.ARG_CAT_NAME, catName);
+        args.putBoolean(EntryListFragment.ARG_TWO_PANE, mTwoPane);
+        fragment.setArguments(args);
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.fragment_in_left, R.anim.fragment_out_left,
+                        R.anim.fragment_in_right, R.anim.fragment_out_right)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .replace(R.id.entry_list, fragment)
+                .addToBackStack(null).commit();
+    }
+
+    /**
+     * Called by the EntryListFragment when an item is selected.
      *
      * @param id      The entry ID
      * @param catName The name of the entry category

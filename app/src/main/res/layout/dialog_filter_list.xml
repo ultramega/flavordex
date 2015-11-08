@@ -18,18 +18,6 @@
 
             <TextView
                 style="@style/TableText.Label"
-                android:text="@string/label_cat" />
-
-            <Spinner
-                android:id="@+id/entry_cat"
-                style="@style/Spinner"
-                android:prompt="@string/hint_entry_cat" />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView
-                style="@style/TableText.Label"
                 android:text="@string/label_maker" />
 
             <EditText

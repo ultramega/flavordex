@@ -62,6 +62,13 @@ import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
 public class EntryListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
+     * Keys for the Fragment arguments
+     */
+    public static final String ARG_CAT = "cat";
+    public static final String ARG_CAT_NAME = "cat_name";
+    public static final String ARG_TWO_PANE = "two_pane";
+
+    /**
      * Request codes for external Activities
      */
     private static final int REQUEST_SET_FILTERS = 300;
@@ -178,6 +185,11 @@ public class EntryListFragment extends ListFragment
     private boolean mExportMode = false;
 
     /**
+     * The category ID
+     */
+    private long mCatId = 0;
+
+    /**
      * The Adapter for the ListView
      */
     private EntryListAdapter mAdapter;
@@ -205,7 +217,14 @@ public class EntryListFragment extends ListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
+
+        final Bundle args = getArguments();
+        mCatId = args.getLong(ARG_CAT, mCatId);
+        mTwoPane = args.getBoolean(ARG_TWO_PANE, mTwoPane);
+        setActivateOnItemClick(mTwoPane);
+
         setupToolbar();
+        setCatName(args.getString(ARG_CAT_NAME));
         registerForContextMenu(getListView());
 
         updateFilterToolbar(false);
@@ -622,14 +641,7 @@ public class EntryListFragment extends ListFragment
     private void updateFilterToolbar(boolean animate) {
         if(mFilters == null || mFilters.size() == 0) {
             showFilterToolbar(false, animate);
-            setSubtitle(getString(R.string.title_all_entries));
         } else {
-            if(mFilters.containsKey(Tables.Entries.CAT)) {
-                setSubtitle(getString(R.string.title_cat_entries,
-                        mFilters.get(Tables.Entries.CAT)));
-            } else {
-                setSubtitle(getString(R.string.title_all_entries));
-            }
             showFilterToolbar(true, animate);
             mFilterToolbar.setTitle(getString(R.string.message_active_filters, mFilterText));
         }
@@ -691,9 +703,15 @@ public class EntryListFragment extends ListFragment
      * Set the subtitle. This will will display as the title of the list Toolbar or as the ActionBar
      * subtitle.
      *
-     * @param subtitle The subtitle string
+     * @param catName The category name
      */
-    private void setSubtitle(CharSequence subtitle) {
+    private void setCatName(String catName) {
+        final String subtitle;
+        if(catName == null) {
+            subtitle = getString(R.string.title_all_entries);
+        } else {
+            subtitle = getString(R.string.title_cat_entries, catName);
+        }
         if(mToolbar != null) {
             mToolbar.setTitle(subtitle);
         } else {
@@ -702,16 +720,6 @@ public class EntryListFragment extends ListFragment
                 actionBar.setSubtitle(subtitle);
             }
         }
-    }
-
-    /**
-     * Enable or disable two-pane mode.
-     *
-     * @param twoPane Whether the Activity is in two-pane mode
-     */
-    public void setTwoPane(boolean twoPane) {
-        mTwoPane = twoPane;
-        setActivateOnItemClick(twoPane);
     }
 
     /**
@@ -752,9 +760,17 @@ public class EntryListFragment extends ListFragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri uri;
         if(TextUtils.isEmpty(mSearchQuery)) {
-            uri = Tables.Entries.CONTENT_URI;
+            if(mCatId > 0) {
+                uri = Tables.Cats.getEntriesUri(mCatId);
+            } else {
+                uri = Tables.Entries.CONTENT_URI;
+            }
         } else {
-            uri = Uri.withAppendedPath(Tables.Entries.CONTENT_FILTER_URI_BASE, mSearchQuery);
+            if(mCatId > 0) {
+                uri = Tables.Cats.getFilterUri(mCatId, mSearchQuery);
+            } else {
+                uri = Uri.withAppendedPath(Tables.Entries.CONTENT_FILTER_URI_BASE, mSearchQuery);
+            }
         }
         final String sort = mSortField + (mSortReversed ? " DESC" : " ASC");
         return new CursorLoader(getContext(), uri, LIST_PROJECTION, mWhere, mWhereArgs, sort);

@@ -6,7 +6,7 @@
     <string name="ext_csv" translatable="false">.csv</string>
     <string name="list_item_cat">%1$s (%2$d)</string>
 
-    <string name="cat_any">Any Category</string>
+    <string name="cat_all">All Categories</string>
     <string name="cat_beer">Beer</string>
     <string name="cat_wine">Wine</string>
     <string name="cat_whiskey">Whiskey</string>
@@ -27,6 +27,7 @@
     <string name="title_delete_cat">Delete Category?</string>
     <string name="title_filter">Filter Entries</string>
     <string name="title_sort">Sort by…</string>
+    <string name="title_categories">Categories</string>
     <string name="title_all_entries">All Entries</string>
     <string name="title_cat_entries">%s Entries</string>
     <string name="title_import">Import Entries</string>
@@ -105,7 +106,6 @@
 
     <string name="hint_empty" translatable="false">\?</string>
     <string name="hint_entry_title">Entry Title</string>
-    <string name="hint_entry_cat">Entry Category</string>
     <string name="hint_maker">Maker</string>
     <string name="hint_origin">Origin</string>
     <string name="hint_price">Price</string>
@@ -118,7 +118,6 @@
     <string name="hint_flavor_name">Flavor Name</string>
 
     <string name="label_title">Title: </string>
-    <string name="label_cat">Category: </string>
     <string name="label_maker">Maker: </string>
     <string name="label_origin">Origin: </string>
     <string name="label_price">Price: </string>
@@ -191,7 +190,6 @@
     <string name="share_subject">I logged %s on Flavordex</string>
     <string name="share_body">I logged %1$s in my %2$s with a %3$.1f rating.\n\nvia Flavordex</string>
 
-    <string name="filter_entry_cat">Category</string>
     <string name="filter_maker">Maker</string>
     <string name="filter_origin">Origin</string>
     <string name="filter_location">Location</string>
