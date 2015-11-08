@@ -178,12 +178,14 @@ public class FlavordexProvider extends ContentProvider {
                 break;
             case CATS_ENTRIES:
                 queryBuilder.setTables(Tables.Entries.VIEW_NAME);
-                queryBuilder.appendWhere(Tables.Entries.CAT + " = " + uri.getPathSegments().get(1));
+                queryBuilder.appendWhere(Tables.Entries.CAT_ID + " = "
+                        + uri.getPathSegments().get(1));
                 break;
             case CATS_ENTRIES_FILTER:
                 queryBuilder.setTables(Tables.Entries.VIEW_NAME);
-                queryBuilder.appendWhere(Tables.Entries.CAT + " = " + uri.getPathSegments().get(1));
-                queryBuilder.appendWhere(Tables.Entries.TITLE + " LIKE ");
+                queryBuilder.appendWhere(Tables.Entries.CAT_ID + " = "
+                        + uri.getPathSegments().get(1));
+                queryBuilder.appendWhere(" AND " + Tables.Entries.TITLE + " LIKE ");
                 queryBuilder.appendWhereEscapeString("%" + uri.getLastPathSegment() + "%");
                 break;
             case CATS:
