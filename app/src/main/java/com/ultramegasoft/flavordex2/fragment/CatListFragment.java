@@ -43,7 +43,7 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         final String catName = ((CatListAdapter)getListAdapter()).getItem(position).realName;
-        ((EntryListActivity)getActivity()).onCatSelected(id, catName);
+        ((EntryListActivity)getActivity()).onCatSelected(id, catName, false);
     }
 
     @Override

@@ -106,9 +106,9 @@ public class EntryListActivity extends AppCompatActivity
                 AppChooserDialog.showDialog(getSupportFragmentManager(), false);
                 return true;
             case R.id.menu_export:
-                if(!PermissionUtils.checkExternalStoragePerm(this,
+                if(PermissionUtils.checkExternalStoragePerm(this,
                         R.string.message_request_storage_xport)) {
-                    return true;
+                    enableExportMode();
                 }
                 return true;
             case R.id.menu_settings:
@@ -138,12 +138,13 @@ public class EntryListActivity extends AppCompatActivity
      *
      * @param id The category ID
      */
-    public void onCatSelected(long id, String catName) {
+    public void onCatSelected(long id, String catName, boolean exportMode) {
         final Fragment fragment = new EntryListFragment();
         final Bundle args = new Bundle();
         args.putLong(EntryListFragment.ARG_CAT, id);
         args.putString(EntryListFragment.ARG_CAT_NAME, catName);
         args.putBoolean(EntryListFragment.ARG_TWO_PANE, mTwoPane);
+        args.putBoolean(EntryListFragment.ARG_EXPORT_MODE, exportMode);
         fragment.setArguments(args);
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.fragment_in_left, R.anim.fragment_out_left,
@@ -201,5 +202,17 @@ public class EntryListActivity extends AppCompatActivity
             }
         }
         super.onBackPressed();
+    }
+
+    /**
+     * Enable export mode.
+     */
+    private void enableExportMode() {
+        final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.entry_list);
+        if(fragment instanceof EntryListFragment) {
+            ((EntryListFragment)fragment).setExportMode(true, true);
+        } else {
+            onCatSelected(0, null, true);
+        }
     }
 }

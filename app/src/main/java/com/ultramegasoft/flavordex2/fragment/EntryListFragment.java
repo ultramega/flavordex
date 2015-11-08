@@ -59,6 +59,7 @@ public class EntryListFragment extends ListFragment
     public static final String ARG_CAT = "cat";
     public static final String ARG_CAT_NAME = "cat_name";
     public static final String ARG_TWO_PANE = "two_pane";
+    public static final String ARG_EXPORT_MODE = "export_mode";
 
     /**
      * Request codes for external Activities
@@ -193,6 +194,13 @@ public class EntryListFragment extends ListFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        final Bundle args = getArguments();
+        mCatId = args.getLong(ARG_CAT, mCatId);
+        mCatName = args.getString(ARG_CAT_NAME);
+        mTwoPane = args.getBoolean(ARG_TWO_PANE, mTwoPane);
+        mExportMode = args.getBoolean(ARG_EXPORT_MODE, mExportMode);
+
         if(savedInstanceState != null) {
             mActivatedItem = savedInstanceState.getLong(STATE_SELECTED_ITEM, mActivatedItem);
             mSearchQuery = savedInstanceState.getString(STATE_SEARCH);
@@ -213,11 +221,6 @@ public class EntryListFragment extends ListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-
-        final Bundle args = getArguments();
-        mCatId = args.getLong(ARG_CAT, mCatId);
-        mCatName = args.getString(ARG_CAT_NAME);
-        mTwoPane = args.getBoolean(ARG_TWO_PANE, mTwoPane);
         setActivateOnItemClick(mTwoPane);
 
         setupToolbar();
@@ -524,8 +527,9 @@ public class EntryListFragment extends ListFragment
      * Enable or disable export mode.
      *
      * @param exportMode Whether to enable export mode
+     * @param animate    Whether to animate the export toolbar
      */
-    private void setExportMode(boolean exportMode, boolean animate) {
+    public void setExportMode(boolean exportMode, boolean animate) {
         final ListView listView = getListView();
         if(exportMode) {
             listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
