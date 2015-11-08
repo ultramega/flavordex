@@ -98,6 +98,18 @@ public class FileSelectorDialog extends DialogFragment {
     private FileListAdapter mAdapter;
 
     /**
+     * Callback interface for Activities to receive results.
+     */
+    public interface OnFileSelectedCallbacks {
+        /**
+         * Called when a file is selected.
+         *
+         * @param filePath The path to the selected file
+         */
+        void onFileSelected(String filePath);
+    }
+
+    /**
      * @param fm               The FragmentManager to use
      * @param target           The Fragment to send results to
      * @param requestCode      The request code
@@ -263,6 +275,8 @@ public class FileSelectorDialog extends DialogFragment {
             final Intent data = new Intent();
             data.putExtra(EXTRA_PATH, mPath);
             target.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, data);
+        } else if(getActivity() instanceof OnFileSelectedCallbacks) {
+            ((OnFileSelectedCallbacks)getActivity()).onFileSelected(mPath);
         }
         dismiss();
     }
