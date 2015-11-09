@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
@@ -52,6 +51,11 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
     private final ArrayList<Category> mCats = new ArrayList<>();
 
     /**
+     * Whether to show the All Categories item
+     */
+    private boolean mShowAllCats;
+
+    /**
      * @param context          The Context
      * @param cursor           The Cursor from the database query
      * @param resource         The layout resource ID to use for each list item
@@ -85,9 +89,44 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
 
         if(newCursor != null) {
             readCursor(newCursor, mCats);
+            if(mShowAllCats) {
+                mShowAllCats = false;
+                setShowAllCats(true);
+            }
         }
 
         notifyDataSetChanged();
+    }
+
+    /**
+     * Enable or disable the 'All Categories' list item.
+     *
+     * @param showAllCats Whether to show the All Categories item
+     */
+    public void setShowAllCats(boolean showAllCats) {
+        if(showAllCats == mShowAllCats) {
+            return;
+        }
+        if(showAllCats) {
+            final String title = mContext.getString(R.string.cat_all);
+            int count = 0;
+            for(Category cat : mCats) {
+                count += cat.numEntries;
+            }
+            mCats.add(0, new Category(mContext, 0, title, true, count));
+        } else {
+            mCats.remove(0);
+        }
+        mShowAllCats = showAllCats;
+    }
+
+    /**
+     * Is the 'All Categories' list item enabled.
+     *
+     * @return Whether the All Categories item is enabled
+     */
+    public boolean getShowAllCats() {
+        return mShowAllCats;
     }
 
     /**
@@ -131,21 +170,6 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
     @Override
     public long getItemId(int position) {
         return mCats.get(position).id;
-    }
-
-    /**
-     * Get the position of an item based on ID.
-     *
-     * @param id The database ID of the item
-     * @return The index of the item, or -1 if the item does not exist
-     */
-    public int getItemIndex(long id) {
-        for(int i = 0; i < mCats.size(); i++) {
-            if(mCats.get(i).id == id) {
-                return i;
-            }
-        }
-        return ListView.INVALID_POSITION;
     }
 
     @Override

@@ -63,7 +63,12 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        final String catName = ((CatListAdapter)getListAdapter()).getItem(position).realName;
+        final String catName;
+        if(id > 0) {
+            catName = ((CatListAdapter)getListAdapter()).getItem(position).realName;
+        } else {
+            catName = null;
+        }
         ((EntryListActivity)getActivity()).onCatSelected(id, catName, false);
     }
 
@@ -73,6 +78,9 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
         super.onCreateContextMenu(menu, v, menuInfo);
         final AdapterView.AdapterContextMenuInfo info =
                 (AdapterView.AdapterContextMenuInfo)menuInfo;
+        if(mAdapter.getShowAllCats() && info.position == 0) {
+            return;
+        }
         getActivity().getMenuInflater().inflate(R.menu.cat_context_menu, menu);
 
         if(mAdapter.getItem(info.position).preset) {
@@ -104,6 +112,7 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter = new CatListAdapter(getContext(), data, android.R.layout.simple_list_item_2);
+        mAdapter.setShowAllCats(true);
         setListAdapter(mAdapter);
     }
 
