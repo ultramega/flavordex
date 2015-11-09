@@ -221,6 +221,12 @@ public class EntryListFragment extends ListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
+
+        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         setActivateOnItemClick(mTwoPane);
 
         setupToolbar();
@@ -298,6 +304,9 @@ public class EntryListFragment extends ListFragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case android.R.id.home:
+                getFragmentManager().popBackStack();
+                return true;
             case R.id.menu_filter:
                 EntryFilterDialog.showDialog(getFragmentManager(), this, REQUEST_SET_FILTERS,
                         mFilters);

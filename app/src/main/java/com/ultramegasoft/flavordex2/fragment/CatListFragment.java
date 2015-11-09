@@ -35,15 +35,17 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(false);
+        }
+
         final Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.list_toolbar);
         if(toolbar != null) {
             toolbar.getMenu().clear();
             toolbar.setTitle(R.string.title_categories);
-        } else {
-            final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-            if(actionBar != null) {
-                actionBar.setSubtitle(R.string.title_categories);
-            }
+        } else if(actionBar != null) {
+            actionBar.setSubtitle(R.string.title_categories);
         }
 
         registerForContextMenu(getListView());
