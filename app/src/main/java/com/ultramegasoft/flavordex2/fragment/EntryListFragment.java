@@ -422,6 +422,8 @@ public class EntryListFragment extends ListFragment
     private void setupToolbar() {
         mToolbar = (Toolbar)getActivity().findViewById(R.id.list_toolbar);
         if(mToolbar != null) {
+            final Menu menu = mToolbar.getMenu();
+            menu.clear();
             mToolbar.inflateMenu(R.menu.entry_list_menu);
             mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
@@ -429,7 +431,7 @@ public class EntryListFragment extends ListFragment
                     return onOptionsItemSelected(item);
                 }
             });
-            setupMenu(mToolbar.getMenu());
+            setupMenu(menu);
         }
     }
 

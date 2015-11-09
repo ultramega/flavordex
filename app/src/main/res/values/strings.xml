@@ -59,6 +59,7 @@
     <string name="menu_sort_name">Name</string>
     <string name="menu_sort_date">Date</string>
     <string name="menu_sort_rating">Rating</string>
+    <string name="menu_add_cat">Create Category</string>
     <string name="menu_add_entry">Add Entry</string>
     <string name="menu_edit_entry">Edit Entry</string>
     <string name="menu_save_entry">Save Entry</string>

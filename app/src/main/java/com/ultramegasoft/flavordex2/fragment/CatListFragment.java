@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2.fragment;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -10,6 +11,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -35,6 +38,12 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setupToolbar();
+        registerForContextMenu(getListView());
+        getLoaderManager().initLoader(0, null, this);
+    }
+
+    private void setupToolbar() {
         final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(false);
@@ -43,14 +52,20 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
         final Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.list_toolbar);
         if(toolbar != null) {
             toolbar.getMenu().clear();
+            toolbar.inflateMenu(R.menu.cat_list_menu);
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onOptionsItemSelected(item);
+                }
+            });
             toolbar.setTitle(R.string.title_categories);
-        } else if(actionBar != null) {
-            actionBar.setSubtitle(R.string.title_categories);
+        } else {
+            setHasOptionsMenu(true);
+            if(actionBar != null) {
+                actionBar.setSubtitle(R.string.title_categories);
+            }
         }
-
-        registerForContextMenu(getListView());
-
-        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -72,6 +87,22 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
             catName = null;
         }
         ((EntryListActivity)getActivity()).onCatSelected(id, catName, false);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.cat_list_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menu_add_cat:
+                startActivity(new Intent(getContext(), EditCatActivity.class));
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
