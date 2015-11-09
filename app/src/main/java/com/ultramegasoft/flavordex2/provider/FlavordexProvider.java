@@ -161,8 +161,8 @@ public class FlavordexProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
+        Uri notifyUri = uri;
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-
         switch(sUriMatcher.match(uri)) {
             case ENTRIES:
                 queryBuilder.setTables(Tables.Entries.VIEW_NAME);
@@ -175,10 +175,12 @@ public class FlavordexProvider extends ContentProvider {
                 queryBuilder.setTables(Tables.Entries.VIEW_NAME);
                 queryBuilder.appendWhere(Tables.Entries.TITLE + " LIKE ");
                 queryBuilder.appendWhereEscapeString("%" + uri.getLastPathSegment() + "%");
+                notifyUri = Tables.Entries.CONTENT_URI;
                 break;
             case ENTRIES_CAT:
                 queryBuilder.setTables(Tables.Entries.VIEW_NAME);
                 queryBuilder.appendWhere(Tables.Entries.CAT_ID + " = " + uri.getLastPathSegment());
+                notifyUri = Tables.Entries.CONTENT_URI;
                 break;
             case ENTRIES_CAT_FILTER:
                 queryBuilder.setTables(Tables.Entries.VIEW_NAME);
@@ -186,6 +188,7 @@ public class FlavordexProvider extends ContentProvider {
                         + uri.getPathSegments().get(2));
                 queryBuilder.appendWhere(" AND " + Tables.Entries.TITLE + " LIKE ");
                 queryBuilder.appendWhereEscapeString("%" + uri.getLastPathSegment() + "%");
+                notifyUri = Tables.Entries.CONTENT_URI;
                 break;
             case CATS:
                 queryBuilder.setTables(Tables.Cats.VIEW_NAME);
@@ -267,7 +270,7 @@ public class FlavordexProvider extends ContentProvider {
 
         final Cursor cursor = queryBuilder.query(mDbHelper.getReadableDatabase(), projection,
                 selection, selectionArgs, null, null, sortOrder);
-        cursor.setNotificationUri(mResolver, uri);
+        cursor.setNotificationUri(mResolver, notifyUri);
 
         return cursor;
     }
@@ -287,6 +290,7 @@ public class FlavordexProvider extends ContentProvider {
                         || values.containsKey(Tables.Entries.ORIGIN)) {
                     processMaker(values);
                 }
+                mResolver.notifyChange(Tables.Cats.CONTENT_URI, null);
                 break;
             case CATS:
                 table = Tables.Cats.TABLE_NAME;
@@ -510,11 +514,13 @@ public class FlavordexProvider extends ContentProvider {
         switch(sUriMatcher.match(uri)) {
             case ENTRIES:
                 table = Tables.Entries.TABLE_NAME;
+                mResolver.notifyChange(Tables.Cats.CONTENT_URI, null);
                 break;
             case ENTRIES_ID:
                 table = Tables.Entries.TABLE_NAME;
                 selection = appendWhere(selection,
                         Tables.Entries._ID + " = " + uri.getLastPathSegment());
+                mResolver.notifyChange(Tables.Cats.CONTENT_URI, null);
                 break;
             case CATS:
                 table = Tables.Cats.TABLE_NAME;
