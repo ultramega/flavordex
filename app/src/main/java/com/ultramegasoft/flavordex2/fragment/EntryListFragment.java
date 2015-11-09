@@ -318,7 +318,7 @@ public class EntryListFragment extends ListFragment
                 if(mCatId > 0) {
                     addEntry(mCatId, mCatName);
                 } else {
-                    CatListDialog.showDialog(getFragmentManager(), this, REQUEST_SELECT_CAT, true);
+                    CatListDialog.showDialog(getFragmentManager(), this, REQUEST_SELECT_CAT);
                 }
                 return true;
         }

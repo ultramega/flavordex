@@ -14,9 +14,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -35,11 +33,6 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
     private static final String TAG = "CatListDialog";
 
     /**
-     * Arguments for the Fragment
-     */
-    public static final String ARG_CONTEXT_MENU = "context_menu";
-
-    /**
      * Keys for the result data Intent
      */
     public static final String EXTRA_CAT_ID = "cat_id";
@@ -56,23 +49,8 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
      * @param requestCode A number to identify this request
      */
     public static void showDialog(FragmentManager fm, Fragment target, int requestCode) {
-        showDialog(fm, target, requestCode, false);
-    }
-
-    /**
-     * @param fm          The FragmentManager to use
-     * @param target      The Fragment to notify of the result
-     * @param requestCode A number to identify this request
-     * @param contextMenu Whether to enable the context menu
-     */
-    public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
-                                  boolean contextMenu) {
         final DialogFragment fragment = new CatListDialog();
         fragment.setTargetFragment(target, requestCode);
-
-        final Bundle args = new Bundle();
-        args.putBoolean(ARG_CONTEXT_MENU, contextMenu);
-        fragment.setArguments(args);
 
         fragment.show(fm, TAG);
     }
@@ -141,40 +119,7 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
             }
         });
 
-        if(getArguments().getBoolean(ARG_CONTEXT_MENU, false)) {
-            registerForContextMenu(listView);
-        }
-
         return listView;
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        final AdapterView.AdapterContextMenuInfo info =
-                (AdapterView.AdapterContextMenuInfo)menuInfo;
-        if(info.position == mAdapter.getCount()) {
-            return;
-        }
-
-        getActivity().getMenuInflater().inflate(R.menu.cat_context_menu, menu);
-
-        final MenuItem edit = menu.findItem(R.id.menu_edit);
-        final MenuItem delete = menu.findItem(R.id.menu_delete);
-
-        final MenuItem.OnMenuItemClickListener listener = new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return onContextItemSelected(item);
-            }
-        };
-        edit.setOnMenuItemClickListener(listener);
-        delete.setOnMenuItemClickListener(listener);
-
-        if(mAdapter.getItem(info.position).preset) {
-            delete.setEnabled(false).setVisible(false);
-        }
     }
 
     @Override
@@ -184,22 +129,6 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
         if(target != null) {
             target.onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, null);
         }
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        final AdapterView.AdapterContextMenuInfo info =
-                (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-        switch(item.getItemId()) {
-            case R.id.menu_edit:
-                EditCatActivity.startActivity(getContext(), info.id,
-                        mAdapter.getItem(info.position).name);
-                return true;
-            case R.id.menu_delete:
-                CatDeleteDialog.showDialog(getFragmentManager(), null, 0, info.id);
-                return true;
-        }
-        return super.onContextItemSelected(item);
     }
 
     @Override
