@@ -44,13 +44,9 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     }
 
     private void setupToolbar() {
-        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(false);
-        }
-
         final Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.list_toolbar);
         if(toolbar != null) {
+            toolbar.setNavigationIcon(null);
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.cat_list_menu);
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -62,7 +58,9 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
             toolbar.setTitle(R.string.title_categories);
         } else {
             setHasOptionsMenu(true);
+            final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
             if(actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(false);
                 actionBar.setSubtitle(R.string.title_categories);
             }
         }

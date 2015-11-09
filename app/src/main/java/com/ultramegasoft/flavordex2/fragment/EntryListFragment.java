@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -220,13 +221,6 @@ public class EntryListFragment extends ListFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
-
-        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
         setActivateOnItemClick(mTwoPane);
 
         setupToolbar();
@@ -295,10 +289,8 @@ public class EntryListFragment extends ListFragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if(mToolbar == null) {
-            inflater.inflate(R.menu.entry_list_menu, menu);
-            setupMenu(menu);
-        }
+        inflater.inflate(R.menu.entry_list_menu, menu);
+        setupMenu(menu);
     }
 
     @Override
@@ -419,9 +411,18 @@ public class EntryListFragment extends ListFragment
     /**
      * Set up the list Toolbar if it exists.
      */
+    @SuppressLint("PrivateResource")
     private void setupToolbar() {
         mToolbar = (Toolbar)getActivity().findViewById(R.id.list_toolbar);
         if(mToolbar != null) {
+            mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+            mToolbar.setNavigationContentDescription(R.string.abc_action_bar_up_description);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getFragmentManager().popBackStack();
+                }
+            });
             final Menu menu = mToolbar.getMenu();
             menu.clear();
             mToolbar.inflateMenu(R.menu.entry_list_menu);
@@ -432,6 +433,12 @@ public class EntryListFragment extends ListFragment
                 }
             });
             setupMenu(menu);
+        } else {
+            setHasOptionsMenu(true);
+            final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+            if(actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+            }
         }
     }
 
