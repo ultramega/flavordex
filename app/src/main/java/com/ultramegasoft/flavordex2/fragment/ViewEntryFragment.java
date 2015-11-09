@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TabHost;
 
+import com.ultramegasoft.flavordex2.EntryListActivity;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.beer.ViewBeerInfoFragment;
@@ -171,6 +172,12 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
                 final Fragment fragment = fm.findFragmentById(R.id.entry_list);
                 if(fragment instanceof EntryListFragment) {
                     ((EntryListFragment)fragment).clearSelection();
+                } else if(fragment instanceof CatListFragment) {
+                    final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+                    if(actionBar != null) {
+                        actionBar.setSubtitle(null);
+                    }
+                    ((EntryListActivity)getActivity()).onItemSelected(-1, null, 0);
                 } else {
                     getActivity().finish();
                 }
