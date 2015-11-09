@@ -60,6 +60,7 @@ public class EntryListFragment extends ListFragment
     public static final String ARG_CAT = "cat";
     public static final String ARG_CAT_NAME = "cat_name";
     public static final String ARG_TWO_PANE = "two_pane";
+    public static final String ARG_SELECTED_ITEM = "selected_item";
     public static final String ARG_EXPORT_MODE = "export_mode";
 
     /**
@@ -200,6 +201,7 @@ public class EntryListFragment extends ListFragment
         mCatId = args.getLong(ARG_CAT, mCatId);
         mCatName = args.getString(ARG_CAT_NAME);
         mTwoPane = args.getBoolean(ARG_TWO_PANE, mTwoPane);
+        mActivatedItem = args.getLong(ARG_SELECTED_ITEM, mActivatedItem);
         mExportMode = args.getBoolean(ARG_EXPORT_MODE, mExportMode);
 
         if(savedInstanceState != null) {

@@ -44,6 +44,11 @@ public class EntryListActivity extends AppCompatActivity
      */
     private Fragment mWelcomeFragment;
 
+    /**
+     * The currently selected journal entry
+     */
+    private long mSelectedItem = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,6 +150,7 @@ public class EntryListActivity extends AppCompatActivity
         args.putLong(EntryListFragment.ARG_CAT, id);
         args.putString(EntryListFragment.ARG_CAT_NAME, catName);
         args.putBoolean(EntryListFragment.ARG_TWO_PANE, mTwoPane);
+        args.putLong(EntryListFragment.ARG_SELECTED_ITEM, mSelectedItem);
         args.putBoolean(EntryListFragment.ARG_EXPORT_MODE, exportMode);
         fragment.setArguments(args);
         getSupportFragmentManager().beginTransaction().replace(R.id.entry_list, fragment)
@@ -160,6 +166,7 @@ public class EntryListActivity extends AppCompatActivity
      */
     public void onItemSelected(long id, String catName, long catId) {
         if(mTwoPane) {
+            mSelectedItem = id;
             final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             final Fragment fragment;
             if(id == -1) {
