@@ -74,6 +74,12 @@ public class EntryListActivity extends AppCompatActivity
                 }
                 prefs.edit().putBoolean(FlavordexApp.PREF_FIRST_RUN, false).apply();
             }
+
+            final long catId = prefs.getLong(FlavordexApp.PREF_LIST_CAT_ID, -1);
+            if(catId > -1) {
+                onCatSelected(catId, prefs.getString(FlavordexApp.PREF_LIST_CAT_NAME, null), false);
+            }
+
             PermissionUtils.checkExternalStoragePerm(this, R.string.message_request_storage);
         }
     }

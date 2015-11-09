@@ -1,8 +1,10 @@
 package com.ultramegasoft.flavordex2.fragment;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -22,6 +24,7 @@ import android.widget.ListView;
 
 import com.ultramegasoft.flavordex2.EditCatActivity;
 import com.ultramegasoft.flavordex2.EntryListActivity;
+import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.dialog.CatDeleteDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
@@ -41,6 +44,10 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
         setupToolbar();
         registerForContextMenu(getListView());
         getLoaderManager().initLoader(0, null, this);
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        prefs.edit().remove(FlavordexApp.PREF_LIST_CAT_ID).remove(FlavordexApp.PREF_LIST_CAT_NAME)
+                .apply();
     }
 
     private void setupToolbar() {
@@ -85,6 +92,10 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
             catName = null;
         }
         ((EntryListActivity)getActivity()).onCatSelected(id, catName, false);
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        prefs.edit().putLong(FlavordexApp.PREF_LIST_CAT_ID, id)
+                .putString(FlavordexApp.PREF_LIST_CAT_NAME, catName).apply();
     }
 
     @Override
