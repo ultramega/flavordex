@@ -2,6 +2,7 @@ package com.ultramegasoft.flavordex2.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -758,13 +759,13 @@ public class EntryListFragment extends ListFragment
         Uri uri;
         if(TextUtils.isEmpty(mSearchQuery)) {
             if(mCatId > 0) {
-                uri = Tables.Cats.getEntriesUri(mCatId);
+                uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_CAT_URI_BASE, mCatId);
             } else {
                 uri = Tables.Entries.CONTENT_URI;
             }
         } else {
             if(mCatId > 0) {
-                uri = Tables.Cats.getFilterUri(mCatId, mSearchQuery);
+                uri = Tables.Entries.getCatFilterUri(mCatId, mSearchQuery);
             } else {
                 uri = Uri.withAppendedPath(Tables.Entries.CONTENT_FILTER_URI_BASE, mSearchQuery);
             }

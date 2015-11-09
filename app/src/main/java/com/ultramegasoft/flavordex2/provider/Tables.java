@@ -69,6 +69,8 @@ public class Tables {
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
         public static final Uri CONTENT_FILTER_URI_BASE =
                 Uri.parse(URI_BASE + TABLE_NAME + "/filter/");
+        public static final Uri CONTENT_CAT_URI_BASE =
+                Uri.parse(URI_BASE + TABLE_NAME + "/cat/");
 
         /**
          * Get the Uri for an entry's extra fields.
@@ -101,6 +103,18 @@ public class Tables {
         public static Uri getPhotoUri(long entryId) {
             final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, entryId);
             return Uri.withAppendedPath(baseUri, "photos");
+        }
+
+        /**
+         * Create a category entry filter Uri.
+         *
+         * @param catId      The category ID
+         * @param filterText The filter text
+         * @return The category filter Uri
+         */
+        public static Uri getCatFilterUri(long catId, String filterText) {
+            final Uri baseUri = ContentUris.withAppendedId(CONTENT_CAT_URI_BASE, catId);
+            return Uri.withAppendedPath(baseUri, "filter/" + filterText);
         }
 
         private Entries() {
@@ -442,29 +456,6 @@ public class Tables {
         public static Uri getFlavorUri(long catId) {
             final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, catId);
             return Uri.withAppendedPath(baseUri, "flavor");
-        }
-
-        /**
-         * Get the Uri for an category's entries.
-         *
-         * @param catId The category ID
-         * @return The Uri for the category's entries
-         */
-        public static Uri getEntriesUri(long catId) {
-            final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, catId);
-            return Uri.withAppendedPath(baseUri, "entries");
-        }
-
-        /**
-         * Create a category entry filter Uri.
-         *
-         * @param catId      The category ID
-         * @param filterText The filter text
-         * @return The category filter Uri
-         */
-        public static Uri getFilterUri(long catId, String filterText) {
-            final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, catId);
-            return Uri.withAppendedPath(baseUri, "entries/filter/" + filterText);
         }
 
         private Cats() {

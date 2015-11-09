@@ -33,15 +33,15 @@ public class FlavordexProvider extends ContentProvider {
     private static final int ENTRIES = 1;
     private static final int ENTRIES_ID = 2;
     private static final int ENTRIES_FILTER = 3;
-    private static final int ENTRIES_EXTRAS = 4;
-    private static final int ENTRIES_FLAVOR = 5;
-    private static final int ENTRIES_PHOTOS = 6;
-    private static final int CATS = 7;
-    private static final int CATS_ID = 8;
-    private static final int CATS_EXTRAS = 9;
-    private static final int CATS_FLAVOR = 10;
-    private static final int CATS_ENTRIES = 11;
-    private static final int CATS_ENTRIES_FILTER = 12;
+    private static final int ENTRIES_CAT = 4;
+    private static final int ENTRIES_CAT_FILTER = 5;
+    private static final int ENTRIES_EXTRAS = 6;
+    private static final int ENTRIES_FLAVOR = 7;
+    private static final int ENTRIES_PHOTOS = 8;
+    private static final int CATS = 9;
+    private static final int CATS_ID = 10;
+    private static final int CATS_EXTRAS = 11;
+    private static final int CATS_FLAVOR = 12;
     private static final int EXTRAS = 13;
     private static final int EXTRAS_ID = 14;
     private static final int FLAVORS = 15;
@@ -64,6 +64,8 @@ public class FlavordexProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "entries", ENTRIES);
         sUriMatcher.addURI(AUTHORITY, "entries/#", ENTRIES_ID);
         sUriMatcher.addURI(AUTHORITY, "entries/filter/*", ENTRIES_FILTER);
+        sUriMatcher.addURI(AUTHORITY, "entries/cat/#", ENTRIES_CAT);
+        sUriMatcher.addURI(AUTHORITY, "entries/cat/#/filter/*", ENTRIES_CAT_FILTER);
         sUriMatcher.addURI(AUTHORITY, "entries/#/extras", ENTRIES_EXTRAS);
         sUriMatcher.addURI(AUTHORITY, "entries/#/flavor", ENTRIES_FLAVOR);
         sUriMatcher.addURI(AUTHORITY, "entries/#/photos", ENTRIES_PHOTOS);
@@ -71,8 +73,6 @@ public class FlavordexProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "cats/#", CATS_ID);
         sUriMatcher.addURI(AUTHORITY, "cats/#/extras", CATS_EXTRAS);
         sUriMatcher.addURI(AUTHORITY, "cats/#/flavor", CATS_FLAVOR);
-        sUriMatcher.addURI(AUTHORITY, "cats/#/entries", CATS_ENTRIES);
-        sUriMatcher.addURI(AUTHORITY, "cats/#/entries/filter/*", CATS_ENTRIES_FILTER);
         sUriMatcher.addURI(AUTHORITY, "extras", EXTRAS);
         sUriMatcher.addURI(AUTHORITY, "extras/#", EXTRAS_ID);
         sUriMatcher.addURI(AUTHORITY, "flavors", FLAVORS);
@@ -116,8 +116,8 @@ public class FlavordexProvider extends ContentProvider {
         switch(sUriMatcher.match(uri)) {
             case ENTRIES:
             case ENTRIES_FILTER:
-            case CATS_ENTRIES:
-            case CATS_ENTRIES_FILTER:
+            case ENTRIES_CAT:
+            case ENTRIES_CAT_FILTER:
                 return Tables.Entries.DATA_TYPE;
             case ENTRIES_ID:
                 return Tables.Entries.DATA_TYPE_ITEM;
@@ -176,15 +176,14 @@ public class FlavordexProvider extends ContentProvider {
                 queryBuilder.appendWhere(Tables.Entries.TITLE + " LIKE ");
                 queryBuilder.appendWhereEscapeString("%" + uri.getLastPathSegment() + "%");
                 break;
-            case CATS_ENTRIES:
+            case ENTRIES_CAT:
                 queryBuilder.setTables(Tables.Entries.VIEW_NAME);
-                queryBuilder.appendWhere(Tables.Entries.CAT_ID + " = "
-                        + uri.getPathSegments().get(1));
+                queryBuilder.appendWhere(Tables.Entries.CAT_ID + " = " + uri.getLastPathSegment());
                 break;
-            case CATS_ENTRIES_FILTER:
+            case ENTRIES_CAT_FILTER:
                 queryBuilder.setTables(Tables.Entries.VIEW_NAME);
                 queryBuilder.appendWhere(Tables.Entries.CAT_ID + " = "
-                        + uri.getPathSegments().get(1));
+                        + uri.getPathSegments().get(2));
                 queryBuilder.appendWhere(" AND " + Tables.Entries.TITLE + " LIKE ");
                 queryBuilder.appendWhereEscapeString("%" + uri.getLastPathSegment() + "%");
                 break;
@@ -347,8 +346,8 @@ public class FlavordexProvider extends ContentProvider {
             case LOCATIONS_ID:
                 throw new IllegalArgumentException("Insert not permitted on: " + uri.toString());
             case ENTRIES_FILTER:
-            case CATS_ENTRIES:
-            case CATS_ENTRIES_FILTER:
+            case ENTRIES_CAT:
+            case ENTRIES_CAT_FILTER:
             case MAKERS:
             case MAKERS_ID:
             case MAKERS_FILTER:
@@ -481,8 +480,8 @@ public class FlavordexProvider extends ContentProvider {
             case DELETED:
                 throw new IllegalArgumentException("Update not permitted on: " + uri.toString());
             case ENTRIES_FILTER:
-            case CATS_ENTRIES:
-            case CATS_ENTRIES_FILTER:
+            case ENTRIES_CAT:
+            case ENTRIES_CAT_FILTER:
             case MAKERS:
             case MAKERS_ID:
             case MAKERS_FILTER:
@@ -586,8 +585,8 @@ public class FlavordexProvider extends ContentProvider {
             case LOCATIONS_ID:
                 throw new IllegalArgumentException("Delete not permitted on: " + uri.toString());
             case ENTRIES_FILTER:
-            case CATS_ENTRIES:
-            case CATS_ENTRIES_FILTER:
+            case ENTRIES_CAT:
+            case ENTRIES_CAT_FILTER:
             case MAKERS:
             case MAKERS_ID:
             case MAKERS_FILTER:
