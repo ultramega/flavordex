@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.view.Menu;
@@ -189,10 +190,19 @@ public class EntryListActivity extends AppCompatActivity
     public void onBackPressed() {
         if(mTwoPane) {
             final FragmentManager fm = getSupportFragmentManager();
-            final Fragment fragment = fm.findFragmentById(R.id.entry_detail_container);
+            Fragment fragment = fm.findFragmentById(R.id.entry_detail_container);
             if(fragment instanceof ViewEntryFragment) {
                 if(!((ViewEntryFragment)fragment).onBackButtonPressed()) {
-                    ((EntryListFragment)fm.findFragmentById(R.id.entry_list)).clearSelection();
+                    fragment = fm.findFragmentById(R.id.entry_list);
+                    if(fragment instanceof EntryListFragment) {
+                        ((EntryListFragment)fragment).clearSelection();
+                    } else {
+                        final ActionBar actionBar = getSupportActionBar();
+                        if(actionBar != null) {
+                            actionBar.setSubtitle(null);
+                        }
+                        onItemSelected(-1, null, 0);
+                    }
                 }
                 return;
             }
