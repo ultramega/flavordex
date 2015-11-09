@@ -1,6 +1,7 @@
 package com.ultramegasoft.flavordex2.backend;
 
 import com.google.api.server.spi.response.UnauthorizedException;
+import com.google.appengine.api.utils.SystemProperty;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,7 +21,8 @@ public class DatabaseHelper {
     /**
      * The database connection URL
      */
-    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/flavordex2?user=root";
+    private static final String DB_URL_DEBUG = "jdbc:mysql://127.0.0.1:3306/flavordex2?user=root";
+    private static final String DB_URL = "jdbc:google:mysql://flavordex:backend/flavordex2?user=root";
 
     /**
      * The database connection
@@ -45,11 +47,16 @@ public class DatabaseHelper {
     public void open() throws SQLException {
         close();
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            if(SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                mConnection = DriverManager.getConnection(DB_URL);
+            } else {
+                Class.forName("com.mysql.jdbc.Driver");
+                mConnection = DriverManager.getConnection(DB_URL_DEBUG);
+            }
         } catch(ClassNotFoundException e) {
             e.printStackTrace();
         }
-        mConnection = DriverManager.getConnection(DB_URL);
     }
 
     /**
