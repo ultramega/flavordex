@@ -36,6 +36,9 @@ import com.ultramegasoft.flavordex2.widget.CatListAdapter;
  * @author Steve Guidetti
  */
 public class CatListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    /**
+     * The Adapter backing the list
+     */
     private CatListAdapter mAdapter;
 
     @Override
@@ -50,6 +53,9 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
                 .apply();
     }
 
+    /**
+     * Set up the list Toolbar.
+     */
     private void setupToolbar() {
         final Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.list_toolbar);
         if(toolbar != null) {
