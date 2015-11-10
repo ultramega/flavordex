@@ -247,10 +247,9 @@ public class CatDeleteDialog extends DialogFragment
         @Override
         protected Void doInBackground(Void... params) {
             final ContentResolver cr = mContext.getContentResolver();
-            final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
 
-            final Cursor cursor = cr.query(Uri.withAppendedPath(uri, "entries"),
-                    new String[] {Tables.Entries._ID}, null, null, null);
+            Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_CAT_URI_BASE, mCatId);
+            final Cursor cursor = cr.query(uri, new String[] {Tables.Entries._ID}, null, null, null);
             if(cursor != null) {
                 try {
                     while(cursor.moveToNext()) {
@@ -261,6 +260,7 @@ public class CatDeleteDialog extends DialogFragment
                 }
             }
 
+            uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
             cr.delete(uri, null, null);
             cr.notifyChange(Tables.Entries.CONTENT_URI, null);
             BackendUtils.requestDataSync(mContext);
