@@ -49,8 +49,7 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
         getLoaderManager().initLoader(0, null, this);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        prefs.edit().remove(FlavordexApp.PREF_LIST_CAT_ID).remove(FlavordexApp.PREF_LIST_CAT_NAME)
-                .apply();
+        prefs.edit().remove(FlavordexApp.PREF_LIST_CAT_ID).apply();
     }
 
     /**
@@ -91,17 +90,10 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        final String catName;
-        if(id > 0) {
-            catName = ((CatListAdapter)getListAdapter()).getItem(position).realName;
-        } else {
-            catName = null;
-        }
-        ((EntryListActivity)getActivity()).onCatSelected(id, catName, false);
+        ((EntryListActivity)getActivity()).onCatSelected(id, false);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        prefs.edit().putLong(FlavordexApp.PREF_LIST_CAT_ID, id)
-                .putString(FlavordexApp.PREF_LIST_CAT_NAME, catName).apply();
+        prefs.edit().putLong(FlavordexApp.PREF_LIST_CAT_ID, id).apply();
     }
 
     @Override

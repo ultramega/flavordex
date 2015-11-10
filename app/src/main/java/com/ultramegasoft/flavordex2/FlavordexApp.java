@@ -44,7 +44,6 @@ public class FlavordexApp extends Application implements
     public static final String PREF_LIST_SORT_FIELD = "pref_list_sort_field";
     public static final String PREF_LIST_SORT_REVERSED = "pref_list_sort_reversed";
     public static final String PREF_LIST_CAT_ID = "pref_list_cat_id";
-    public static final String PREF_LIST_CAT_NAME = "pref_list_cat_name";
 
     /**
      * Entry category preset names

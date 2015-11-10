@@ -60,7 +60,6 @@ public class EntryListFragment extends ListFragment
      * Keys for the Fragment arguments
      */
     public static final String ARG_CAT = "cat";
-    public static final String ARG_CAT_NAME = "cat_name";
     public static final String ARG_TWO_PANE = "two_pane";
     public static final String ARG_SELECTED_ITEM = "selected_item";
     public static final String ARG_EXPORT_MODE = "export_mode";
@@ -207,7 +206,6 @@ public class EntryListFragment extends ListFragment
 
         final Bundle args = getArguments();
         mCatId = args.getLong(ARG_CAT, mCatId);
-        mCatName = args.getString(ARG_CAT_NAME);
         mTwoPane = args.getBoolean(ARG_TWO_PANE, mTwoPane);
         mActivatedItem = args.getLong(ARG_SELECTED_ITEM, mActivatedItem);
         mExportMode = args.getBoolean(ARG_EXPORT_MODE, mExportMode);
@@ -234,7 +232,6 @@ public class EntryListFragment extends ListFragment
         setActivateOnItemClick(mTwoPane);
 
         setupToolbar();
-        setCatName();
         registerForContextMenu(getListView());
 
         updateFilterToolbar(false);
@@ -249,6 +246,8 @@ public class EntryListFragment extends ListFragment
         getLoaderManager().initLoader(LOADER_ENTRIES, null, this);
         if(mCatId > 0) {
             getLoaderManager().initLoader(LOADER_CAT, null, this);
+        } else {
+            setCatName(null);
         }
     }
 
@@ -329,7 +328,7 @@ public class EntryListFragment extends ListFragment
                 setSort(Tables.Entries.RATING);
                 return true;
             case R.id.menu_add_entry:
-                if(mCatId > 0) {
+                if(mCatName != null) {
                     addEntry(mCatId, mCatName);
                 } else {
                     CatListDialog.showDialog(getFragmentManager(), this, REQUEST_SELECT_CAT);
@@ -712,12 +711,15 @@ public class EntryListFragment extends ListFragment
     /**
      * Set the subtitle. This will display the category name as the title of the list Toolbar or as
      * the ActionBar subtitle.
+     *
+     * @param catName The category name
      */
-    private void setCatName() {
+    private void setCatName(String catName) {
         final String subtitle;
-        if(mCatName == null) {
+        if(catName == null) {
             subtitle = getString(R.string.title_all_entries);
         } else {
+            mCatName = FlavordexApp.getRealCatName(getContext(), catName);
             subtitle = getString(R.string.title_cat_entries, mCatName);
         }
         if(mToolbar != null) {
@@ -824,10 +826,7 @@ public class EntryListFragment extends ListFragment
                 break;
             case LOADER_CAT:
                 if(data.moveToFirst()) {
-                    mCatName = data.getString(data.getColumnIndex(Tables.Cats.NAME));
-                    setCatName();
-                    PreferenceManager.getDefaultSharedPreferences(getContext()).edit()
-                            .putString(FlavordexApp.PREF_LIST_CAT_NAME, mCatName).apply();
+                    setCatName(data.getString(data.getColumnIndex(Tables.Cats.NAME)));
                 } else {
                     new Handler().post(new Runnable() {
                         @Override

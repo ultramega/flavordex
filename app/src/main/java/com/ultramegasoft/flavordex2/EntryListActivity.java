@@ -77,7 +77,7 @@ public class EntryListActivity extends AppCompatActivity
 
             final long catId = prefs.getLong(FlavordexApp.PREF_LIST_CAT_ID, -1);
             if(catId > -1) {
-                onCatSelected(catId, prefs.getString(FlavordexApp.PREF_LIST_CAT_NAME, null), false);
+                onCatSelected(catId, false);
             }
 
             PermissionUtils.checkExternalStoragePerm(this, R.string.message_request_storage);
@@ -148,13 +148,13 @@ public class EntryListActivity extends AppCompatActivity
     /**
      * Called by the CatListFragment when an item is selected.
      *
-     * @param id The category ID
+     * @param id         The category ID
+     * @param exportMode Whether to start the entry list Fragment in export mode
      */
-    public void onCatSelected(long id, String catName, boolean exportMode) {
+    public void onCatSelected(long id, boolean exportMode) {
         final Fragment fragment = new EntryListFragment();
         final Bundle args = new Bundle();
         args.putLong(EntryListFragment.ARG_CAT, id);
-        args.putString(EntryListFragment.ARG_CAT_NAME, catName);
         args.putBoolean(EntryListFragment.ARG_TWO_PANE, mTwoPane);
         args.putLong(EntryListFragment.ARG_SELECTED_ITEM, mSelectedItem);
         args.putBoolean(EntryListFragment.ARG_EXPORT_MODE, exportMode);
@@ -231,7 +231,7 @@ public class EntryListActivity extends AppCompatActivity
         if(fragment instanceof EntryListFragment) {
             ((EntryListFragment)fragment).setExportMode(true, true);
         } else {
-            onCatSelected(0, null, true);
+            onCatSelected(0, true);
         }
     }
 }
