@@ -228,7 +228,7 @@ public class PhotoSyncHelper {
 
                 driveFile = uploadFile(uri, hash);
                 if(driveFile != null) {
-                    values.put(Tables.Photos.DRIVE_ID, driveFile.getDriveId().encodeToString());
+                    values.put(Tables.Photos.DRIVE_ID, driveFile.getDriveId().getResourceId());
                 }
 
                 if(values.size() > 0) {
@@ -361,7 +361,7 @@ public class PhotoSyncHelper {
             try {
                 final MetadataBuffer buffer = result.getMetadataBuffer();
                 for(Metadata metadata : buffer) {
-                    driveIds.add(metadata.getDriveId().encodeToString());
+                    driveIds.add(metadata.getDriveId().getResourceId());
                 }
             } finally {
                 result.release();
@@ -445,18 +445,20 @@ public class PhotoSyncHelper {
     /**
      * Download a file from Drive.
      *
-     * @param driveId The Drive ID
+     * @param resourceId The Drive resource ID
      * @return The path to the downloaded file
      */
-    private String downloadPhoto(String driveId) {
+    private String downloadPhoto(String resourceId) {
         if(!mMediaMounted) {
             return null;
         }
 
-        final DriveFile driveFile = DriveId.decodeFromString(driveId).asDriveFile();
-        if(driveFile == null) {
+        final DriveId driveId =
+                Drive.DriveApi.fetchDriveId(mClient, resourceId).await().getDriveId();
+        if(driveId == null) {
             return null;
         }
+        final DriveFile driveFile = driveId.asDriveFile();
 
         final DriveApi.DriveContentsResult result =
                 driveFile.open(mClient, DriveFile.MODE_READ_ONLY, null).await();
