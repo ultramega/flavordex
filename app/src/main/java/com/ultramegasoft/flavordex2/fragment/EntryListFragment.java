@@ -790,7 +790,7 @@ public class EntryListFragment extends ListFragment
             case LOADER_CAT:
                 return new CursorLoader(getContext(),
                         ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId),
-                        new String[] {Tables.Cats._ID}, null, null, null);
+                        new String[] {Tables.Cats.NAME}, null, null, null);
         }
         return null;
     }
@@ -823,7 +823,12 @@ public class EntryListFragment extends ListFragment
                 setListShown(true);
                 break;
             case LOADER_CAT:
-                if(data.getCount() < 1) {
+                if(data.moveToFirst()) {
+                    mCatName = data.getString(data.getColumnIndex(Tables.Cats.NAME));
+                    setCatName();
+                    PreferenceManager.getDefaultSharedPreferences(getContext()).edit()
+                            .putString(FlavordexApp.PREF_LIST_CAT_NAME, mCatName).apply();
+                } else {
                     new Handler().post(new Runnable() {
                         @Override
                         public void run() {
