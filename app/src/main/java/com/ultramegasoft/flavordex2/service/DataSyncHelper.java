@@ -510,6 +510,7 @@ public class DataSyncHelper {
         } else {
             values.put(Tables.Cats.NAME, record.getName());
             values.put(Tables.Cats.PUBLISHED, true);
+            values.put(Tables.Cats.SYNCED, true);
             if(catId > 0) {
                 uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, catId);
                 cr.update(uri, values, null, null);
@@ -618,6 +619,7 @@ public class DataSyncHelper {
             values.put(Tables.Entries.RATING, record.getRating());
             values.put(Tables.Entries.NOTES, record.getNotes());
             values.put(Tables.Entries.PUBLISHED, true);
+            values.put(Tables.Entries.SYNCED, true);
             if(entryId > 0) {
                 uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId);
                 cr.update(uri, values, null, null);
