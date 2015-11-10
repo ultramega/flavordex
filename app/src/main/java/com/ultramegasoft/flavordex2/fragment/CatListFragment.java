@@ -91,9 +91,6 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         ((EntryListActivity)getActivity()).onCatSelected(id, false);
-
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        prefs.edit().putLong(FlavordexApp.PREF_LIST_CAT_ID, id).apply();
     }
 
     @Override

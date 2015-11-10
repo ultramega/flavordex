@@ -249,6 +249,9 @@ public class EntryListFragment extends ListFragment
         } else {
             setCatName(null);
         }
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        prefs.edit().putLong(FlavordexApp.PREF_LIST_CAT_ID, mCatId).apply();
     }
 
     @SuppressWarnings("ConstantConditions")
