@@ -36,21 +36,18 @@ public class TaskService extends GcmTaskService {
             if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false)) {
                 photoSyncHelper = new PhotoSyncHelper(this);
                 if(BackendUtils.isPhotoSyncRequested(this)) {
-                    BackendUtils.requestPhotoSync(this, false);
                     if(photoSyncHelper.connect()) {
                         photoSyncHelper.deletePhotos();
                         photoSyncHelper.fetchPhotos();
                         photoSyncHelper.pushPhotos();
-                    } else {
-                        BackendUtils.requestPhotoSync(this);
+                        BackendUtils.requestPhotoSync(this, false);
                     }
                 }
             }
 
             if(BackendUtils.isDataSyncRequested(this)) {
-                BackendUtils.requestDataSync(this, false);
-                if(!new DataSyncHelper(this, photoSyncHelper).sync()) {
-                    BackendUtils.requestDataSync(this);
+                if(new DataSyncHelper(this, photoSyncHelper).sync()) {
+                    BackendUtils.requestDataSync(this, false);
                 }
             }
 
