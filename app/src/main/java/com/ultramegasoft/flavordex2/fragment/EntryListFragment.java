@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -87,6 +88,12 @@ public class EntryListFragment extends ListFragment
     private static final String STATE_WHERE = "where";
     private static final String STATE_WHERE_ARGS = "where_args";
     private static final String STATE_EXPORT_MODE = "export_mode";
+
+    /**
+     * Loader IDs
+     */
+    private static final int LOADER_ENTRIES = 0;
+    private static final int LOADER_CAT = 1;
 
     /**
      * The fields to query from the database
@@ -239,7 +246,10 @@ public class EntryListFragment extends ListFragment
 
         setExportMode(mExportMode, false);
 
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(LOADER_ENTRIES, null, this);
+        if(mCatId > 0) {
+            getLoaderManager().initLoader(LOADER_CAT, null, this);
+        }
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -756,53 +766,82 @@ public class EntryListFragment extends ListFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri uri;
-        if(TextUtils.isEmpty(mSearchQuery)) {
-            if(mCatId > 0) {
-                uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_CAT_URI_BASE, mCatId);
-            } else {
-                uri = Tables.Entries.CONTENT_URI;
-            }
-        } else {
-            if(mCatId > 0) {
-                uri = Tables.Entries.getCatFilterUri(mCatId, mSearchQuery);
-            } else {
-                uri = Uri.withAppendedPath(Tables.Entries.CONTENT_FILTER_URI_BASE, mSearchQuery);
-            }
+        switch(id) {
+            case LOADER_ENTRIES:
+                Uri uri;
+                if(TextUtils.isEmpty(mSearchQuery)) {
+                    if(mCatId > 0) {
+                        uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_CAT_URI_BASE,
+                                mCatId);
+                    } else {
+                        uri = Tables.Entries.CONTENT_URI;
+                    }
+                } else {
+                    if(mCatId > 0) {
+                        uri = Tables.Entries.getCatFilterUri(mCatId, mSearchQuery);
+                    } else {
+                        uri = Uri.withAppendedPath(Tables.Entries.CONTENT_FILTER_URI_BASE,
+                                mSearchQuery);
+                    }
+                }
+                final String sort = mSortField + (mSortReversed ? " DESC" : " ASC");
+                return new CursorLoader(getContext(), uri, LIST_PROJECTION, mWhere, mWhereArgs,
+                        sort);
+            case LOADER_CAT:
+                return new CursorLoader(getContext(),
+                        ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId),
+                        new String[] {Tables.Cats._ID}, null, null, null);
         }
-        final String sort = mSortField + (mSortReversed ? " DESC" : " ASC");
-        return new CursorLoader(getContext(), uri, LIST_PROJECTION, mWhere, mWhereArgs, sort);
+        return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(mExportMode) {
-            final ListView listView = getListView();
-            final long[] checkedItems = listView.getCheckedItemIds();
-            for(int i = 0; i < mAdapter.getCount(); i++) {
-                listView.setItemChecked(i, false);
-            }
+        switch(loader.getId()) {
+            case LOADER_ENTRIES:
+                if(mExportMode) {
+                    final ListView listView = getListView();
+                    final long[] checkedItems = listView.getCheckedItemIds();
+                    for(int i = 0; i < mAdapter.getCount(); i++) {
+                        listView.setItemChecked(i, false);
+                    }
 
-            mAdapter.swapCursor(data);
-            int pos;
-            for(long checked : checkedItems) {
-                pos = mAdapter.getItemIndex(checked);
-                if(pos != ListView.INVALID_POSITION) {
-                    listView.setItemChecked(pos, true);
+                    mAdapter.swapCursor(data);
+                    int pos;
+                    for(long checked : checkedItems) {
+                        pos = mAdapter.getItemIndex(checked);
+                        if(pos != ListView.INVALID_POSITION) {
+                            listView.setItemChecked(pos, true);
+                        }
+                    }
+
+                    invalidateExportMenu();
+                } else {
+                    mAdapter.swapCursor(data);
+                    setActivatedPosition(mAdapter.getItemIndex(mActivatedItem));
                 }
-            }
-
-            invalidateExportMenu();
-        } else {
-            mAdapter.swapCursor(data);
-            setActivatedPosition(mAdapter.getItemIndex(mActivatedItem));
+                setListShown(true);
+                break;
+            case LOADER_CAT:
+                if(data.getCount() < 1) {
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            getFragmentManager().popBackStack();
+                        }
+                    });
+                }
+                break;
         }
-        setListShown(true);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        setActivatedPosition(ListView.INVALID_POSITION);
-        mAdapter.swapCursor(null);
+        switch(loader.getId()) {
+            case LOADER_ENTRIES:
+                setActivatedPosition(ListView.INVALID_POSITION);
+                mAdapter.swapCursor(null);
+                break;
+        }
     }
 }
