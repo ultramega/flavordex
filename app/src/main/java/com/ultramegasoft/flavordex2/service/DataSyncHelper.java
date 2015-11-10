@@ -37,6 +37,12 @@ public class DataSyncHelper {
     private static final String TAG = "DataSyncHelper";
 
     /**
+     * Helper to implement exponential backoff
+     */
+    private static final BackendUtils.ExponentialBackoffHelper sBackoffHelper =
+            new BackendUtils.ExponentialBackoffHelper(30, 30, 60 * 15);
+
+    /**
      * The Context
      */
     private final Context mContext;
@@ -77,6 +83,10 @@ public class DataSyncHelper {
      * @return Whether the sync completed successfully
      */
     public boolean sync() {
+        if(!sBackoffHelper.shouldExecute()) {
+            return false;
+        }
+
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
         if(accountName == null || mClientId == 0) {
@@ -94,11 +104,13 @@ public class DataSyncHelper {
             fetchUpdates();
             Log.d(TAG, "Syncing complete.");
 
+            sBackoffHelper.onSuccess();
             return true;
         } catch(IOException e) {
             Log.w(TAG, "Syncing with the backend failed", e);
         }
 
+        sBackoffHelper.onFail();
         return false;
     }
 

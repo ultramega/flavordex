@@ -51,6 +51,12 @@ public class PhotoSyncHelper {
     private static final String TAG = "PhotoSyncHelper";
 
     /**
+     * Helper to implement exponential backoff
+     */
+    private static final BackendUtils.ExponentialBackoffHelper sBackoffHelper =
+            new BackendUtils.ExponentialBackoffHelper(30, 30, 60 * 15);
+
+    /**
      * The custom property key to identify photos
      */
     private static final CustomPropertyKey sHashKey =
@@ -97,6 +103,11 @@ public class PhotoSyncHelper {
         if(isConnected()) {
             return true;
         }
+
+        if(!sBackoffHelper.shouldExecute()) {
+            return false;
+        }
+
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             mShouldSync = false;
             mMediaMounted = false;
@@ -132,6 +143,7 @@ public class PhotoSyncHelper {
             Log.d(TAG, "Connection successful. sync: " + mShouldSync + " media: " + mMediaMounted);
             mDriveFolder = Drive.DriveApi.getAppFolder(mClient);
             if(mDriveFolder != null) {
+                sBackoffHelper.onSuccess();
                 return true;
             }
             Log.w(TAG, "Failed to get application folder.");
@@ -156,6 +168,7 @@ public class PhotoSyncHelper {
 
         Log.w(TAG, "Connection failed! Reason: " + result.getErrorMessage());
         mClient.disconnect();
+        sBackoffHelper.onFail();
         return false;
     }
 

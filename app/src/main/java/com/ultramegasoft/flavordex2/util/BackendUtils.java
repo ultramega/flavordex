@@ -276,4 +276,73 @@ public class BackendUtils {
         }
         return builder.build();
     }
+
+    /**
+     * Helper class to implement exponential backoff.
+     */
+    public static class ExponentialBackoffHelper {
+        /**
+         * The base interval of delay times in milliseconds
+         */
+        private final long mRetryInterval;
+
+        /**
+         * The amount of tolerance in the random offset in delay times in milliseconds
+         */
+        private final long mRetryTolerance;
+
+        /**
+         * The maximum delay time in milliseconds
+         */
+        private final long mMaxRetryDelay;
+
+        /**
+         * The current failure count
+         */
+        private long mFailureCount = 0;
+
+        /**
+         * The minimum timestamp of the next allowed execution
+         */
+        private long mRetryTime = 0;
+
+        /**
+         * @param interval  The base interval of delay times in seconds
+         * @param tolerance The amount of tolerance in the random offset in delay times in seconds
+         * @param maxDelay  The maximum delay time in seconds
+         */
+        public ExponentialBackoffHelper(long interval, long tolerance, long maxDelay) {
+            mRetryInterval = interval * 1000;
+            mRetryTolerance = tolerance * 1000;
+            mMaxRetryDelay = maxDelay * 1000;
+        }
+
+        /**
+         * Should the task be executed?
+         *
+         * @return Whether the retry delay has been met
+         */
+        public boolean shouldExecute() {
+            return System.currentTimeMillis() > mRetryTime;
+        }
+
+        /**
+         * Call when the task has executed successfully to reset the failure count.
+         */
+        public void onSuccess() {
+            mFailureCount = mRetryTime = 0;
+        }
+
+        /**
+         * Call when the task has failed to execute.
+         */
+        public void onFail() {
+            mFailureCount++;
+            long delay = (long)(Math.pow(2, mFailureCount) * mRetryInterval);
+            delay = delay > mMaxRetryDelay ? mMaxRetryDelay : delay;
+            delay += (Math.random() - 0.5) * mRetryTolerance;
+            mRetryTime = System.currentTimeMillis() + delay;
+            Log.d(TAG, "Task failed! Retrying in " + delay + "ms");
+        }
+    }
 }
