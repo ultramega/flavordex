@@ -22,6 +22,7 @@ import com.ultramegasoft.flavordex2.provider.Tables;
 
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -244,6 +245,8 @@ public class PhotoUtils {
             } finally {
                 parcelFileDescriptor.close();
             }
+        } catch(FileNotFoundException e) {
+            Log.w(TAG, "File not found: " + uri.toString());
         } catch(IOException e) {
             Log.e(TAG, "Failed to load bitmap", e);
         }
