@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Named;
 
@@ -46,6 +48,8 @@ import javax.inject.Named;
         }
 )
 public class SyncEndpoint {
+    private static final Logger LOGGER = Logger.getLogger(SyncEndpoint.class.getName());
+
     /**
      * The API key for Google Cloud Messaging
      */
@@ -77,8 +81,8 @@ public class SyncEndpoint {
             updateRecord.setCats(helper.getUpdatedCats());
             updateRecord.setEntries(helper.getUpdatedEntries());
         } catch(SQLException e) {
-            e.printStackTrace();
-            throw new InternalServerErrorException("Failed to fetch updates.");
+            LOGGER.log(Level.SEVERE, "Failed to fetch updates", e);
+            throw new InternalServerErrorException("Failed to fetch updates");
         } finally {
             helper.close();
         }
@@ -121,7 +125,7 @@ public class SyncEndpoint {
                         }
                         catStatuses.put(catRecord.getUuid(), status);
                     } catch(SQLException e) {
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "Failed to update category record", e);
                         catStatuses.put(catRecord.getUuid(), false);
                     }
                 }
@@ -138,7 +142,7 @@ public class SyncEndpoint {
                         }
                         entryStatuses.put(entryRecord.getUuid(), status);
                     } catch(SQLException e) {
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "Failed to update entry record", e);
                         entryStatuses.put(entryRecord.getUuid(), false);
                     }
                 }
@@ -149,8 +153,8 @@ public class SyncEndpoint {
                 notifyClients(helper);
             }
         } catch(SQLException e) {
-            e.printStackTrace();
-            throw new InternalServerErrorException("Failed to save updated data.");
+            LOGGER.log(Level.SEVERE, "Failed to save updated data", e);
+            throw new InternalServerErrorException("Failed to save updated data");
         } finally {
             helper.close();
         }
@@ -181,8 +185,8 @@ public class SyncEndpoint {
             helper.setClientId(clientId);
             helper.setSyncTime(time);
         } catch(SQLException e) {
-            e.printStackTrace();
-            throw new InternalServerErrorException("Failed to update client sync time.");
+            LOGGER.log(Level.SEVERE, "Failed to update client sync time", e);
+            throw new InternalServerErrorException("Failed to update client sync time");
         } finally {
             helper.close();
         }
@@ -218,7 +222,7 @@ public class SyncEndpoint {
                 }
             }
         } catch(IOException | SQLException | UnauthorizedException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Failed to send GCM messages", e);
         }
     }
 }

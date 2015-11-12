@@ -9,6 +9,8 @@ import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.users.User;
 
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Named;
 
@@ -39,6 +41,8 @@ import javax.inject.Named;
         }
 )
 public class RegistrationEndpoint {
+    private static final Logger LOGGER = Logger.getLogger(RegistrationEndpoint.class.getName());
+
     /**
      * Register a client device with the backend.
      *
@@ -60,8 +64,8 @@ public class RegistrationEndpoint {
             helper.setUser(user.getEmail());
             return helper.registerClient(gcmId);
         } catch(SQLException e) {
-            e.printStackTrace();
-            throw new InternalServerErrorException("Failed to register the client.");
+            LOGGER.log(Level.SEVERE, "Failed to register the client", e);
+            throw new InternalServerErrorException("Failed to register the client");
         } finally {
             helper.close();
         }
@@ -87,8 +91,8 @@ public class RegistrationEndpoint {
             helper.setUser(user.getEmail());
             helper.unregisterClient(clientId);
         } catch(SQLException e) {
-            e.printStackTrace();
-            throw new InternalServerErrorException("Failed to unregister the client.");
+            LOGGER.log(Level.SEVERE, "Failed to unregister the client", e);
+            throw new InternalServerErrorException("Failed to unregister the client");
         } finally {
             helper.close();
         }

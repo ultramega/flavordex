@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Database access helper.
@@ -18,6 +20,8 @@ import java.util.HashMap;
  * @author Steve Guidetti
  */
 public class DatabaseHelper {
+    private static final Logger LOGGER = Logger.getLogger(DatabaseHelper.class.getName());
+
     /**
      * The database connection URL
      */
@@ -55,7 +59,7 @@ public class DatabaseHelper {
                 mConnection = DriverManager.getConnection(DB_URL_DEBUG);
             }
         } catch(ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Failed to connect to the database", e);
         }
     }
 
@@ -68,7 +72,7 @@ public class DatabaseHelper {
                 mConnection.close();
                 mConnection = null;
             } catch(SQLException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Failed to close the database connection", e);
             }
         }
     }
