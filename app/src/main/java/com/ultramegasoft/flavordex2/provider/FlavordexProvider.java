@@ -293,7 +293,6 @@ public class FlavordexProvider extends ContentProvider {
                         || values.containsKey(Tables.Entries.ORIGIN)) {
                     processMaker(values);
                 }
-                mResolver.notifyChange(Tables.Cats.CONTENT_URI, null);
                 break;
             case CATS:
                 table = Tables.Cats.TABLE_NAME;
@@ -369,6 +368,10 @@ public class FlavordexProvider extends ContentProvider {
 
                 if(id > 0) {
                     mBackupManager.dataChanged();
+
+                    if(Tables.Entries.TABLE_NAME.equals(table)) {
+                        mResolver.notifyChange(Tables.Cats.CONTENT_URI, null);
+                    }
 
                     final Uri rowUri = ContentUris.withAppendedId(uri, id);
                     mResolver.notifyChange(rowUri, null);
@@ -521,13 +524,11 @@ public class FlavordexProvider extends ContentProvider {
         switch(sUriMatcher.match(uri)) {
             case ENTRIES:
                 table = Tables.Entries.TABLE_NAME;
-                mResolver.notifyChange(Tables.Cats.CONTENT_URI, null);
                 break;
             case ENTRIES_ID:
                 table = Tables.Entries.TABLE_NAME;
                 selection = appendWhere(selection,
                         Tables.Entries._ID + " = " + uri.getLastPathSegment());
-                mResolver.notifyChange(Tables.Cats.CONTENT_URI, null);
                 break;
             case CATS:
                 table = Tables.Cats.TABLE_NAME;
@@ -614,6 +615,11 @@ public class FlavordexProvider extends ContentProvider {
 
             if(count > 0) {
                 mBackupManager.dataChanged();
+
+                if(Tables.Entries.TABLE_NAME.equals(table)) {
+                    mResolver.notifyChange(Tables.Cats.CONTENT_URI, null);
+                }
+
                 mResolver.notifyChange(uri, null);
             }
 
