@@ -115,23 +115,12 @@ public class DatabaseHelper {
             throw new UnauthorizedException("Unknown user");
         }
         final RegistrationRecord record = new RegistrationRecord();
-        String sql = "SELECT id, gcm_id FROM clients WHERE user = ?";
+
+        String sql = "DELETE FROM clients WHERE user = ? AND gcm_id = ?";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
         stmt.setLong(1, mUserId);
-
-        ResultSet result = stmt.executeQuery();
-        while(result.next()) {
-            if(gcmId.equals(result.getString(2))) {
-                record.setClientId(result.getLong(1));
-
-                sql = "UPDATE clients SET last_sync = 0 WHERE id = ?";
-                stmt = mConnection.prepareStatement(sql);
-                stmt.setLong(1, record.getClientId());
-                stmt.executeUpdate();
-
-                return record;
-            }
-        }
+        stmt.setString(2, gcmId);
+        stmt.executeUpdate();
 
         sql = "INSERT INTO clients (user, gcm_id) VALUES (?, ?)";
         stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -139,7 +128,7 @@ public class DatabaseHelper {
         stmt.setString(2, gcmId);
 
         stmt.executeUpdate();
-        result = stmt.getGeneratedKeys();
+        final ResultSet result = stmt.getGeneratedKeys();
         if(result.next()) {
             record.setClientId(result.getLong(1));
         }
