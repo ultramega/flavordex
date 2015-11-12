@@ -68,7 +68,7 @@ CREATE TABLE photos2 (
   path TEXT,
   drive_id TEXT,
   pos INTEGER DEFAULT 0,
-  UNIQUE(entry, hash) ON CONFLICT IGNORE
+  UNIQUE(entry, hash) ON CONFLICT REPLACE
 );
 --
 INSERT INTO photos2 (_id, entry, path) SELECT * FROM photos;

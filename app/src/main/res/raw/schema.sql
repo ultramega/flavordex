@@ -82,7 +82,7 @@ CREATE TABLE photos (
   path TEXT,
   drive_id TEXT,
   pos INTEGER DEFAULT 0,
-  UNIQUE(entry, hash) ON CONFLICT IGNORE
+  UNIQUE(entry, hash) ON CONFLICT REPLACE
 );
 --
 CREATE TABLE deleted (
