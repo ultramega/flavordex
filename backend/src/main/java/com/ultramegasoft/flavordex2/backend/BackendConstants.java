@@ -1,6 +1,8 @@
 package com.ultramegasoft.flavordex2.backend;
 
 /**
+ * Constants used by all endpoints.
+ *
  * @author Steve Guidetti
  */
 public class BackendConstants {
