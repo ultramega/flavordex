@@ -28,6 +28,23 @@
     <init>(...);
 }
 
+-keep public class android.support.v7.preference.PreferenceCategory {
+    <init>(...);
+}
+
 -keep public class android.support.v7.preference.CheckBoxPreference {
     <init>(...);
 }
+
+# Needed to keep generic types and @Key annotations accessed via reflection
+-keepattributes Signature,RuntimeVisibleAnnotations,AnnotationDefault
+-keepclassmembers class * {
+    @com.google.api.client.util.Key <fields>;
+}
+
+# com.google.client.util.IOUtils references java.nio.file.Files when on Java 7+
+-dontnote java.nio.file.Files, java.nio.file.Path
+
+# Suppress warnings on sun.misc.Unsafe
+-dontnote sun.misc.Unsafe
+-dontwarn sun.misc.Unsafe
