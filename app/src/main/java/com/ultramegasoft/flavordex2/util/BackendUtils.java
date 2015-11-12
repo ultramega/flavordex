@@ -66,6 +66,7 @@ public class BackendUtils {
         final PeriodicTask task = new PeriodicTask.Builder()
                 .setTag(TASK_SYNC_DATA)
                 .setUpdateCurrent(true)
+                .setPersisted(false)
                 .setPeriod(30)
                 .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
                 .setService(TaskService.class)
