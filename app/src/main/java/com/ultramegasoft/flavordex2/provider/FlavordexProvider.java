@@ -7,12 +7,13 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.UUID;
 
@@ -22,6 +23,8 @@ import java.util.UUID;
  * @author Steve Guidetti
  */
 public class FlavordexProvider extends ContentProvider {
+    private static final String TAG = "FlavordexProvider";
+
     /**
      * The Authority string for this ContentProvider
      */
@@ -361,18 +364,22 @@ public class FlavordexProvider extends ContentProvider {
         }
 
         synchronized(FlavordexProvider.class) {
-            final long id = mDbHelper.getWritableDatabase().insert(table, null, values);
+            try {
+                final long id = mDbHelper.getWritableDatabase().insertOrThrow(table, null, values);
 
-            if(id > 0) {
-                mBackupManager.dataChanged();
+                if(id > 0) {
+                    mBackupManager.dataChanged();
 
-                final Uri rowUri = ContentUris.withAppendedId(uri, id);
-                mResolver.notifyChange(rowUri, null);
-                return rowUri;
+                    final Uri rowUri = ContentUris.withAppendedId(uri, id);
+                    mResolver.notifyChange(rowUri, null);
+                    return rowUri;
+                }
+            } catch(SQLException e) {
+                Log.e(TAG, "Failed to insert row into: " + uri.toString(), e);
             }
         }
 
-        throw new SQLiteException("Failed to insert row into " + uri.toString());
+        return null;
     }
 
     @Override

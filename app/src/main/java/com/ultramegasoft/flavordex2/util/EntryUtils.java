@@ -65,6 +65,9 @@ public class EntryUtils {
         values.put(Tables.Entries.UPDATED, System.currentTimeMillis());
 
         final Uri entryUri = cr.insert(Tables.Entries.CONTENT_URI, values);
+        if(entryUri == null) {
+            throw new SQLiteException("Failed to insert new row into the entries table");
+        }
         insertExtras(cr, catUri, entryUri, entry);
         insertFlavors(cr, entryUri, entry);
         insertPhotos(cr, entryUri, entry);

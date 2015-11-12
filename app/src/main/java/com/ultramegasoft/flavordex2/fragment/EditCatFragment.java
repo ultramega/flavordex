@@ -731,13 +731,15 @@ public class EditCatFragment extends LoadingProgressFragment
         @Override
         protected Void doInBackground(Void... params) {
             final Uri catUri = updateCat();
-            if(mExtras != null) {
-                updateExtras(catUri);
+            if(catUri != null) {
+                if(mExtras != null) {
+                    updateExtras(catUri);
+                }
+                if(mFlavors != null) {
+                    updateFlavors(catUri);
+                }
+                BackendUtils.requestDataSync(mContext);
             }
-            if(mFlavors != null) {
-                updateFlavors(catUri);
-            }
-            BackendUtils.requestDataSync(mContext);
             return null;
         }
 

@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -352,20 +350,15 @@ public class ViewPhotosFragment extends AbsPhotosFragment
             values.put(Tables.Photos.PATH, mPhoto.uri.toString());
             values.put(Tables.Photos.POS, mPhoto.pos);
 
-            try {
-                uri = cr.insert(uri, values);
-                if(uri != null) {
-                    mPhoto.id = Long.valueOf(uri.getLastPathSegment());
-                    PhotoUtils.deleteThumb(mContext, mEntryId);
-                    EntryUtils.markChanged(cr, mEntryId);
-                    BackendUtils.requestDataSync(mContext);
-                    BackendUtils.requestPhotoSync(mContext);
-                    return true;
-                }
-            } catch(SQLiteException e) {
-                Log.e(TAG, "Failed to save photo", e);
+            uri = cr.insert(uri, values);
+            if(uri != null) {
+                mPhoto.id = Long.valueOf(uri.getLastPathSegment());
+                PhotoUtils.deleteThumb(mContext, mEntryId);
+                EntryUtils.markChanged(cr, mEntryId);
+                BackendUtils.requestDataSync(mContext);
+                BackendUtils.requestPhotoSync(mContext);
+                return true;
             }
-
             return false;
         }
 

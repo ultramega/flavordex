@@ -530,6 +530,9 @@ public class DataSyncHelper {
                 uri = Tables.Cats.CONTENT_URI;
                 values.put(Tables.Cats.UUID, record.getUuid());
                 uri = cr.insert(uri, values);
+                if(uri == null) {
+                    return;
+                }
             }
 
             parseCatExtras(uri, record);
@@ -640,6 +643,9 @@ public class DataSyncHelper {
                 values.put(Tables.Entries.CAT, catId);
                 values.put(Tables.Entries.UUID, record.getUuid());
                 uri = cr.insert(uri, values);
+                if(uri == null) {
+                    return;
+                }
             }
 
             parseEntryExtras(uri, record);
