@@ -20,22 +20,6 @@
     <init>(...);
 }
 
--keep public class android.support.v7.preference.Preference {
-    <init>(...);
-}
-
--keep public class android.support.v7.preference.PreferenceScreen {
-    <init>(...);
-}
-
--keep public class android.support.v7.preference.PreferenceCategory {
-    <init>(...);
-}
-
--keep public class android.support.v7.preference.CheckBoxPreference {
-    <init>(...);
-}
-
 # Needed to keep generic types and @Key annotations accessed via reflection
 -keepattributes Signature,RuntimeVisibleAnnotations,AnnotationDefault
 -keepclassmembers class * {
