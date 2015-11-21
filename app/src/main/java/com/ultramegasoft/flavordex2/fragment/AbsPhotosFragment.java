@@ -176,14 +176,15 @@ public abstract class AbsPhotosFragment extends Fragment {
                 case REQUEST_SELECT_IMAGE:
                     if(data != null) {
                         uri = data.getData();
+                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && uri != null) {
+                            cr.takePersistableUriPermission(uri,
+                                    Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        }
                     }
                     break;
             }
 
             if(uri != null) {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    cr.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                }
                 mPhotoLoader = new PhotoLoader(uri);
                 mPhotoLoader.execute();
             }
