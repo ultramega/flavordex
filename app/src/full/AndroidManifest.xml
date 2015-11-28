@@ -38,6 +38,12 @@
             android:parentActivityName=".EntryListActivity"
             android:theme="@style/AppTheme.DialogWhenLarge" />
 
+        <provider
+            android:name=".provider.FlavordexProvider"
+            android:authorities="com.ultramegasoft.flavordex2"
+            android:enabled="true"
+            android:exported="false" />
+
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"

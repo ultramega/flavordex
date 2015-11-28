@@ -5,6 +5,8 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.ultramegasoft.flavordex2.FlavordexApp;
+
 /**
  * Constants for accessing database records.
  *
@@ -15,7 +17,7 @@ public class Tables {
     /**
      * The Authority string for the application
      */
-    public static final String AUTHORITY = "com.ultramegasoft.flavordex2";
+    private static final String AUTHORITY = FlavordexApp.AUTHORITY;
 
     /**
      * The base for all content Uris

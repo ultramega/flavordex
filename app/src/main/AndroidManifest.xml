@@ -46,13 +46,6 @@
         <activity
             android:name=".EditEntryActivity"
             android:label="@string/title_edit" />
-
-        <provider
-            android:name=".provider.FlavordexProvider"
-            android:authorities="com.ultramegasoft.flavordex2"
-            android:enabled="true"
-            android:exported="false" />
-
     </application>
 
 </manifest>

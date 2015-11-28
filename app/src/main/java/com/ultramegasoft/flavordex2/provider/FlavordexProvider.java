@@ -15,6 +15,8 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ultramegasoft.flavordex2.FlavordexApp;
+
 import java.util.UUID;
 
 /**
@@ -28,7 +30,7 @@ public class FlavordexProvider extends ContentProvider {
     /**
      * The Authority string for this ContentProvider
      */
-    private static final String AUTHORITY = Tables.AUTHORITY;
+    private static final String AUTHORITY = FlavordexApp.AUTHORITY;
 
     /**
      * URI identifier codes

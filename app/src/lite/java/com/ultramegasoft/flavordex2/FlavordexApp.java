@@ -9,6 +9,11 @@ import android.location.Location;
  * @see AbsFlavordexApp
  */
 public class FlavordexApp extends AbsFlavordexApp {
+    /**
+     * The Authority string for the application
+     */
+    public static final String AUTHORITY = "com.ultramegasoft.flavordex2.lite";
+
     @Override
     public Location getLocation() {
         return null;

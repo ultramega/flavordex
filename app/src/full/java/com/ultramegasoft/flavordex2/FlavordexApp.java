@@ -25,6 +25,11 @@ import com.ultramegasoft.flavordex2.util.BackendUtils;
 public class FlavordexApp extends AbsFlavordexApp implements
         SharedPreferences.OnSharedPreferenceChangeListener {
     /**
+     * The Authority string for the application
+     */
+    public static final String AUTHORITY = "com.ultramegasoft.flavordex2";
+
+    /**
      * Preference names
      */
     public static final String PREF_ACCOUNT_NAME = "pref_account_name";
