@@ -617,8 +617,9 @@ public class BaseEntryListFragment extends ListFragment
         if(catName == null) {
             subtitle = getString(R.string.title_all_entries);
         } else {
-            mCatName = FlavordexApp.getRealCatName(getContext(), catName);
-            subtitle = getString(R.string.title_cat_entries, mCatName);
+            mCatName = catName;
+            subtitle = getString(R.string.title_cat_entries,
+                    FlavordexApp.getRealCatName(getContext(), mCatName));
         }
         if(mToolbar != null) {
             mToolbar.setTitle(subtitle);
