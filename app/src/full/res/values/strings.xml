@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ext_csv" translatable="false">.csv</string>
+
+    <string name="title_create_cat">Create Category</string>
+    <string name="title_edit_cat">Edit Category</string>
+    <string name="title_delete_cat">Delete Category?</string>
+    <string name="title_export">Export Entries</string>
+    <string name="title_select_file">Select File</string>
+    <string name="title_exporting">Exporting…</string>
+    <string name="title_duplicates">Duplicates Detected</string>
+    <string name="title_settings">Application Settings</string>
+
+    <string name="header_cat_fields">Category Fields</string>
+    <string name="header_cat_flavors">Category Flavors</string>
+    <string name="header_cat_title">Category Title</string>
+
+    <string name="menu_settings">Application Settings</string>
+    <string name="menu_xport">Import/Export</string>
+    <string name="menu_import">Import from CSV</string>
+    <string name="menu_export">Export to CSV</string>
+    <string name="menu_export_selected">Export</string>
+    <string name="menu_save_cat">Save Category</string>
+    <string name="menu_edit_cat">Edit Category</string>
+    <string name="menu_delete_cat">Delete Category</string>
+
+    <string name="button_undo">Undo</string>
+    <string name="button_select_dir">Select Directory</string>
+    <string name="button_add_extra">Add Field</string>
+    <string name="button_add_flavor">Add Flavor</string>
+    <string name="button_remove_extra">Remove Field</string>
+    <string name="button_remove_flavor">Remove Flavor</string>
+    <string name="button_ignore">Ignore</string>
+    <string name="button_uncheck_duplicates">Uncheck %s</string>
+    <string name="button_export">Export</string>
+    <string name="button_create_cat">Create Category</string>
+
+    <string name="hint_cat_name">Category Name</string>
+    <string name="hint_file_name">File Name</string>
+    <string name="hint_extra_name">Field Name</string>
+    <string name="hint_flavor_name">Flavor Name</string>
+
+    <string name="label_field">%s: </string>
+
+    <string name="field_entry_title">Entry Title</string>
+    <string name="field_maker">Maker</string>
+    <string name="field_origin">Origin</string>
+    <string name="field_price">Price</string>
+    <string name="field_location">Tasting Location</string>
+    <string name="field_date">Date/Time</string>
+
+    <string name="message_empty_dir">No files found.</string>
+    <string name="message_empty_dir_filtered">No %s files found.</string>
+    <string name="message_export_complete">Export complete.</string>
+    <string name="message_duplicates_unchecked">%1$d %2$s %3$s unchecked.</string>
+    <string name="message_duplicates_detected">%1$d %2$s %3$s detected. What would you like to do?</string>
+    <string name="message_confirm_delete_cat">Are you sure you want to delete the &lt;b>%s&lt;/b> category?</string>
+    <string name="message_delete_cat_entries">Delete &lt;b>%1$d %2$s&lt;/b> from this category.</string>
+    <string name="message_request_storage_xport">Flavordex requires external storage access to enable CSV file importing and exporting.</string>
+    <string name="message_registering_client">Registering device with the sync service…</string>
+    <string name="message_connecting_drive">Connecting to Google Drive…</string>
+
+    <string name="pref_cat_general">General</string>
+    <string name="pref_edit_cats">Edit Categories</string>
+    <string name="pref_summary_edit_cats">Add, remove, or customize entry categories.</string>
+    <string name="pref_detect_location">Remember Locations</string>
+    <string name="pref_summary_detect_location">Auto-fill location name based on previous entries.</string>
+    <string name="pref_cat_sync">Synchronization</string>
+    <string name="pref_sync_data">Sync Journal Data</string>
+    <string name="pref_summary_sync_data">Sync journal data across your logged in devices.</string>
+    <string name="pref_sync_photos">Sync Entry Photos</string>
+    <string name="pref_summary_sync_photos">Sync entry photos via your Google Drive account.</string>
+    <string name="pref_sync_photos_unmetered">Unmetered Photo Sync</string>
+    <string name="pref_summary_sync_photos_unmetered">Only sync photos when connected to an unmetered connection.</string>
+
+    <string name="error_read_dir">Error: Unable to open directory for reading</string>
+    <string name="error_csv_export">Export failed</string>
+    <string name="error_csv_export_file">Unable to create destination file</string>
+    <string name="error_csv_parse">Unable to parse the .csv file</string>
+    <string name="error_get_accounts">Error: Unable to open the account chooser</string>
+    <string name="error_register_failed">Error: Failed to connect to the sync service</string>
+
+    <string name="about_gms">Google Play Services Legal Notice</string>
+</resources>

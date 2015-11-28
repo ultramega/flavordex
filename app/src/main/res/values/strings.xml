@@ -3,7 +3,6 @@
     <string name="app_name" translatable="false">Flavordex</string>
     <string name="date_format" translatable="false">MMM dd, yyyy</string>
     <string name="date_time_format" translatable="false">MMM dd, yyyy h:mm a</string>
-    <string name="ext_csv" translatable="false">.csv</string>
 
     <string name="cat_num_entries">%1$d %2$s</string>
     <string name="cat_all">All Categories</string>
@@ -22,9 +21,6 @@
     <string name="title_remove_photo">Remove Photo?</string>
     <string name="title_add_flavor">Rate Flavors</string>
     <string name="title_select_cat">Select Category</string>
-    <string name="title_create_cat">Create Category</string>
-    <string name="title_edit_cat">Edit Category</string>
-    <string name="title_delete_cat">Delete Category?</string>
     <string name="title_filter">Filter Entries</string>
     <string name="title_sort">Sort by…</string>
     <string name="title_categories">Categories</string>
@@ -32,12 +28,7 @@
     <string name="title_cat_entries">%s Entries</string>
     <string name="title_import">Import Entries</string>
     <string name="title_import_app">Import from Flavordex</string>
-    <string name="title_export">Export Entries</string>
-    <string name="title_select_file">Select File</string>
     <string name="title_importing">Importing…</string>
-    <string name="title_exporting">Exporting…</string>
-    <string name="title_duplicates">Duplicates Detected</string>
-    <string name="title_settings">Application Settings</string>
     <string name="title_permission">Permission Requested</string>
     <string name="title_reset_flavor">Reset Flavor Chart</string>
     <string name="title_about">About Flavordex 2</string>
@@ -46,13 +37,9 @@
     <string name="header_rating">Rating</string>
     <string name="header_notes">Notes</string>
     <string name="header_date">Entry Date</string>
-    <string name="header_cat_fields">Category Fields</string>
-    <string name="header_cat_flavors">Category Flavors</string>
     <string name="header_select_app">Select %s</string>
     <string name="header_entry_title">Entry Title</string>
-    <string name="header_cat_title">Category Title</string>
 
-    <string name="menu_settings">Application Settings</string>
     <string name="menu_filter">Filter List</string>
     <string name="menu_search">Search Entries</string>
     <string name="menu_sort">Sort List</string>
@@ -71,14 +58,7 @@
     <string name="menu_remove_photo">Remove Photo</string>
     <string name="menu_edit_flavor">Edit Flavors</string>
     <string name="menu_reset_flavor">Reset Flavors</string>
-    <string name="menu_xport">Import/Export</string>
-    <string name="menu_import">Import from CSV</string>
     <string name="menu_import_app">Import from Flavordex</string>
-    <string name="menu_export">Export to CSV</string>
-    <string name="menu_export_selected">Export</string>
-    <string name="menu_save_cat">Save Category</string>
-    <string name="menu_edit_cat">Edit Category</string>
-    <string name="menu_delete_cat">Delete Category</string>
     <string name="menu_cancel">Cancel</string>
     <string name="menu_check_all">Check All</string>
     <string name="menu_uncheck_all">Uncheck All</string>
@@ -87,23 +67,13 @@
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_clear">Clear</string>
-    <string name="button_undo">Undo</string>
     <string name="button_add_photo">Add Photo</string>
     <string name="button_select_photo">Add From Gallery</string>
     <string name="button_take_photo">Add From Camera</string>
     <string name="button_remove_photo">Remove Photo</string>
     <string name="button_clear_filter">Remove Filters</string>
-    <string name="button_select_dir">Select Directory</string>
-    <string name="button_add_extra">Add Field</string>
-    <string name="button_add_flavor">Add Flavor</string>
-    <string name="button_remove_extra">Remove Field</string>
-    <string name="button_remove_flavor">Remove Flavor</string>
     <string name="button_grant_permission">Grant Permission</string>
     <string name="button_import">Import Selected</string>
-    <string name="button_ignore">Ignore</string>
-    <string name="button_uncheck_duplicates">Uncheck %s</string>
-    <string name="button_export">Export</string>
-    <string name="button_create_cat">Create Category</string>
 
     <string name="hint_empty" translatable="false">\?</string>
     <string name="hint_entry_title">Entry Title</string>
@@ -112,11 +82,7 @@
     <string name="hint_price">Price</string>
     <string name="hint_location">Where are you?</string>
     <string name="hint_notes">Notes</string>
-    <string name="hint_cat_name">Category Name</string>
     <string name="hint_location_filter">Tasting Location</string>
-    <string name="hint_file_name">File Name</string>
-    <string name="hint_extra_name">Field Name</string>
-    <string name="hint_flavor_name">Flavor Name</string>
 
     <string name="label_title">Title: </string>
     <string name="label_maker">Maker: </string>
@@ -127,14 +93,6 @@
     <string name="label_date">Date/Time: </string>
     <string name="label_date_min">Starting: </string>
     <string name="label_date_max">Ending: </string>
-    <string name="label_field">%s: </string>
-
-    <string name="field_entry_title">Entry Title</string>
-    <string name="field_maker">Maker</string>
-    <string name="field_origin">Origin</string>
-    <string name="field_price">Price</string>
-    <string name="field_location">Tasting Location</string>
-    <string name="field_date">Date/Time</string>
 
     <string name="message_no_data">No entries found.</string>
     <string name="message_no_data_filter">No entries found matching &lt;b>%s&lt;/b>.</string>
@@ -143,50 +101,21 @@
     <string name="message_no_photos">No Photos</string>
     <string name="message_no_media">External storage not available</string>
     <string name="message_active_filters">Filtered by %s.</string>
-    <string name="message_empty_dir">No files found.</string>
-    <string name="message_empty_dir_filtered">No %s files found.</string>
     <string name="message_import_no_data">No valid entries were found.</string>
     <string name="message_import_complete">Import complete.</string>
-    <string name="message_export_complete">Export complete.</string>
-    <string name="message_duplicates_unchecked">%1$d %2$s %3$s unchecked.</string>
-    <string name="message_duplicates_detected">%1$d %2$s %3$s detected. What would you like to do?</string>
-    <string name="message_confirm_delete_cat">Are you sure you want to delete the &lt;b>%s&lt;/b> category?</string>
-    <string name="message_delete_cat_entries">Delete &lt;b>%1$d %2$s&lt;/b> from this category.</string>
     <string name="message_request_storage">Flavordex requires external storage access to enable photo features.</string>
-    <string name="message_request_storage_xport">Flavordex requires external storage access to enable CSV file importing and exporting.</string>
     <string name="message_reset_flavor">Do you want to reset this flavor chart to the current category default? This will result in a blank chart.</string>
     <string name="message_app_requires_update">%s (requires update)</string>
     <string name="message_version">Flavordex v.%s</string>
     <string name="message_copyright">Copyright © 2015 UltraMega Software</string>
-    <string name="message_registering_client">Registering device with the sync service…</string>
-    <string name="message_connecting_drive">Connecting to Google Drive…</string>
     <string name="message_duplicate_photo">The selected photo has already been added.</string>
 
-    <string name="pref_cat_general">General</string>
-    <string name="pref_edit_cats">Edit Categories</string>
-    <string name="pref_summary_edit_cats">Add, remove, or customize entry categories.</string>
-    <string name="pref_detect_location">Remember Locations</string>
-    <string name="pref_summary_detect_location">Auto-fill location name based on previous entries.</string>
-    <string name="pref_cat_sync">Synchronization</string>
-    <string name="pref_sync_data">Sync Journal Data</string>
-    <string name="pref_summary_sync_data">Sync journal data across your logged in devices.</string>
-    <string name="pref_sync_photos">Sync Entry Photos</string>
-    <string name="pref_summary_sync_photos">Sync entry photos via your Google Drive account.</string>
-    <string name="pref_sync_photos_unmetered">Unmetered Photo Sync</string>
-    <string name="pref_summary_sync_photos_unmetered">Only sync photos when connected to an unmetered connection.</string>
-
     <string name="error_camera">Error: Unable to launch camera</string>
-    <string name="error_read_dir">Error: Unable to open directory for reading</string>
-    <string name="error_csv_export">Export failed</string>
-    <string name="error_csv_export_file">Unable to create destination file</string>
-    <string name="error_csv_parse">Unable to parse the .csv file</string>
     <string name="error_required">required</string>
     <string name="error_no_app">Error: No applications found to complete your request</string>
     <string name="error_no_email">Error: No email client found</string>
     <string name="error_insert_photo">Error: Failed to save photo</string>
     <string name="error_insert_entry">Error: Failed to create new entry</string>
-    <string name="error_get_accounts">Error: Unable to open the account chooser</string>
-    <string name="error_register_failed">Error: Failed to connect to the sync service</string>
 
     <string name="share_subject">I logged %s on Flavordex</string>
     <string name="share_body">I logged %1$s in my %2$s with a %3$.1f rating.\n\nvia Flavordex</string>
@@ -206,5 +135,4 @@
     <string name="about_website">Website: </string>
     <string name="about_send_email">Contact Support</string>
     <string name="about_email_subject">Flavordex %s</string>
-    <string name="about_gms">Google Play Services Legal Notice</string>
 </resources>

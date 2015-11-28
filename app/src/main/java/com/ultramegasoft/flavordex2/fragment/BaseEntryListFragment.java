@@ -29,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
@@ -43,18 +42,18 @@ import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.dialog.EntryFilterDialog;
-import com.ultramegasoft.flavordex2.dialog.ExportDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryDeleter;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
 
 /**
- * The main entry list Fragment. Shows a list of all the journal entries.
+ * Base class for the main entry list Fragment. Shows a list of all the journal entries in a
+ * category.
  *
  * @author Steve Guidetti
  */
-public class EntryListFragment extends ListFragment
+public class BaseEntryListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Keys for the Fragment arguments
@@ -86,13 +85,12 @@ public class EntryListFragment extends ListFragment
     private static final String STATE_FILTER_TEXT = "filter_text";
     private static final String STATE_WHERE = "where";
     private static final String STATE_WHERE_ARGS = "where_args";
-    private static final String STATE_EXPORT_MODE = "export_mode";
 
     /**
      * Loader IDs
      */
-    private static final int LOADER_ENTRIES = 0;
-    private static final int LOADER_CAT = 1;
+    protected static final int LOADER_ENTRIES = 0;
+    protected static final int LOADER_CAT = 1;
 
     /**
      * The fields to query from the database
@@ -110,7 +108,7 @@ public class EntryListFragment extends ListFragment
     /**
      * Whether the Activity is in two-pane mode
      */
-    private boolean mTwoPane;
+    protected boolean mTwoPane;
 
     /**
      * The main list Toolbar
@@ -128,22 +126,15 @@ public class EntryListFragment extends ListFragment
     private boolean mFilterToolbarShowing;
 
     /**
-     * The Toolbar for export selection mode
-     */
-    private Toolbar mExportToolbar;
-
-    /**
      * Toolbar Animations
      */
     private Animation mFilterInAnimation;
     private Animation mFilterOutAnimation;
-    private Animation mExportInAnimation;
-    private Animation mExportOutAnimation;
 
     /**
      * The current activated item if in two-pane mode
      */
-    private long mActivatedItem = -1;
+    protected long mActivatedItem = -1;
 
     /**
      * The string to search for in the list query
@@ -181,11 +172,6 @@ public class EntryListFragment extends ListFragment
     private boolean mSortReversed = false;
 
     /**
-     * Whether the list is in export selection mode
-     */
-    private boolean mExportMode = false;
-
-    /**
      * The category ID
      */
     private long mCatId = 0;
@@ -198,7 +184,7 @@ public class EntryListFragment extends ListFragment
     /**
      * The Adapter for the ListView
      */
-    private EntryListAdapter mAdapter;
+    protected EntryListAdapter mAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -208,7 +194,6 @@ public class EntryListFragment extends ListFragment
         mCatId = args.getLong(ARG_CAT, mCatId);
         mTwoPane = args.getBoolean(ARG_TWO_PANE, mTwoPane);
         mActivatedItem = args.getLong(ARG_SELECTED_ITEM, mActivatedItem);
-        mExportMode = args.getBoolean(ARG_EXPORT_MODE, mExportMode);
 
         if(savedInstanceState != null) {
             mActivatedItem = savedInstanceState.getLong(STATE_SELECTED_ITEM, mActivatedItem);
@@ -217,7 +202,6 @@ public class EntryListFragment extends ListFragment
             mFilterText = savedInstanceState.getString(STATE_FILTER_TEXT);
             mWhere = savedInstanceState.getString(STATE_WHERE);
             mWhereArgs = savedInstanceState.getStringArray(STATE_WHERE_ARGS);
-            mExportMode = savedInstanceState.getBoolean(STATE_EXPORT_MODE, mExportMode);
         }
 
         final SharedPreferences prefs = PreferenceManager
@@ -240,8 +224,6 @@ public class EntryListFragment extends ListFragment
         mAdapter = new EntryListAdapter(getContext());
         setListShown(false);
         setListAdapter(mAdapter);
-
-        setExportMode(mExportMode, false);
 
         getLoaderManager().initLoader(LOADER_ENTRIES, null, this);
         if(mCatId > 0) {
@@ -278,10 +260,6 @@ public class EntryListFragment extends ListFragment
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
-        if(mExportMode) {
-            invalidateExportMenu();
-            return;
-        }
         mActivatedItem = id;
         final Cursor cursor = (Cursor)mAdapter.getItem(position);
         final String catName = cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT));
@@ -298,7 +276,6 @@ public class EntryListFragment extends ListFragment
         outState.putString(STATE_FILTER_TEXT, mFilterText);
         outState.putString(STATE_WHERE, mWhere);
         outState.putStringArray(STATE_WHERE_ARGS, mWhereArgs);
-        outState.putBoolean(STATE_EXPORT_MODE, mExportMode);
     }
 
     @Override
@@ -566,88 +543,6 @@ public class EntryListFragment extends ListFragment
     }
 
     /**
-     * Enable or disable export mode.
-     *
-     * @param exportMode Whether to enable export mode
-     * @param animate    Whether to animate the export toolbar
-     */
-    public void setExportMode(boolean exportMode, boolean animate) {
-        final ListView listView = getListView();
-        if(exportMode) {
-            listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-        } else {
-            setActivateOnItemClick(mTwoPane);
-            for(long id : getListView().getCheckedItemIds()) {
-                listView.setItemChecked(mAdapter.getItemIndex(id), false);
-            }
-        }
-        mAdapter.setMultiChoiceMode(exportMode);
-        listView.setItemChecked(mAdapter.getItemIndex(mActivatedItem), !exportMode && mTwoPane);
-        showExportToolbar(exportMode, animate);
-
-        mExportMode = exportMode;
-    }
-
-    /**
-     * Show or hide the export Toolbar.
-     *
-     * @param show Whether to show the export Toolbar
-     */
-    private void showExportToolbar(boolean show, boolean animate) {
-        if(mExportToolbar == null) {
-            mExportToolbar = (Toolbar)getActivity().findViewById(R.id.export_toolbar);
-            mExportToolbar.inflateMenu(R.menu.export_menu);
-            mExportToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    switch(item.getItemId()) {
-                        case R.id.menu_export_selected:
-                            ExportDialog.showDialog(getFragmentManager(),
-                                    getListView().getCheckedItemIds());
-                            setExportMode(false, true);
-                            return true;
-                        case R.id.menu_cancel:
-                            setExportMode(false, true);
-                            return true;
-                        case R.id.menu_check_all:
-                        case R.id.menu_uncheck_all:
-                            final ListView listView = getListView();
-                            final boolean check = item.getItemId() == R.id.menu_check_all;
-                            for(int i = 0; i < mAdapter.getCount(); i++) {
-                                listView.setItemChecked(i, check);
-                            }
-                            invalidateExportMenu();
-                            return true;
-                    }
-                    return false;
-                }
-            });
-
-            mExportInAnimation = AnimationUtils.loadAnimation(getContext(),
-                    R.anim.toolbar_slide_in_bottom);
-            mExportOutAnimation = AnimationUtils.loadAnimation(getContext(),
-                    R.anim.toolbar_slide_out_bottom);
-        }
-
-        invalidateExportMenu();
-
-        mExportToolbar.setVisibility(show ? View.VISIBLE : View.GONE);
-        if(animate) {
-            mExportToolbar.startAnimation(show ? mExportInAnimation : mExportOutAnimation);
-        }
-    }
-
-    /**
-     * Update the enabled state of the export button based on whether any items are checked.
-     */
-    private void invalidateExportMenu() {
-        if(mExportToolbar != null) {
-            mExportToolbar.getMenu().findItem(R.id.menu_export_selected)
-                    .setEnabled(getListView().getCheckedItemCount() > 0);
-        }
-    }
-
-    /**
      * Update the state of the filter Toolbar.
      */
     private void updateFilterToolbar(boolean animate) {
@@ -739,7 +634,7 @@ public class EntryListFragment extends ListFragment
      * Turn on activate-on-click mode. When this mode is on, list items will be given the activated
      * state when touched.
      */
-    private void setActivateOnItemClick(boolean activateOnItemClick) {
+    protected void setActivateOnItemClick(boolean activateOnItemClick) {
         getListView().setChoiceMode(activateOnItemClick
                 ? ListView.CHOICE_MODE_SINGLE
                 : ListView.CHOICE_MODE_NONE);
@@ -750,8 +645,8 @@ public class EntryListFragment extends ListFragment
      *
      * @param position The index of the item to activate
      */
-    private void setActivatedPosition(int position) {
-        if(position != ListView.INVALID_POSITION && !mExportMode) {
+    protected void setActivatedPosition(int position) {
+        if(position != ListView.INVALID_POSITION) {
             getListView().setItemChecked(position, true);
         }
     }
@@ -804,27 +699,8 @@ public class EntryListFragment extends ListFragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch(loader.getId()) {
             case LOADER_ENTRIES:
-                if(mExportMode) {
-                    final ListView listView = getListView();
-                    final long[] checkedItems = listView.getCheckedItemIds();
-                    for(int i = 0; i < mAdapter.getCount(); i++) {
-                        listView.setItemChecked(i, false);
-                    }
-
-                    mAdapter.swapCursor(data);
-                    int pos;
-                    for(long checked : checkedItems) {
-                        pos = mAdapter.getItemIndex(checked);
-                        if(pos != ListView.INVALID_POSITION) {
-                            listView.setItemChecked(pos, true);
-                        }
-                    }
-
-                    invalidateExportMenu();
-                } else {
-                    mAdapter.swapCursor(data);
-                    setActivatedPosition(mAdapter.getItemIndex(mActivatedItem));
-                }
+                mAdapter.swapCursor(data);
+                setActivatedPosition(mAdapter.getItemIndex(mActivatedItem));
                 setListShown(true);
                 break;
             case LOADER_CAT:

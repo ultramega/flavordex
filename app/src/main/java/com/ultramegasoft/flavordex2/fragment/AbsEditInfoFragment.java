@@ -26,10 +26,7 @@ import android.widget.FilterQueryProvider;
 import android.widget.RatingBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
-import android.widget.TableLayout;
-import android.widget.TextView;
 
-import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.DateInputWidget;
@@ -40,11 +37,11 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 
 /**
- * Fragment for editing details for a new or existing journal entry.
+ * Base class for the Fragment for editing details for a new or existing journal entry.
  *
  * @author Steve Guidetti
  */
-public class EditInfoFragment extends LoadingProgressFragment
+public abstract class AbsEditInfoFragment extends LoadingProgressFragment
         implements LoaderManager.LoaderCallbacks {
     /**
      * Keys for the Fragment arguments
@@ -69,15 +66,10 @@ public class EditInfoFragment extends LoadingProgressFragment
     private AutoCompleteTextView mTxtMaker;
     private EditText mTxtOrigin;
     private EditText mTxtPrice;
-    private EditText mTxtLocation;
+    protected EditText mTxtLocation;
     private DateInputWidget mDateInputWidget;
     private RatingBar mRatingBar;
     private EditText mTxtNotes;
-
-    /**
-     * The TableLayout for the main info
-     */
-    private TableLayout mInfoTable;
 
     /**
      * The category ID for the entry being added
@@ -138,10 +130,6 @@ public class EditInfoFragment extends LoadingProgressFragment
         mRatingBar = (RatingBar)root.findViewById(R.id.entry_rating);
         mTxtNotes = (EditText)root.findViewById(R.id.entry_notes);
 
-        mInfoTable = (TableLayout)root.findViewById(R.id.entry_info);
-
-        mTxtLocation.setText(((FlavordexApp)getActivity().getApplication()).getLocationName());
-
         final Date date = new Date();
         mDateInputWidget.setDate(date);
         mDateInputWidget.setMaxDate(date);
@@ -155,11 +143,6 @@ public class EditInfoFragment extends LoadingProgressFragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_EXTRAS, mExtras);
-    }
-
-    @Override
-    protected int getLayoutId() {
-        return R.layout.fragment_edit_info;
     }
 
     /**
@@ -185,7 +168,7 @@ public class EditInfoFragment extends LoadingProgressFragment
                 final Bundle args = new Bundle();
                 args.putParcelable("uri", uri);
 
-                getLoaderManager().restartLoader(LOADER_MAKERS, args, EditInfoFragment.this);
+                getLoaderManager().restartLoader(LOADER_MAKERS, args, AbsEditInfoFragment.this);
 
                 return adapter.getCursor();
             }
@@ -235,16 +218,6 @@ public class EditInfoFragment extends LoadingProgressFragment
      * @param extras A map of extra names to the extra field
      */
     protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> extras) {
-        final LayoutInflater inflater = LayoutInflater.from(getContext());
-        for(ExtraFieldHolder extra : extras.values()) {
-            if(!extra.preset) {
-                final View root = inflater.inflate(R.layout.edit_info_extra, mInfoTable, false);
-                ((TextView)root.findViewById(R.id.label))
-                        .setText(getString(R.string.label_field, extra.name));
-                initEditText((EditText)root.findViewById(R.id.value), extra);
-                mInfoTable.addView(root);
-            }
-        }
     }
 
     /**

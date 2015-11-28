@@ -4,14 +4,6 @@
         <item quantity="one">entry</item>
         <item quantity="other">entries</item>
     </plurals>
-    <plurals name="duplicates">
-        <item quantity="one">duplicate</item>
-        <item quantity="other">duplicates</item>
-    </plurals>
-    <plurals name="were">
-        <item quantity="one">was</item>
-        <item quantity="other">were</item>
-    </plurals>
     <plurals name="app">
         <item quantity="one">App</item>
         <item quantity="other">Apps</item>

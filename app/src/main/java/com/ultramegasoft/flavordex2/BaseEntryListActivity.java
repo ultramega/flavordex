@@ -3,7 +3,6 @@ package com.ultramegasoft.flavordex2;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,8 +15,6 @@ import android.view.MenuItem;
 
 import com.ultramegasoft.flavordex2.dialog.AboutDialog;
 import com.ultramegasoft.flavordex2.dialog.AppChooserDialog;
-import com.ultramegasoft.flavordex2.dialog.FileImportDialog;
-import com.ultramegasoft.flavordex2.dialog.FileSelectorDialog;
 import com.ultramegasoft.flavordex2.fragment.CatListFragment;
 import com.ultramegasoft.flavordex2.fragment.EntryListFragment;
 import com.ultramegasoft.flavordex2.fragment.ViewEntryFragment;
@@ -26,14 +23,13 @@ import com.ultramegasoft.flavordex2.util.AppImportUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 /**
- * The main application Activity. This shows a list of all the journal entries. On narrow screens,
- * selecting an entry launches a new Activity to show details. On wide screens, selecting an entry
- * shows details in a Fragment in this Activity.
+ * Base class for the main application Activity. This shows a list of the categories or all the
+ * journal entries in a category. On narrow screens, selecting an entry launches a new Activity to
+ * show details. On wide screens, selecting an entry shows details in a Fragment in this Activity.
  *
  * @author Steve Guidetti
  */
-public class EntryListActivity extends AppCompatActivity
-        implements FileSelectorDialog.OnFileSelectedCallbacks {
+public class BaseEntryListActivity extends AppCompatActivity {
     /**
      * Whether the Activity is in two-pane mode
      */
@@ -91,40 +87,10 @@ public class EntryListActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        final boolean showFileXport = Environment.getExternalStorageDirectory().canWrite()
-                || PermissionUtils.shouldAskExternalStoragePerm(this);
-        final boolean showAppImport = AppImportUtils.isAnyAppInstalled(this);
-        menu.findItem(R.id.menu_xport).setVisible(showFileXport || showAppImport);
-        menu.findItem(R.id.menu_import).setVisible(showFileXport);
-        menu.findItem(R.id.menu_export).setVisible(showFileXport);
-        menu.findItem(R.id.menu_import_app).setVisible(showAppImport);
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.menu_import:
-                if(!PermissionUtils.checkExternalStoragePerm(this,
-                        R.string.message_request_storage_xport)) {
-                    return true;
-                }
-                final String rootPath = Environment.getExternalStorageDirectory().getPath();
-                FileSelectorDialog.showDialog(getSupportFragmentManager(), null, 0, rootPath, false,
-                        ".csv");
-                return true;
             case R.id.menu_import_app:
                 AppChooserDialog.showDialog(getSupportFragmentManager(), false);
-                return true;
-            case R.id.menu_export:
-                if(PermissionUtils.checkExternalStoragePerm(this,
-                        R.string.message_request_storage_xport)) {
-                    enableExportMode();
-                }
-                return true;
-            case R.id.menu_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.menu_about:
                 AboutDialog.showDialog(getSupportFragmentManager());
@@ -138,11 +104,6 @@ public class EntryListActivity extends AppCompatActivity
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         PermissionUtils.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
-    }
-
-    @Override
-    public void onFileSelected(String filePath) {
-        FileImportDialog.showDialog(getSupportFragmentManager(), filePath);
     }
 
     /**
@@ -221,17 +182,5 @@ public class EntryListActivity extends AppCompatActivity
             }
         }
         super.onBackPressed();
-    }
-
-    /**
-     * Enable export mode.
-     */
-    private void enableExportMode() {
-        final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.entry_list);
-        if(fragment instanceof EntryListFragment) {
-            ((EntryListFragment)fragment).setExportMode(true, true);
-        } else {
-            onCatSelected(0, true);
-        }
     }
 }

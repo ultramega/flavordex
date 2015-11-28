@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="duplicates">
+        <item quantity="one">duplicate</item>
+        <item quantity="other">duplicates</item>
+    </plurals>
+    <plurals name="were">
+        <item quantity="one">was</item>
+        <item quantity="other">were</item>
+    </plurals>
+</resources>

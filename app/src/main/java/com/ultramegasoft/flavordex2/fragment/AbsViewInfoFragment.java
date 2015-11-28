@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RatingBar;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.EditEntryActivity;
@@ -30,17 +29,17 @@ import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
 /**
- * Fragment to display the main details of a journal entry.
+ * Base class for the Fragment to display the main details of a journal entry.
  *
  * @author Steve Guidetti
  */
-public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public abstract class AbsViewInfoFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Loader IDs
      */
@@ -78,11 +77,6 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * The entry rating
      */
     private float mRating;
-
-    /**
-     * List of extra field TableRows
-     */
-    private final ArrayList<View> mExtraRows = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -158,9 +152,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      *
      * @return An ID from R.layout
      */
-    protected int getLayoutId() {
-        return R.layout.fragment_view_info;
-    }
+    protected abstract int getLayoutId();
 
     /**
      * Fills the Views with data.
@@ -215,27 +207,6 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param data A LinkedHashMap containing the extra values
      */
     protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> data) {
-        final TableLayout table = (TableLayout)getActivity().findViewById(R.id.entry_info);
-        if(!mExtraRows.isEmpty()) {
-            for(View tableRow : mExtraRows) {
-                table.removeView(tableRow);
-            }
-            mExtraRows.clear();
-        }
-        if(data.size() > 0) {
-            final LayoutInflater inflater = LayoutInflater.from(getContext());
-            for(ExtraFieldHolder extra : data.values()) {
-                if(extra.preset) {
-                    continue;
-                }
-                final View root = inflater.inflate(R.layout.view_info_extra, table, false);
-                ((TextView)root.findViewById(R.id.label))
-                        .setText(getString(R.string.label_field, extra.name));
-                ((TextView)root.findViewById(R.id.value)).setText(extra.value);
-                table.addView(root);
-                mExtraRows.add(root);
-            }
-        }
     }
 
     /**

@@ -1,8 +1,6 @@
 package com.ultramegasoft.flavordex2;
 
-import android.app.Application;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
@@ -10,7 +8,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.preference.PreferenceManager;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
@@ -18,52 +15,23 @@ import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.service.TaskService;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 
-import java.util.HashMap;
-
 /**
- * Stores global runtime information needed by the application.
+ * Full implementation of the Application. Adds support for location detection and data
+ * synchronization.
  *
  * @author Steve Guidetti
+ * @see AbsFlavordexApp
  */
-public class FlavordexApp extends Application implements
+public class FlavordexApp extends AbsFlavordexApp implements
         SharedPreferences.OnSharedPreferenceChangeListener {
-    /**
-     * Enable developer features
-     */
-    public static final boolean DEVELOPER_MODE = false;
-
     /**
      * Preference names
      */
-    public static final String PREF_FIRST_RUN = "pref_first_run";
     public static final String PREF_ACCOUNT_NAME = "pref_account_name";
     public static final String PREF_SYNC_DATA = "pref_sync_data";
     public static final String PREF_SYNC_PHOTOS = "pref_sync_photos";
     public static final String PREF_SYNC_PHOTOS_UNMETERED = "pref_sync_photos_unmetered";
     public static final String PREF_DETECT_LOCATION = "pref_detect_location";
-    public static final String PREF_LIST_SORT_FIELD = "pref_list_sort_field";
-    public static final String PREF_LIST_SORT_REVERSED = "pref_list_sort_reversed";
-    public static final String PREF_LIST_CAT_ID = "pref_list_cat_id";
-
-    /**
-     * Entry category preset names
-     */
-    public static final String CAT_BEER = "_beer";
-    public static final String CAT_WINE = "_wine";
-    public static final String CAT_WHISKEY = "_whiskey";
-    public static final String CAT_COFFEE = "_coffee";
-
-    /**
-     * Map of preset category names to string resource IDs
-     */
-    private static final HashMap<String, Integer> sCatNameMap = new HashMap<String, Integer>() {
-        {
-            put(CAT_BEER, R.string.cat_beer);
-            put(CAT_WINE, R.string.cat_wine);
-            put(CAT_WHISKEY, R.string.cat_whiskey);
-            put(CAT_COFFEE, R.string.cat_coffee);
-        }
-    };
 
     /**
      * Listener for location updates
@@ -100,18 +68,6 @@ public class FlavordexApp extends Application implements
     @Override
     public void onCreate() {
         super.onCreate();
-        if(DEVELOPER_MODE) {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .penaltyFlashScreen()
-                    .build());
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                    .detectAll()
-                    .penaltyLog()
-                    .build());
-        }
-
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
         if(prefs.getBoolean(PREF_DETECT_LOCATION, false)) {
@@ -132,21 +88,6 @@ public class FlavordexApp extends Application implements
                         .cancelTask(BackendUtils.TASK_SYNC_DATA, TaskService.class);
             }
         }
-    }
-
-    /**
-     * Get the real display name of an entry category from a raw database name value, translating
-     * internal names as needed.
-     *
-     * @param context The Context
-     * @param name    The name from the database
-     * @return The real display name
-     */
-    public static String getRealCatName(Context context, String name) {
-        if(sCatNameMap.containsKey(name)) {
-            return context.getString(sCatNameMap.get(name));
-        }
-        return name;
     }
 
     /**

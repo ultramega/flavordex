@@ -14,22 +14,21 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.ultramegasoft.flavordex2.EditCatActivity;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.CatListAdapter;
 
 /**
- * Dialog to select a category.
+ * Base class for the Dialog to select a category.
  *
  * @author Steve Guidetti
  */
-public class CatListDialog extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class BaseCatListDialog extends DialogFragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "CatListDialog";
 
     /**
@@ -41,9 +40,11 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
     /**
      * The Adapter backing the list
      */
-    private CatListAdapter mAdapter;
+    protected CatListAdapter mAdapter;
 
     /**
+     * Show the dialog.
+     *
      * @param fm          The FragmentManager to use
      * @param target      The Fragment to notify of the result
      * @param requestCode A number to identify this request
@@ -77,10 +78,12 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final ListView listView = getLayout();
+        listView.setAdapter(mAdapter);
         return new AlertDialog.Builder(getContext())
                 .setTitle(R.string.title_select_cat)
                 .setIcon(R.drawable.ic_list)
-                .setView(getLayout())
+                .setView(listView)
                 .setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -95,31 +98,32 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
      *
      * @return The View to place inside the Dialog
      */
-    private View getLayout() {
+    protected ListView getLayout() {
         final ListView listView = new ListView(getContext());
-
-        listView.addFooterView(LayoutInflater.from(getContext())
-                .inflate(R.layout.cat_add_list_item, listView, false));
-        listView.setAdapter(mAdapter);
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(position == mAdapter.getCount()) {
-                    startActivity(new Intent(getContext(), EditCatActivity.class));
-                } else {
-                    final Fragment target = getTargetFragment();
-                    if(target != null) {
-                        final Intent intent = new Intent();
-                        intent.putExtra(EXTRA_CAT_ID, id);
-                        intent.putExtra(EXTRA_CAT_NAME, mAdapter.getItem(position).name);
-                        target.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                    }
-                }
+                onCatSelected(position, id);
             }
         });
 
         return listView;
+    }
+
+    /**
+     * Called when a list item is selected.
+     *
+     * @param position The position index of the item
+     * @param id       The ID of the item
+     */
+    protected void onCatSelected(int position, long id) {
+        final Fragment target = getTargetFragment();
+        if(target != null) {
+            final Intent intent = new Intent();
+            intent.putExtra(EXTRA_CAT_ID, id);
+            intent.putExtra(EXTRA_CAT_NAME, mAdapter.getItem(position).name);
+            target.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+        }
     }
 
     @Override

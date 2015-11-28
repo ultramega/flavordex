@@ -14,16 +14,15 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.R;
 
 /**
- * Dialog that shows information about the application.
+ * Base class for the Dialog that shows information about the application.
  *
  * @author Steve Guidetti
  */
-public class AboutDialog extends DialogFragment {
+public class BaseAboutDialog extends DialogFragment {
     /**
      * Tag to identify the Fragment
      */
@@ -41,8 +40,22 @@ public class AboutDialog extends DialogFragment {
 
     @NonNull
     @Override
-    @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        return new AlertDialog.Builder(getContext())
+                .setIcon(R.drawable.ic_info)
+                .setTitle(R.string.title_about)
+                .setPositiveButton(R.string.button_ok, null)
+                .setView(getLayout())
+                .create();
+    }
+
+    /**
+     * Get the layout for the Dialog.
+     *
+     * @return The View to place inside the Dialog
+     */
+    @SuppressLint("InflateParams")
+    protected View getLayout() {
         final View root = LayoutInflater.from(getContext()).inflate(R.layout.dialog_about, null);
 
         ((TextView)root.findViewById(R.id.about_version)).setText(BuildConfig.VERSION_NAME);
@@ -59,24 +72,7 @@ public class AboutDialog extends DialogFragment {
             }
         });
 
-        if(GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(getContext())
-                != null) {
-            final TextView gmsText = (TextView)root.findViewById(R.id.about_gms);
-            gmsText.setVisibility(View.VISIBLE);
-            gmsText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    GmsNoticeDialog.showDialog(getFragmentManager());
-                }
-            });
-        }
-
-        return new AlertDialog.Builder(getContext())
-                .setIcon(R.drawable.ic_info)
-                .setTitle(R.string.title_about)
-                .setPositiveButton(R.string.button_ok, null)
-                .setView(root)
-                .create();
+        return root;
     }
 
     /**
@@ -101,33 +97,5 @@ public class AboutDialog extends DialogFragment {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(getString(R.string.about_website_url)));
         startActivity(intent);
-    }
-
-    /**
-     * Dialog to show the Google Play Services legal notice.
-     */
-    public static class GmsNoticeDialog extends DialogFragment {
-        private static final String TAG = "GmsNoticeDialog";
-
-        /**
-         * Show the dialog.
-         *
-         * @param fm The FragmentManager to use
-         */
-        public static void showDialog(FragmentManager fm) {
-            final DialogFragment fragment = new GmsNoticeDialog();
-            fragment.show(fm, TAG);
-        }
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final String message = GoogleApiAvailability.getInstance()
-                    .getOpenSourceSoftwareLicenseInfo(getContext());
-            return new AlertDialog.Builder(getContext())
-                    .setMessage(message)
-                    .setPositiveButton(R.string.button_ok, null)
-                    .create();
-        }
     }
 }
