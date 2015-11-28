@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Flavordex Lite</string>
+
+    <string name="title_about">About Flavordex Lite</string>
+
+    <string name="message_version">Flavordex Lite v.%s</string>
+
+    <string name="welcome_header">Welcome to Flavordex Lite</string>
+
+    <string name="about_email_subject">Flavordex Lite %s</string>
+</resources>

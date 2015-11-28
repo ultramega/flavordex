@@ -31,7 +31,7 @@
     <string name="title_importing">Importing…</string>
     <string name="title_permission">Permission Requested</string>
     <string name="title_reset_flavor">Reset Flavor Chart</string>
-    <string name="title_about">About Flavordex 2</string>
+    <string name="title_about">About Flavordex</string>
 
     <string name="header_details">Details</string>
     <string name="header_rating">Rating</string>
