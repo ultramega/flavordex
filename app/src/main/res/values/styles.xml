@@ -3,10 +3,6 @@
     <style name="AppTheme" parent="Theme.AppCompat">
     </style>
 
-    <style name="AppTheme.DialogWhenLarge" parent="Theme.AppCompat.DialogWhenLarge">
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-    </style>
-
     <style name="Header" parent="TextAppearance.AppCompat.Large">
         <item name="android:textStyle">bold</item>
         <item name="android:singleLine">true</item>
