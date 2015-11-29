@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="UnusedAttribute">
+        tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
         <meta-data
             android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAI1rmSd8q8YRnl84E-73ReAlo-79A956xNgMQxsA" />
