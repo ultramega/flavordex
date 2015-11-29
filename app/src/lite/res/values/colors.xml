@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <color name="primary_material_dark" tools:ignore="PrivateResource">#3e2723</color>
-    <color name="accent_material_dark" tools:ignore="PrivateResource">#ff5252</color>
+    <color name="accent_material_dark" tools:ignore="PrivateResource">#2196f3</color>
     <color name="background_material_dark" tools:ignore="PrivateResource">#4e342e</color>
     <color name="background_floating_material_dark" tools:ignore="PrivateResource">#5d4037</color>
     <color name="button_material_dark" tools:ignore="PrivateResource">#8d6e63</color>
