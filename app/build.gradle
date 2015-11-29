@@ -18,7 +18,7 @@ android {
         lite {
             applicationId 'com.ultramegasoft.flavordex2.lite'
             versionCode 1
-            versionName '2.0.0'
+            versionName '2.0.0-lite'
         }
         full {
             versionCode 4
