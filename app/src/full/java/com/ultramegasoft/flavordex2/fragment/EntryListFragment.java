@@ -185,9 +185,9 @@ public class EntryListFragment extends BaseEntryListFragment {
                     }
 
                     invalidateExportMenu();
+                    setListShown(true);
+                    return;
                 }
-                setListShown(true);
-                return;
         }
         super.onLoadFinished(loader, data);
     }
