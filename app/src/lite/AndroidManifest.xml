@@ -7,6 +7,10 @@
         android:protectionLevel="signature" />
 
     <application tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <meta-data
+            android:name="com.google.android.backup.api_key"
+            android:value="AEdPqrEAAAAIzRBPnvlizG7Vjp3-1MjEhHwI39HdD_rs2KBqHA" />
+
         <provider
             android:name="com.ultramegasoft.flavordex2.provider.FlavordexProvider"
             android:authorities="com.ultramegasoft.flavordex2.lite.provider"

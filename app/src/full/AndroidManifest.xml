@@ -27,6 +27,9 @@
     <application
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <meta-data
+            android:name="com.google.android.backup.api_key"
+            android:value="AEdPqrEAAAAI1rmSd8q8YRnl84E-73ReAlo-79A956xNgMQxsA" />
+        <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
