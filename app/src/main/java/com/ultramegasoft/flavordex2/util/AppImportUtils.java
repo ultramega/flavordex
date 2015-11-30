@@ -14,7 +14,9 @@ import android.provider.BaseColumns;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
+import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
 import java.util.ArrayList;
 
@@ -27,15 +29,17 @@ public class AppImportUtils {
     /**
      * Application IDs
      */
-    public static final int APP_BEER = 0;
-    public static final int APP_WINE = 1;
-    public static final int APP_WHISKEY = 2;
-    public static final int APP_COFFEE = 3;
+    public static final int APP_FD2_LITE = 0;
+    public static final int APP_BEER = 1;
+    public static final int APP_WINE = 2;
+    public static final int APP_WHISKEY = 3;
+    public static final int APP_COFFEE = 4;
 
     /**
      * The package names for the apps
      */
     private static final String[] sPackageNames = new String[] {
+            "com.ultramegasoft.flavordex2.lite",
             "com.flavordex.beer",
             "com.flavordex.wine",
             "com.flavordex.whiskey",
@@ -46,6 +50,7 @@ public class AppImportUtils {
      * Lists of extra column names for each app
      */
     private static final String[][] sExtraColumns = new String[][] {
+            null,
             new String[] {
                     BeerColumns.STYLE,
                     BeerColumns.SERVING,
@@ -189,7 +194,7 @@ public class AppImportUtils {
     }
 
     /**
-     * Import an entry from an original Flavordex app.
+     * Import an entry from a Flavordex app.
      *
      * @param context  The Context
      * @param app      The source app
@@ -197,6 +202,22 @@ public class AppImportUtils {
      * @return The imported entry
      */
     public static EntryHolder importEntry(Context context, int app, long sourceId) {
+        if(app == APP_FD2_LITE) {
+            return importFd2LiteEntry(context, sourceId);
+        } else {
+            return importLegacyEntry(context, app, sourceId);
+        }
+    }
+
+    /**
+     * Import an entry from an original Flavordex app.
+     *
+     * @param context  The Context
+     * @param app      The source app
+     * @param sourceId The ID of the source entry
+     * @return The imported entry
+     */
+    private static EntryHolder importLegacyEntry(Context context, int app, long sourceId) {
         final EntryHolder entry = new EntryHolder();
         final ContentResolver cr = context.getContentResolver();
         final Uri uri = ContentUris.withAppendedId(getEntriesUri(app), sourceId);
@@ -240,6 +261,128 @@ public class AppImportUtils {
         }
 
         return entry;
+    }
+
+    /**
+     * Import an entry from Flavordex 2 Lite.
+     *
+     * @param context  The Context
+     * @param sourceId The ID of the source entry
+     * @return The imported entry
+     */
+    private static EntryHolder importFd2LiteEntry(Context context, long sourceId) {
+        final EntryHolder entry = new EntryHolder();
+        final ContentResolver cr = context.getContentResolver();
+        final Uri uri = ContentUris.withAppendedId(getEntriesUri(APP_FD2_LITE), sourceId);
+        final Cursor cursor = cr.query(uri, null, null, null, null);
+        if(cursor != null) {
+            try {
+                if(cursor.moveToFirst()) {
+                    if(cursor.getColumnIndex(Tables.Entries.UUID) > -1) {
+                        entry.uuid = cursor.getString(cursor.getColumnIndex(Tables.Entries.UUID));
+                    }
+                    entry.title = cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
+                    entry.catName = cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT));
+                    entry.maker = cursor.getString(cursor.getColumnIndex(Tables.Entries.MAKER));
+                    entry.origin = cursor.getString(cursor.getColumnIndex(Tables.Entries.ORIGIN));
+                    entry.price = cursor.getString(cursor.getColumnIndex(Tables.Entries.PRICE));
+                    entry.location =
+                            cursor.getString(cursor.getColumnIndex(Tables.Entries.LOCATION));
+                    entry.date = cursor.getLong(cursor.getColumnIndex(Tables.Entries.DATE));
+                    entry.rating = cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING));
+                    entry.notes = cursor.getString(cursor.getColumnIndex(Tables.Entries.NOTES));
+
+                    getFd2LiteExtras(context, uri, entry);
+                    getFd2LiteFlavors(context, uri, entry);
+                    getFd2LitePhotos(context, uri, entry);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+
+        return entry;
+    }
+
+    /**
+     * Insert the extra fields from the Flavordex 2 Lite source entry into the new local entry.
+     *
+     * @param context   The Context
+     * @param sourceUri The entry Uri from the source app
+     * @param entry     The new local entry
+     */
+    private static void getFd2LiteExtras(Context context, Uri sourceUri, EntryHolder entry) {
+        final ContentResolver cr = context.getContentResolver();
+        final Cursor cursor =
+                cr.query(Uri.withAppendedPath(sourceUri, "extras"), null, null, null, null);
+        if(cursor != null) {
+            try {
+                String name;
+                String value;
+                while(cursor.moveToNext()) {
+                    name = cursor.getString(cursor.getColumnIndex(Tables.EntriesExtras.EXTRA));
+                    value = cursor.getString(cursor.getColumnIndex(Tables.EntriesExtras.VALUE));
+                    entry.addExtra(0, name, true, value);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+    }
+
+    /**
+     * Insert the flavors from the Flavordex 2 Lite source entry into the new local entry.
+     *
+     * @param context   The Context
+     * @param sourceUri The entry Uri from the source app
+     * @param entry     The new local entry
+     */
+    private static void getFd2LiteFlavors(Context context, Uri sourceUri, EntryHolder entry) {
+        final ContentResolver cr = context.getContentResolver();
+        final Cursor cursor =
+                cr.query(Uri.withAppendedPath(sourceUri, "flavor"), null, null, null, null);
+        if(cursor != null) {
+            try {
+                String name;
+                int value;
+                while(cursor.moveToNext()) {
+                    name = cursor.getString(cursor.getColumnIndex(Tables.EntriesFlavors.FLAVOR));
+                    value = cursor.getInt(cursor.getColumnIndex(Tables.EntriesFlavors.VALUE));
+                    entry.addFlavor(name, value);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+    }
+
+    /**
+     * Insert the photos from the Flavordex 2 Lite source entry into the new local entry.
+     *
+     * @param context   The Context
+     * @param sourceUri The entry Uri from the source app
+     * @param entry     The new local entry
+     */
+    private static void getFd2LitePhotos(Context context, Uri sourceUri, EntryHolder entry) {
+        final ContentResolver cr = context.getContentResolver();
+        final Cursor cursor =
+                cr.query(Uri.withAppendedPath(sourceUri, "photos"), null, null, null, null);
+        if(cursor != null) {
+            try {
+                String hash;
+                String path;
+                int pos;
+                final ArrayList<PhotoHolder> photos = entry.getPhotos();
+                while(cursor.moveToNext()) {
+                    hash = cursor.getString(cursor.getColumnIndex(Tables.Photos.HASH));
+                    path = cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH));
+                    pos = cursor.getInt(cursor.getColumnIndex(Tables.Photos.POS));
+                    photos.add(new PhotoHolder(0, hash, Uri.parse(path), pos));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
     }
 
     /**

@@ -2,12 +2,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <permission
+        android:name="com.ultramegasoft.flavordex2.lite.permission.ACCESS_DATA"
+        android:protectionLevel="signature" />
+
     <application tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <provider
             android:name="com.ultramegasoft.flavordex2.provider.FlavordexProvider"
-            android:authorities="com.ultramegasoft.flavordex2.lite"
+            android:authorities="com.ultramegasoft.flavordex2.lite.provider"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="true"
+            android:permission="com.ultramegasoft.flavordex2.lite.permission.ACCESS_DATA" />
 
     </application>
 
