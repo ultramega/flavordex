@@ -247,7 +247,7 @@ public class PhotoUtils {
             }
         } catch(FileNotFoundException e) {
             Log.w(TAG, "File not found: " + uri.toString());
-        } catch(IOException e) {
+        } catch(IOException | SecurityException e) {
             Log.e(TAG, "Failed to load bitmap", e);
         }
         return null;
