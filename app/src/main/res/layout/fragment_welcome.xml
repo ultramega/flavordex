@@ -30,7 +30,7 @@
             android:layout_marginBottom="16dp"
             android:layout_marginTop="30dp"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/logo" />
+            android:src="@mipmap/logo" />
 
         <TextView
             android:layout_width="wrap_content"
