@@ -320,7 +320,7 @@ public class AppImportUtils {
                 String name;
                 String value;
                 while(cursor.moveToNext()) {
-                    name = cursor.getString(cursor.getColumnIndex(Tables.EntriesExtras.EXTRA));
+                    name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
                     value = cursor.getString(cursor.getColumnIndex(Tables.EntriesExtras.VALUE));
                     entry.addExtra(0, name, true, value);
                 }
