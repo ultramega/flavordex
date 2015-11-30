@@ -27,7 +27,7 @@ public class FlavordexApp extends AbsFlavordexApp implements
     /**
      * The Authority string for the application
      */
-    public static final String AUTHORITY = "com.ultramegasoft.flavordex2";
+    public static final String AUTHORITY = "com.ultramegasoft.flavordex2.provider";
 
     /**
      * Preference names

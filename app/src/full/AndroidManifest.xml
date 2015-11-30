@@ -41,7 +41,7 @@
 
         <provider
             android:name=".provider.FlavordexProvider"
-            android:authorities="com.ultramegasoft.flavordex2"
+            android:authorities="com.ultramegasoft.flavordex2.provider"
             android:enabled="true"
             android:exported="false" />
 
