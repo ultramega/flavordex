@@ -14,12 +14,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.ultramegasoft.flavordex2.dialog.AboutDialog;
-import com.ultramegasoft.flavordex2.dialog.AppChooserDialog;
 import com.ultramegasoft.flavordex2.fragment.CatListFragment;
 import com.ultramegasoft.flavordex2.fragment.EntryListFragment;
 import com.ultramegasoft.flavordex2.fragment.ViewEntryFragment;
 import com.ultramegasoft.flavordex2.fragment.WelcomeFragment;
-import com.ultramegasoft.flavordex2.util.AppImportUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 /**
@@ -63,20 +61,21 @@ public class BaseEntryListActivity extends AppCompatActivity {
                         .add(R.id.entry_detail_container, mWelcomeFragment).commit();
             }
 
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if(prefs.getBoolean(FlavordexApp.PREF_FIRST_RUN, true)) {
-                if(AppImportUtils.isAnyAppInstalled(this)) {
-                    AppChooserDialog.showDialog(getSupportFragmentManager(), true);
-                }
-                prefs.edit().putBoolean(FlavordexApp.PREF_FIRST_RUN, false).apply();
-            }
-
-            final long catId = prefs.getLong(FlavordexApp.PREF_LIST_CAT_ID, -1);
-            if(catId > -1) {
-                onCatSelected(catId, false);
-            }
+            loadPreferences(PreferenceManager.getDefaultSharedPreferences(this));
 
             PermissionUtils.checkExternalStoragePerm(this, R.string.message_request_storage);
+        }
+    }
+
+    /**
+     * Load the Shared Preferences for the Activity.
+     *
+     * @param prefs The default SharedPreferences
+     */
+    protected void loadPreferences(SharedPreferences prefs) {
+        final long catId = prefs.getLong(FlavordexApp.PREF_LIST_CAT_ID, -1);
+        if(catId > -1) {
+            onCatSelected(catId, false);
         }
     }
 
@@ -89,9 +88,6 @@ public class BaseEntryListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.menu_import_app:
-                AppChooserDialog.showDialog(getSupportFragmentManager(), false);
-                return true;
             case R.id.menu_about:
                 AboutDialog.showDialog(getSupportFragmentManager());
                 return true;

@@ -1,11 +1,13 @@
 package com.ultramegasoft.flavordex2;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.ultramegasoft.flavordex2.dialog.AppChooserDialog;
 import com.ultramegasoft.flavordex2.dialog.FileImportDialog;
 import com.ultramegasoft.flavordex2.dialog.FileSelectorDialog;
 import com.ultramegasoft.flavordex2.fragment.EntryListFragment;
@@ -20,6 +22,16 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
  */
 public class EntryListActivity extends BaseEntryListActivity
         implements FileSelectorDialog.OnFileSelectedCallbacks {
+    @Override
+    protected void loadPreferences(SharedPreferences prefs) {
+        super.loadPreferences(prefs);
+        if(prefs.getBoolean(FlavordexApp.PREF_FIRST_RUN, true)) {
+            if(AppImportUtils.isAnyAppInstalled(this)) {
+                AppChooserDialog.showDialog(getSupportFragmentManager(), true);
+            }
+            prefs.edit().putBoolean(FlavordexApp.PREF_FIRST_RUN, false).apply();
+        }
+    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -44,6 +56,9 @@ public class EntryListActivity extends BaseEntryListActivity
                 final String rootPath = Environment.getExternalStorageDirectory().getPath();
                 FileSelectorDialog.showDialog(getSupportFragmentManager(), null, 0, rootPath, false,
                         ".csv");
+                return true;
+            case R.id.menu_import_app:
+                AppChooserDialog.showDialog(getSupportFragmentManager(), false);
                 return true;
             case R.id.menu_export:
                 if(PermissionUtils.checkExternalStoragePerm(this,

@@ -11,9 +11,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -54,22 +51,25 @@ public class BaseCatListFragment extends ListFragment
         final Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.list_toolbar);
         if(toolbar != null) {
             toolbar.setNavigationIcon(null);
-            toolbar.getMenu().clear();
-            toolbar.inflateMenu(R.menu.cat_list_menu);
-            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    return onOptionsItemSelected(item);
-                }
-            });
             toolbar.setTitle(R.string.title_categories);
         } else {
-            setHasOptionsMenu(true);
             final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
             if(actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(false);
                 actionBar.setSubtitle(R.string.title_categories);
             }
+        }
+        setupMenu(toolbar);
+    }
+
+    /**
+     * Set up the options menu.
+     *
+     * @param toolbar The list Toolbar if it exists
+     */
+    protected void setupMenu(Toolbar toolbar) {
+        if(toolbar != null) {
+            toolbar.getMenu().clear();
         }
     }
 
@@ -86,12 +86,6 @@ public class BaseCatListFragment extends ListFragment
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         ((EntryListActivity)getActivity()).onCatSelected(id, false);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.cat_list_menu, menu);
     }
 
     @Override

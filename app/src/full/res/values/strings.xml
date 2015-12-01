@@ -7,6 +7,9 @@
     <string name="title_delete_cat">Delete Category?</string>
     <string name="title_export">Export Entries</string>
     <string name="title_select_file">Select File</string>
+    <string name="title_import">Import Entries</string>
+    <string name="title_import_app">Import from Flavordex</string>
+    <string name="title_importing">Importing…</string>
     <string name="title_exporting">Exporting…</string>
     <string name="title_duplicates">Duplicates Detected</string>
     <string name="title_settings">Application Settings</string>
@@ -14,12 +17,18 @@
     <string name="header_cat_fields">Category Fields</string>
     <string name="header_cat_flavors">Category Flavors</string>
     <string name="header_cat_title">Category Title</string>
+    <string name="header_select_app">Select %s</string>
 
     <string name="menu_settings">Application Settings</string>
     <string name="menu_xport">Import/Export</string>
     <string name="menu_import">Import from CSV</string>
+    <string name="menu_import_app">Import from Flavordex</string>
     <string name="menu_export">Export to CSV</string>
+    <string name="menu_cancel">Cancel</string>
+    <string name="menu_check_all">Check All</string>
+    <string name="menu_uncheck_all">Uncheck All</string>
     <string name="menu_export_selected">Export</string>
+    <string name="menu_add_cat">Create Category</string>
     <string name="menu_save_cat">Save Category</string>
     <string name="menu_edit_cat">Edit Category</string>
     <string name="menu_delete_cat">Delete Category</string>
@@ -32,6 +41,7 @@
     <string name="button_remove_flavor">Remove Flavor</string>
     <string name="button_ignore">Ignore</string>
     <string name="button_uncheck_duplicates">Uncheck %s</string>
+    <string name="button_import">Import Selected</string>
     <string name="button_export">Export</string>
     <string name="button_create_cat">Create Category</string>
 
@@ -51,7 +61,9 @@
 
     <string name="message_empty_dir">No files found.</string>
     <string name="message_empty_dir_filtered">No %s files found.</string>
+    <string name="message_import_complete">Import complete.</string>
     <string name="message_export_complete">Export complete.</string>
+    <string name="message_app_requires_update">%s (requires update)</string>
     <string name="message_duplicates_unchecked">%1$d %2$s %3$s unchecked.</string>
     <string name="message_duplicates_detected">%1$d %2$s %3$s detected. What would you like to do?</string>
     <string name="message_confirm_delete_cat">Are you sure you want to delete the &lt;b>%s&lt;/b> category?</string>
