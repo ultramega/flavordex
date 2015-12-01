@@ -247,7 +247,9 @@ public class PhotoUtils {
             }
         } catch(FileNotFoundException e) {
             Log.w(TAG, "File not found: " + uri.toString());
-        } catch(IOException | SecurityException e) {
+        } catch(SecurityException e) {
+            Log.w(TAG, "Permission denied for Uri: " + uri.toString());
+        } catch(IOException e) {
             Log.e(TAG, "Failed to load bitmap", e);
         }
         return null;
