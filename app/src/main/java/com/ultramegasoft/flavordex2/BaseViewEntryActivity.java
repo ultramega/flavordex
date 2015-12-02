@@ -12,11 +12,11 @@ import com.ultramegasoft.flavordex2.fragment.ViewEntryFragment;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 /**
- * This Activity holds the entry details on narrow screen devices.
+ * Base class for the Activity that holds the entry details on narrow screen devices.
  *
  * @author Steve Guidetti
  */
-public class ViewEntryActivity extends AppCompatActivity {
+public class BaseViewEntryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
