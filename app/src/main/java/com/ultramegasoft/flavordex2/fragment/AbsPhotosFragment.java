@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -24,9 +23,7 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -47,7 +44,7 @@ public abstract class AbsPhotosFragment extends Fragment {
      * Keys for the saved state
      */
     private static final String STATE_PHOTOS = "photos";
-    private static final String STATE_CAPTURE_FILE = "capture_file";
+    private static final String STATE_CAPTURE_URI = "capture_uri";
     private static final String STATE_LOADING_URI = "loading_uri";
 
     /**
@@ -63,7 +60,7 @@ public abstract class AbsPhotosFragment extends Fragment {
     /**
      * The image file currently being captured
      */
-    private File mCapturedPhoto;
+    private Uri mCapturedPhoto;
 
     /**
      * The currently running photo loader
@@ -89,7 +86,7 @@ public abstract class AbsPhotosFragment extends Fragment {
 
         if(savedInstanceState != null) {
             mPhotos = savedInstanceState.getParcelableArrayList(STATE_PHOTOS);
-            mCapturedPhoto = (File)savedInstanceState.getSerializable(STATE_CAPTURE_FILE);
+            mCapturedPhoto = savedInstanceState.getParcelable(STATE_CAPTURE_URI);
             final Uri loadingUri = savedInstanceState.getParcelable(STATE_LOADING_URI);
             if(loadingUri != null) {
                 mPhotoLoader = new PhotoLoader(loadingUri);
@@ -129,7 +126,7 @@ public abstract class AbsPhotosFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(STATE_PHOTOS, mPhotos);
-        outState.putSerializable(STATE_CAPTURE_FILE, mCapturedPhoto);
+        outState.putParcelable(STATE_CAPTURE_URI, mCapturedPhoto);
         if(mPhotoLoader != null) {
             outState.putParcelable(STATE_LOADING_URI, mPhotoLoader.getUri());
         }
@@ -165,10 +162,9 @@ public abstract class AbsPhotosFragment extends Fragment {
             switch(requestCode) {
                 case REQUEST_CAPTURE_IMAGE:
                     try {
-                        final File file = mCapturedPhoto;
-                        final String uriString = MediaStore.Images.Media.insertImage(cr,
-                                file.getPath(), file.getName(), null);
-                        uri = Uri.parse(uriString);
+                        uri = mCapturedPhoto;
+                        MediaStore.Images.Media.insertImage(cr, uri.getPath(),
+                                uri.getLastPathSegment(), null);
                     } catch(FileNotFoundException e) {
                         Log.e(TAG, "Failed to save file", e);
                     }
@@ -176,10 +172,6 @@ public abstract class AbsPhotosFragment extends Fragment {
                 case REQUEST_SELECT_IMAGE:
                     if(data != null) {
                         uri = data.getData();
-                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && uri != null) {
-                            cr.takePersistableUriPermission(uri,
-                                    Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        }
                     }
                     break;
             }
@@ -222,17 +214,12 @@ public abstract class AbsPhotosFragment extends Fragment {
      * Launch an image capturing Intent.
      */
     final void takePhoto() {
-        try {
-            mCapturedPhoto = PhotoUtils.getOutputMediaFile();
-            final Intent intent = PhotoUtils.getTakePhotoIntent(mCapturedPhoto);
-            if(intent.resolveActivity(getContext().getPackageManager()) != null) {
-                getParentFragment().startActivityForResult(intent, REQUEST_CAPTURE_IMAGE);
-                return;
-            }
-        } catch(IOException e) {
-            Log.e(TAG, "Failed to create new file", e);
+        final Intent intent = PhotoUtils.getTakePhotoIntent();
+        if(intent != null && intent.resolveActivity(getContext().getPackageManager()) != null) {
+            mCapturedPhoto = intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT);
+            getParentFragment().startActivityForResult(intent, REQUEST_CAPTURE_IMAGE);
+            return;
         }
-
         Toast.makeText(getContext(), R.string.error_camera, Toast.LENGTH_LONG).show();
     }
 

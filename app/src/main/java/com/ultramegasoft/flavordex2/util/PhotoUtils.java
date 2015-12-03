@@ -74,13 +74,17 @@ public class PhotoUtils {
     /**
      * Get an Intent to capture a photo.
      *
-     * @param file File to save the captured photo
      * @return Image capture Intent
      */
-    public static Intent getTakePhotoIntent(File file) {
-        final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-        return intent;
+    public static Intent getTakePhotoIntent() {
+        try {
+            final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getOutputMediaFile()));
+            return intent;
+        } catch(IOException e) {
+            Log.e(TAG, "Failed to create new file", e);
+        }
+        return null;
     }
 
     /**
