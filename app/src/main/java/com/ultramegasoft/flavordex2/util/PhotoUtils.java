@@ -407,6 +407,13 @@ public class PhotoUtils {
         return albumDir;
     }
 
+    /**
+     * Get the file name from a content Uri.
+     *
+     * @param cr  The ContentResolver
+     * @param uri The Uri
+     * @return The file name
+     */
     public static String getName(ContentResolver cr, Uri uri) {
         if("file".equals(uri.getScheme())) {
             return uri.getLastPathSegment();
