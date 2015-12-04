@@ -452,7 +452,7 @@ public class AppImportUtils {
                     hash = cursor.getString(cursor.getColumnIndex(Tables.Photos.HASH));
                     path = cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH));
                     pos = cursor.getInt(cursor.getColumnIndex(Tables.Photos.POS));
-                    photos.add(new PhotoHolder(0, hash, Uri.parse(path), pos));
+                    photos.add(new PhotoHolder(0, hash, PhotoUtils.parsePath(path), pos));
                 }
             } finally {
                 cursor.close();
