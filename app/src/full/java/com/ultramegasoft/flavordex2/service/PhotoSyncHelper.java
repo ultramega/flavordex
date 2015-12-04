@@ -328,7 +328,7 @@ public class PhotoSyncHelper {
             long id;
             long entryId;
             String driveId;
-            String filePath;
+            File filePath;
             final ContentValues values = new ContentValues();
             while(cursor.moveToNext()) {
                 driveId = cursor.getString(cursor.getColumnIndex(Tables.Photos.DRIVE_ID));
@@ -339,7 +339,7 @@ public class PhotoSyncHelper {
                 }
                 id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
                 entryId = cursor.getLong(cursor.getColumnIndex(Tables.Photos.ENTRY));
-                values.put(Tables.Photos.PATH, filePath);
+                values.put(Tables.Photos.PATH, filePath.getName());
                 cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id), values,
                         null, null);
                 PhotoUtils.deleteThumb(mContext, entryId);
@@ -459,9 +459,9 @@ public class PhotoSyncHelper {
      * Download a file from Drive.
      *
      * @param resourceId The Drive resource ID
-     * @return The path to the downloaded file
+     * @return The downloaded file
      */
-    private String downloadPhoto(String resourceId) {
+    private File downloadPhoto(String resourceId) {
         if(!mMediaMounted) {
             return null;
         }
@@ -492,7 +492,7 @@ public class PhotoSyncHelper {
                 final String hash = metadata.getCustomProperties().get(sHashKey);
                 if(hash != null && hash.equals(PhotoUtils.getMD5Hash(mContext.getContentResolver(),
                         Uri.fromFile(outputFile)))) {
-                    return outputFile.getPath();
+                    return outputFile;
                 }
                 if(!mShouldSync) {
                     return null;
@@ -514,7 +514,7 @@ public class PhotoSyncHelper {
                 inputStream.close();
                 outputStream.close();
             }
-            return outputFile.getPath();
+            return outputFile;
         } catch(IOException e) {
             Log.w(TAG, "Download failed", e);
         } finally {

@@ -254,7 +254,8 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         final ArrayList<PhotoHolder> photos = getPhotos();
         photos.clear();
         long id;
-        String hash, path;
+        String hash;
+        String path;
         int pos;
         Uri uri;
         while(data.moveToNext()) {
@@ -263,7 +264,9 @@ public class ViewPhotosFragment extends AbsPhotosFragment
             path = data.getString(data.getColumnIndex(Tables.Photos.PATH));
             pos = data.getInt(data.getColumnIndex(Tables.Photos.POS));
             uri = PhotoUtils.parsePath(path);
-            photos.add(new PhotoHolder(id, hash, uri, pos));
+            if(uri != null) {
+                photos.add(new PhotoHolder(id, hash, uri, pos));
+            }
         }
 
         notifyDataChanged();
@@ -349,7 +352,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
 
             final ContentValues values = new ContentValues();
             values.put(Tables.Photos.HASH, PhotoUtils.getMD5Hash(cr, mPhoto.uri));
-            values.put(Tables.Photos.PATH, mPhoto.uri.toString());
+            values.put(Tables.Photos.PATH, mPhoto.uri.getLastPathSegment());
             values.put(Tables.Photos.POS, mPhoto.pos);
 
             uri = cr.insert(uri, values);

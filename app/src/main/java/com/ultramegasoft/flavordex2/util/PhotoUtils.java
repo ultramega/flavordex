@@ -544,7 +544,14 @@ public class PhotoUtils {
     public static Uri parsePath(String path) {
         if(path.charAt(0) == '/') {
             return Uri.fromFile(new File(path));
+        } else if(path.startsWith("file://") || path.startsWith("content://")) {
+            return Uri.parse(path);
         }
-        return Uri.parse(path);
+        try {
+            return Uri.fromFile(new File(getMediaStorageDir(), path));
+        } catch(IOException e) {
+            Log.e(TAG, "Failed to parse path: " + path, e);
+        }
+        return null;
     }
 }

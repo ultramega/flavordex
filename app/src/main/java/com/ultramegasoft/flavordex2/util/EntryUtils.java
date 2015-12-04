@@ -301,7 +301,7 @@ public class EntryUtils {
                 continue;
             }
             values.put(Tables.Photos.HASH, photo.hash);
-            values.put(Tables.Photos.PATH, photo.uri.toString());
+            values.put(Tables.Photos.PATH, photo.uri.getLastPathSegment());
             values.put(Tables.Photos.POS, i);
             cr.insert(uri, values);
         }
