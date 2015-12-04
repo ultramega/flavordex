@@ -554,4 +554,24 @@ public class PhotoUtils {
         }
         return null;
     }
+
+    /**
+     * Get the simplest representation of a photo path from a Uri.
+     *
+     * @param uri The photo Uri
+     * @return The file name or full Uri string
+     */
+    public static String getPathString(Uri uri) {
+        if("file".equals(uri.getScheme())) {
+            final File file = new File(uri.getPath());
+            try {
+                if(file.getParentFile().equals(getMediaStorageDir())) {
+                    return file.getName();
+                }
+            } catch(IOException e) {
+                Log.w(TAG, "Unable to check file location", e);
+            }
+        }
+        return uri.toString();
+    }
 }

@@ -150,7 +150,7 @@ public class CSVUtils {
     private static void addPhotos(ArrayList<String> fields, EntryHolder entry) {
         final JSONArray array = new JSONArray();
         for(PhotoHolder photo : entry.getPhotos()) {
-            array.put(photo.uri.toString());
+            array.put(PhotoUtils.getPathString(photo.uri));
         }
         fields.add(array.toString());
     }
