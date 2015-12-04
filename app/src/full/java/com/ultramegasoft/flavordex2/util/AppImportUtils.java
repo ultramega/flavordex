@@ -264,6 +264,81 @@ public class AppImportUtils {
     }
 
     /**
+     * Insert the extra fields from the source entry into the new local entry.
+     *
+     * @param extraColumns The list of extra columns from the source entry
+     * @param cursor       The Cursor for the source entry row
+     * @param entry        The new local entry
+     */
+    private static void getExtras(String[] extraColumns, Cursor cursor, EntryHolder entry) {
+        String name;
+        String value;
+        for(String column : extraColumns) {
+            name = "_" + column;
+            value = cursor.getString(cursor.getColumnIndex(column));
+            entry.addExtra(0, name, true, value);
+        }
+    }
+
+    /**
+     * Insert the flavors from the source entry into the new local entry.
+     *
+     * @param context   The Context
+     * @param app       The app
+     * @param sourceUri The entry Uri from the source app
+     * @param entry     The new local entry
+     */
+    private static void getFlavors(Context context, int app, Uri sourceUri, EntryHolder entry) {
+        final ContentResolver cr = context.getContentResolver();
+        final String[] names = getFlavorNames(context, app);
+        final Cursor cursor = cr.query(Uri.withAppendedPath(sourceUri, "flavor"), null, null, null,
+                FlavorsColumns.FLAVOR + " ASC");
+        if(cursor != null) {
+            try {
+                if(cursor.getCount() != names.length) {
+                    return;
+                }
+
+                String name;
+                int value;
+                while(cursor.moveToNext()) {
+                    name = names[cursor.getInt(cursor.getColumnIndex(FlavorsColumns.FLAVOR))];
+                    value = cursor.getInt(cursor.getColumnIndex(FlavorsColumns.VALUE));
+                    entry.addFlavor(name, value);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+    }
+
+    /**
+     * Insert the photos from the source entry into the new local entry.
+     *
+     * @param context   The Context
+     * @param sourceUri The entry Uri from the source app
+     * @param entry     The new local entry
+     */
+    private static void getPhotos(Context context, Uri sourceUri, EntryHolder entry) {
+        final ContentResolver cr = context.getContentResolver();
+        final Cursor cursor = cr.query(Uri.withAppendedPath(sourceUri, "photos"), null, null, null,
+                PhotosColumns._ID + " ASC");
+        if(cursor != null) {
+            try {
+                String path;
+                Uri uri;
+                while(cursor.moveToNext()) {
+                    path = cursor.getString(cursor.getColumnIndex(PhotosColumns.PATH));
+                    uri = PhotoUtils.parsePath(path);
+                    entry.addPhoto(0, PhotoUtils.getMD5Hash(cr, uri), uri);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+    }
+
+    /**
      * Import an entry from Flavordex 2 Lite.
      *
      * @param context  The Context
@@ -378,81 +453,6 @@ public class AppImportUtils {
                     path = cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH));
                     pos = cursor.getInt(cursor.getColumnIndex(Tables.Photos.POS));
                     photos.add(new PhotoHolder(0, hash, Uri.parse(path), pos));
-                }
-            } finally {
-                cursor.close();
-            }
-        }
-    }
-
-    /**
-     * Insert the extra fields from the source entry into the new local entry.
-     *
-     * @param extraColumns The list of extra columns from the source entry
-     * @param cursor       The Cursor for the source entry row
-     * @param entry        The new local entry
-     */
-    private static void getExtras(String[] extraColumns, Cursor cursor, EntryHolder entry) {
-        String name;
-        String value;
-        for(String column : extraColumns) {
-            name = "_" + column;
-            value = cursor.getString(cursor.getColumnIndex(column));
-            entry.addExtra(0, name, true, value);
-        }
-    }
-
-    /**
-     * Insert the flavors from the source entry into the new local entry.
-     *
-     * @param context   The Context
-     * @param app       The app
-     * @param sourceUri The entry Uri from the source app
-     * @param entry     The new local entry
-     */
-    private static void getFlavors(Context context, int app, Uri sourceUri, EntryHolder entry) {
-        final ContentResolver cr = context.getContentResolver();
-        final String[] names = getFlavorNames(context, app);
-        final Cursor cursor = cr.query(Uri.withAppendedPath(sourceUri, "flavor"), null, null, null,
-                FlavorsColumns.FLAVOR + " ASC");
-        if(cursor != null) {
-            try {
-                if(cursor.getCount() != names.length) {
-                    return;
-                }
-
-                String name;
-                int value;
-                while(cursor.moveToNext()) {
-                    name = names[cursor.getInt(cursor.getColumnIndex(FlavorsColumns.FLAVOR))];
-                    value = cursor.getInt(cursor.getColumnIndex(FlavorsColumns.VALUE));
-                    entry.addFlavor(name, value);
-                }
-            } finally {
-                cursor.close();
-            }
-        }
-    }
-
-    /**
-     * Insert the photos from the source entry into the new local entry.
-     *
-     * @param context   The Context
-     * @param sourceUri The entry Uri from the source app
-     * @param entry     The new local entry
-     */
-    private static void getPhotos(Context context, Uri sourceUri, EntryHolder entry) {
-        final ContentResolver cr = context.getContentResolver();
-        final Cursor cursor = cr.query(Uri.withAppendedPath(sourceUri, "photos"), null, null, null,
-                PhotosColumns._ID + " ASC");
-        if(cursor != null) {
-            try {
-                String path;
-                Uri uri;
-                while(cursor.moveToNext()) {
-                    path = cursor.getString(cursor.getColumnIndex(PhotosColumns.PATH));
-                    uri = PhotoUtils.parsePath(path);
-                    entry.addPhoto(0, PhotoUtils.getMD5Hash(cr, uri), uri);
                 }
             } finally {
                 cursor.close();
