@@ -35,7 +35,7 @@ public class PhotoHolder implements Parcelable {
     /**
      * The Uri to the photo file
      */
-    public final Uri uri;
+    public Uri uri;
 
     /**
      * The sort position of the photo

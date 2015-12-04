@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -409,6 +410,70 @@ public class PhotoUtils {
         }
 
         return albumDir;
+    }
+
+    /**
+     * Get the file Uri for the given Uri.
+     *
+     * @param cr  The ContentResolver
+     * @param uri The original Uri
+     * @return The file Uri
+     */
+    public static Uri getFileUri(ContentResolver cr, Uri uri) {
+        if("file".equals(uri.getScheme())) {
+            return uri;
+        } else {
+            final String name = getName(cr, uri);
+            if(name != null) {
+                final File file;
+                try {
+                    file = new File(getMediaStorageDir(), name);
+                    if(file.exists()) {
+                        return Uri.fromFile(file);
+                    }
+                    return savePhotoFromUri(cr, uri, file);
+                } catch(IOException e) {
+                    Log.w(TAG, "Unable to check for existing file", e);
+                }
+            }
+            return savePhotoFromUri(cr, uri, null);
+        }
+    }
+
+    /**
+     * Save a photo from a content Uri to the external storage.
+     *
+     * @param cr   The ContentResolver
+     * @param uri  The content Uri
+     * @param file The File to write to or null to create one
+     * @return The file Uri for the new file
+     */
+    public static Uri savePhotoFromUri(ContentResolver cr, Uri uri, File file) {
+        try {
+            if(file == null) {
+                file = getOutputMediaFile();
+            }
+            final InputStream inputStream = cr.openInputStream(uri);
+            if(inputStream != null) {
+                final OutputStream outputStream = new FileOutputStream(file);
+                try {
+                    final byte[] buffer = new byte[8192];
+                    int read;
+                    while((read = inputStream.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, read);
+                    }
+                    return Uri.fromFile(file);
+                } finally {
+                    inputStream.close();
+                    outputStream.close();
+                }
+            }
+        } catch(FileNotFoundException e) {
+            Log.w(TAG, "File not found for Uri: " + uri.getPath());
+        } catch(IOException e) {
+            Log.e(TAG, "Failed to save the photo", e);
+        }
+        return null;
     }
 
     /**

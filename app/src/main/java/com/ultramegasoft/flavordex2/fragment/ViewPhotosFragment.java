@@ -44,8 +44,6 @@ import java.util.ArrayList;
  */
 public class ViewPhotosFragment extends AbsPhotosFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String TAG = "ViewPhotosFragment";
-
     /**
      * Argument for the photo removal confirmation dialog
      */
@@ -342,6 +340,10 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         @Override
         protected Boolean doInBackground(Void... params) {
             final ContentResolver cr = mContext.getContentResolver();
+            mPhoto.uri = PhotoUtils.getFileUri(cr, mPhoto.uri);
+            if(mPhoto.uri == null) {
+                return false;
+            }
             Uri uri =
                     Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/photos");
 

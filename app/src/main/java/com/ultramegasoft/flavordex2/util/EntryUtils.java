@@ -296,6 +296,10 @@ public class EntryUtils {
         PhotoHolder photo;
         for(int i = 0; i < photos.size(); i++) {
             photo = photos.get(i);
+            photo.uri = PhotoUtils.getFileUri(cr, photo.uri);
+            if(photo.uri == null) {
+                continue;
+            }
             values.put(Tables.Photos.HASH, photo.hash);
             values.put(Tables.Photos.PATH, photo.uri.toString());
             values.put(Tables.Photos.POS, i);
