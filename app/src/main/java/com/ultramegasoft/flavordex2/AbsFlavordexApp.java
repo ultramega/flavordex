@@ -16,7 +16,7 @@ public abstract class AbsFlavordexApp extends Application {
     /**
      * Enable developer features
      */
-    public static final boolean DEVELOPER_MODE = false;
+    public static final boolean DEVELOPER_MODE = true;
 
     /**
      * Preference names
