@@ -2,6 +2,7 @@ package com.ultramegasoft.flavordex2.fragment;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -45,19 +46,25 @@ import java.util.ArrayList;
 public class ViewPhotosFragment extends AbsPhotosFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
-     * Argument for the photo removal confirmation dialog
-     */
-    private static final String ARG_PHOTO_POSITION = "photo_position";
-
-    /**
      * Request codes for external Activities
      */
     private static final int REQUEST_DELETE_IMAGE = 700;
+    private static final int REQUEST_LOCATE_IMAGE = 701;
+
+    /**
+     * Keys for the saved state
+     */
+    private static final String STATE_CURRENT_ITEM = "current_item";
 
     /**
      * The database ID for this entry
      */
     private long mEntryId;
+
+    /**
+     * The currently displayed photo
+     */
+    private int mCurrentItem = -1;
 
     /**
      * Views for this Fragment
@@ -69,6 +76,9 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ENTRY_ID);
+        if(savedInstanceState != null) {
+            mCurrentItem = savedInstanceState.getInt(STATE_CURRENT_ITEM, mCurrentItem);
+        }
     }
 
     @Override
@@ -97,6 +107,12 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         } else {
             notifyDataChanged();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(STATE_CURRENT_ITEM, mPager.getCurrentItem());
     }
 
     @Override
@@ -136,8 +152,11 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
                 case REQUEST_DELETE_IMAGE:
+                    removePhoto(mCurrentItem);
+                    break;
+                case REQUEST_LOCATE_IMAGE:
                     if(data != null) {
-                        removePhoto(data.getIntExtra(ARG_PHOTO_POSITION, -1));
+                        replacePhoto(data.getData());
                     }
                     break;
             }
@@ -200,15 +219,50 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         if(getPhotos().isEmpty()) {
             return;
         }
-
-        final int position = mPager.getCurrentItem();
-
-        final Intent intent = new Intent();
-        intent.putExtra(ARG_PHOTO_POSITION, position);
-
+        mCurrentItem = mPager.getCurrentItem();
         ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_IMAGE,
                 getString(R.string.title_remove_photo),
-                getString(R.string.message_confirm_remove_photo), R.drawable.ic_delete, intent);
+                getString(R.string.message_confirm_remove_photo), R.drawable.ic_delete);
+    }
+
+    /**
+     * Delete the shown image.
+     */
+    public void deletePhoto() {
+        if(getPhotos().isEmpty()) {
+            return;
+        }
+        removePhoto(mPager.getCurrentItem());
+    }
+
+    /**
+     * Locate a missing image.
+     */
+    public void locatePhoto() {
+        if(getPhotos().isEmpty()) {
+            return;
+        }
+        mCurrentItem = mPager.getCurrentItem();
+        final Intent intent = PhotoUtils.getSelectPhotoIntent();
+        getParentFragment().startActivityForResult(intent, REQUEST_LOCATE_IMAGE);
+    }
+
+    /**
+     * Replace the currently shown image.
+     *
+     * @param uri The Uri for the new image
+     */
+    public void replacePhoto(Uri uri) {
+        if(uri == null || getPhotos().isEmpty()) {
+            return;
+        }
+        final PhotoHolder photo = getPhotos().get(mCurrentItem);
+        if(photo != null) {
+            photo.uri = uri;
+            photo.hash = null;
+            new PhotoSaver(getContext(), mEntryId, photo).execute();
+            notifyDataChanged();
+        }
     }
 
     /**
@@ -347,24 +401,37 @@ public class ViewPhotosFragment extends AbsPhotosFragment
             if(mPhoto.uri == null) {
                 return false;
             }
-            Uri uri =
-                    Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/photos");
+
+            if(mPhoto.hash == null) {
+                mPhoto.hash = PhotoUtils.getMD5Hash(mContext.getContentResolver(), mPhoto.uri);
+            }
 
             final ContentValues values = new ContentValues();
-            values.put(Tables.Photos.HASH, PhotoUtils.getMD5Hash(cr, mPhoto.uri));
+            values.put(Tables.Photos.HASH, mPhoto.hash);
             values.put(Tables.Photos.PATH, mPhoto.uri.getLastPathSegment());
             values.put(Tables.Photos.POS, mPhoto.pos);
 
-            uri = cr.insert(uri, values);
-            if(uri != null) {
+            Uri uri;
+            if(mPhoto.id > 0) {
+                uri = ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, mPhoto.id);
+                if(cr.update(uri, values, null, null) < 1) {
+                    return false;
+                }
+            } else {
+                uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE,
+                        mEntryId + "/photos");
+                uri = cr.insert(uri, values);
+                if(uri == null) {
+                    return false;
+                }
                 mPhoto.id = Long.valueOf(uri.getLastPathSegment());
-                PhotoUtils.deleteThumb(mContext, mEntryId);
-                EntryUtils.markChanged(cr, mEntryId);
-                BackendUtils.requestDataSync(mContext);
-                BackendUtils.requestPhotoSync(mContext);
-                return true;
             }
-            return false;
+
+            PhotoUtils.deleteThumb(mContext, mEntryId);
+            EntryUtils.markChanged(cr, mEntryId);
+            BackendUtils.requestDataSync(mContext);
+            BackendUtils.requestPhotoSync(mContext);
+            return true;
         }
 
         @Override

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minWidth="400dp"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        style="@android:style/TextAppearance.Large"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="20dp"
+        android:text="@string/message_photo_not_found" />
+
+    <TextView
+        android:id="@+id/file_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="start"
+        android:gravity="center"
+        android:paddingBottom="20dp" />
+
+    <Button
+        android:id="@+id/button_locate_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_locate_photo" />
+
+    <Button
+        android:id="@+id/button_remove_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_remove_photo" />
+</LinearLayout>

@@ -1,64 +1,127 @@
 package com.ultramegasoft.flavordex2.fragment;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.R;
-import com.ultramegasoft.flavordex2.widget.ImageLoader;
+import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
 /**
  * Fragment for displaying a single photo.
  *
  * @author Steve Guidetti
  */
-public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
+public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Bitmap>,
+        PopupMenu.OnMenuItemClickListener {
     /**
-     * Argument for the path to the image file
+     * Argument for the Uri to the image file
      */
     public static final String ARG_URI = "uri";
+
+    /**
+     * The Uri to the image file
+     */
+    private Uri mUri;
+
+    /**
+     * Views from the layout
+     */
+    private View mRootView;
+    private ProgressBar mProgressBar;
+    private ImageView mImageView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final Uri uri = getArguments().getParcelable(ARG_URI);
-        if(uri == null) {
+        mUri = getArguments().getParcelable(ARG_URI);
+        if(mUri == null) {
             return null;
         }
 
-        final View root = inflater.inflate(R.layout.fragment_photo, container, false);
-        final ImageView imageView = (ImageView)root.findViewById(R.id.image);
+        mRootView = inflater.inflate(R.layout.fragment_photo, container, false);
+        mProgressBar = (ProgressBar)mRootView.findViewById(R.id.progress);
+        mImageView = (ImageView)mRootView.findViewById(R.id.image);
 
-        imageView.getViewTreeObserver()
+        mImageView.getViewTreeObserver()
                 .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
-                        final int width = imageView.getWidth();
-                        final int height = imageView.getHeight();
+                        final int width = mImageView.getWidth();
                         if(width > 0) {
-                            new ImageLoader(imageView, width, height, uri).execute();
+                            loadPhoto();
                             //noinspection deprecation
-                            imageView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            mImageView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                         }
                     }
                 });
 
-        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+        return mRootView;
+    }
+
+    /**
+     * Load the image file.
+     */
+    private void loadPhoto() {
+        getLoaderManager().initLoader(0, null, this).forceLoad();
+    }
+
+    /**
+     * Show the loaded image.
+     *
+     * @param bitmap The Bitmap to show
+     */
+    private void showPhoto(Bitmap bitmap) {
+        mImageView.setImageBitmap(bitmap);
+
+        mImageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                showMenu(root.findViewById(R.id.anchor));
+                showMenu(mRootView.findViewById(R.id.anchor));
                 return true;
             }
         });
+    }
 
-        return root;
+    /**
+     * Show the missing photo layout.
+     */
+    private void showNoPhoto() {
+        final View root = ((ViewStub)mRootView.findViewById(R.id.photo_not_found)).inflate();
+        ((TextView)root.findViewById(R.id.file_name)).setText(mUri.toString());
+        root.findViewById(R.id.button_locate_photo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final ViewPhotosFragment fragment = (ViewPhotosFragment)getParentFragment();
+                if(fragment != null) {
+                    fragment.locatePhoto();
+                }
+            }
+        });
+        root.findViewById(R.id.button_remove_photo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final ViewPhotosFragment fragment = (ViewPhotosFragment)getParentFragment();
+                if(fragment != null) {
+                    fragment.deletePhoto();
+                }
+            }
+        });
     }
 
     /**
@@ -84,5 +147,62 @@ public class PhotoFragment extends Fragment implements PopupMenu.OnMenuItemClick
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public Loader<Bitmap> onCreateLoader(int id, Bundle args) {
+        return new PhotoLoader(getContext(), mUri, mImageView.getWidth(), mImageView.getHeight());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Bitmap> loader, Bitmap data) {
+        mProgressBar.setVisibility(View.INVISIBLE);
+        if(data != null) {
+            showPhoto(data);
+        } else {
+            showNoPhoto();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Bitmap> loader) {
+    }
+
+    /**
+     * Custom Loader to load a Bitmap.
+     */
+    private static class PhotoLoader extends AsyncTaskLoader<Bitmap> {
+        /**
+         * The Uri to the image to load
+         */
+        private final Uri mUri;
+
+        /**
+         * The container width
+         */
+        private final int mWidth;
+
+        /**
+         * The container height
+         */
+        private final int mHeight;
+
+        /**
+         * @param context The Context
+         * @param uri     The Uri to the image to load
+         * @param width   The container width
+         * @param height  The container height
+         */
+        public PhotoLoader(Context context, Uri uri, int width, int height) {
+            super(context);
+            mUri = uri;
+            mWidth = width;
+            mHeight = height;
+        }
+
+        @Override
+        public Bitmap loadInBackground() {
+            return PhotoUtils.loadBitmap(getContext(), mUri, mWidth, mHeight);
+        }
     }
 }

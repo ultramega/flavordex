@@ -30,7 +30,7 @@ public class PhotoHolder implements Parcelable {
     /**
      * The MD5 hash of the photo file
      */
-    public final String hash;
+    public String hash;
 
     /**
      * The Uri to the photo file

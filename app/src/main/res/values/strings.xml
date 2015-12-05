@@ -62,6 +62,7 @@
     <string name="button_select_photo">Add From Gallery</string>
     <string name="button_take_photo">Add From Camera</string>
     <string name="button_remove_photo">Remove Photo</string>
+    <string name="button_locate_photo">Locate Photo…</string>
     <string name="button_clear_filter">Remove Filters</string>
     <string name="button_grant_permission">Grant Permission</string>
 
@@ -90,6 +91,7 @@
     <string name="message_confirm_remove_photo">Are you sure you want to remove this photo? The file will &lt;i>not&lt;/i> be deleted.</string>
     <string name="message_no_photos">No Photos</string>
     <string name="message_no_media">External storage not available</string>
+    <string name="message_photo_not_found">Photo not found</string>
     <string name="message_active_filters">Filtered by %s.</string>
     <string name="message_import_no_data">No valid entries were found.</string>
     <string name="message_request_storage">Flavordex requires external storage access to enable photo features.</string>
