@@ -1,14 +1,14 @@
 INSERT INTO cats VALUES (5, '708ba04e-8306-4c80-a763-086b0ea70763', 'Sample', 0, 0, 0, 0);
 --
-INSERT INTO photos VALUES (1, 1, NULL, '/sdcard/DCIM/Flavordex/20121114_161713.jpg', NULL, 0);
+INSERT INTO photos VALUES (1, 1, NULL, '20121114_161713.jpg', NULL, 0);
 --
-INSERT INTO photos VALUES (2, 2, NULL, '/sdcard/DCIM/Flavordex/photo.JPG', NULL, 0);
+INSERT INTO photos VALUES (2, 2, NULL, 'photo.JPG', NULL, 0);
 --
-INSERT INTO photos VALUES (3, 3, NULL, '/sdcard/DCIM/Flavordex/winephoto.JPG', NULL, 0);
+INSERT INTO photos VALUES (3, 3, NULL, 'winephoto.JPG', NULL, 0);
 --
-INSERT INTO photos VALUES (4, 4, NULL, '/sdcard/DCIM/Flavordex/IMG_1897.JPG', NULL, 0);
+INSERT INTO photos VALUES (4, 4, NULL, 'IMG_1897.JPG', NULL, 0);
 --
-INSERT INTO photos VALUES (5, 4, NULL, '/sdcard/DCIM/Flavordex/IMG_1896.JPG', NULL, 1);
+INSERT INTO photos VALUES (5, 4, NULL, 'IMG_1896.JPG', NULL, 1);
 --
 INSERT INTO makers VALUES (1, 'Jefferson''s', 'Canada');
 --
