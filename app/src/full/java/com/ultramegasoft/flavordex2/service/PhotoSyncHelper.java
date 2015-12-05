@@ -328,18 +328,18 @@ public class PhotoSyncHelper {
             long id;
             long entryId;
             String driveId;
-            File filePath;
+            File file;
             final ContentValues values = new ContentValues();
             while(cursor.moveToNext()) {
                 driveId = cursor.getString(cursor.getColumnIndex(Tables.Photos.DRIVE_ID));
-                filePath = downloadPhoto(driveId);
-                if(filePath == null) {
+                file = downloadPhoto(driveId);
+                if(file == null) {
                     requestSync = true;
                     continue;
                 }
                 id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
                 entryId = cursor.getLong(cursor.getColumnIndex(Tables.Photos.ENTRY));
-                values.put(Tables.Photos.PATH, filePath.getName());
+                values.put(Tables.Photos.PATH, file.getName());
                 cr.update(ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, id), values,
                         null, null);
                 PhotoUtils.deleteThumb(mContext, entryId);
