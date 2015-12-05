@@ -299,22 +299,21 @@ public class PhotoUtils {
      */
     private static void generateThumb(Context context, Uri uri, long id) {
         try {
-            if(uri == null) {
-                //noinspection ResultOfMethodCallIgnored
-                getThumbFile(context, id).createNewFile();
-                return;
+            if(uri != null) {
+                final Bitmap inputBitmap = loadBitmap(context, uri, THUMB_SIZE, THUMB_SIZE);
+
+                if(inputBitmap != null) {
+                    final FileOutputStream os = new FileOutputStream(getThumbFile(context, id));
+                    inputBitmap.compress(Bitmap.CompressFormat.JPEG, 90, os);
+                    os.close();
+
+                    sThumbCache.remove(id);
+                    inputBitmap.recycle();
+                }
             }
 
-            final Bitmap inputBitmap = loadBitmap(context, uri, THUMB_SIZE, THUMB_SIZE);
-
-            if(inputBitmap != null) {
-                final FileOutputStream os = new FileOutputStream(getThumbFile(context, id));
-                inputBitmap.compress(Bitmap.CompressFormat.JPEG, 90, os);
-                os.close();
-
-                sThumbCache.remove(id);
-                inputBitmap.recycle();
-            }
+            //noinspection ResultOfMethodCallIgnored
+            getThumbFile(context, id).createNewFile();
         } catch(IOException e) {
             Log.e(TAG, "Error writing thumbnail bitmap", e);
         }
@@ -331,7 +330,12 @@ public class PhotoUtils {
         final File file = getThumbFile(context, id);
 
         if(!file.exists()) {
-            generateThumb(context, id);
+            if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) &&
+                    PermissionUtils.hasExternalStoragePerm(context)) {
+                generateThumb(context, id);
+            } else {
+                return null;
+            }
         }
 
         if(file.length() == 0) {
