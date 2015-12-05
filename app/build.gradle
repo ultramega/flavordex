@@ -24,8 +24,8 @@ android {
         full {
             dimension "version"
             applicationId "com.ultramegasoft.flavordex2"
-            versionCode 4
-            versionName '2.1.1'
+            versionCode 5
+            versionName '2.1.2'
         }
         sdk15 {
             dimension "sdk"
