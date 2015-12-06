@@ -58,6 +58,13 @@
         </TableRow>
     </TableLayout>
 
+    <Button
+        android:id="@+id/button_upgrade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/button_upgrade" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

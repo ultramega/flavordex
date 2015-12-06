@@ -6,6 +6,8 @@
 
     <string name="menu_upgrade">Upgrade</string>
 
+    <string name="button_upgrade">Purchase Upgrade</string>
+
     <string name="message_version">Flavordex Lite v.%s</string>
 
     <string name="welcome_header">Welcome to Flavordex Lite</string>
