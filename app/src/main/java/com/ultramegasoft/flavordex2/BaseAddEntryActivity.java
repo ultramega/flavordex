@@ -14,11 +14,11 @@ import com.ultramegasoft.flavordex2.fragment.AddEntryFragment;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 /**
- * Activity for adding a new journal entry.
+ * Base class for the Activity for adding a new journal entry.
  *
  * @author Steve Guidetti
  */
-public class AddEntryActivity extends AppCompatActivity {
+public class BaseAddEntryActivity extends AppCompatActivity {
     /**
      * Keys for the Intent extras
      */
