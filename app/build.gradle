@@ -4,6 +4,7 @@ android {
     compileSdkVersion 23
     buildToolsVersion '23.0.1'
     defaultConfig {
+        minSdkVersion 15
         targetSdkVersion 23
     }
     buildTypes {
@@ -13,27 +14,16 @@ android {
             shrinkResources true
         }
     }
-    flavorDimensions "sdk", "version"
     productFlavors {
         lite {
-            dimension "version"
             applicationId 'com.ultramegasoft.flavordex2.lite'
             versionCode 1
             versionName '2.0.0-lite'
         }
         full {
-            dimension "version"
             applicationId "com.ultramegasoft.flavordex2"
             versionCode 5
             versionName '2.1.2'
-        }
-        sdk15 {
-            dimension "sdk"
-            minSdkVersion 15
-        }
-        sdk21 {
-            dimension "sdk"
-            minSdkVersion 21
         }
     }
     useLibrary 'org.apache.http.legacy'
