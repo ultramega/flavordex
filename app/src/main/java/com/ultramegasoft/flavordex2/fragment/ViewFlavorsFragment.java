@@ -284,6 +284,10 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if(data == null) {
+            return;
+        }
+        data.moveToPosition(-1);
         final ArrayList<RadarHolder> flavorValues = new ArrayList<>();
 
         String name;
