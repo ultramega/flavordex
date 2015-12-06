@@ -141,6 +141,7 @@ public class PhotoSyncHelper {
         final ConnectionResult result = mClient.blockingConnect();
         if(result.isSuccess()) {
             Log.d(TAG, "Connection successful. sync: " + mShouldSync + " media: " + mMediaMounted);
+            Drive.DriveApi.requestSync(mClient).await();
             mDriveFolder = Drive.DriveApi.getAppFolder(mClient);
             if(mDriveFolder != null) {
                 sBackoffHelper.onSuccess();
