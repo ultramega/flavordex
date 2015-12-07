@@ -9,7 +9,7 @@
 
     <string name="button_upgrade">Purchase Upgrade</string>
 
-    <string name="message_upgrade">This feature is available in the full version.</string>
+    <string name="message_upgrade"><![CDATA[This feature is available in the full version.<br><br>The full version adds:<br> - Custom categories<br> - Importing and exporting CSV files<br> - Syncing data between your devices<br> - And more…]]></string>
 
     <string name="welcome_header">Welcome to Flavordex Lite</string>
 
