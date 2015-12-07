@@ -3,10 +3,13 @@
     <string name="app_name" translatable="false">Flavordex Lite</string>
 
     <string name="title_about">About Flavordex Lite</string>
+    <string name="title_upgrade">Upgrade</string>
 
     <string name="menu_upgrade">Upgrade</string>
 
     <string name="button_upgrade">Purchase Upgrade</string>
+
+    <string name="message_upgrade">This feature is available in the full version.</string>
 
     <string name="welcome_header">Welcome to Flavordex Lite</string>
 
