@@ -31,7 +31,7 @@ public class UpgradeUtils {
             if(intent.resolveActivity(pm) == null) {
                 intent.setData(Uri.parse("amzn://apps/android?p=" + PACKAGE));
                 if(intent.resolveActivity(pm) == null) {
-                    intent.setData(Uri.parse("http://flavordex.com/upgrade"));
+                    intent.setData(Uri.parse("http://flavordex.com/"));
                 }
             }
 
