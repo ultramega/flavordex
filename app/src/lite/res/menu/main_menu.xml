@@ -3,13 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_upgrade"
+        android:id="@+id/menu_xport"
         android:orderInCategory="100"
+        android:title="@string/menu_xport"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_settings"
+        android:orderInCategory="101"
+        android:title="@string/menu_settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_upgrade"
+        android:orderInCategory="102"
         android:title="@string/menu_upgrade"
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_about"
-        android:orderInCategory="101"
+        android:orderInCategory="103"
         android:title="@string/menu_about"
         app:showAsAction="never" />
 </menu>

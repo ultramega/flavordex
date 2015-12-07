@@ -30,6 +30,10 @@ public class EntryListActivity extends BaseEntryListActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.menu_xport:
+            case R.id.menu_settings:
+                UpgradeUtils.showDialog(getSupportFragmentManager());
+                return true;
             case R.id.menu_upgrade:
                 UpgradeUtils.openStore(this);
                 return true;

@@ -19,8 +19,6 @@
     <string name="header_cat_title">Category Title</string>
     <string name="header_select_app">Select %s</string>
 
-    <string name="menu_settings">Application Settings</string>
-    <string name="menu_xport">Import/Export</string>
     <string name="menu_import">Import from CSV</string>
     <string name="menu_import_app">Import from Flavordex</string>
     <string name="menu_export">Export to CSV</string>
@@ -28,7 +26,6 @@
     <string name="menu_check_all">Check All</string>
     <string name="menu_uncheck_all">Uncheck All</string>
     <string name="menu_export_selected">Export</string>
-    <string name="menu_add_cat">Create Category</string>
     <string name="menu_save_cat">Save Category</string>
     <string name="menu_edit_cat">Edit Category</string>
     <string name="menu_delete_cat">Delete Category</string>
