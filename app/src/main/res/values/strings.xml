@@ -55,7 +55,6 @@
     <string name="menu_edit_flavor">Edit Flavors</string>
     <string name="menu_reset_flavor">Reset Flavors</string>
     <string name="menu_xport">Import/Export</string>
-    <string name="menu_settings">Application Settings</string>
     <string name="menu_about">About</string>
 
     <string name="button_ok">OK</string>

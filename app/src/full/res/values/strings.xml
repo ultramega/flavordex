@@ -22,6 +22,7 @@
     <string name="menu_import">Import from CSV</string>
     <string name="menu_import_app">Import from Flavordex</string>
     <string name="menu_export">Export to CSV</string>
+    <string name="menu_settings">Application Settings</string>
     <string name="menu_cancel">Cancel</string>
     <string name="menu_check_all">Check All</string>
     <string name="menu_uncheck_all">Uncheck All</string>
