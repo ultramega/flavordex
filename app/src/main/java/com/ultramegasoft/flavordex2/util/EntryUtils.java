@@ -313,7 +313,7 @@ public class EntryUtils {
      * @param name The original text
      * @return The filtered text
      */
-    private static String filterName(String name) {
+    public static String filterName(String name) {
         for(int i = 0; i < name.length(); i++) {
             if(name.charAt(i) != '_') {
                 return name.substring(i);

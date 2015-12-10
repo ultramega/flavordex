@@ -37,7 +37,7 @@ import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.dialog.CatDeleteDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
-import com.ultramegasoft.flavordex2.util.InputUtils;
+import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;
 import com.ultramegasoft.flavordex2.widget.RadarView;
 
@@ -163,7 +163,6 @@ public class EditCatFragment extends LoadingProgressFragment
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
         mTxtTitle = (EditText)root.findViewById(R.id.cat_name);
-        InputUtils.addFilter(mTxtTitle, InputUtils.NAME_FILTER);
 
         mTableExtras = (TableLayout)root.findViewById(R.id.cat_extras);
         mTableFlavors = (TableLayout)root.findViewById(R.id.cat_flavor);
@@ -393,10 +392,7 @@ public class EditCatFragment extends LoadingProgressFragment
         final LayoutInflater inflater = LayoutInflater.from(getContext());
         final View root = inflater.inflate(R.layout.edit_cat_field, tableLayout, false);
 
-        final InputFilter[] filters = new InputFilter[] {
-                InputUtils.NAME_FILTER,
-                new InputFilter.LengthFilter(maxLength)
-        };
+        final InputFilter[] filters = new InputFilter[] {new InputFilter.LengthFilter(maxLength)};
         final EditText editText = (EditText)root.findViewById(R.id.field_name);
         editText.setFilters(filters);
         editText.setHint(hint);
@@ -504,7 +500,8 @@ public class EditCatFragment extends LoadingProgressFragment
 
         final ContentValues info = new ContentValues();
         if(mTxtTitle != null) {
-            info.put(Tables.Cats.NAME, mTxtTitle.getText().toString());
+            final String title = EntryUtils.filterName(mTxtTitle.getText().toString());
+            info.put(Tables.Cats.NAME, title);
         }
 
         new DataSaver(getContext(), info, mExtraFields, mFlavorFields, mCatId).execute();
@@ -712,7 +709,7 @@ public class EditCatFragment extends LoadingProgressFragment
         private final long mCatId;
 
         /**
-         * @param context      The Context
+         * @param context The Context
          * @param catInfo The basic information for the cats table
          * @param extras  The extra fields for the category
          * @param flavors The flavors for the category
@@ -779,13 +776,13 @@ public class EditCatFragment extends LoadingProgressFragment
                     if(field.delete) {
                         mResolver.delete(uri, null, null);
                     } else {
-                        values.put(Tables.Extras.NAME, field.name);
+                        values.put(Tables.Extras.NAME, EntryUtils.filterName(field.name));
                         values.put(Tables.Extras.POS, pos++);
                         values.put(Tables.Extras.DELETED, false);
                         mResolver.update(uri, values, null, null);
                     }
                 } else if(!field.isEmpty()) {
-                    values.put(Tables.Extras.NAME, field.name);
+                    values.put(Tables.Extras.NAME, EntryUtils.filterName(field.name));
                     values.put(Tables.Extras.POS, pos++);
                     mResolver.insert(insertUri, values);
                 }
