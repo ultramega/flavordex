@@ -100,7 +100,7 @@ public class AppChooserDialog extends DialogFragment {
             mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    selectItem(position);
+                    selectItem(id);
                 }
             });
         }
@@ -140,10 +140,10 @@ public class AppChooserDialog extends DialogFragment {
     /**
      * Select a single app to import entries from.
      *
-     * @param position The selected item position
+     * @param id The selected item position
      */
-    private void selectItem(int position) {
-        AppImportDialog.showDialog(getFragmentManager(), position);
+    private void selectItem(long id) {
+        AppImportDialog.showDialog(getFragmentManager(), (int)id);
         dismiss();
     }
 
