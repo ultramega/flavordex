@@ -116,7 +116,7 @@ public class Tables {
          */
         public static Uri getCatFilterUri(long catId, String filterText) {
             final Uri baseUri = ContentUris.withAppendedId(CONTENT_CAT_URI_BASE, catId);
-            return Uri.withAppendedPath(baseUri, "filter/" + filterText);
+            return Uri.withAppendedPath(baseUri, "filter/" + Uri.encode(filterText));
         }
 
         private Entries() {

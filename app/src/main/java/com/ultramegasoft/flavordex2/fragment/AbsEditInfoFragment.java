@@ -162,7 +162,7 @@ public abstract class AbsEditInfoFragment extends LoadingProgressFragment
                     uri = Tables.Makers.CONTENT_URI;
                 } else {
                     uri = Uri.withAppendedPath(Tables.Makers.CONTENT_FILTER_URI_BASE,
-                            constraint.toString());
+                            Uri.encode(constraint.toString()));
                 }
 
                 final Bundle args = new Bundle();

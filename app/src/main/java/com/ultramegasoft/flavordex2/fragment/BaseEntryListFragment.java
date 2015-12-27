@@ -682,7 +682,7 @@ public class BaseEntryListFragment extends ListFragment
                         uri = Tables.Entries.getCatFilterUri(mCatId, mSearchQuery);
                     } else {
                         uri = Uri.withAppendedPath(Tables.Entries.CONTENT_FILTER_URI_BASE,
-                                mSearchQuery);
+                                Uri.encode(mSearchQuery));
                     }
                 }
                 final String sort = mSortField + (mSortReversed ? " DESC" : " ASC");

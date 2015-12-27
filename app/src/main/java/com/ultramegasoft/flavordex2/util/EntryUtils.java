@@ -88,9 +88,11 @@ public class EntryUtils {
      * @return The title with a number appended if the original title already exists
      */
     private static String getUniqueTitle(ContentResolver cr, String origTitle) {
-        final Uri uri = Uri.withAppendedPath(Tables.Entries.CONTENT_FILTER_URI_BASE, origTitle);
         final String[] projection = new String[] {Tables.Entries.TITLE};
-        final Cursor cursor = cr.query(uri, projection, null, null, null);
+        final String where = Tables.Entries.TITLE + " = ?";
+        final String[] whereArgs = new String[] {origTitle};
+        final Cursor cursor = cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs,
+                null);
         if(cursor != null) {
             try {
                 if(cursor.getCount() == 0) {
