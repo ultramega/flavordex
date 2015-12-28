@@ -424,24 +424,20 @@ public class PhotoUtils {
      * @return The file Uri
      */
     public static Uri getFileUri(ContentResolver cr, Uri uri) {
-        if("file".equals(uri.getScheme())) {
-            return uri;
-        } else {
-            final String name = getName(cr, uri);
-            if(name != null) {
-                final File file;
-                try {
-                    file = new File(getMediaStorageDir(), name);
-                    if(file.exists()) {
-                        return Uri.fromFile(file);
-                    }
-                    return savePhotoFromUri(cr, uri, file);
-                } catch(IOException e) {
-                    Log.w(TAG, "Unable to check for existing file", e);
+        final String name = getName(cr, uri);
+        if(name != null) {
+            final File file;
+            try {
+                file = new File(getMediaStorageDir(), name);
+                if(file.exists()) {
+                    return Uri.fromFile(file);
                 }
+                return savePhotoFromUri(cr, uri, file);
+            } catch(IOException e) {
+                Log.w(TAG, "Unable to check for existing file", e);
             }
-            return savePhotoFromUri(cr, uri, null);
         }
+        return savePhotoFromUri(cr, uri, null);
     }
 
     /**
