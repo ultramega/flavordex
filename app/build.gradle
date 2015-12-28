@@ -22,8 +22,8 @@ android {
         }
         full {
             applicationId "com.ultramegasoft.flavordex2"
-            versionCode 8
-            versionName '2.1.5'
+            versionCode 9
+            versionName '2.1.6'
         }
     }
     useLibrary 'org.apache.http.legacy'
