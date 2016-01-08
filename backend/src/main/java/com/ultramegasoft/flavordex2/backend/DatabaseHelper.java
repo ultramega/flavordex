@@ -26,7 +26,7 @@ public class DatabaseHelper {
      * The database connection URL
      */
     private static final String DB_URL_DEBUG = "jdbc:mysql://127.0.0.1:3306/flavordex2?user=root";
-    private static final String DB_URL = "jdbc:google:mysql://flavordex:backend/flavordex2?user=root";
+    private static final String DB_URL = "jdbc:mysql://api.flavordex.com:3306/flavordex?user=flavordex&password=7hLfRTyGT53bQzKc";
 
     /**
      * The database connection
