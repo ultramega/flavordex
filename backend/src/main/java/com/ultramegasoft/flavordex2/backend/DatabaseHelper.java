@@ -51,11 +51,10 @@ public class DatabaseHelper {
     public void open() throws SQLException {
         close();
         try {
+            Class.forName("com.mysql.jdbc.Driver");
             if(SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
-                Class.forName("com.mysql.jdbc.GoogleDriver");
                 mConnection = DriverManager.getConnection(DB_URL);
             } else {
-                Class.forName("com.mysql.jdbc.Driver");
                 mConnection = DriverManager.getConnection(DB_URL_DEBUG);
             }
         } catch(ClassNotFoundException e) {
