@@ -205,32 +205,6 @@ public class DatabaseHelper {
     }
 
     /**
-     * Get the Google Cloud Messaging ID for the specified client.
-     *
-     * @param clientId The database ID of the client
-     * @return The Google Cloud Messaging ID
-     * @throws SQLException
-     */
-    public String getGcmId(long clientId) throws SQLException {
-        final String sql = "SELECT gcm_id FROM clients WHERE id = ?";
-        final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        try {
-            stmt.setLong(1, clientId);
-
-            final ResultSet result = stmt.executeQuery();
-            if(result.next()) {
-                return result.getString(1);
-            }
-        } finally {
-            if(stmt != null) {
-                stmt.close();
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Set the Google Cloud Messaging ID for the specified client.
      *
      * @param clientId The database ID of the client
