@@ -117,23 +117,42 @@ public class DatabaseHelper {
         if(mUserId == 0) {
             throw new UnauthorizedException("Unknown user");
         }
+
         final RegistrationRecord record = new RegistrationRecord();
 
         String sql = "DELETE FROM clients WHERE user = ? AND gcm_id = ?";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, mUserId);
-        stmt.setString(2, gcmId);
-        stmt.executeUpdate();
+        try {
+            stmt.setLong(1, mUserId);
+            stmt.setString(2, gcmId);
+            stmt.executeUpdate();
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
+        }
 
         sql = "INSERT INTO clients (user, gcm_id) VALUES (?, ?)";
         stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        stmt.setLong(1, mUserId);
-        stmt.setString(2, gcmId);
+        try {
+            stmt.setLong(1, mUserId);
+            stmt.setString(2, gcmId);
 
-        stmt.executeUpdate();
-        final ResultSet result = stmt.getGeneratedKeys();
-        if(result.next()) {
-            record.setClientId(result.getLong(1));
+            stmt.executeUpdate();
+            final ResultSet result = stmt.getGeneratedKeys();
+            try {
+                if(result.next()) {
+                    record.setClientId(result.getLong(1));
+                }
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
 
         return record;
@@ -150,11 +169,18 @@ public class DatabaseHelper {
         if(mUserId == 0) {
             throw new UnauthorizedException("Unknown user");
         }
+
         final String sql = "DELETE FROM clients WHERE id = ? AND user = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, clientId);
-        stmt.setLong(2, mUserId);
-        stmt.executeUpdate();
+        try {
+            stmt.setLong(1, clientId);
+            stmt.setLong(2, mUserId);
+            stmt.executeUpdate();
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
     /**
@@ -166,10 +192,16 @@ public class DatabaseHelper {
     public void setSyncTime(long time) throws SQLException {
         final String sql = "UPDATE clients SET last_sync = ? WHERE user = ? AND id = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, time);
-        stmt.setLong(2, mUserId);
-        stmt.setLong(3, mClientId);
-        stmt.executeUpdate();
+        try {
+            stmt.setLong(1, time);
+            stmt.setLong(2, mUserId);
+            stmt.setLong(3, mClientId);
+            stmt.executeUpdate();
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
     /**
@@ -182,11 +214,17 @@ public class DatabaseHelper {
     public String getGcmId(long clientId) throws SQLException {
         final String sql = "SELECT gcm_id FROM clients WHERE id = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, clientId);
+        try {
+            stmt.setLong(1, clientId);
 
-        final ResultSet result = stmt.executeQuery();
-        if(result.next()) {
-            return result.getString(1);
+            final ResultSet result = stmt.executeQuery();
+            if(result.next()) {
+                return result.getString(1);
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
 
         return null;
@@ -202,9 +240,15 @@ public class DatabaseHelper {
     public void setGcmId(long clientId, String gcmId) throws SQLException {
         final String sql = "UPDATE clients SET gcm_id = ? WHERE id = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setString(1, gcmId);
-        stmt.setLong(2, clientId);
-        stmt.executeUpdate();
+        try {
+            stmt.setString(1, gcmId);
+            stmt.setLong(2, clientId);
+            stmt.executeUpdate();
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
     /**
@@ -218,17 +262,30 @@ public class DatabaseHelper {
         if(mUserId == 0) {
             throw new UnauthorizedException("Unknown user");
         }
+
         final String sql = "SELECT id, gcm_id FROM clients WHERE user = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, mUserId);
+        try {
+            stmt.setLong(1, mUserId);
 
-        final ResultSet result = stmt.executeQuery();
-        final HashMap<Long, String> records = new HashMap<>();
-        while(result.next()) {
-            records.put(result.getLong(1), result.getString(2));
+            final ResultSet result = stmt.executeQuery();
+            try {
+                final HashMap<Long, String> records = new HashMap<>();
+                while(result.next()) {
+                    records.put(result.getLong(1), result.getString(2));
+                }
+
+                return records;
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
-
-        return records;
     }
 
     /**
@@ -242,51 +299,76 @@ public class DatabaseHelper {
         if(mUserId == 0) {
             throw new UnauthorizedException("Unknown user");
         }
+
         final ArrayList<EntryRecord> records = new ArrayList<>();
         EntryRecord record;
 
         String sql = "SELECT uuid FROM deleted WHERE user = ? AND client != ? AND sync_time > (SELECT last_sync FROM clients WHERE id = ?)";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, mUserId);
-        stmt.setLong(2, mClientId);
-        stmt.setLong(3, mClientId);
+        try {
+            stmt.setLong(1, mUserId);
+            stmt.setLong(2, mClientId);
+            stmt.setLong(3, mClientId);
 
-        ResultSet result = stmt.executeQuery();
-        while(result.next()) {
-            record = new EntryRecord();
-            record.setUuid(result.getString("uuid"));
-            record.setDeleted(true);
-            records.add(record);
+            final ResultSet result = stmt.executeQuery();
+            try {
+                while(result.next()) {
+                    record = new EntryRecord();
+                    record.setUuid(result.getString("uuid"));
+                    record.setDeleted(true);
+                    records.add(record);
+                }
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
 
         sql = "SELECT a.*, b.uuid AS cat_uuid FROM entries a LEFT JOIN categories b ON a.cat = b.id WHERE a.user = ? AND a.client != ? AND a.sync_time > (SELECT last_sync FROM clients WHERE id = ?)";
         stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, mUserId);
-        stmt.setLong(2, mClientId);
-        stmt.setLong(3, mClientId);
+        try {
+            stmt.setLong(1, mUserId);
+            stmt.setLong(2, mClientId);
+            stmt.setLong(3, mClientId);
 
-        result = stmt.executeQuery();
-        while(result.next()) {
-            record = new EntryRecord();
-            record.setId(result.getLong("id"));
-            record.setUuid(result.getString("uuid"));
-            record.setCat(result.getLong("cat"));
-            record.setCatUuid(result.getString("cat_uuid"));
-            record.setTitle(result.getString("title"));
-            record.setMaker(result.getString("maker"));
-            record.setOrigin(result.getString("origin"));
-            record.setPrice(result.getString("price"));
-            record.setLocation(result.getString("location"));
-            record.setDate(result.getLong("date"));
-            record.setRating(result.getFloat("rating"));
-            record.setNotes(result.getString("notes"));
-            record.setUpdated(result.getLong("updated"));
+            final ResultSet result = stmt.executeQuery();
+            try {
+                while(result.next()) {
+                    record = new EntryRecord();
+                    record.setId(result.getLong("id"));
+                    record.setUuid(result.getString("uuid"));
+                    record.setCat(result.getLong("cat"));
+                    record.setCatUuid(result.getString("cat_uuid"));
+                    record.setTitle(result.getString("title"));
+                    record.setMaker(result.getString("maker"));
+                    record.setOrigin(result.getString("origin"));
+                    record.setPrice(result.getString("price"));
+                    record.setLocation(result.getString("location"));
+                    record.setDate(result.getLong("date"));
+                    record.setRating(result.getFloat("rating"));
+                    record.setNotes(result.getString("notes"));
+                    record.setUpdated(result.getLong("updated"));
 
-            record.setExtras(getEntryExtras(record.getId()));
-            record.setFlavors(getEntryFlavors(record.getId()));
-            record.setPhotos(getEntryPhotos(record.getId()));
+                    record.setExtras(getEntryExtras(record.getId()));
+                    record.setFlavors(getEntryFlavors(record.getId()));
+                    record.setPhotos(getEntryPhotos(record.getId()));
 
-            records.add(record);
+                    records.add(record);
+                }
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
 
         return records;
@@ -302,20 +384,32 @@ public class DatabaseHelper {
     private ArrayList<ExtraRecord> getEntryExtras(long entryId) throws SQLException {
         final String sql = "SELECT a.uuid, a.name, b.value FROM extras a LEFT JOIN entries_extras b ON a.id = b.extra WHERE b.entry = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, entryId);
+        try {
+            stmt.setLong(1, entryId);
 
-        final ResultSet result = stmt.executeQuery();
-        final ArrayList<ExtraRecord> records = new ArrayList<>();
-        ExtraRecord record;
-        while(result.next()) {
-            record = new ExtraRecord();
-            record.setUuid(result.getString("uuid"));
-            record.setName(result.getString("name"));
-            record.setValue(result.getString("value"));
-            records.add(record);
+            final ResultSet result = stmt.executeQuery();
+            try {
+                final ArrayList<ExtraRecord> records = new ArrayList<>();
+                ExtraRecord record;
+                while(result.next()) {
+                    record = new ExtraRecord();
+                    record.setUuid(result.getString("uuid"));
+                    record.setName(result.getString("name"));
+                    record.setValue(result.getString("value"));
+                    records.add(record);
+                }
+
+                return records;
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
-
-        return records;
     }
 
     /**
@@ -328,20 +422,32 @@ public class DatabaseHelper {
     private ArrayList<FlavorRecord> getEntryFlavors(long entryId) throws SQLException {
         final String sql = "SELECT flavor, value, pos FROM entries_flavors WHERE entry = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, entryId);
+        try {
+            stmt.setLong(1, entryId);
 
-        final ResultSet result = stmt.executeQuery();
-        final ArrayList<FlavorRecord> records = new ArrayList<>();
-        FlavorRecord record;
-        while(result.next()) {
-            record = new FlavorRecord();
-            record.setName(result.getString("flavor"));
-            record.setValue(result.getInt("value"));
-            record.setPos(result.getInt("pos"));
-            records.add(record);
+            final ResultSet result = stmt.executeQuery();
+            try {
+                final ArrayList<FlavorRecord> records = new ArrayList<>();
+                FlavorRecord record;
+                while(result.next()) {
+                    record = new FlavorRecord();
+                    record.setName(result.getString("flavor"));
+                    record.setValue(result.getInt("value"));
+                    record.setPos(result.getInt("pos"));
+                    records.add(record);
+                }
+
+                return records;
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
-
-        return records;
     }
 
     /**
@@ -354,20 +460,32 @@ public class DatabaseHelper {
     private ArrayList<PhotoRecord> getEntryPhotos(long entryId) throws SQLException {
         final String sql = "SELECT hash, drive_id, pos FROM photos WHERE entry = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, entryId);
+        try {
+            stmt.setLong(1, entryId);
 
-        final ResultSet result = stmt.executeQuery();
-        final ArrayList<PhotoRecord> records = new ArrayList<>();
-        PhotoRecord record;
-        while(result.next()) {
-            record = new PhotoRecord();
-            record.setHash(result.getString("hash"));
-            record.setDriveId(result.getString("drive_id"));
-            record.setPos(result.getInt("pos"));
-            records.add(record);
+            final ResultSet result = stmt.executeQuery();
+            try {
+                final ArrayList<PhotoRecord> records = new ArrayList<>();
+                PhotoRecord record;
+                while(result.next()) {
+                    record = new PhotoRecord();
+                    record.setHash(result.getString("hash"));
+                    record.setDriveId(result.getString("drive_id"));
+                    record.setPos(result.getInt("pos"));
+                    records.add(record);
+                }
+
+                return records;
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
-
-        return records;
     }
 
     /**
@@ -389,13 +507,25 @@ public class DatabaseHelper {
 
             String sql = "SELECT id, cat FROM entries WHERE uuid = ? AND user = ?";
             PreparedStatement stmt = mConnection.prepareStatement(sql);
-            stmt.setString(1, entry.getUuid());
-            stmt.setLong(2, mUserId);
+            try {
+                stmt.setString(1, entry.getUuid());
+                stmt.setLong(2, mUserId);
 
-            ResultSet result = stmt.executeQuery();
-            if(result.next()) {
-                entry.setId(result.getLong(1));
-                entry.setCat(result.getLong(2));
+                final ResultSet result = stmt.executeQuery();
+                try {
+                    if(result.next()) {
+                        entry.setId(result.getLong(1));
+                        entry.setCat(result.getLong(2));
+                    }
+                } finally {
+                    if(result != null) {
+                        result.close();
+                    }
+                }
+            } finally {
+                if(stmt != null) {
+                    stmt.close();
+                }
             }
 
             if(entry.isDeleted()) {
@@ -403,13 +533,25 @@ public class DatabaseHelper {
             } else if(entry.getId() == 0) {
                 sql = "SELECT id FROM categories WHERE uuid = ? AND user = ?";
                 stmt = mConnection.prepareStatement(sql);
-                stmt.setString(1, entry.getCatUuid());
-                stmt.setLong(2, mUserId);
+                try {
+                    stmt.setString(1, entry.getCatUuid());
+                    stmt.setLong(2, mUserId);
 
-                result = stmt.executeQuery();
-                if(result.next()) {
-                    entry.setCat(result.getLong(1));
-                    success = insertEntry(entry);
+                    final ResultSet result = stmt.executeQuery();
+                    try {
+                        if(result.next()) {
+                            entry.setCat(result.getLong(1));
+                            success = insertEntry(entry);
+                        }
+                    } finally {
+                        if(result != null) {
+                            result.close();
+                        }
+                    }
+                } finally {
+                    if(stmt != null) {
+                        stmt.close();
+                    }
                 }
             } else {
                 success = updateEntry(entry);
@@ -431,37 +573,56 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private boolean insertEntry(EntryRecord entry) throws SQLException {
+        int changed;
         String sql = "INSERT INTO entries (uuid, user, cat, title, maker, origin, price, location, date, rating, notes, updated, sync_time, client) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        stmt.setString(1, entry.getUuid());
-        stmt.setLong(2, mUserId);
-        stmt.setLong(3, entry.getCat());
-        stmt.setString(4, entry.getTitle());
-        stmt.setString(5, entry.getMaker());
-        stmt.setString(6, entry.getOrigin());
-        stmt.setString(7, entry.getPrice());
-        stmt.setString(8, entry.getLocation());
-        stmt.setLong(9, entry.getDate());
-        stmt.setFloat(10, entry.getRating());
-        stmt.setString(11, entry.getNotes());
-        stmt.setLong(12, entry.getUpdated());
-        stmt.setLong(13, System.currentTimeMillis());
-        stmt.setLong(14, mClientId);
-        final int changed = stmt.executeUpdate();
+        try {
+            stmt.setString(1, entry.getUuid());
+            stmt.setLong(2, mUserId);
+            stmt.setLong(3, entry.getCat());
+            stmt.setString(4, entry.getTitle());
+            stmt.setString(5, entry.getMaker());
+            stmt.setString(6, entry.getOrigin());
+            stmt.setString(7, entry.getPrice());
+            stmt.setString(8, entry.getLocation());
+            stmt.setLong(9, entry.getDate());
+            stmt.setFloat(10, entry.getRating());
+            stmt.setString(11, entry.getNotes());
+            stmt.setLong(12, entry.getUpdated());
+            stmt.setLong(13, System.currentTimeMillis());
+            stmt.setLong(14, mClientId);
+            changed = stmt.executeUpdate();
 
-        final ResultSet result = stmt.getGeneratedKeys();
-        if(result.next()) {
-            entry.setId(result.getLong(1));
-            insertEntryExtras(entry);
-            insertEntryFlavors(entry);
-            insertEntryPhotos(entry);
+            final ResultSet result = stmt.getGeneratedKeys();
+            try {
+                if(result.next()) {
+                    entry.setId(result.getLong(1));
+                    insertEntryExtras(entry);
+                    insertEntryFlavors(entry);
+                    insertEntryPhotos(entry);
+                }
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
 
         sql = "DELETE FROM deleted WHERE user = ? AND uuid = ?";
         stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, mUserId);
-        stmt.setString(2, entry.getUuid());
-        stmt.executeUpdate();
+        try {
+            stmt.setLong(1, mUserId);
+            stmt.setString(2, entry.getUuid());
+            stmt.executeUpdate();
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
+        }
 
         return changed > 0;
     }
@@ -476,26 +637,32 @@ public class DatabaseHelper {
     private boolean updateEntry(EntryRecord entry) throws SQLException {
         final String sql = "UPDATE entries SET title = ?, maker = ?, origin = ?, price = ?, location = ?, date = ?, rating = ?, notes = ?, updated = ?, sync_time = ?, client = ? WHERE user = ? AND id = ? AND updated < ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setString(1, entry.getTitle());
-        stmt.setString(2, entry.getMaker());
-        stmt.setString(3, entry.getOrigin());
-        stmt.setString(4, entry.getPrice());
-        stmt.setString(5, entry.getLocation());
-        stmt.setLong(6, entry.getDate());
-        stmt.setFloat(7, entry.getRating());
-        stmt.setString(8, entry.getNotes());
-        stmt.setLong(9, entry.getUpdated());
-        stmt.setLong(10, System.currentTimeMillis());
-        stmt.setLong(11, mClientId);
-        stmt.setLong(12, mUserId);
-        stmt.setLong(13, entry.getId());
-        stmt.setLong(14, entry.getUpdated());
-        if(stmt.executeUpdate() > 0) {
-            updateEntryExtras(entry);
-            updateEntryFlavors(entry);
-            updateEntryPhotos(entry);
+        try {
+            stmt.setString(1, entry.getTitle());
+            stmt.setString(2, entry.getMaker());
+            stmt.setString(3, entry.getOrigin());
+            stmt.setString(4, entry.getPrice());
+            stmt.setString(5, entry.getLocation());
+            stmt.setLong(6, entry.getDate());
+            stmt.setFloat(7, entry.getRating());
+            stmt.setString(8, entry.getNotes());
+            stmt.setLong(9, entry.getUpdated());
+            stmt.setLong(10, System.currentTimeMillis());
+            stmt.setLong(11, mClientId);
+            stmt.setLong(12, mUserId);
+            stmt.setLong(13, entry.getId());
+            stmt.setLong(14, entry.getUpdated());
+            if(stmt.executeUpdate() > 0) {
+                updateEntryExtras(entry);
+                updateEntryFlavors(entry);
+                updateEntryPhotos(entry);
 
-            return true;
+                return true;
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
 
         return false;
@@ -511,14 +678,21 @@ public class DatabaseHelper {
         if(entry.getExtras() == null) {
             return;
         }
+
         final String sql = "INSERT INTO entries_extras (entry, extra, value) VALUES (?, (SELECT id FROM extras WHERE cat = ? AND uuid = ?), ?)";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, entry.getId());
-        stmt.setLong(2, entry.getCat());
-        for(ExtraRecord extra : entry.getExtras()) {
-            stmt.setString(3, extra.getUuid());
-            stmt.setString(4, extra.getValue());
-            stmt.executeUpdate();
+        try {
+            stmt.setLong(1, entry.getId());
+            stmt.setLong(2, entry.getCat());
+            for(ExtraRecord extra : entry.getExtras()) {
+                stmt.setString(3, extra.getUuid());
+                stmt.setString(4, extra.getValue());
+                stmt.executeUpdate();
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
     }
 
@@ -532,12 +706,19 @@ public class DatabaseHelper {
         if(entry.getExtras() == null) {
             return;
         }
+
         final String sql = "DELETE FROM entries_extras WHERE entry = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, entry.getId());
-        stmt.executeUpdate();
+        try {
+            stmt.setLong(1, entry.getId());
+            stmt.executeUpdate();
 
-        insertEntryExtras(entry);
+            insertEntryExtras(entry);
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
     /**
@@ -550,14 +731,21 @@ public class DatabaseHelper {
         if(entry.getFlavors() == null) {
             return;
         }
+
         final String sql = "INSERT INTO entries_flavors (entry, flavor, value, pos) VALUES (?, ?, ?, ?)";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, entry.getId());
-        for(FlavorRecord flavor : entry.getFlavors()) {
-            stmt.setString(2, flavor.getName());
-            stmt.setInt(3, flavor.getValue());
-            stmt.setInt(4, flavor.getPos());
-            stmt.executeUpdate();
+        try {
+            stmt.setLong(1, entry.getId());
+            for(FlavorRecord flavor : entry.getFlavors()) {
+                stmt.setString(2, flavor.getName());
+                stmt.setInt(3, flavor.getValue());
+                stmt.setInt(4, flavor.getPos());
+                stmt.executeUpdate();
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
     }
 
@@ -571,12 +759,19 @@ public class DatabaseHelper {
         if(entry.getFlavors() == null) {
             return;
         }
+
         final String sql = "DELETE FROM entries_flavors WHERE entry = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, entry.getId());
-        stmt.executeUpdate();
+        try {
+            stmt.setLong(1, entry.getId());
+            stmt.executeUpdate();
 
-        insertEntryFlavors(entry);
+            insertEntryFlavors(entry);
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
     /**
@@ -589,14 +784,21 @@ public class DatabaseHelper {
         if(entry.getPhotos() == null) {
             return;
         }
+
         final String sql = "INSERT INTO photos (entry, hash, drive_id, pos) VALUES (?, ?, ?, ?)";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, entry.getId());
-        for(PhotoRecord photo : entry.getPhotos()) {
-            stmt.setString(2, photo.getHash());
-            stmt.setString(3, photo.getDriveId());
-            stmt.setInt(4, photo.getPos());
-            stmt.executeUpdate();
+        try {
+            stmt.setLong(1, entry.getId());
+            for(PhotoRecord photo : entry.getPhotos()) {
+                stmt.setString(2, photo.getHash());
+                stmt.setString(3, photo.getDriveId());
+                stmt.setInt(4, photo.getPos());
+                stmt.executeUpdate();
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
     }
 
@@ -610,12 +812,19 @@ public class DatabaseHelper {
         if(entry.getPhotos() == null) {
             return;
         }
+
         final String sql = "DELETE FROM photos WHERE entry = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, entry.getId());
-        stmt.executeUpdate();
+        try {
+            stmt.setLong(1, entry.getId());
+            stmt.executeUpdate();
 
-        insertEntryPhotos(entry);
+            insertEntryPhotos(entry);
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
     /**
@@ -626,22 +835,37 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private boolean deleteEntry(EntryRecord entry) throws SQLException {
+        int updated;
         String sql = "DELETE FROM entries WHERE user = ? AND id = ? AND updated < ?";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, mUserId);
-        stmt.setLong(2, entry.getId());
-        stmt.setLong(3, entry.getUpdated());
-        if(stmt.executeUpdate() > 0) {
+        try {
+            stmt.setLong(1, mUserId);
+            stmt.setLong(2, entry.getId());
+            stmt.setLong(3, entry.getUpdated());
+            updated = stmt.executeUpdate();
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
+        }
+
+        if(updated > 0) {
             sql = "INSERT INTO deleted (user, type, cat, uuid, sync_time, client) VALUES (?, 'entry', ?, ?, ?, ?)";
             stmt = mConnection.prepareStatement(sql);
-            stmt.setLong(1, mUserId);
-            stmt.setLong(2, entry.getCat());
-            stmt.setString(3, entry.getUuid());
-            stmt.setLong(4, System.currentTimeMillis());
-            stmt.setLong(5, mClientId);
-            stmt.executeUpdate();
+            try {
+                stmt.setLong(1, mUserId);
+                stmt.setLong(2, entry.getCat());
+                stmt.setString(3, entry.getUuid());
+                stmt.setLong(4, System.currentTimeMillis());
+                stmt.setLong(5, mClientId);
+                stmt.executeUpdate();
 
-            return true;
+                return true;
+            } finally {
+                if(stmt != null) {
+                    stmt.close();
+                }
+            }
         }
 
         return false;
@@ -658,41 +882,66 @@ public class DatabaseHelper {
         if(mUserId == 0) {
             throw new UnauthorizedException("Unknown user");
         }
+
         final ArrayList<CatRecord> records = new ArrayList<>();
         CatRecord record;
 
         String sql = "SELECT uuid FROM deleted WHERE user = ? AND client != ? AND sync_time > (SELECT last_sync FROM clients WHERE id = ?)";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, mUserId);
-        stmt.setLong(2, mClientId);
-        stmt.setLong(3, mClientId);
+        try {
+            stmt.setLong(1, mUserId);
+            stmt.setLong(2, mClientId);
+            stmt.setLong(3, mClientId);
 
-        ResultSet result = stmt.executeQuery();
-        while(result.next()) {
-            record = new CatRecord();
-            record.setUuid(result.getString("uuid"));
-            record.setDeleted(true);
-            records.add(record);
+            final ResultSet result = stmt.executeQuery();
+            try {
+                while(result.next()) {
+                    record = new CatRecord();
+                    record.setUuid(result.getString("uuid"));
+                    record.setDeleted(true);
+                    records.add(record);
+                }
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
 
         sql = "SELECT * FROM categories WHERE user = ? AND client != ? AND sync_time > (SELECT last_sync FROM clients WHERE id = ?)";
         stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, mUserId);
-        stmt.setLong(2, mClientId);
-        stmt.setLong(3, mClientId);
+        try {
+            stmt.setLong(1, mUserId);
+            stmt.setLong(2, mClientId);
+            stmt.setLong(3, mClientId);
 
-        result = stmt.executeQuery();
-        while(result.next()) {
-            record = new CatRecord();
-            record.setId(result.getLong("id"));
-            record.setUuid(result.getString("uuid"));
-            record.setName(result.getString("name"));
-            record.setUpdated(result.getLong("updated"));
+            final ResultSet result = stmt.executeQuery();
+            try {
+                while(result.next()) {
+                    record = new CatRecord();
+                    record.setId(result.getLong("id"));
+                    record.setUuid(result.getString("uuid"));
+                    record.setName(result.getString("name"));
+                    record.setUpdated(result.getLong("updated"));
 
-            record.setExtras(getCatExtras(record.getId()));
-            record.setFlavors(getCatFlavors(record.getId()));
+                    record.setExtras(getCatExtras(record.getId()));
+                    record.setFlavors(getCatFlavors(record.getId()));
 
-            records.add(record);
+                    records.add(record);
+                }
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
 
         return records;
@@ -708,21 +957,33 @@ public class DatabaseHelper {
     private ArrayList<ExtraRecord> getCatExtras(long catId) throws SQLException {
         final String sql = "SELECT uuid, name, pos, deleted FROM extras WHERE cat = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, catId);
+        try {
+            stmt.setLong(1, catId);
 
-        final ResultSet result = stmt.executeQuery();
-        final ArrayList<ExtraRecord> records = new ArrayList<>();
-        ExtraRecord record;
-        while(result.next()) {
-            record = new ExtraRecord();
-            record.setUuid(result.getString("uuid"));
-            record.setName(result.getString("name"));
-            record.setPos(result.getInt("pos"));
-            record.setDeleted(result.getBoolean("deleted"));
-            records.add(record);
+            final ResultSet result = stmt.executeQuery();
+            try {
+                final ArrayList<ExtraRecord> records = new ArrayList<>();
+                ExtraRecord record;
+                while(result.next()) {
+                    record = new ExtraRecord();
+                    record.setUuid(result.getString("uuid"));
+                    record.setName(result.getString("name"));
+                    record.setPos(result.getInt("pos"));
+                    record.setDeleted(result.getBoolean("deleted"));
+                    records.add(record);
+                }
+
+                return records;
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
-
-        return records;
     }
 
     /**
@@ -735,19 +996,31 @@ public class DatabaseHelper {
     private ArrayList<FlavorRecord> getCatFlavors(long catId) throws SQLException {
         final String sql = "SELECT name, pos FROM flavors WHERE cat = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, catId);
+        try {
+            stmt.setLong(1, catId);
 
-        final ResultSet result = stmt.executeQuery();
-        final ArrayList<FlavorRecord> records = new ArrayList<>();
-        FlavorRecord record;
-        while(result.next()) {
-            record = new FlavorRecord();
-            record.setName(result.getString("name"));
-            record.setPos(result.getInt("pos"));
-            records.add(record);
+            final ResultSet result = stmt.executeQuery();
+            try {
+                final ArrayList<FlavorRecord> records = new ArrayList<>();
+                FlavorRecord record;
+                while(result.next()) {
+                    record = new FlavorRecord();
+                    record.setName(result.getString("name"));
+                    record.setPos(result.getInt("pos"));
+                    records.add(record);
+                }
+
+                return records;
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
-
-        return records;
     }
 
     /**
@@ -769,23 +1042,35 @@ public class DatabaseHelper {
 
             final String sql = "SELECT id FROM categories WHERE uuid = ? AND user = ?";
             final PreparedStatement stmt = mConnection.prepareStatement(sql);
-            stmt.setString(1, cat.getUuid());
-            stmt.setLong(2, mUserId);
+            try {
+                stmt.setString(1, cat.getUuid());
+                stmt.setLong(2, mUserId);
 
-            final ResultSet result = stmt.executeQuery();
-            if(result.next()) {
-                cat.setId(result.getLong(1));
+                final ResultSet result = stmt.executeQuery();
+                try {
+                    if(result.next()) {
+                        cat.setId(result.getLong(1));
+                    }
+
+                    if(cat.isDeleted()) {
+                        success = deleteCat(cat);
+                    } else if(cat.getId() == 0) {
+                        success = insertCat(cat);
+                    } else {
+                        success = updateCat(cat);
+                    }
+
+                    mConnection.commit();
+                } finally {
+                    if(result != null) {
+                        result.close();
+                    }
+                }
+            } finally {
+                if(stmt != null) {
+                    stmt.close();
+                }
             }
-
-            if(cat.isDeleted()) {
-                success = deleteCat(cat);
-            } else if(cat.getId() == 0) {
-                success = insertCat(cat);
-            } else {
-                success = updateCat(cat);
-            }
-
-            mConnection.commit();
         } finally {
             mConnection.setAutoCommit(true);
         }
@@ -801,28 +1086,47 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private boolean insertCat(CatRecord cat) throws SQLException {
+        int changed;
         String sql = "INSERT INTO categories (uuid, user, name, updated, sync_time, client) VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        stmt.setString(1, cat.getUuid());
-        stmt.setLong(2, mUserId);
-        stmt.setString(3, cat.getName());
-        stmt.setLong(4, cat.getUpdated());
-        stmt.setLong(5, System.currentTimeMillis());
-        stmt.setLong(6, mClientId);
-        final int changed = stmt.executeUpdate();
+        try {
+            stmt.setString(1, cat.getUuid());
+            stmt.setLong(2, mUserId);
+            stmt.setString(3, cat.getName());
+            stmt.setLong(4, cat.getUpdated());
+            stmt.setLong(5, System.currentTimeMillis());
+            stmt.setLong(6, mClientId);
+            changed = stmt.executeUpdate();
 
-        final ResultSet result = stmt.getGeneratedKeys();
-        if(result.next()) {
-            cat.setId(result.getLong(1));
-            insertCatExtras(cat);
-            insertCatFlavors(cat);
+            final ResultSet result = stmt.getGeneratedKeys();
+            try {
+                if(result.next()) {
+                    cat.setId(result.getLong(1));
+                    insertCatExtras(cat);
+                    insertCatFlavors(cat);
+                }
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
 
         sql = "DELETE FROM deleted WHERE user = ? AND uuid = ?";
         stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, mUserId);
-        stmt.setString(2, cat.getUuid());
-        stmt.executeUpdate();
+        try {
+            stmt.setLong(1, mUserId);
+            stmt.setString(2, cat.getUuid());
+            stmt.executeUpdate();
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
+        }
 
         return changed > 0;
     }
@@ -837,18 +1141,24 @@ public class DatabaseHelper {
     private boolean updateCat(CatRecord cat) throws SQLException {
         final String sql = "UPDATE categories SET name = ?, updated = ?, sync_time = ?, client = ? WHERE user = ? AND id = ? AND updated < ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setString(1, cat.getName());
-        stmt.setLong(2, cat.getUpdated());
-        stmt.setLong(3, System.currentTimeMillis());
-        stmt.setLong(4, mClientId);
-        stmt.setLong(5, mUserId);
-        stmt.setLong(6, cat.getId());
-        stmt.setLong(7, cat.getUpdated());
-        if(stmt.executeUpdate() > 0) {
-            updateCatExtras(cat);
-            updateCatFlavors(cat);
+        try {
+            stmt.setString(1, cat.getName());
+            stmt.setLong(2, cat.getUpdated());
+            stmt.setLong(3, System.currentTimeMillis());
+            stmt.setLong(4, mClientId);
+            stmt.setLong(5, mUserId);
+            stmt.setLong(6, cat.getId());
+            stmt.setLong(7, cat.getUpdated());
+            if(stmt.executeUpdate() > 0) {
+                updateCatExtras(cat);
+                updateCatFlavors(cat);
 
-            return true;
+                return true;
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
 
         return false;
@@ -864,24 +1174,37 @@ public class DatabaseHelper {
         if(cat.getExtras() == null) {
             return;
         }
+
         final String sql = "INSERT INTO extras (uuid, cat, name, pos, deleted) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, pos = ?, deleted = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        stmt.setLong(2, cat.getId());
-        for(ExtraRecord extra : cat.getExtras()) {
-            stmt.setString(1, extra.getUuid());
-            stmt.setString(3, extra.getName());
-            stmt.setInt(4, extra.getPos());
-            stmt.setBoolean(5, extra.isDeleted());
-            stmt.setString(6, extra.getName());
-            stmt.setInt(7, extra.getPos());
-            stmt.setBoolean(8, extra.isDeleted());
-            stmt.executeUpdate();
+        try {
+            stmt.setLong(2, cat.getId());
+            for(ExtraRecord extra : cat.getExtras()) {
+                stmt.setString(1, extra.getUuid());
+                stmt.setString(3, extra.getName());
+                stmt.setInt(4, extra.getPos());
+                stmt.setBoolean(5, extra.isDeleted());
+                stmt.setString(6, extra.getName());
+                stmt.setInt(7, extra.getPos());
+                stmt.setBoolean(8, extra.isDeleted());
+                stmt.executeUpdate();
 
-            if(extra.getId() == 0) {
-                ResultSet result = stmt.getGeneratedKeys();
-                if(result.next()) {
-                    extra.setId(result.getLong(1));
+                if(extra.getId() == 0) {
+                    final ResultSet result = stmt.getGeneratedKeys();
+                    try {
+                        if(result.next()) {
+                            extra.setId(result.getLong(1));
+                        }
+                    } finally {
+                        if(result != null) {
+                            result.close();
+                        }
+                    }
                 }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
             }
         }
     }
@@ -896,26 +1219,45 @@ public class DatabaseHelper {
         if(cat.getExtras() == null) {
             return;
         }
+
         final ArrayList<String> extraUuids = new ArrayList<>();
         for(ExtraRecord extra : cat.getExtras()) {
             extraUuids.add(extra.getUuid());
         }
 
         String sql = "SELECT id, uuid FROM extras WHERE cat = ?";
-        PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, cat.getId());
+        final PreparedStatement stmt = mConnection.prepareStatement(sql);
+        try {
+            stmt.setLong(1, cat.getId());
 
-        final ResultSet result = stmt.executeQuery();
-        sql = "DELETE FROM extras WHERE id = ?";
-        stmt = mConnection.prepareStatement(sql);
-        while(result.next()) {
-            if(!extraUuids.contains(result.getString(2))) {
-                stmt.setLong(1, result.getLong(1));
-                stmt.executeUpdate();
+            final ResultSet result = stmt.executeQuery();
+            try {
+                sql = "DELETE FROM extras WHERE id = ?";
+                final PreparedStatement stmt2 = mConnection.prepareStatement(sql);
+                try {
+                    while(result.next()) {
+                        if(!extraUuids.contains(result.getString(2))) {
+                            stmt2.setLong(1, result.getLong(1));
+                            stmt2.executeUpdate();
+                        }
+                    }
+
+                    insertCatExtras(cat);
+                } finally {
+                    if(stmt2 != null) {
+                        stmt2.close();
+                    }
+                }
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
             }
         }
-
-        insertCatExtras(cat);
     }
 
     /**
@@ -928,13 +1270,20 @@ public class DatabaseHelper {
         if(cat.getFlavors() == null) {
             return;
         }
+
         final String sql = "INSERT INTO flavors (cat, name, pos) VALUES (?, ?, ?)";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, cat.getId());
-        for(FlavorRecord flavor : cat.getFlavors()) {
-            stmt.setString(2, flavor.getName());
-            stmt.setInt(3, flavor.getPos());
-            stmt.executeUpdate();
+        try {
+            stmt.setLong(1, cat.getId());
+            for(FlavorRecord flavor : cat.getFlavors()) {
+                stmt.setString(2, flavor.getName());
+                stmt.setInt(3, flavor.getPos());
+                stmt.executeUpdate();
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
         }
     }
 
@@ -948,12 +1297,19 @@ public class DatabaseHelper {
         if(cat.getFlavors() == null) {
             return;
         }
+
         final String sql = "DELETE FROM flavors WHERE cat = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, cat.getId());
-        stmt.executeUpdate();
+        try {
+            stmt.setLong(1, cat.getId());
+            stmt.executeUpdate();
 
-        insertCatFlavors(cat);
+            insertCatFlavors(cat);
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
+        }
     }
 
     /**
@@ -964,21 +1320,36 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private boolean deleteCat(CatRecord cat) throws SQLException {
+        int changed;
         String sql = "DELETE FROM categories WHERE user = ? AND id = ? AND updated < ?";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setLong(1, mUserId);
-        stmt.setLong(2, cat.getId());
-        stmt.setLong(3, cat.getUpdated());
-        if(stmt.executeUpdate() > 0) {
+        try {
+            stmt.setLong(1, mUserId);
+            stmt.setLong(2, cat.getId());
+            stmt.setLong(3, cat.getUpdated());
+            changed = stmt.executeUpdate();
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
+        }
+
+        if(changed > 0) {
             sql = "INSERT INTO deleted (user, type, uuid, sync_time, client) VALUES (?, 'cat', ?, ?, ?)";
             stmt = mConnection.prepareStatement(sql);
-            stmt.setLong(1, mUserId);
-            stmt.setString(2, cat.getUuid());
-            stmt.setLong(3, System.currentTimeMillis());
-            stmt.setLong(4, mClientId);
-            stmt.executeUpdate();
+            try {
+                stmt.setLong(1, mUserId);
+                stmt.setString(2, cat.getUuid());
+                stmt.setLong(3, System.currentTimeMillis());
+                stmt.setLong(4, mClientId);
+                stmt.executeUpdate();
 
-            return true;
+                return true;
+            } finally {
+                if(stmt != null) {
+                    stmt.close();
+                }
+            }
         }
 
         return false;
@@ -993,21 +1364,45 @@ public class DatabaseHelper {
      */
     private long getUserId(String userEmail) throws SQLException {
         String sql = "SELECT id FROM users WHERE email = ?";
-        PreparedStatement stmt = mConnection.prepareStatement(sql);
-        stmt.setString(1, userEmail);
-
-        ResultSet result = stmt.executeQuery();
-        if(result.next()) {
-            return result.getLong(1);
-        } else {
-            sql = "INSERT INTO users (email) VALUES (?)";
-            stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        final PreparedStatement stmt = mConnection.prepareStatement(sql);
+        try {
             stmt.setString(1, userEmail);
-            stmt.executeUpdate();
 
-            result = stmt.getGeneratedKeys();
-            if(result.next()) {
-                return result.getLong(1);
+            final ResultSet result = stmt.executeQuery();
+            try {
+                if(result.next()) {
+                    return result.getLong(1);
+                } else {
+                    sql = "INSERT INTO users (email) VALUES (?)";
+                    final PreparedStatement stmt2 = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                    try {
+                        stmt2.setString(1, userEmail);
+                        stmt2.executeUpdate();
+
+                        final ResultSet result2 = stmt2.getGeneratedKeys();
+                        try {
+                            if(result2.next()) {
+                                return result2.getLong(1);
+                            }
+                        } finally {
+                            if(result2 != null) {
+                                result2.close();
+                            }
+                        }
+                    } finally {
+                        if(stmt2 != null) {
+                            stmt2.close();
+                        }
+                    }
+                }
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
             }
         }
 
