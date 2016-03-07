@@ -112,13 +112,16 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(STATE_CURRENT_ITEM, mPager.getCurrentItem());
+        outState.putInt(STATE_CURRENT_ITEM, mCurrentItem);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mPager = null;
+        if(mPager != null) {
+            mCurrentItem = mPager.getCurrentItem();
+            mPager = null;
+        }
         mNoDataLayout = null;
     }
 
