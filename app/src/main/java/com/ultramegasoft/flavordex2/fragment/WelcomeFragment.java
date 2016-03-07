@@ -11,6 +11,8 @@ import android.widget.TextView;
 import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.R;
 
+import java.util.Calendar;
+
 /**
  * @author Steve Guidetti
  */
@@ -22,6 +24,10 @@ public class WelcomeFragment extends Fragment {
 
         final TextView version = (TextView)root.findViewById(R.id.text_version);
         version.setText(getString(R.string.message_version, BuildConfig.VERSION_NAME));
+
+        ((TextView)root.findViewById(R.id.text_copyright))
+                .setText(getString(R.string.message_copyright,
+                        Calendar.getInstance().get(Calendar.YEAR)));
 
         return root;
     }

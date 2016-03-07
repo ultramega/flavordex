@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.R;
 
+import java.util.Calendar;
+
 /**
  * Base class for the Dialog that shows information about the application.
  *
@@ -71,6 +73,9 @@ public class BaseAboutDialog extends DialogFragment {
                 openWebsite();
             }
         });
+        ((TextView)root.findViewById(R.id.about_copyright))
+                .setText(getString(R.string.message_copyright,
+                        Calendar.getInstance().get(Calendar.YEAR)));
 
         return root;
     }

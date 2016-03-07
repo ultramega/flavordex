@@ -99,7 +99,7 @@
     <string name="message_request_storage">Flavordex requires external storage access to enable photo features.</string>
     <string name="message_reset_flavor">Do you want to reset this flavor chart to the current category default? This will result in a blank chart.</string>
     <string name="message_version">Flavordex v.%s</string>
-    <string name="message_copyright">Copyright © 2015 UltraMega Software</string>
+    <string name="message_copyright">Copyright © %d UltraMega Software</string>
     <string name="message_duplicate_photo">The selected photo has already been added.</string>
 
     <string name="error_camera">Error: Unable to launch camera</string>
