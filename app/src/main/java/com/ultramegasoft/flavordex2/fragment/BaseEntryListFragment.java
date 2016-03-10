@@ -407,7 +407,7 @@ public class BaseEntryListFragment extends ListFragment
     private void setupToolbar() {
         mToolbar = (Toolbar)getActivity().findViewById(R.id.list_toolbar);
         if(mToolbar != null) {
-            mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
+            mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
             mToolbar.setNavigationContentDescription(R.string.abc_action_bar_up_description);
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
