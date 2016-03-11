@@ -60,7 +60,7 @@
 
         <RatingBar
             android:id="@+id/rating"
-            style="?android:attr/ratingBarStyleSmall"
+            style="@style/ListRatingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:numStars="5"
