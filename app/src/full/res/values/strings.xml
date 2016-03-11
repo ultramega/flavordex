@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="google_app_id">1001621163874</string>
     <string name="ext_csv" translatable="false">.csv</string>
 
     <string name="title_create_cat">Create Category</string>
