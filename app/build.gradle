@@ -31,11 +31,11 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:23.1.1'
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
     liteCompile 'com.google.android.gms:play-services-ads:8.4.0'
     fullCompile project(path: ':backend', configuration: 'android-endpoints')
-    fullCompile 'com.android.support:preference-v7:23.1.1'
+    fullCompile 'com.android.support:preference-v7:23.4.0'
     fullCompile 'com.google.android.gms:play-services-gcm:8.4.0'
     fullCompile 'com.google.android.gms:play-services-drive:8.4.0'
 }
