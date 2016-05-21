@@ -32,3 +32,6 @@
 # Suppress warnings on sun.misc.Unsafe
 -dontnote sun.misc.Unsafe
 -dontwarn sun.misc.Unsafe
+
+# TODO: Remove when upgrading Google Play Services
+-keep public @com.google.android.gms.common.util.DynamiteApi class * { *; }
