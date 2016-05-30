@@ -89,8 +89,8 @@ public class EntryUtils {
      */
     private static String getUniqueTitle(ContentResolver cr, String origTitle) {
         final String[] projection = new String[] {Tables.Entries.TITLE};
-        final String where = Tables.Entries.TITLE + " = ?";
-        final String[] whereArgs = new String[] {origTitle};
+        final String where = Tables.Entries.TITLE + " LIKE ?";
+        final String[] whereArgs = new String[] {origTitle + "%"};
         final Cursor cursor = cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs,
                 null);
         if(cursor != null) {
