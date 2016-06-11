@@ -42,13 +42,13 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="appengine-endpoints-1.9.38" level="project" />
     <orderEntry type="library" exported="" name="appengine-endpoints-deps-1.9.38" level="project" />
-    <orderEntry type="library" exported="" name="mysql-connector-java-5.1.37" level="project" />
+    <orderEntry type="library" exported="" name="javax.servlet-api-3.1.0" level="project" />
     <orderEntry type="library" exported="" name="gcm-server-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="appengine-api-1.0-sdk-1.9.38" level="project" />
     <orderEntry type="library" exported="" name="json-simple-1.1.1" level="project" />
     <orderEntry type="library" exported="" name="junit-4.10" level="project" />
     <orderEntry type="library" exported="" name="hamcrest-core-1.1" level="project" />
-    <orderEntry type="library" exported="" name="javax.servlet-api-3.1.0" level="project" />
+    <orderEntry type="library" exported="" name="mysql-connector-java-5.1.39" level="project" />
     <orderEntry type="library" exported="" name="backend.backend-android-endpoints" level="project" />
   </component>
 </module>
