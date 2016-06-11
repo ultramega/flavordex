@@ -14,7 +14,4 @@
     <string name="welcome_header">Welcome to Flavordex Lite</string>
 
     <string name="about_email_subject">Flavordex Lite %s</string>
-
-    <string name="ad_bottom_banner">ca-app-pub-9798297035121760/5415617647</string>
-    <string name="ad_add_entry_interstitial">ca-app-pub-9798297035121760/2322550440</string>
 </resources>

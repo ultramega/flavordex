@@ -18,7 +18,7 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
  *
  * @author Steve Guidetti
  */
-public class BaseAddEntryActivity extends AppCompatActivity {
+public class AddEntryActivity extends AppCompatActivity {
     /**
      * Keys for the Intent extras
      */

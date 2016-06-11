@@ -16,11 +16,10 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
  *
  * @author Steve Guidetti
  */
-public class BaseViewEntryActivity extends AppCompatActivity {
+public class ViewEntryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_entry_detail);
 
         final ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) {
@@ -40,8 +39,8 @@ public class BaseViewEntryActivity extends AppCompatActivity {
             final ViewEntryFragment fragment = new ViewEntryFragment();
             fragment.setArguments(arguments);
 
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.entry_detail_container, fragment).commit();
+            getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment)
+                    .commit();
         }
     }
 
