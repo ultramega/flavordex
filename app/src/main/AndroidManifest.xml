@@ -42,6 +42,8 @@
         <activity
             android:name=".EditEntryActivity"
             android:label="@string/title_edit" />
+        <activity
+            android:name=".EntrySearchActivity" />
     </application>
 
 </manifest>

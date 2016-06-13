@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,8 +17,10 @@ import android.view.MenuItem;
 import com.ultramegasoft.flavordex2.dialog.AboutDialog;
 import com.ultramegasoft.flavordex2.fragment.CatListFragment;
 import com.ultramegasoft.flavordex2.fragment.EntryListFragment;
+import com.ultramegasoft.flavordex2.fragment.EntrySearchFragment;
 import com.ultramegasoft.flavordex2.fragment.ViewEntryFragment;
 import com.ultramegasoft.flavordex2.fragment.WelcomeFragment;
+import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 /**
@@ -28,6 +31,16 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
  * @author Steve Guidetti
  */
 public class BaseEntryListActivity extends AppCompatActivity {
+    /**
+     * Request codes for external Activities
+     */
+    private static final int REQUEST_SEARCH = 300;
+
+    /**
+     * Keys for the saved state
+     */
+    private static final String STATE_FILTERS = "filters";
+
     /**
      * Whether the Activity is in two-pane mode
      */
@@ -42,6 +55,16 @@ public class BaseEntryListActivity extends AppCompatActivity {
      * The currently selected journal entry
      */
     private long mSelectedItem = -1;
+
+    /**
+     * Map of filters to populate the filter fragment
+     */
+    private ContentValues mFilters;
+
+    /**
+     * The result returned by the search Activity
+     */
+    private Intent mSearchResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +87,15 @@ public class BaseEntryListActivity extends AppCompatActivity {
             loadPreferences(PreferenceManager.getDefaultSharedPreferences(this));
 
             PermissionUtils.checkExternalStoragePerm(this, R.string.message_request_storage);
+        } else {
+            mFilters = savedInstanceState.getParcelable(STATE_FILTERS);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(STATE_FILTERS, mFilters);
     }
 
     /**
@@ -88,6 +119,9 @@ public class BaseEntryListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.menu_search:
+                onOpenSearch();
+                return true;
             case R.id.menu_about:
                 AboutDialog.showDialog(getSupportFragmentManager());
                 return true;
@@ -102,6 +136,28 @@ public class BaseEntryListActivity extends AppCompatActivity {
         PermissionUtils.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_SEARCH && resultCode == RESULT_OK) {
+            mSearchResult = data;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mSearchResult != null) {
+            final ContentValues filters
+                    = mSearchResult.getParcelableExtra(EntrySearchFragment.EXTRA_FILTERS);
+            final String where = mSearchResult.getStringExtra(EntrySearchFragment.EXTRA_SQL_WHERE);
+            final String[] whereArgs
+                    = mSearchResult.getStringArrayExtra(EntrySearchFragment.EXTRA_SQL_ARGS);
+            onSearchSubmitted(filters, where, whereArgs);
+            mSearchResult = null;
+        }
+    }
+
     /**
      * Called by the CatListFragment when an item is selected.
      *
@@ -109,13 +165,8 @@ public class BaseEntryListActivity extends AppCompatActivity {
      * @param exportMode Whether to start the entry list Fragment in export mode
      */
     public void onCatSelected(long id, boolean exportMode) {
-        final Fragment fragment = new EntryListFragment();
-        final Bundle args = new Bundle();
-        args.putLong(EntryListFragment.ARG_CAT, id);
-        args.putBoolean(EntryListFragment.ARG_TWO_PANE, mTwoPane);
-        args.putLong(EntryListFragment.ARG_SELECTED_ITEM, mSelectedItem);
-        args.putBoolean(EntryListFragment.ARG_EXPORT_MODE, exportMode);
-        fragment.setArguments(args);
+        final Fragment fragment = EntryListFragment.getInstance(id, mTwoPane, mSelectedItem,
+                exportMode, null, null);
         getSupportFragmentManager().beginTransaction().replace(R.id.entry_list, fragment)
                 .addToBackStack(null).commit();
     }
@@ -154,6 +205,40 @@ public class BaseEntryListActivity extends AppCompatActivity {
             intent.putExtra(ViewEntryFragment.ARG_ENTRY_CAT_ID, catId);
             startActivity(intent);
         }
+    }
+
+    /**
+     * Open the search page.
+     */
+    private void onOpenSearch() {
+        if(mTwoPane) {
+            final Bundle args = new Bundle();
+            args.putParcelable(EntrySearchFragment.ARG_FILTER_VALUES, mFilters);
+            final Fragment fragment = new EntrySearchFragment();
+            fragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.entry_detail_container, fragment).commit();
+        } else {
+            final Intent intent = new Intent(this, EntrySearchActivity.class);
+            intent.putExtra(EntrySearchActivity.EXTRA_FILTERS, mFilters);
+            startActivityForResult(intent, REQUEST_SEARCH);
+        }
+    }
+
+    /**
+     * Open the entry list with search results.
+     *
+     * @param filters   The filter values
+     * @param where     The where clause
+     * @param whereArgs The values for the parameters of the where clause
+     */
+    public void onSearchSubmitted(ContentValues filters, String where, String[] whereArgs) {
+        mFilters = filters;
+        final FragmentManager fm = getSupportFragmentManager();
+        final long catId = filters.getAsLong(Tables.Entries.CAT_ID);
+        final Fragment fragment = EntryListFragment.getInstance(catId, mTwoPane, mSelectedItem,
+                false, where, whereArgs);
+        fm.beginTransaction().replace(R.id.entry_list, fragment).addToBackStack(null).commit();
     }
 
     @Override

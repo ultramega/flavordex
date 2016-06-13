@@ -3,7 +3,6 @@ package com.ultramegasoft.flavordex2.fragment;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -18,8 +17,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,7 +29,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.SearchView;
 
 import com.ultramegasoft.flavordex2.AddEntryActivity;
 import com.ultramegasoft.flavordex2.EditEntryActivity;
@@ -41,7 +37,6 @@ import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
-import com.ultramegasoft.flavordex2.dialog.EntryFilterDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryDeleter;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
@@ -58,15 +53,16 @@ public class BaseEntryListFragment extends ListFragment
     /**
      * Keys for the Fragment arguments
      */
-    public static final String ARG_CAT = "cat";
-    public static final String ARG_TWO_PANE = "two_pane";
-    public static final String ARG_SELECTED_ITEM = "selected_item";
-    public static final String ARG_EXPORT_MODE = "export_mode";
+    private static final String ARG_CAT = "cat";
+    private static final String ARG_TWO_PANE = "two_pane";
+    private static final String ARG_SELECTED_ITEM = "selected_item";
+    private static final String ARG_WHERE = "where";
+    private static final String ARG_WHERE_ARGS = "where_args";
+    protected static final String ARG_EXPORT_MODE = "export_mode";
 
     /**
      * Request codes for external Activities
      */
-    private static final int REQUEST_SET_FILTERS = 300;
     private static final int REQUEST_ADD_ENTRY = 301;
     private static final int REQUEST_DELETE_ENTRY = 302;
     private static final int REQUEST_SELECT_CAT = 303;
@@ -80,11 +76,6 @@ public class BaseEntryListFragment extends ListFragment
      * Keys for the saved state
      */
     private static final String STATE_SELECTED_ITEM = "selected_item";
-    private static final String STATE_SEARCH = "search";
-    private static final String STATE_FILTERS = "filters";
-    private static final String STATE_FILTER_TEXT = "filter_text";
-    private static final String STATE_WHERE = "where";
-    private static final String STATE_WHERE_ARGS = "where_args";
 
     /**
      * Loader IDs
@@ -116,40 +107,9 @@ public class BaseEntryListFragment extends ListFragment
     private Toolbar mToolbar;
 
     /**
-     * The Toolbar for displaying filter settings
-     */
-    private Toolbar mFilterToolbar;
-
-    /**
-     * Whether the filter Toolbar is showing
-     */
-    private boolean mFilterToolbarShowing;
-
-    /**
-     * Toolbar Animations
-     */
-    private Animation mFilterInAnimation;
-    private Animation mFilterOutAnimation;
-
-    /**
      * The current activated item if in two-pane mode
      */
     protected long mActivatedItem = -1;
-
-    /**
-     * The string to search for in the list query
-     */
-    private String mSearchQuery;
-
-    /**
-     * Map of filters to populate the filter dialog
-     */
-    private ContentValues mFilters;
-
-    /**
-     * The list of filter parameters to show the user
-     */
-    private String mFilterText;
 
     /**
      * The where string to use in the database query
@@ -186,6 +146,32 @@ public class BaseEntryListFragment extends ListFragment
      */
     protected EntryListAdapter mAdapter;
 
+    /**
+     * Get an instance of this Fragment.
+     *
+     * @param catId        The category ID
+     * @param twoPane      Whether the layout is in two-pane mode
+     * @param selectedItem The selected item ID
+     * @param exportMode   Whether to enable export mode
+     * @param where        The where clause
+     * @param whereArgs    The values for the parameters of the where clause
+     * @return An instance of this Fragment
+     */
+    public static EntryListFragment getInstance(long catId, boolean twoPane, long selectedItem,
+                                                boolean exportMode, String where,
+                                                String[] whereArgs) {
+        final EntryListFragment fragment = new EntryListFragment();
+        final Bundle args = new Bundle();
+        args.putLong(ARG_CAT, catId);
+        args.putBoolean(ARG_TWO_PANE, twoPane);
+        args.putLong(ARG_SELECTED_ITEM, selectedItem);
+        args.putBoolean(ARG_EXPORT_MODE, exportMode);
+        args.putString(ARG_WHERE, where);
+        args.putStringArray(ARG_WHERE_ARGS, whereArgs);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -194,14 +180,11 @@ public class BaseEntryListFragment extends ListFragment
         mCatId = args.getLong(ARG_CAT, mCatId);
         mTwoPane = args.getBoolean(ARG_TWO_PANE, mTwoPane);
         mActivatedItem = args.getLong(ARG_SELECTED_ITEM, mActivatedItem);
+        mWhere = args.getString(ARG_WHERE);
+        mWhereArgs = args.getStringArray(ARG_WHERE_ARGS);
 
         if(savedInstanceState != null) {
             mActivatedItem = savedInstanceState.getLong(STATE_SELECTED_ITEM, mActivatedItem);
-            mSearchQuery = savedInstanceState.getString(STATE_SEARCH);
-            mFilters = savedInstanceState.getParcelable(STATE_FILTERS);
-            mFilterText = savedInstanceState.getString(STATE_FILTER_TEXT);
-            mWhere = savedInstanceState.getString(STATE_WHERE);
-            mWhereArgs = savedInstanceState.getStringArray(STATE_WHERE_ARGS);
         }
 
         final SharedPreferences prefs = PreferenceManager
@@ -218,8 +201,7 @@ public class BaseEntryListFragment extends ListFragment
         setupToolbar();
         registerForContextMenu(getListView());
 
-        updateFilterToolbar(false);
-        updateEmptyText();
+        setEmptyText();
 
         mAdapter = new EntryListAdapter(getContext());
         setListShown(false);
@@ -271,11 +253,6 @@ public class BaseEntryListFragment extends ListFragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(STATE_SELECTED_ITEM, mActivatedItem);
-        outState.putString(STATE_SEARCH, mSearchQuery);
-        outState.putParcelable(STATE_FILTERS, mFilters);
-        outState.putString(STATE_FILTER_TEXT, mFilterText);
-        outState.putString(STATE_WHERE, mWhere);
-        outState.putStringArray(STATE_WHERE_ARGS, mWhereArgs);
     }
 
     @Override
@@ -290,10 +267,6 @@ public class BaseEntryListFragment extends ListFragment
         switch(item.getItemId()) {
             case android.R.id.home:
                 getFragmentManager().popBackStack();
-                return true;
-            case R.id.menu_filter:
-                EntryFilterDialog.showDialog(getFragmentManager(), this, REQUEST_SET_FILTERS,
-                        mFilters);
                 return true;
             case R.id.menu_sort_name:
                 item.setChecked(true);
@@ -364,9 +337,6 @@ public class BaseEntryListFragment extends ListFragment
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
-                case REQUEST_SET_FILTERS:
-                    setFilters(data);
-                    break;
                 case REQUEST_SELECT_CAT:
                     addEntry(data.getLongExtra(CatListDialog.EXTRA_CAT_ID, 0),
                             data.getStringExtra(CatListDialog.EXTRA_CAT_NAME));
@@ -444,7 +414,6 @@ public class BaseEntryListFragment extends ListFragment
             return;
         }
 
-        setupSearch(menu.findItem(R.id.menu_search));
         if(mSortField.equals(Tables.Entries.TITLE)) {
             menu.findItem(R.id.menu_sort_name).setChecked(true);
         }
@@ -455,71 +424,6 @@ public class BaseEntryListFragment extends ListFragment
             menu.findItem(R.id.menu_sort_rating).setChecked(true);
         }
 
-    }
-
-    /**
-     * Set up the search bar.
-     *
-     * @param searchItem The search action item
-     */
-    private void setupSearch(MenuItem searchItem) {
-        if(searchItem == null) {
-            return;
-        }
-
-        final SearchView searchView = (SearchView)searchItem.getActionView();
-        searchView.setQueryHint(getText(R.string.menu_search));
-
-        if(!TextUtils.isEmpty(mSearchQuery)) {
-            searchItem.expandActionView();
-            searchView.setQuery(mSearchQuery, false);
-        }
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                setSearchQuery(newText);
-                return false;
-            }
-        });
-    }
-
-    /**
-     * Set the list searchQuery.
-     *
-     * @param searchQuery The searchQuery
-     */
-    private void setSearchQuery(String searchQuery) {
-        mSearchQuery = searchQuery;
-        updateEmptyText();
-        getLoaderManager().restartLoader(0, null, this);
-    }
-
-    /**
-     * Set the filter parameters from the result from the filter dialog.
-     *
-     * @param filterData The Intent returned by EntryFilterDialog
-     */
-    private void setFilters(Intent filterData) {
-        if(filterData == null) {
-            mFilters = null;
-            mFilterText = null;
-            mWhere = null;
-            mWhereArgs = null;
-        } else {
-            mFilters = filterData.getParcelableExtra(EntryFilterDialog.EXTRA_FILTER_VALUES);
-            mFilterText = filterData.getStringExtra(EntryFilterDialog.EXTRA_FIELDS_LIST);
-            mWhere = filterData.getStringExtra(EntryFilterDialog.EXTRA_SQL_WHERE);
-            mWhereArgs = filterData.getStringArrayExtra(EntryFilterDialog.EXTRA_SQL_ARGS);
-        }
-        updateFilterToolbar(true);
-        updateEmptyText();
-        getLoaderManager().restartLoader(0, null, this);
     }
 
     /**
@@ -543,65 +447,14 @@ public class BaseEntryListFragment extends ListFragment
     }
 
     /**
-     * Update the state of the filter Toolbar.
-     */
-    private void updateFilterToolbar(boolean animate) {
-        if(mFilters == null || mFilters.size() == 0) {
-            showFilterToolbar(false, animate);
-        } else {
-            showFilterToolbar(true, animate);
-            mFilterToolbar.setTitle(getString(R.string.message_active_filters, mFilterText));
-        }
-    }
-
-    /**
-     * Show or hide the filter Toolbar.
-     *
-     * @param show Whether to show the filter Toolbar
-     */
-    private void showFilterToolbar(boolean show, boolean animate) {
-        if(mFilterToolbarShowing == show) {
-            return;
-        }
-
-        if(mFilterToolbar == null) {
-            mFilterToolbar = (Toolbar)getActivity().findViewById(R.id.filter_toolbar);
-            mFilterToolbar.inflateMenu(R.menu.filters_menu);
-            mFilterToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    switch(item.getItemId()) {
-                        case R.id.menu_clear:
-                            setFilters(null);
-                            return true;
-                    }
-                    return false;
-                }
-            });
-
-            mFilterInAnimation = AnimationUtils.loadAnimation(getContext(),
-                    R.anim.toolbar_slide_in_top);
-            mFilterOutAnimation = AnimationUtils.loadAnimation(getContext(),
-                    R.anim.toolbar_slide_out_top);
-        }
-
-        mFilterToolbar.setVisibility(show ? View.VISIBLE : View.GONE);
-        if(animate) {
-            mFilterToolbar.startAnimation(show ? mFilterInAnimation : mFilterOutAnimation);
-        }
-
-        mFilterToolbarShowing = show;
-    }
-
-    /**
      * Set the text shown when the list is empty based on any filters that are set.
      */
-    private void updateEmptyText() {
+    private void setEmptyText() {
         CharSequence emptyText;
-        if(TextUtils.isEmpty(mSearchQuery)) {
+        if(mWhere == null) {
             emptyText = getText(R.string.message_no_data);
         } else {
-            emptyText = Html.fromHtml(getString(R.string.message_no_data_filter, mSearchQuery));
+            emptyText = getString(R.string.message_no_data_filter);
         }
         setEmptyText(emptyText);
     }
@@ -670,20 +523,10 @@ public class BaseEntryListFragment extends ListFragment
         switch(id) {
             case LOADER_ENTRIES:
                 Uri uri;
-                if(TextUtils.isEmpty(mSearchQuery)) {
-                    if(mCatId > 0) {
-                        uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_CAT_URI_BASE,
-                                mCatId);
-                    } else {
-                        uri = Tables.Entries.CONTENT_URI;
-                    }
+                if(mCatId > 0) {
+                    uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_CAT_URI_BASE, mCatId);
                 } else {
-                    if(mCatId > 0) {
-                        uri = Tables.Entries.getCatFilterUri(mCatId, mSearchQuery);
-                    } else {
-                        uri = Uri.withAppendedPath(Tables.Entries.CONTENT_FILTER_URI_BASE,
-                                Uri.encode(mSearchQuery));
-                    }
+                    uri = Tables.Entries.CONTENT_URI;
                 }
                 final String sort = mSortField + (mSortReversed ? " DESC" : " ASC");
                 return new CursorLoader(getContext(), uri, LIST_PROJECTION, mWhere, mWhereArgs,

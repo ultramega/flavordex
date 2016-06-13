@@ -1,24 +1,27 @@
-package com.ultramegasoft.flavordex2.dialog;
+package com.ultramegasoft.flavordex2.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Spinner;
 
+import com.ultramegasoft.flavordex2.EntryListActivity;
+import com.ultramegasoft.flavordex2.EntrySearchActivity;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.widget.CatListAdapter;
 import com.ultramegasoft.flavordex2.widget.DateInputWidget;
 
 import java.util.ArrayList;
@@ -29,27 +32,27 @@ import java.util.Date;
  *
  * @author Steve Guidetti
  */
-public class EntryFilterDialog extends DialogFragment {
-    private static final String TAG = "EntryFilterDialog";
-
+public class EntrySearchFragment extends DialogFragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Arguments for the Fragment
      */
-    private static final String ARG_FILTER_VALUES = "filter_values";
+    public static final String ARG_FILTER_VALUES = "filter_values";
     private static final String ARG_DATE_MIN = "date_min";
     private static final String ARG_DATE_MAX = "date_max";
 
     /**
      * Keys for the result data Intent
      */
-    public static final String EXTRA_FILTER_VALUES = "filter_values";
+    public static final String EXTRA_FILTERS = "filter_values";
     public static final String EXTRA_SQL_WHERE = "where";
     public static final String EXTRA_SQL_ARGS = "args";
-    public static final String EXTRA_FIELDS_LIST = "fields_list";
 
     /**
      * Views from the layout
      */
+    private Spinner mSpnCat;
+    private EditText mTxtTitle;
     private EditText mTxtMaker;
     private EditText mTxtOrigin;
     private EditText mTxtLocation;
@@ -57,61 +60,32 @@ public class EntryFilterDialog extends DialogFragment {
     private DateInputWidget mDateMax;
 
     /**
-     * Show the filter dialog.
-     *
-     * @param fm          The FragmentManager to use
-     * @param target      The Fragment to send results to
-     * @param requestCode The request code
-     * @param filters     Initial values for the form fields
+     * The initial selected category ID
      */
-    public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
-                                  ContentValues filters) {
-        final EntryFilterDialog fragment = new EntryFilterDialog();
-        fragment.setTargetFragment(target, requestCode);
-        if(filters != null) {
-            final Bundle args = new Bundle();
-            args.putParcelable(ARG_FILTER_VALUES, filters);
-            fragment.setArguments(args);
-        }
-        fragment.show(fm, TAG);
+    private long mCatId;
 
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new AlertDialog.Builder(getContext())
-                .setTitle(R.string.title_filter)
-                .setIcon(R.drawable.ic_filter_list)
-                .setView(getLayout())
-                .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        performFilter();
-                    }
-                })
-                .setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-    }
-
-    /**
-     * Get the layout for the filter form.
-     *
-     * @return The layout
-     */
     @SuppressLint("InflateParams")
-    private View getLayout() {
-        final LayoutInflater inflater = LayoutInflater.from(getContext());
-        final View root = inflater.inflate(R.layout.dialog_filter_list, null);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        final View root = inflater.inflate(R.layout.fragment_search, null);
 
+        mSpnCat = (Spinner)root.findViewById(R.id.cat);
+        mTxtTitle = (EditText)root.findViewById(R.id.title);
         mTxtMaker = (EditText)root.findViewById(R.id.maker);
         mTxtOrigin = (EditText)root.findViewById(R.id.origin);
         mTxtLocation = (EditText)root.findViewById(R.id.location);
         mDateMin = (DateInputWidget)root.findViewById(R.id.date_min);
         mDateMax = (DateInputWidget)root.findViewById(R.id.date_max);
+
+        root.findViewById(R.id.button_search).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performFilter();
+            }
+        });
+
+        getLoaderManager().initLoader(0, null, this);
 
         setupEventHandlers();
         populateFields();
@@ -160,6 +134,9 @@ public class EntryFilterDialog extends DialogFragment {
         if(args != null) {
             final ContentValues filters = args.getParcelable(ARG_FILTER_VALUES);
             if(filters != null) {
+                mCatId = filters.getAsLong(Tables.Entries.CAT_ID);
+
+                mTxtTitle.setText(filters.getAsString(Tables.Entries.TITLE));
                 mTxtMaker.setText(filters.getAsString(Tables.Entries.MAKER));
                 mTxtOrigin.setText(filters.getAsString(Tables.Entries.ORIGIN));
                 mTxtLocation.setText(filters.getAsString(Tables.Entries.LOCATION));
@@ -175,15 +152,18 @@ public class EntryFilterDialog extends DialogFragment {
     }
 
     /**
-     * Send the results to the target Fragment.
+     * Parse the form fields and send the results to the Activity.
      */
     private void performFilter() {
-        final Fragment fragment = getTargetFragment();
-        if(fragment != null) {
-            final Intent data = new Intent();
-            parseFields(data);
-
-            fragment.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, data);
+        final Intent intent = new Intent();
+        parseFields(intent);
+        if(getActivity() instanceof EntrySearchActivity) {
+            ((EntrySearchActivity)getActivity()).publishResult(intent);
+        } else if(getActivity() instanceof EntryListActivity) {
+            final ContentValues filters = intent.getParcelableExtra(EXTRA_FILTERS);
+            final String where = intent.getStringExtra(EXTRA_SQL_WHERE);
+            final String[] whereArgs = intent.getStringArrayExtra(EXTRA_SQL_ARGS);
+            ((EntryListActivity)getActivity()).onSearchSubmitted(filters, where, whereArgs);
         }
     }
 
@@ -196,27 +176,31 @@ public class EntryFilterDialog extends DialogFragment {
         final ContentValues filterValues = new ContentValues();
         final StringBuilder where = new StringBuilder();
         final ArrayList<String> argList = new ArrayList<>();
-        final StringBuilder fieldsList = new StringBuilder();
+
+        filterValues.put(Tables.Entries.CAT_ID, mSpnCat.getSelectedItemId());
+
+        if(!TextUtils.isEmpty(mTxtTitle.getText())) {
+            filterValues.put(Tables.Entries.TITLE, mTxtTitle.getText().toString());
+            where.append(Tables.Entries.TITLE).append(" LIKE ? AND ");
+            argList.add("%" + mTxtTitle.getText() + "%");
+        }
 
         if(!TextUtils.isEmpty(mTxtMaker.getText())) {
             filterValues.put(Tables.Entries.MAKER, mTxtMaker.getText().toString());
             where.append(Tables.Entries.MAKER).append(" LIKE ? AND ");
             argList.add("%" + mTxtMaker.getText() + "%");
-            fieldsList.append(getString(R.string.filter_maker)).append(", ");
         }
 
         if(!TextUtils.isEmpty(mTxtOrigin.getText())) {
             filterValues.put(Tables.Entries.ORIGIN, mTxtOrigin.getText().toString());
             where.append(Tables.Entries.ORIGIN).append(" LIKE ? AND ");
             argList.add("%" + mTxtOrigin.getText() + "%");
-            fieldsList.append(getString(R.string.filter_origin)).append(", ");
         }
 
         if(!TextUtils.isEmpty(mTxtLocation.getText())) {
             filterValues.put(Tables.Entries.LOCATION, mTxtLocation.getText().toString());
             where.append(Tables.Entries.LOCATION).append(" LIKE ? AND ");
             argList.add("%" + mTxtLocation.getText() + "%");
-            fieldsList.append(getString(R.string.filter_location)).append(", ");
         }
 
         final Date minDate = mDateMin.getDate();
@@ -233,20 +217,40 @@ public class EntryFilterDialog extends DialogFragment {
                 where.append(Tables.Entries.DATE).append(" < ")
                         .append(maxTime + (24 * 60 * 60 * 1000)).append(" AND ");
             }
-            fieldsList.append(getString(R.string.filter_date)).append(", ");
         }
 
         if(where.length() > 5) {
             where.delete(where.length() - 5, where.length());
         }
 
-        if(fieldsList.length() > 2) {
-            fieldsList.delete(fieldsList.length() - 2, fieldsList.length());
-        }
-
-        data.putExtra(EXTRA_FILTER_VALUES, filterValues);
+        data.putExtra(EXTRA_FILTERS, filterValues);
         data.putExtra(EXTRA_SQL_WHERE, where.toString());
         data.putExtra(EXTRA_SQL_ARGS, argList.toArray(new String[argList.size()]));
-        data.putExtra(EXTRA_FIELDS_LIST, fieldsList.toString());
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getContext(), Tables.Cats.CONTENT_URI, null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        final CatListAdapter adapter = new CatListAdapter(getContext(), data,
+                android.R.layout.simple_spinner_item,
+                android.R.layout.simple_spinner_dropdown_item);
+        adapter.setShowAllCats(true);
+        mSpnCat.setAdapter(adapter);
+
+        for(int i = 0; i < adapter.getCount(); i++) {
+            if(adapter.getItemId(i) == mCatId) {
+                mSpnCat.setSelection(i);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        ((CatListAdapter)mSpnCat.getAdapter()).swapCursor(null);
     }
 }

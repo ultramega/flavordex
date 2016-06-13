@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/filter_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:background="#33000000"
-        android:elevation="4dp"
-        android:minHeight="36dp"
-        android:visibility="gone"
-        app:titleTextAppearance="@style/TextAppearance.AppCompat"
-        tools:ignore="UnusedAttribute" />
 
     <FrameLayout
         android:id="@+id/list"

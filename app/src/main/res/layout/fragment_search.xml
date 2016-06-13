@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:shrinkColumns="1"
+            android:stretchColumns="1">
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_cat" />
+
+                <Spinner
+                    android:id="@+id/cat"
+                    style="@style/Spinner" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_title" />
+
+                <EditText
+                    android:id="@+id/title"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/hint_entry_title" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_maker" />
+
+                <EditText
+                    android:id="@+id/maker"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/hint_maker" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_origin" />
+
+                <EditText
+                    android:id="@+id/origin"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/hint_origin" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_location" />
+
+                <EditText
+                    android:id="@+id/location"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/hint_location_filter" />
+            </TableRow>
+
+            <TextView
+                style="@style/SubHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/header_date" />
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/label_date_min" />
+
+                <com.ultramegasoft.flavordex2.widget.DateInputWidget
+                    android:id="@+id/date_min"
+                    android:background="@drawable/divider"
+                    app:allowClear="true" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/label_date_max" />
+
+                <com.ultramegasoft.flavordex2.widget.DateInputWidget
+                    android:id="@+id/date_max"
+                    android:background="@drawable/divider"
+                    app:allowClear="true" />
+            </TableRow>
+        </TableLayout>
+    </ScrollView>
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <Button
+            android:id="@+id/button_clear"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_clear" />
+
+        <Button
+            android:id="@+id/button_search"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_search" />
+    </LinearLayout>
+</LinearLayout>

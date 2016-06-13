@@ -8,16 +8,6 @@
         android:title="@string/menu_add_entry"
         app:showAsAction="ifRoom|withText" />
     <item
-        android:id="@+id/menu_search"
-        android:title="@string/menu_search"
-        app:actionViewClass="android.widget.SearchView"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/menu_filter"
-        android:icon="@drawable/ic_filter_list"
-        android:title="@string/menu_filter"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/menu_sort"
         android:icon="@drawable/ic_sort"
         android:title="@string/menu_sort"
