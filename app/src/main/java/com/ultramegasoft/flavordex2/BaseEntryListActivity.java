@@ -222,12 +222,15 @@ public class BaseEntryListActivity extends AppCompatActivity {
      */
     private void onOpenSearch() {
         if(mTwoPane) {
+            final FragmentManager fm = getSupportFragmentManager();
+            if(fm.findFragmentById(R.id.entry_detail_container) instanceof EntrySearchFragment) {
+                return;
+            }
             final Bundle args = new Bundle();
             args.putParcelable(EntrySearchFragment.ARG_FILTER_VALUES, mFilters);
             final Fragment fragment = new EntrySearchFragment();
             fragment.setArguments(args);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.entry_detail_container, fragment).commit();
+            fm.beginTransaction().replace(R.id.entry_detail_container, fragment).commit();
         } else {
             final Intent intent = new Intent(this, EntrySearchActivity.class);
             intent.putExtra(EntrySearchActivity.EXTRA_FILTERS, mFilters);
