@@ -86,6 +86,7 @@
     <string name="label_date">Date/Time: </string>
     <string name="label_date_min">Starting: </string>
     <string name="label_date_max">Ending: </string>
+    <string name="label_notes">Notes: </string>
 
     <string name="message_no_data">No entries found.</string>
     <string name="message_no_data_filter">No entries found matching your query.</string>

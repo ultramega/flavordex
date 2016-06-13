@@ -78,12 +78,36 @@
 
                 <TextView
                     style="@style/TableText.Label"
+                    android:text="@string/label_price" />
+
+                <EditText
+                    android:id="@+id/price"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/hint_price" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
                     android:text="@string/label_location" />
 
                 <EditText
                     android:id="@+id/location"
                     style="@style/TextInput.Name"
                     android:hint="@string/hint_location_filter" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_notes" />
+
+                <EditText
+                    android:id="@+id/notes"
+                    style="@style/TextInput.Name"
+                    android:hint="@string/header_notes" />
             </TableRow>
 
             <TextView

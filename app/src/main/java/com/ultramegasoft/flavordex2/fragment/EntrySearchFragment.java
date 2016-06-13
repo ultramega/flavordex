@@ -55,7 +55,9 @@ public class EntrySearchFragment extends DialogFragment
     private EditText mTxtTitle;
     private EditText mTxtMaker;
     private EditText mTxtOrigin;
+    private EditText mTxtPrice;
     private EditText mTxtLocation;
+    private EditText mTxtNotes;
     private DateInputWidget mDateMin;
     private DateInputWidget mDateMax;
 
@@ -74,7 +76,9 @@ public class EntrySearchFragment extends DialogFragment
         mTxtTitle = (EditText)root.findViewById(R.id.title);
         mTxtMaker = (EditText)root.findViewById(R.id.maker);
         mTxtOrigin = (EditText)root.findViewById(R.id.origin);
+        mTxtPrice = (EditText)root.findViewById(R.id.price);
         mTxtLocation = (EditText)root.findViewById(R.id.location);
+        mTxtNotes = (EditText)root.findViewById(R.id.notes);
         mDateMin = (DateInputWidget)root.findViewById(R.id.date_min);
         mDateMax = (DateInputWidget)root.findViewById(R.id.date_max);
 
@@ -146,7 +150,9 @@ public class EntrySearchFragment extends DialogFragment
                 mTxtTitle.setText(filters.getAsString(Tables.Entries.TITLE));
                 mTxtMaker.setText(filters.getAsString(Tables.Entries.MAKER));
                 mTxtOrigin.setText(filters.getAsString(Tables.Entries.ORIGIN));
+                mTxtPrice.setText(filters.getAsString(Tables.Entries.PRICE));
                 mTxtLocation.setText(filters.getAsString(Tables.Entries.LOCATION));
+                mTxtNotes.setText(filters.getAsString(Tables.Entries.NOTES));
 
                 if(filters.containsKey(ARG_DATE_MIN)) {
                     mDateMin.setDate(new Date(filters.getAsLong(ARG_DATE_MIN)));
@@ -166,7 +172,9 @@ public class EntrySearchFragment extends DialogFragment
         mTxtTitle.setText(null);
         mTxtMaker.setText(null);
         mTxtOrigin.setText(null);
+        mTxtPrice.setText(null);
         mTxtLocation.setText(null);
+        mTxtNotes.setText(null);
         mDateMin.setDate(null);
         mDateMax.setDate(null);
     }
@@ -217,10 +225,22 @@ public class EntrySearchFragment extends DialogFragment
             argList.add("%" + mTxtOrigin.getText() + "%");
         }
 
+        if(!TextUtils.isEmpty(mTxtPrice.getText())) {
+            filterValues.put(Tables.Entries.PRICE, mTxtPrice.getText().toString());
+            where.append(Tables.Entries.PRICE).append(" LIKE ? AND ");
+            argList.add("%" + mTxtPrice.getText() + "%");
+        }
+
         if(!TextUtils.isEmpty(mTxtLocation.getText())) {
             filterValues.put(Tables.Entries.LOCATION, mTxtLocation.getText().toString());
             where.append(Tables.Entries.LOCATION).append(" LIKE ? AND ");
             argList.add("%" + mTxtLocation.getText() + "%");
+        }
+
+        if(!TextUtils.isEmpty(mTxtNotes.getText())) {
+            filterValues.put(Tables.Entries.NOTES, mTxtNotes.getText().toString());
+            where.append(Tables.Entries.NOTES).append(" LIKE ? AND ");
+            argList.add("%" + mTxtNotes.getText() + "%");
         }
 
         final Date minDate = mDateMin.getDate();
