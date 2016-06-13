@@ -8,13 +8,24 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:shrinkColumns="1"
             android:stretchColumns="1">
+
+            <TableRow>
+
+                <TextView
+                    android:layout_span="2"
+                    style="@style/Header"
+                    android:layout_gravity="center"
+                    android:layout_margin="6dp"
+                    android:text="@string/title_search" />
+            </TableRow>
 
             <TableRow>
 
@@ -113,7 +124,8 @@
         style="?android:attr/buttonBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_weight="0"
+        android:layout_gravity="end">
 
         <Button
             android:id="@+id/button_clear"

@@ -21,7 +21,7 @@
     <string name="title_remove_photo">Remove Photo?</string>
     <string name="title_add_flavor">Rate Flavors</string>
     <string name="title_select_cat">Select Category</string>
-    <string name="title_filter">Filter Entries</string>
+    <string name="title_search">Search Entries</string>
     <string name="title_sort">Sort by…</string>
     <string name="title_categories">Categories</string>
     <string name="title_all_entries">All Entries</string>
