@@ -78,6 +78,13 @@ public class EntrySearchFragment extends DialogFragment
         mDateMin = (DateInputWidget)root.findViewById(R.id.date_min);
         mDateMax = (DateInputWidget)root.findViewById(R.id.date_max);
 
+        root.findViewById(R.id.button_clear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetForm();
+            }
+        });
+
         root.findViewById(R.id.button_search).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,6 +156,19 @@ public class EntrySearchFragment extends DialogFragment
                 }
             }
         }
+    }
+
+    /**
+     * Clear all form fields.
+     */
+    private void resetForm() {
+        mSpnCat.setSelection(0);
+        mTxtTitle.setText(null);
+        mTxtMaker.setText(null);
+        mTxtOrigin.setText(null);
+        mTxtLocation.setText(null);
+        mDateMin.setDate(null);
+        mDateMax.setDate(null);
     }
 
     /**
