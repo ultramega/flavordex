@@ -266,7 +266,7 @@ public class BaseEntryListFragment extends ListFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case android.R.id.home:
-                getFragmentManager().popBackStack();
+                ((EntryListActivity)getActivity()).onCatSelected(-1, false);
                 return true;
             case R.id.menu_sort_name:
                 item.setChecked(true);
@@ -382,7 +382,7 @@ public class BaseEntryListFragment extends ListFragment
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    getFragmentManager().popBackStack();
+                    ((EntryListActivity)getActivity()).onCatSelected(-1, false);
                 }
             });
             final Menu menu = mToolbar.getMenu();

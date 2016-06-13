@@ -52,6 +52,11 @@ public class BaseEntryListActivity extends AppCompatActivity {
     private Fragment mWelcomeFragment;
 
     /**
+     * The category list Fragment
+     */
+    private Fragment mCatListFragment = new CatListFragment();
+
+    /**
      * The currently selected journal entry
      */
     private long mSelectedItem = -1;
@@ -77,8 +82,8 @@ public class BaseEntryListActivity extends AppCompatActivity {
         }
 
         if(savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.entry_list, new CatListFragment()).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.entry_list, mCatListFragment)
+                    .commit();
             if(mTwoPane) {
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.entry_detail_container, mWelcomeFragment).commit();
@@ -165,10 +170,15 @@ public class BaseEntryListActivity extends AppCompatActivity {
      * @param exportMode Whether to start the entry list Fragment in export mode
      */
     public void onCatSelected(long id, boolean exportMode) {
-        final Fragment fragment = EntryListFragment.getInstance(id, mTwoPane, mSelectedItem,
-                exportMode, null, null);
-        getSupportFragmentManager().beginTransaction().replace(R.id.entry_list, fragment)
-                .addToBackStack(null).commit();
+        final Fragment fragment;
+        if(id < 0) {
+            fragment = mCatListFragment;
+            mFilters = null;
+        } else {
+            fragment = EntryListFragment.getInstance(id, mTwoPane, mSelectedItem, exportMode, null,
+                    null);
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.entry_list, fragment).commit();
     }
 
     /**
@@ -234,11 +244,10 @@ public class BaseEntryListActivity extends AppCompatActivity {
      */
     public void onSearchSubmitted(ContentValues filters, String where, String[] whereArgs) {
         mFilters = filters;
-        final FragmentManager fm = getSupportFragmentManager();
         final long catId = filters.getAsLong(Tables.Entries.CAT_ID);
         final Fragment fragment = EntryListFragment.getInstance(catId, mTwoPane, mSelectedItem,
                 false, where, whereArgs);
-        fm.beginTransaction().replace(R.id.entry_list, fragment).addToBackStack(null).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.entry_list, fragment).commit();
     }
 
     @Override
