@@ -204,6 +204,11 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         protected static final String COMP_LTE = "<=";
 
         /**
+         * Prefix for keys for extra fields in the filter list
+         */
+        private static final String EXTRA_PREFIX = "_extra_";
+
+        /**
          * Keys for the saved state
          */
         private static final String STATE_EXTRAS = "extras";
@@ -461,7 +466,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
          */
         protected void parseExtraField(ExtraFieldHolder extra, String comparison) {
             if(!TextUtils.isEmpty(extra.value)) {
-                mFilters.put("extra_" + extra.id, extra.value);
+                mFilters.put(EXTRA_PREFIX + extra.id, extra.value);
                 mWhere.append("(SELECT 1 FROM ").append(Tables.EntriesExtras.TABLE_NAME)
                         .append(" WHERE extra = ? AND value ").append(comparison)
                         .append(" ? LIMIT 1) AND ");
@@ -488,16 +493,33 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            ContentValues filters = null;
+            if(getArguments() != null) {
+                filters = getArguments().getParcelable(ARG_FILTERS);
+                if(filters != null) {
+                    mFormHelper.mTxtTitle.setText(filters.getAsString(Tables.Entries.TITLE));
+                    mFormHelper.mTxtMaker.setText(filters.getAsString(Tables.Entries.MAKER));
+                    mFormHelper.mTxtOrigin.setText(filters.getAsString(Tables.Entries.ORIGIN));
+                    mFormHelper.mTxtPrice.setText(filters.getAsString(Tables.Entries.PRICE));
+                    mFormHelper.mTxtLocation.setText(filters.getAsString(Tables.Entries.LOCATION));
+                }
+            }
+
             if(data != null) {
-                data.move(-1);
+                data.moveToPosition(-1);
                 final LinkedHashMap<String, ExtraFieldHolder> extras = new LinkedHashMap<>();
                 while(data.moveToNext()) {
                     final long id = data.getLong(data.getColumnIndex(Tables.Extras._ID));
                     final String name = data.getString(data.getColumnIndex(Tables.Extras.NAME));
                     final boolean preset =
                             data.getLong(data.getColumnIndex(Tables.Extras.PRESET)) == 1;
-                    extras.put(name, new ExtraFieldHolder(id, name, preset));
+                    final ExtraFieldHolder extra = new ExtraFieldHolder(id, name, preset);
+                    if(filters != null) {
+                        extra.value = filters.getAsString(EXTRA_PREFIX + id);
+                    }
+                    extras.put(name, extra);
                 }
+
                 mFormHelper.setExtras(extras);
             }
         }
