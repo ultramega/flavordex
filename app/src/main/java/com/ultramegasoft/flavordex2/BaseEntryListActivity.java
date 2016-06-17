@@ -39,6 +39,8 @@ public class BaseEntryListActivity extends AppCompatActivity {
     /**
      * Keys for the saved state
      */
+    private static final String STATE_SELECTED_CAT = "selected_cat";
+    private static final String STATE_SELECTED_ENTRY = "selected_entry";
     private static final String STATE_FILTERS = "filters";
 
     /**
@@ -98,6 +100,8 @@ public class BaseEntryListActivity extends AppCompatActivity {
 
             PermissionUtils.checkExternalStoragePerm(this, R.string.message_request_storage);
         } else {
+            mSelectedCat = savedInstanceState.getLong(STATE_SELECTED_CAT, mSelectedCat);
+            mSelectedItem = savedInstanceState.getLong(STATE_SELECTED_ENTRY, mSelectedItem);
             mFilters = savedInstanceState.getParcelable(STATE_FILTERS);
         }
     }
@@ -105,6 +109,8 @@ public class BaseEntryListActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putLong(STATE_SELECTED_CAT, mSelectedCat);
+        outState.putLong(STATE_SELECTED_ENTRY, mSelectedItem);
         outState.putParcelable(STATE_FILTERS, mFilters);
     }
 
