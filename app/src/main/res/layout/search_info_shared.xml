@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TableRow>
+
+        <TextView
+            style="@style/TableText.Label"
+            android:text="@string/label_location" />
+
+        <EditText
+            android:id="@+id/entry_location"
+            style="@style/TextInput.Name"
+            android:hint="@string/hint_location_filter" />
+    </TableRow>
+
+    <TextView
+        style="@style/SubHeader"
+        android:text="@string/header_date" />
+
+    <TableRow>
+
+        <TextView
+            style="@style/TableText.Label"
+            android:layout_gravity="center_vertical"
+            android:text="@string/label_date_min" />
+
+        <com.ultramegasoft.flavordex2.widget.DateInputWidget
+            android:id="@+id/entry_date_min"
+            android:background="@drawable/divider"
+            app:allowClear="true" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            style="@style/TableText.Label"
+            android:layout_gravity="center_vertical"
+            android:text="@string/label_date_max" />
+
+        <com.ultramegasoft.flavordex2.widget.DateInputWidget
+            android:id="@+id/entry_date_max"
+            android:background="@drawable/divider"
+            app:allowClear="true" />
+    </TableRow>
+</merge>

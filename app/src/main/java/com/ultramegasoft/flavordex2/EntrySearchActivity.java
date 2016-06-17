@@ -33,7 +33,7 @@ public class EntrySearchActivity extends AppCompatActivity {
         if(savedInstanceState == null) {
             final ContentValues filters = getIntent().getParcelableExtra(EXTRA_FILTERS);
             final Bundle args = new Bundle();
-            args.putParcelable(EntrySearchFragment.ARG_FILTER_VALUES, filters);
+            args.putParcelable(EntrySearchFragment.ARG_FILTERS, filters);
             final Fragment fragment = new EntrySearchFragment();
             fragment.setArguments(args);
             getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment)

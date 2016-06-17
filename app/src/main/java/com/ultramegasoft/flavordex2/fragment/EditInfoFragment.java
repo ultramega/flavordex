@@ -10,25 +10,18 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
-import android.widget.CursorAdapter;
 import android.widget.EditText;
-import android.widget.FilterQueryProvider;
 import android.widget.RatingBar;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
 
+import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.EntryFormHelper;
 import com.ultramegasoft.flavordex2.widget.DateInputWidget;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
@@ -41,7 +34,7 @@ import java.util.LinkedHashMap;
  *
  * @author Steve Guidetti
  */
-public abstract class AbsEditInfoFragment extends LoadingProgressFragment
+public class EditInfoFragment extends LoadingProgressFragment
         implements LoaderManager.LoaderCallbacks {
     /**
      * Keys for the Fragment arguments
@@ -52,7 +45,6 @@ public abstract class AbsEditInfoFragment extends LoadingProgressFragment
      * Loader IDs
      */
     private static final int LOADER_MAIN = 0;
-    private static final int LOADER_MAKERS = 1;
 
     /**
      * Keys for the saved state
@@ -62,11 +54,6 @@ public abstract class AbsEditInfoFragment extends LoadingProgressFragment
     /**
      * The Views for the form fields
      */
-    private EditText mTxtTitle;
-    private AutoCompleteTextView mTxtMaker;
-    private EditText mTxtOrigin;
-    private EditText mTxtPrice;
-    protected EditText mTxtLocation;
     private DateInputWidget mDateInputWidget;
     private RatingBar mRatingBar;
     private EditText mTxtNotes;
@@ -87,9 +74,9 @@ public abstract class AbsEditInfoFragment extends LoadingProgressFragment
     private boolean mIsLoading;
 
     /**
-     * Map of extra field names to their data
+     * The EntryFormHelper
      */
-    private LinkedHashMap<String, ExtraFieldHolder> mExtras;
+    private EntryFormHelper mFormHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,9 +95,8 @@ public abstract class AbsEditInfoFragment extends LoadingProgressFragment
             getLoaderManager().initLoader(LOADER_MAIN, null, this).forceLoad();
         } else {
             //noinspection unchecked
-            mExtras = (LinkedHashMap<String, ExtraFieldHolder>)savedInstanceState
-                    .getSerializable(STATE_EXTRAS);
-            populateExtras(mExtras);
+            mFormHelper.setExtras((LinkedHashMap<String, ExtraFieldHolder>)savedInstanceState
+                    .getSerializable(STATE_EXTRAS));
             hideLoadingIndicator(false);
         }
     }
@@ -121,11 +107,8 @@ public abstract class AbsEditInfoFragment extends LoadingProgressFragment
                              Bundle savedInstanceState) {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
-        mTxtTitle = (EditText)root.findViewById(R.id.entry_title);
-        mTxtMaker = (AutoCompleteTextView)root.findViewById(R.id.entry_maker);
-        mTxtOrigin = (EditText)root.findViewById(R.id.entry_origin);
-        mTxtPrice = (EditText)root.findViewById(R.id.entry_price);
-        mTxtLocation = (EditText)root.findViewById(R.id.entry_location);
+        mFormHelper = createHelper(root);
+
         mDateInputWidget = (DateInputWidget)root.findViewById(R.id.entry_date);
         mRatingBar = (RatingBar)root.findViewById(R.id.entry_rating);
         mTxtNotes = (EditText)root.findViewById(R.id.entry_notes);
@@ -134,64 +117,31 @@ public abstract class AbsEditInfoFragment extends LoadingProgressFragment
         mDateInputWidget.setDate(date);
         mDateInputWidget.setMaxDate(date);
 
-        setupMakersAutoComplete();
+        mFormHelper.mTxtLocation.setText(((FlavordexApp)getActivity().getApplication())
+                .getLocationName());
 
         return root;
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(STATE_EXTRAS, mExtras);
+    protected int getLayoutId() {
+        return R.layout.fragment_edit_info;
     }
 
     /**
-     * Set up the autocomplete for the maker field.
+     * Create the EntryFormHelper.
+     *
+     * @param root The root of the layout
+     * @return The EntryFormHelper
      */
-    private void setupMakersAutoComplete() {
-        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(getContext(),
-                R.layout.simple_dropdown_item_2line, null,
-                new String[] {Tables.Makers.NAME, Tables.Makers.LOCATION},
-                new int[] {android.R.id.text1, android.R.id.text2}, 0);
+    protected EntryFormHelper createHelper(View root) {
+        return new EntryFormHelper(this, root);
+    }
 
-        adapter.setFilterQueryProvider(new FilterQueryProvider() {
-            @Override
-            public Cursor runQuery(CharSequence constraint) {
-                final Uri uri;
-                if(TextUtils.isEmpty(constraint)) {
-                    uri = Tables.Makers.CONTENT_URI;
-                } else {
-                    uri = Uri.withAppendedPath(Tables.Makers.CONTENT_FILTER_URI_BASE,
-                            Uri.encode(constraint.toString()));
-                }
-
-                final Bundle args = new Bundle();
-                args.putParcelable("uri", uri);
-
-                getLoaderManager().restartLoader(LOADER_MAKERS, args, AbsEditInfoFragment.this);
-
-                return adapter.getCursor();
-            }
-        });
-
-        mTxtMaker.setAdapter(adapter);
-
-        // fill in maker and origin fields with a suggestion
-        mTxtMaker.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final Cursor cursor = (Cursor)parent.getItemAtPosition(position);
-                cursor.moveToPosition(position);
-
-                final String name = cursor.getString(cursor.getColumnIndex(Tables.Makers.NAME));
-                final String origin =
-                        cursor.getString(cursor.getColumnIndex(Tables.Makers.LOCATION));
-                mTxtMaker.setText(name);
-                mTxtOrigin.setText(origin);
-
-                // skip origin field
-                mTxtOrigin.focusSearch(View.FOCUS_DOWN).requestFocus();
-            }
-        });
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(STATE_EXTRAS, mFormHelper.getExtras());
     }
 
     /**
@@ -201,88 +151,15 @@ public abstract class AbsEditInfoFragment extends LoadingProgressFragment
      */
     private void populateFields(EntryHolder entry) {
         if(entry != null) {
-            mTxtTitle.setText(entry.title);
-            mTxtMaker.setText(entry.maker);
-            mTxtOrigin.setText(entry.origin);
-            mTxtPrice.setText(entry.price);
-            mTxtLocation.setText(entry.location);
+            mFormHelper.mTxtTitle.setText(entry.title);
+            mFormHelper.mTxtMaker.setText(entry.maker);
+            mFormHelper.mTxtOrigin.setText(entry.origin);
+            mFormHelper.mTxtPrice.setText(entry.price);
+            mFormHelper.mTxtLocation.setText(entry.location);
             mDateInputWidget.setDate(new Date(entry.date));
             mRatingBar.setRating(entry.rating);
             mTxtNotes.setText(entry.notes);
         }
-    }
-
-    /**
-     * Create and set up the extra field views.
-     *
-     * @param extras A map of extra names to the extra field
-     */
-    protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> extras) {
-    }
-
-    /**
-     * Set up an EditText with an extra field.
-     *
-     * @param editText The EditText
-     * @param extra    The extra field to associate with the View
-     */
-    protected static void initEditText(EditText editText, final ExtraFieldHolder extra) {
-        if(extra == null) {
-            return;
-        }
-        if(!extra.preset) {
-            editText.setHint(extra.name);
-        }
-        editText.setText(extra.value);
-
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                extra.value = s.toString();
-            }
-        });
-    }
-
-    /**
-     * Set up a Spinner with an extra field.
-     *
-     * @param spinner The Spinner
-     * @param extra   The extra field to associate with the View
-     */
-    protected static void initSpinner(Spinner spinner, final ExtraFieldHolder extra) {
-        if(extra == null) {
-            return;
-        }
-        if(extra.value != null) {
-            spinner.setSelection(Integer.valueOf(extra.value));
-        }
-
-        final AdapterView.OnItemSelectedListener listener = spinner.getOnItemSelectedListener();
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                extra.value = position + "";
-                if(listener != null) {
-                    listener.onItemSelected(parent, view, position, id);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                if(listener != null) {
-                    listener.onNothingSelected(parent);
-                }
-            }
-        });
     }
 
     /**
@@ -291,9 +168,9 @@ public abstract class AbsEditInfoFragment extends LoadingProgressFragment
      * @return Whether the form is valid
      */
     public boolean isValid() {
-        if(TextUtils.isEmpty(mTxtTitle.getText().toString())) {
-            mTxtTitle.setError(getString(R.string.error_required));
-            mTxtTitle.requestFocus();
+        if(TextUtils.isEmpty(mFormHelper.mTxtTitle.getText().toString())) {
+            mFormHelper.mTxtTitle.setError(getString(R.string.error_required));
+            mFormHelper.mTxtTitle.requestFocus();
             return false;
         }
         return !mIsLoading;
@@ -320,16 +197,16 @@ public abstract class AbsEditInfoFragment extends LoadingProgressFragment
             entry.catId = mCatId;
         }
 
-        entry.title = mTxtTitle.getText().toString();
-        entry.maker = mTxtMaker.getText().toString();
-        entry.origin = mTxtOrigin.getText().toString();
-        entry.price = mTxtPrice.getText().toString();
-        entry.location = mTxtLocation.getText().toString();
+        entry.title = mFormHelper.mTxtTitle.getText().toString();
+        entry.maker = mFormHelper.mTxtMaker.getText().toString();
+        entry.origin = mFormHelper.mTxtOrigin.getText().toString();
+        entry.price = mFormHelper.mTxtPrice.getText().toString();
+        entry.location = mFormHelper.mTxtLocation.getText().toString();
         entry.date = mDateInputWidget.getDate().getTime();
         entry.rating = mRatingBar.getRating();
         entry.notes = mTxtNotes.getText().toString();
 
-        entry.getExtras().addAll(mExtras.values());
+        entry.getExtras().addAll(mFormHelper.getExtras().values());
     }
 
     @Override
@@ -339,10 +216,6 @@ public abstract class AbsEditInfoFragment extends LoadingProgressFragment
                 mIsLoading = true;
                 ActivityCompat.invalidateOptionsMenu(getActivity());
                 return new DataLoader(getContext(), mCatId, mEntryId);
-            case LOADER_MAKERS:
-                final String order = Tables.Makers.NAME + " ASC";
-                final Uri uri = args.getParcelable("uri");
-                return new CursorLoader(getContext(), uri, null, null, null, order);
         }
         return null;
     }
@@ -354,28 +227,19 @@ public abstract class AbsEditInfoFragment extends LoadingProgressFragment
                 final DataLoader.Holder holder = (DataLoader.Holder)data;
 
                 populateFields(holder.entry);
-                mExtras = holder.extras;
-                populateExtras(holder.extras);
+                mFormHelper.setExtras(holder.extras);
 
                 hideLoadingIndicator(true);
-                mTxtTitle.setSelection(mTxtTitle.getText().length());
+                mFormHelper.mTxtTitle.setSelection(mFormHelper.mTxtTitle.getText().length());
 
                 mIsLoading = false;
                 ActivityCompat.invalidateOptionsMenu(getActivity());
-                break;
-            case LOADER_MAKERS:
-                ((CursorAdapter)mTxtMaker.getAdapter()).swapCursor((Cursor)data);
                 break;
         }
     }
 
     @Override
     public void onLoaderReset(Loader loader) {
-        switch(loader.getId()) {
-            case LOADER_MAKERS:
-                ((CursorAdapter)mTxtMaker.getAdapter()).swapCursor(null);
-                break;
-        }
     }
 
     /**

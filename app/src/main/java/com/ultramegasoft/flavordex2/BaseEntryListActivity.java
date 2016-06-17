@@ -57,6 +57,11 @@ public class BaseEntryListActivity extends AppCompatActivity {
     private Fragment mCatListFragment = new CatListFragment();
 
     /**
+     * The currently selected category
+     */
+    private long mSelectedCat = -1;
+
+    /**
      * The currently selected journal entry
      */
     private long mSelectedItem = -1;
@@ -155,9 +160,9 @@ public class BaseEntryListActivity extends AppCompatActivity {
         if(mSearchResult != null) {
             final ContentValues filters
                     = mSearchResult.getParcelableExtra(EntrySearchFragment.EXTRA_FILTERS);
-            final String where = mSearchResult.getStringExtra(EntrySearchFragment.EXTRA_SQL_WHERE);
+            final String where = mSearchResult.getStringExtra(EntrySearchFragment.EXTRA_WHERE);
             final String[] whereArgs
-                    = mSearchResult.getStringArrayExtra(EntrySearchFragment.EXTRA_SQL_ARGS);
+                    = mSearchResult.getStringArrayExtra(EntrySearchFragment.EXTRA_WHERE_ARGS);
             onSearchSubmitted(filters, where, whereArgs);
             mSearchResult = null;
         }
@@ -170,6 +175,7 @@ public class BaseEntryListActivity extends AppCompatActivity {
      * @param exportMode Whether to start the entry list Fragment in export mode
      */
     public void onCatSelected(long id, boolean exportMode) {
+        mSelectedCat = id;
         final Fragment fragment;
         if(id < 0) {
             fragment = mCatListFragment;
@@ -227,7 +233,8 @@ public class BaseEntryListActivity extends AppCompatActivity {
                 return;
             }
             final Bundle args = new Bundle();
-            args.putParcelable(EntrySearchFragment.ARG_FILTER_VALUES, mFilters);
+            args.putLong(EntrySearchFragment.ARG_CAT_ID, mSelectedCat);
+            args.putParcelable(EntrySearchFragment.ARG_FILTERS, mFilters);
             final Fragment fragment = new EntrySearchFragment();
             fragment.setArguments(args);
             fm.beginTransaction().replace(R.id.entry_detail_container, fragment).commit();

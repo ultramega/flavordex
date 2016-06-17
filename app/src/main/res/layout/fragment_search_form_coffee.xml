@@ -1,50 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:maxWidth="@dimen/form_width"
-    android:minWidth="@dimen/form_width"
-    android:orientation="vertical"
-    android:padding="@dimen/form_padding">
-
-    <TextView
-        style="@style/SubHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/header_entry_title" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            style="@style/TableText.Label.Large"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_title" />
-
-        <EditText
-            android:id="@+id/entry_title"
-            style="@style/TextInput.Name.Large"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="@string/coffee_hint_entry_title" />
-    </LinearLayout>
-
-    <TextView
-        style="@style/SubHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/header_details" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TableLayout
-        android:id="@+id/entry_info"
+        android:id="@+id/field_table"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:shrinkColumns="1"
@@ -54,13 +17,24 @@
 
             <TextView
                 style="@style/TableText.Label"
-                android:text="@string/coffee_label_maker" />
+                android:text="@string/label_title" />
+
+            <EditText
+                android:id="@+id/entry_title"
+                style="@style/TextInput.Name"
+                android:hint="@string/coffee_hint_entry_title" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_maker" />
 
             <AutoCompleteTextView
                 android:id="@+id/entry_maker"
                 style="@style/TextInput.Name"
-                android:hint="@string/coffee_hint_maker"
-                android:imeOptions="actionNext" />
+                android:hint="@string/coffee_hint_maker" />
         </TableRow>
 
         <TableRow>
@@ -120,7 +94,7 @@
 
             <EditText
                 android:id="@+id/entry_price"
-                style="@style/TextInput"
+                style="@style/TextInput.Name"
                 android:hint="@string/hint_price" />
         </TableRow>
 
@@ -137,33 +111,10 @@
                 android:prompt="@string/coffee_hint_brew_method" />
         </TableRow>
 
-        <TableRow>
-
-            <TextView
-                style="@style/TableText.Label"
-                android:text="@string/label_location" />
-
-            <EditText
-                android:id="@+id/entry_location"
-                style="@style/TextInput.Name"
-                android:hint="@string/hint_location" />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView
-                style="@style/TableText.Label"
-                android:layout_gravity="center_vertical"
-                android:text="@string/label_date" />
-
-            <com.ultramegasoft.flavordex2.widget.DateInputWidget
-                android:id="@+id/entry_date"
-                app:allowClear="false"
-                app:showTime="true" />
-        </TableRow>
+        <include layout="@layout/search_info_shared" />
     </TableLayout>
 
     <include layout="@layout/stats_form_coffee" />
 
-    <include layout="@layout/edit_info_foot" />
+    <include layout="@layout/search_shared" />
 </LinearLayout>

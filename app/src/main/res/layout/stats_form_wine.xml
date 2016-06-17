@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        style="@style/SubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/wine_label_stats" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/TableText.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_label_vintage" />
+
+        <EditText
+            android:id="@+id/entry_stats_vintage"
+            style="@style/TextInput.Stats"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/wine_hint_vintage"
+            android:nextFocusDown="@+id/entry_stats_abv"
+            android:nextFocusForward="@+id/entry_stats_abv" />
+
+        <TextView
+            style="@style/TableText.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wine_label_abv" />
+
+        <EditText
+            android:id="@+id/entry_stats_abv"
+            style="@style/TextInput.Stats"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/wine_hint_abv" />
+    </LinearLayout>
+</merge>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TableLayout
+        android:id="@+id/field_table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="1"
+        android:stretchColumns="1">
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_title" />
+
+            <EditText
+                android:id="@+id/entry_title"
+                style="@style/TextInput.Name"
+                android:hint="@string/wine_hint_entry_title" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/wine_label_varietal" />
+
+            <AutoCompleteTextView
+                android:id="@+id/entry_varietal"
+                style="@style/TextInput.Name"
+                android:completionThreshold="1"
+                android:hint="@string/wine_hint_varietal"
+                android:imeOptions="actionNext" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_maker" />
+
+            <AutoCompleteTextView
+                android:id="@+id/entry_maker"
+                style="@style/TextInput.Name"
+                android:hint="@string/wine_hint_maker" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_origin" />
+
+            <EditText
+                android:id="@+id/entry_origin"
+                style="@style/TextInput.Name"
+                android:hint="@string/hint_origin" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_price" />
+
+            <EditText
+                android:id="@+id/entry_price"
+                style="@style/TextInput.Name"
+                android:hint="@string/hint_price" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/beer_label_served" />
+
+            <Spinner
+                android:id="@+id/entry_serving_type"
+                style="@style/Spinner"
+                android:entries="@array/beer_serving_types"
+                android:prompt="@string/beer_hint_serving" />
+        </TableRow>
+
+        <include layout="@layout/search_info_shared" />
+    </TableLayout>
+
+    <include layout="@layout/stats_form_wine" />
+
+    <include layout="@layout/search_shared" />
+</LinearLayout>

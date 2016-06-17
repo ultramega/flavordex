@@ -139,65 +139,7 @@
         </TableRow>
     </TableLayout>
 
-    <TextView
-        style="@style/SubHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/beer_label_stats" />
-
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stretchColumns="1,3">
-
-        <TableRow>
-
-            <TextView
-                style="@style/TableText.Label"
-                android:text="@string/beer_label_ibu" />
-
-            <EditText
-                android:id="@+id/entry_stats_ibu"
-                style="@style/TextInput.Stats"
-                android:hint="@string/beer_hint_ibu"
-                android:nextFocusDown="@+id/entry_stats_abv"
-                android:nextFocusForward="@+id/entry_stats_abv" />
-
-            <TextView
-                style="@style/TableText.Label"
-                android:text="@string/beer_label_og" />
-
-            <EditText
-                android:id="@+id/entry_stats_og"
-                style="@style/TextInput.Stats"
-                android:hint="@string/beer_hint_og"
-                android:nextFocusDown="@+id/entry_stats_fg"
-                android:nextFocusForward="@+id/entry_stats_fg" />
-        </TableRow>
-
-        <TableRow>
-
-            <TextView
-                style="@style/TableText.Label"
-                android:text="@string/beer_label_abv" />
-
-            <EditText
-                android:id="@+id/entry_stats_abv"
-                style="@style/TextInput.Stats"
-                android:hint="@string/beer_hint_abv"
-                android:nextFocusDown="@+id/entry_stats_og"
-                android:nextFocusForward="@+id/entry_stats_og" />
-
-            <TextView
-                style="@style/TableText.Label"
-                android:text="@string/beer_label_fg" />
-
-            <EditText
-                android:id="@+id/entry_stats_fg"
-                style="@style/TextInput.Stats"
-                android:hint="@string/beer_hint_fg" />
-        </TableRow>
-    </TableLayout>
+    <include layout="@layout/stats_form_beer" />
 
     <include layout="@layout/edit_info_foot" />
 </LinearLayout>

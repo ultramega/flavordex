@@ -1,155 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_gravity="center_horizontal"
+    android:maxWidth="@dimen/form_width"
+    android:minWidth="@dimen/form_width"
+    android:orientation="vertical"
+    android:padding="@dimen/form_padding">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <TableLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:shrinkColumns="1"
-            android:stretchColumns="1">
+            android:orientation="vertical">
 
-            <TableRow>
+            <TextView
+                style="@style/Header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="6dp"
+                android:text="@string/title_search" />
 
-                <TextView
-                    android:layout_span="2"
-                    style="@style/Header"
-                    android:layout_gravity="center"
-                    android:layout_margin="6dp"
-                    android:text="@string/title_search" />
-            </TableRow>
-
-            <TableRow>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
                     style="@style/TableText.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@string/label_cat" />
 
                 <Spinner
-                    android:id="@+id/cat"
-                    style="@style/Spinner" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_title" />
-
-                <EditText
-                    android:id="@+id/title"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/hint_entry_title" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_maker" />
-
-                <EditText
-                    android:id="@+id/maker"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/hint_maker" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_origin" />
-
-                <EditText
-                    android:id="@+id/origin"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/hint_origin" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_price" />
-
-                <EditText
-                    android:id="@+id/price"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/hint_price" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_location" />
-
-                <EditText
-                    android:id="@+id/location"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/hint_location_filter" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:text="@string/label_notes" />
-
-                <EditText
-                    android:id="@+id/notes"
-                    style="@style/TextInput.Name"
-                    android:hint="@string/header_notes" />
-            </TableRow>
+                    android:id="@+id/entry_cat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
             <TextView
                 style="@style/SubHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/header_date" />
+                android:text="@string/header_details" />
 
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/label_date_min" />
-
-                <com.ultramegasoft.flavordex2.widget.DateInputWidget
-                    android:id="@+id/date_min"
-                    android:background="@drawable/divider"
-                    app:allowClear="true" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    style="@style/TableText.Label"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/label_date_max" />
-
-                <com.ultramegasoft.flavordex2.widget.DateInputWidget
-                    android:id="@+id/date_max"
-                    android:background="@drawable/divider"
-                    app:allowClear="true" />
-            </TableRow>
-        </TableLayout>
+            <FrameLayout
+                android:id="@+id/search_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp" />
+        </LinearLayout>
     </ScrollView>
 
     <LinearLayout
         style="?android:attr/buttonBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:layout_gravity="end">
+        android:layout_gravity="end"
+        android:layout_weight="0">
 
         <Button
             android:id="@+id/button_clear"
