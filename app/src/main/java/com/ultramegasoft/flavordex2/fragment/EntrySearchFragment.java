@@ -60,6 +60,11 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
     public static final String EXTRA_WHERE_ARGS = "where_args";
 
     /**
+     * Loader IDs
+     */
+    private static final int LOADER_CAT = 0;
+
+    /**
      * Views from the layout
      */
     private Spinner mSpnCat;
@@ -101,7 +106,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
             }
         });
 
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(LOADER_CAT, null, this);
 
         return root;
     }
@@ -158,33 +163,43 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getContext(), Tables.Cats.CONTENT_URI, null, null, null, null);
+        switch(id) {
+            case LOADER_CAT:
+                return new CursorLoader(getContext(), Tables.Cats.CONTENT_URI, null, null, null, null);
+        }
+        return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        final CatListAdapter adapter = new CatListAdapter(getContext(), data,
-                android.R.layout.simple_spinner_item,
-                android.R.layout.simple_spinner_dropdown_item);
-        adapter.setShowAllCats(true);
-        mSpnCat.setAdapter(adapter);
+        switch(loader.getId()) {
+            case LOADER_CAT:
+                final CatListAdapter adapter = new CatListAdapter(getContext(), data,
+                        android.R.layout.simple_spinner_item,
+                        android.R.layout.simple_spinner_dropdown_item);
+                adapter.setShowAllCats(true);
+                mSpnCat.setAdapter(adapter);
 
-        if(getArguments() != null) {
-            final long catId = getArguments().getLong(ARG_CAT_ID);
-            if(catId > 0) {
-                for(int i = 0; i < adapter.getCount(); i++) {
-                    if(adapter.getItemId(i) == catId) {
-                        mSpnCat.setSelection(i);
-                        break;
+                if(getArguments() != null) {
+                    final long catId = getArguments().getLong(ARG_CAT_ID);
+                    if(catId > 0) {
+                        for(int i = 0; i < adapter.getCount(); i++) {
+                            if(adapter.getItemId(i) == catId) {
+                                mSpnCat.setSelection(i);
+                                break;
+                            }
+                        }
                     }
                 }
-            }
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        ((CatListAdapter)mSpnCat.getAdapter()).swapCursor(null);
+        switch(loader.getId()) {
+            case LOADER_CAT:
+                ((CatListAdapter)mSpnCat.getAdapter()).swapCursor(null);
+        }
     }
 
     /**
@@ -207,6 +222,11 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
          * Prefix for keys for extra fields in the filter list
          */
         private static final String EXTRA_PREFIX = "_extra_";
+
+        /**
+         * Loader IDs
+         */
+        private static final int LOADER_EXTRAS = 0;
 
         /**
          * Keys for the saved state
@@ -288,7 +308,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
                 mFormHelper.setExtras((LinkedHashMap<String, ExtraFieldHolder>)savedInstanceState
                         .getSerializable(STATE_EXTRAS));
             } else {
-                getLoaderManager().initLoader(0, null, this);
+                getLoaderManager().initLoader(LOADER_EXTRAS, null, this);
             }
         }
 
@@ -481,46 +501,60 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            final Uri uri = Tables.Cats.getExtrasUri(mCatId);
-            final String[] projection = new String[] {
-                    Tables.Extras._ID,
-                    Tables.Extras.NAME,
-                    Tables.Extras.PRESET
-            };
-            final String sort = Tables.Extras.POS;
-            return new CursorLoader(getContext(), uri, projection, null, null, sort);
+            switch(id) {
+                case LOADER_EXTRAS:
+                    final Uri uri = Tables.Cats.getExtrasUri(mCatId);
+                    final String[] projection = new String[] {
+                            Tables.Extras._ID,
+                            Tables.Extras.NAME,
+                            Tables.Extras.PRESET
+                    };
+                    final String sort = Tables.Extras.POS;
+                    return new CursorLoader(getContext(), uri, projection, null, null, sort);
+            }
+            return null;
         }
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            ContentValues filters = null;
-            if(getArguments() != null) {
-                filters = getArguments().getParcelable(ARG_FILTERS);
-                if(filters != null) {
-                    mFormHelper.mTxtTitle.setText(filters.getAsString(Tables.Entries.TITLE));
-                    mFormHelper.mTxtMaker.setText(filters.getAsString(Tables.Entries.MAKER));
-                    mFormHelper.mTxtOrigin.setText(filters.getAsString(Tables.Entries.ORIGIN));
-                    mFormHelper.mTxtPrice.setText(filters.getAsString(Tables.Entries.PRICE));
-                    mFormHelper.mTxtLocation.setText(filters.getAsString(Tables.Entries.LOCATION));
-                }
-            }
-
-            if(data != null) {
-                data.moveToPosition(-1);
-                final LinkedHashMap<String, ExtraFieldHolder> extras = new LinkedHashMap<>();
-                while(data.moveToNext()) {
-                    final long id = data.getLong(data.getColumnIndex(Tables.Extras._ID));
-                    final String name = data.getString(data.getColumnIndex(Tables.Extras.NAME));
-                    final boolean preset =
-                            data.getLong(data.getColumnIndex(Tables.Extras.PRESET)) == 1;
-                    final ExtraFieldHolder extra = new ExtraFieldHolder(id, name, preset);
-                    if(filters != null) {
-                        extra.value = filters.getAsString(EXTRA_PREFIX + id);
+            switch(loader.getId()) {
+                case LOADER_EXTRAS:
+                    ContentValues filters = null;
+                    if(getArguments() != null) {
+                        filters = getArguments().getParcelable(ARG_FILTERS);
+                        if(filters != null) {
+                            mFormHelper.mTxtTitle
+                                    .setText(filters.getAsString(Tables.Entries.TITLE));
+                            mFormHelper.mTxtMaker
+                                    .setText(filters.getAsString(Tables.Entries.MAKER));
+                            mFormHelper.mTxtOrigin
+                                    .setText(filters.getAsString(Tables.Entries.ORIGIN));
+                            mFormHelper.mTxtPrice
+                                    .setText(filters.getAsString(Tables.Entries.PRICE));
+                            mFormHelper.mTxtLocation
+                                    .setText(filters.getAsString(Tables.Entries.LOCATION));
+                        }
                     }
-                    extras.put(name, extra);
-                }
 
-                mFormHelper.setExtras(extras);
+                    if(data != null) {
+                        data.moveToPosition(-1);
+                        final LinkedHashMap<String, ExtraFieldHolder> extras =
+                                new LinkedHashMap<>();
+                        while(data.moveToNext()) {
+                            final long id = data.getLong(data.getColumnIndex(Tables.Extras._ID));
+                            final String name =
+                                    data.getString(data.getColumnIndex(Tables.Extras.NAME));
+                            final boolean preset =
+                                    data.getLong(data.getColumnIndex(Tables.Extras.PRESET)) == 1;
+                            final ExtraFieldHolder extra = new ExtraFieldHolder(id, name, preset);
+                            if(filters != null) {
+                                extra.value = filters.getAsString(EXTRA_PREFIX + id);
+                            }
+                            extras.put(name, extra);
+                        }
+
+                        mFormHelper.setExtras(extras);
+                    }
             }
         }
 

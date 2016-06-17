@@ -37,6 +37,11 @@ import java.util.Map;
  */
 public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
+     * Loader IDs
+     */
+    private static final int LOADER_MAKERS = 100;
+
+    /**
      * The Fragment using the helper object.
      */
     protected final Fragment mFragment;
@@ -153,7 +158,8 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
                 final Bundle args = new Bundle();
                 args.putParcelable("uri", uri);
 
-                mFragment.getLoaderManager().restartLoader(0, args, EntryFormHelper.this);
+                mFragment.getLoaderManager()
+                        .restartLoader(LOADER_MAKERS, args, EntryFormHelper.this);
 
                 return adapter.getCursor();
             }
@@ -246,18 +252,28 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final String order = Tables.Makers.NAME + " ASC";
-        final Uri uri = args.getParcelable("uri");
-        return new CursorLoader(mFragment.getContext(), uri, null, null, null, order);
+        switch(id) {
+            case LOADER_MAKERS:
+                final String order = Tables.Makers.NAME + " ASC";
+                final Uri uri = args.getParcelable("uri");
+                return new CursorLoader(mFragment.getContext(), uri, null, null, null, order);
+        }
+        return null;
     }
 
     @Override
     public void onLoadFinished(Loader loader, Cursor data) {
-        ((CursorAdapter)mTxtMaker.getAdapter()).swapCursor(data);
+        switch(loader.getId()) {
+            case LOADER_MAKERS:
+                ((CursorAdapter)mTxtMaker.getAdapter()).swapCursor(data);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader loader) {
-        ((CursorAdapter)mTxtMaker.getAdapter()).swapCursor(null);
+        switch(loader.getId()) {
+            case LOADER_MAKERS:
+                ((CursorAdapter)mTxtMaker.getAdapter()).swapCursor(null);
+        }
     }
 }
