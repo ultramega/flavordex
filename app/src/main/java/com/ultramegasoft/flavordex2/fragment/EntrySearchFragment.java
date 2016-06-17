@@ -110,8 +110,14 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
      * Set the category to search.
      */
     private void setCategory() {
-        final Fragment fragment;
         final CatListAdapter.Category cat = (CatListAdapter.Category)mSpnCat.getSelectedItem();
+        final Bundle args = getArguments();
+        if(args.getLong(ARG_CAT_ID, -1) == cat.id) {
+            return;
+        }
+        args.putLong(ARG_CAT_ID, cat.id);
+
+        final Fragment fragment;
         switch(cat.name) {
             case FlavordexApp.CAT_BEER:
                 fragment = new BeerSearchFormFragment();
@@ -128,8 +134,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
             default:
                 fragment = new SearchFormFragment();
         }
-        getArguments().putLong(ARG_CAT_ID, cat.id);
-        fragment.setArguments(getArguments());
+        fragment.setArguments(args);
         getChildFragmentManager().beginTransaction().replace(R.id.search_form, fragment).commit();
     }
 
