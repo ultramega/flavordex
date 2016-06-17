@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -115,9 +116,11 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
      * Set the category to search.
      */
     private void setCategory() {
+        final FragmentManager fm = getChildFragmentManager();
         final CatListAdapter.Category cat = (CatListAdapter.Category)mSpnCat.getSelectedItem();
         final Bundle args = getArguments();
-        if(args.getLong(ARG_CAT_ID, -1) == cat.id) {
+        if(fm.findFragmentById(R.id.search_form) != null
+                && args.getLong(ARG_CAT_ID, -1) == cat.id) {
             return;
         }
         args.putLong(ARG_CAT_ID, cat.id);
@@ -140,7 +143,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
                 fragment = new SearchFormFragment();
         }
         fragment.setArguments(args);
-        getChildFragmentManager().beginTransaction().replace(R.id.search_form, fragment).commit();
+        fm.beginTransaction().replace(R.id.search_form, fragment).commit();
     }
 
     /**
