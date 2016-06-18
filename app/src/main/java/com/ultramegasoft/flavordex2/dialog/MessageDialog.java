@@ -6,9 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
-import android.text.Html;
 
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.util.HtmlCompat;
 
 /**
  * Dialog to show simple messages.
@@ -63,7 +63,7 @@ public class MessageDialog extends DialogFragment {
         return new AlertDialog.Builder(getContext())
                 .setIcon(args.getInt(ARG_ICON))
                 .setTitle(args.getString(ARG_TITLE))
-                .setMessage(Html.fromHtml(args.getString(ARG_MESSAGE)))
+                .setMessage(HtmlCompat.fromHtml(args.getString(ARG_MESSAGE)))
                 .setPositiveButton(R.string.button_ok, null)
                 .create();
     }

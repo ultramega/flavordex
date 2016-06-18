@@ -19,7 +19,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -30,6 +29,7 @@ import android.widget.TextView;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
+import com.ultramegasoft.flavordex2.util.HtmlCompat;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
 /**
@@ -204,10 +204,10 @@ public class CatDeleteDialog extends DialogFragment
             final String message = getString(R.string.message_confirm_delete_cat, name);
             final int count = data.getInt(data.getColumnIndex(Tables.Cats.NUM_ENTRIES));
 
-            mTxtMessage.setText(Html.fromHtml(message));
+            mTxtMessage.setText(HtmlCompat.fromHtml(message));
             if(count > 0) {
                 final String entries = getResources().getQuantityString(R.plurals.entries, count);
-                mTxtCheckEntries.setText(Html.fromHtml(
+                mTxtCheckEntries.setText(HtmlCompat.fromHtml(
                         getString(R.string.message_delete_cat_entries, count, entries)));
                 setButtonEnabled(false);
             } else {
