@@ -54,6 +54,7 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
     public EditText mTxtOrigin;
     public EditText mTxtPrice;
     public EditText mTxtLocation;
+    public EditText mTxtNotes;
 
     /**
      * The TableLayout for the main info
@@ -93,6 +94,7 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
         mTxtOrigin = (EditText)root.findViewById(R.id.entry_origin);
         mTxtPrice = (EditText)root.findViewById(R.id.entry_price);
         mTxtLocation = (EditText)root.findViewById(R.id.entry_location);
+        mTxtNotes = (EditText)root.findViewById(R.id.entry_notes);
     }
 
     /**

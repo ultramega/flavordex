@@ -4,4 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        style="@style/SubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/header_notes" />
+
+    <EditText
+        android:id="@+id/entry_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:hint="@string/hint_notes"
+        android:minLines="2" />
 </merge>

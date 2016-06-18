@@ -382,6 +382,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
             mFormHelper.mTxtOrigin.setText(null);
             mFormHelper.mTxtPrice.setText(null);
             mFormHelper.mTxtLocation.setText(null);
+            mFormHelper.mTxtNotes.setText(null);
 
             for(EditText view : mFormHelper.getExtraViews().values()) {
                 view.setText(null);
@@ -425,6 +426,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
             parseTextField(mFormHelper.mTxtOrigin, Tables.Entries.ORIGIN);
             parseTextField(mFormHelper.mTxtPrice, Tables.Entries.PRICE);
             parseTextField(mFormHelper.mTxtLocation, Tables.Entries.LOCATION);
+            parseTextField(mFormHelper.mTxtNotes, Tables.Entries.NOTES);
 
             final Date minDate = mDateMin.getDate();
             final Date maxDate = mDateMax.getDate();
@@ -536,6 +538,8 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
                                     .setText(filters.getAsString(Tables.Entries.PRICE));
                             mFormHelper.mTxtLocation
                                     .setText(filters.getAsString(Tables.Entries.LOCATION));
+                            mFormHelper.mTxtNotes
+                                    .setText(filters.getAsString(Tables.Entries.NOTES));
                         }
                     }
 

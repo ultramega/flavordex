@@ -15,7 +15,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.RatingBar;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
@@ -56,7 +55,6 @@ public class EditInfoFragment extends LoadingProgressFragment
      */
     private DateInputWidget mDateInputWidget;
     private RatingBar mRatingBar;
-    private EditText mTxtNotes;
 
     /**
      * The category ID for the entry being added
@@ -111,7 +109,6 @@ public class EditInfoFragment extends LoadingProgressFragment
 
         mDateInputWidget = (DateInputWidget)root.findViewById(R.id.entry_date);
         mRatingBar = (RatingBar)root.findViewById(R.id.entry_rating);
-        mTxtNotes = (EditText)root.findViewById(R.id.entry_notes);
 
         final Date date = new Date();
         mDateInputWidget.setDate(date);
@@ -158,7 +155,7 @@ public class EditInfoFragment extends LoadingProgressFragment
             mFormHelper.mTxtLocation.setText(entry.location);
             mDateInputWidget.setDate(new Date(entry.date));
             mRatingBar.setRating(entry.rating);
-            mTxtNotes.setText(entry.notes);
+            mFormHelper.mTxtNotes.setText(entry.notes);
         }
     }
 
@@ -204,7 +201,7 @@ public class EditInfoFragment extends LoadingProgressFragment
         entry.location = mFormHelper.mTxtLocation.getText().toString();
         entry.date = mDateInputWidget.getDate().getTime();
         entry.rating = mRatingBar.getRating();
-        entry.notes = mTxtNotes.getText().toString();
+        entry.notes = mFormHelper.mTxtNotes.getText().toString();
 
         entry.getExtras().addAll(mFormHelper.getExtras().values());
     }
