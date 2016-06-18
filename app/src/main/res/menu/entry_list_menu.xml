@@ -8,7 +8,6 @@
         android:title="@string/menu_add_entry"
         app:showAsAction="ifRoom|withText" />
     <item
-        android:id="@+id/menu_sort"
         android:icon="@drawable/ic_sort"
         android:title="@string/menu_sort"
         app:showAsAction="ifRoom">
