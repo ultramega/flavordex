@@ -559,6 +559,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
                 final String[] words = extra.value.split(" ");
                 mWhere.append("(SELECT 1 FROM ").append(Tables.EntriesExtras.TABLE_NAME)
                         .append(" WHERE extra = ? AND ");
+                mWhereArgs.add(extra.id + "");
                 for(String word : words) {
                     mWhere.append("value ").append(comparison).append(" ? AND ");
                     if(COMP_LIKE.equals(comparison)) {
@@ -569,7 +570,6 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
                 }
                 mWhere.delete(mWhere.length() - 4, mWhere.length());
                 mWhere.append("LIMIT 1) AND ");
-                mWhereArgs.add(extra.id + "");
             }
         }
 
