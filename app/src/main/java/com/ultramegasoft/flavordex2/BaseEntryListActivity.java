@@ -30,7 +30,7 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
  *
  * @author Steve Guidetti
  */
-public class BaseEntryListActivity extends AppCompatActivity {
+public abstract class BaseEntryListActivity extends AppCompatActivity {
     /**
      * Request codes for external Activities
      */
