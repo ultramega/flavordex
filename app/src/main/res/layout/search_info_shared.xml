@@ -15,10 +15,6 @@
             android:hint="@string/hint_location_filter" />
     </TableRow>
 
-    <TextView
-        style="@style/SubHeader"
-        android:text="@string/header_date" />
-
     <TableRow>
 
         <TextView
