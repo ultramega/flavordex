@@ -56,7 +56,8 @@ public class PhotoHolder implements Parcelable {
     }
 
     private PhotoHolder(Parcel in) {
-        this(in.readLong(), in.readString(), (Uri)in.readParcelable(null), in.readInt());
+        this(in.readLong(), in.readString(),
+                (Uri)in.readParcelable(PhotoHolder.class.getClassLoader()), in.readInt());
     }
 
     @Override

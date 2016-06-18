@@ -44,7 +44,7 @@ public class BitmapCache implements Parcelable {
 
     private BitmapCache(Parcel in) {
         this();
-        final Bundle bundle = in.readBundle();
+        final Bundle bundle = in.readBundle(BitmapCache.class.getClassLoader());
         for(String key : bundle.keySet()) {
             put(key, (Bitmap)bundle.getParcelable(key));
         }
