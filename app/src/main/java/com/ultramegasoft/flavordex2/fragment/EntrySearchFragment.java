@@ -536,8 +536,14 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         private void parseTextField(EditText field, String fieldName) {
             if(!TextUtils.isEmpty(field.getText())) {
                 mFilters.put(fieldName, field.getText().toString());
-                mWhere.append(fieldName).append(" LIKE ? AND ");
-                mWhereArgs.add("%" + field.getText() + "%");
+                final String[] words = field.getText().toString().split(" ");
+                mWhere.append("(");
+                for(String word : words) {
+                    mWhere.append(fieldName).append(" LIKE ? AND ");
+                    mWhereArgs.add("%" + word + "%");
+                }
+                mWhere.delete(mWhere.length() - 5, mWhere.length());
+                mWhere.append(") AND ");
             }
         }
 
@@ -550,15 +556,20 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         protected void parseExtraField(ExtraFieldHolder extra, String comparison) {
             if(!TextUtils.isEmpty(extra.value)) {
                 mFilters.put(EXTRA_PREFIX + extra.id, extra.value);
+                final String[] words = extra.value.split(" ");
                 mWhere.append("(SELECT 1 FROM ").append(Tables.EntriesExtras.TABLE_NAME)
-                        .append(" WHERE extra = ? AND value ").append(comparison)
-                        .append(" ? LIMIT 1) AND ");
-                mWhereArgs.add(extra.id + "");
-                if(COMP_LIKE.equals(comparison)) {
-                    mWhereArgs.add("%" + extra.value + "%");
-                } else {
-                    mWhereArgs.add(extra.value);
+                        .append(" WHERE extra = ? AND ");
+                for(String word : words) {
+                    mWhere.append("value ").append(comparison).append(" ? AND ");
+                    if(COMP_LIKE.equals(comparison)) {
+                        mWhereArgs.add("%" + word + "%");
+                    } else {
+                        mWhereArgs.add(word);
+                    }
                 }
+                mWhere.delete(mWhere.length() - 4, mWhere.length());
+                mWhere.append("LIMIT 1) AND ");
+                mWhereArgs.add(extra.id + "");
             }
         }
 
