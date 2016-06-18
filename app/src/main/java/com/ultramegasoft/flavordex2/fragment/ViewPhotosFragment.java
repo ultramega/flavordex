@@ -183,6 +183,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     /**
      * Show the message that there are no photos for this entry along with buttons to add one.
      */
+    @SuppressWarnings("ConstantConditions")
     private void showNoDataLayout() {
         final AppCompatActivity activity = (AppCompatActivity)getActivity();
         if(mNoDataLayout == null) {
