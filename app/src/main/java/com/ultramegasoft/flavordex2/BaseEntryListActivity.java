@@ -56,7 +56,7 @@ public abstract class BaseEntryListActivity extends AppCompatActivity {
     /**
      * The category list Fragment
      */
-    private Fragment mCatListFragment = new CatListFragment();
+    private final Fragment mCatListFragment = new CatListFragment();
 
     /**
      * The currently selected category
