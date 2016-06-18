@@ -100,7 +100,7 @@ public class DriveConnectDialog extends DialogFragment
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult result) {
+    public void onConnectionFailed(@NonNull ConnectionResult result) {
         if(result.hasResolution()) {
             try {
                 final int requestCode = REQUEST_RESOLVE_CONNECTION
