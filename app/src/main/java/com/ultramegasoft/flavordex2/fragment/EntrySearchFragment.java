@@ -19,7 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.EntryListActivity;
 import com.ultramegasoft.flavordex2.EntrySearchActivity;
@@ -38,6 +40,7 @@ import com.ultramegasoft.flavordex2.wine.WineSearchFormFragment;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 /**
  * Fragment for searching journal entries.
@@ -50,8 +53,6 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
      */
     public static final String ARG_CAT_ID = "cat_id";
     public static final String ARG_FILTERS = "filters";
-    private static final String ARG_DATE_MIN = "date_min";
-    private static final String ARG_DATE_MAX = "date_max";
 
     /**
      * Keys for the result data Intent
@@ -211,6 +212,14 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
     public static class SearchFormFragment extends Fragment
             implements LoaderManager.LoaderCallbacks<Cursor> {
         /**
+         * Arguments for the Fragment
+         */
+        private static final String ARG_DATE_MIN = "date_min";
+        private static final String ARG_DATE_MAX = "date_max";
+        private static final String ARG_RATING_MIN = "rating_min";
+        private static final String ARG_RATING_MAX = "rating_max";
+
+        /**
          * The types of comparisons available to make between values
          */
         protected static final String COMP_LIKE = "LIKE";
@@ -241,6 +250,10 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
          */
         private DateInputWidget mDateMin;
         private DateInputWidget mDateMax;
+        private RatingBar mRatingMin;
+        private RatingBar mRatingMax;
+        private TextView mTxtRatingMin;
+        private TextView mTxtRatingMax;
 
         /**
          * The EntryFormHelper
@@ -277,6 +290,10 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
 
             mDateMin = (DateInputWidget)root.findViewById(R.id.entry_date_min);
             mDateMax = (DateInputWidget)root.findViewById(R.id.entry_date_max);
+            mRatingMin = (RatingBar)root.findViewById(R.id.entry_rating_min);
+            mRatingMax = (RatingBar)root.findViewById(R.id.entry_rating_max);
+            mTxtRatingMin = (TextView)root.findViewById(R.id.rating_min_text);
+            mTxtRatingMax = (TextView)root.findViewById(R.id.rating_max_text);
 
             setupEventHandlers();
 
@@ -302,6 +319,13 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
                     }
                     if(filters.containsKey(ARG_DATE_MAX)) {
                         mDateMax.setDate(new Date(filters.getAsLong(ARG_DATE_MAX)));
+                    }
+
+                    if(filters.containsKey(ARG_RATING_MIN)) {
+                        mRatingMin.setRating(filters.getAsFloat(ARG_RATING_MIN));
+                    }
+                    if(filters.containsKey(ARG_RATING_MAX)) {
+                        mRatingMax.setRating(filters.getAsFloat(ARG_RATING_MAX));
                     }
                 }
             }
@@ -371,6 +395,26 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
                 public void onDateCleared() {
                 }
             });
+
+            mRatingMin.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                @Override
+                public void onRatingChanged(RatingBar bar, float v, boolean b) {
+                    mTxtRatingMin.setText(String.format(Locale.US, "%.1f", v));
+                    if(v > mRatingMax.getRating()) {
+                        mRatingMax.setRating(v);
+                    }
+                }
+            });
+
+            mRatingMax.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                @Override
+                public void onRatingChanged(RatingBar bar, float v, boolean b) {
+                    mTxtRatingMax.setText(String.format(Locale.US, "%.1f", v));
+                    if(v < mRatingMin.getRating()) {
+                        mRatingMin.setRating(v);
+                    }
+                }
+            });
         }
 
         /**
@@ -390,6 +434,9 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
 
             mDateMin.setDate(null);
             mDateMax.setDate(null);
+
+            mRatingMin.setRating(0);
+            mRatingMax.setRating(5);
         }
 
         /**
@@ -443,6 +490,17 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
                     mWhere.append(Tables.Entries.DATE).append(" < ")
                             .append(maxTime + (24 * 60 * 60 * 1000)).append(" AND ");
                 }
+            }
+
+            if(mRatingMin.getRating() > 0) {
+                mFilters.put(ARG_RATING_MIN, mRatingMin.getRating());
+                mWhere.append(Tables.Entries.RATING).append(" >= ? AND ");
+                mWhereArgs.add(mRatingMin.getRating() + "");
+            }
+            if(mRatingMax.getRating() < 5) {
+                mFilters.put(ARG_RATING_MAX, mRatingMax.getRating());
+                mWhere.append(Tables.Entries.RATING).append(" <= ? AND ");
+                mWhereArgs.add(mRatingMax.getRating() + "");
             }
 
             parseExtras();

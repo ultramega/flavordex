@@ -85,6 +85,8 @@
     <string name="label_date">Date/Time: </string>
     <string name="label_date_min">After Date: </string>
     <string name="label_date_max">Before Date: </string>
+    <string name="label_min">Minimum: </string>
+    <string name="label_max">Maximum: </string>
 
     <string name="message_no_data">No entries found.</string>
     <string name="message_no_data_filter">No entries found matching your query.</string>

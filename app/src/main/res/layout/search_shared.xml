@@ -1,8 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <TextView
+        style="@style/SubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/header_rating" />
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:layout_gravity="center_vertical"
+                android:text="@string/label_min" />
+
+            <RatingBar
+                android:id="@+id/entry_rating_min"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:numStars="5"
+                android:stepSize="0.5" />
+
+            <TextView
+                android:id="@+id/rating_min_text"
+                style="@style/Base.TextAppearance.AppCompat.Large"
+                android:layout_gravity="center_vertical"
+                android:text="0.0"
+                tools:ignore="HardcodedText" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:layout_gravity="center_vertical"
+                android:text="@string/label_max" />
+
+            <RatingBar
+                android:id="@+id/entry_rating_max"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:numStars="5"
+                android:rating="5"
+                android:stepSize="0.5" />
+
+            <TextView
+                android:id="@+id/rating_max_text"
+                style="@style/Base.TextAppearance.AppCompat.Large"
+                android:layout_gravity="center_vertical"
+                android:text="5.0"
+                tools:ignore="HardcodedText" />
+        </TableRow>
+    </TableLayout>
 
     <TextView
         style="@style/SubHeader"
