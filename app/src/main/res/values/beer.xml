@@ -36,6 +36,15 @@
         <item>Growler</item>
     </string-array>
 
+    <string-array name="beer_serving_types_search">
+        <item>Any</item>
+        <item>Draft</item>
+        <item>Cask</item>
+        <item>Bottle</item>
+        <item>Can</item>
+        <item>Growler</item>
+    </string-array>
+
     <string-array name="beer_styles">
         <item>Adjunct Lager</item>
         <item>Altbier</item>

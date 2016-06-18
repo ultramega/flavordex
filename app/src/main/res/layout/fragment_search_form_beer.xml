@@ -83,7 +83,7 @@
             <Spinner
                 android:id="@+id/entry_serving_type"
                 style="@style/Spinner"
-                android:entries="@array/beer_serving_types"
+                android:entries="@array/beer_serving_types_search"
                 android:prompt="@string/beer_hint_serving" />
         </TableRow>
 

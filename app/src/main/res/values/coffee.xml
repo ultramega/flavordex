@@ -62,6 +62,18 @@
         <item>Cupping</item>
     </string-array>
 
+    <string-array name="coffee_brew_methods_search">
+        <item>Any</item>
+        <item>Press</item>
+        <item>Drip</item>
+        <item>Percolator</item>
+        <item>Espresso</item>
+        <item>Vacuum</item>
+        <item>Pour-over</item>
+        <item>Turkish</item>
+        <item>Cupping</item>
+    </string-array>
+
     <string-array name="coffee_flavor_names">
         <item>Body</item>
         <item>Citrus</item>

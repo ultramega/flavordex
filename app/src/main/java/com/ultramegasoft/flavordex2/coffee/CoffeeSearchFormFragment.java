@@ -46,7 +46,9 @@ public class CoffeeSearchFormFragment extends EntrySearchFragment.SearchFormFrag
     protected boolean parsePresetField(ExtraFieldHolder extra) {
         switch(extra.name) {
             case Tables.Extras.Coffee.BREW_METHOD:
-                parseExtraField(extra, COMP_EQ);
+                if(!extra.value.equals("0")) {
+                    parseExtraField(extra, COMP_EQ);
+                }
                 return true;
         }
         return super.parsePresetField(extra);

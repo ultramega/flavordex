@@ -40,7 +40,9 @@ public class BeerSearchFormFragment extends EntrySearchFragment.SearchFormFragme
     protected boolean parsePresetField(ExtraFieldHolder extra) {
         switch(extra.name) {
             case Tables.Extras.Beer.SERVING:
-                parseExtraField(extra, COMP_EQ);
+                if(!extra.value.equals("0")) {
+                    parseExtraField(extra, COMP_EQ);
+                }
                 return true;
         }
         return super.parsePresetField(extra);

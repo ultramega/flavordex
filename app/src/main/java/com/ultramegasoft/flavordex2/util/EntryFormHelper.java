@@ -228,9 +228,10 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
         if(extra == null) {
             return;
         }
-        if(extra.value != null) {
-            spinner.setSelection(Integer.valueOf(extra.value));
+        if(extra.value == null) {
+            extra.value = "0";
         }
+        spinner.setSelection(Integer.valueOf(extra.value));
 
         final AdapterView.OnItemSelectedListener listener = spinner.getOnItemSelectedListener();
 
