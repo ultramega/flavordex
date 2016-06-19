@@ -72,6 +72,9 @@ public class EntryUtils {
         insertFlavors(cr, entryUri, entry);
         insertPhotos(cr, entryUri, entry);
 
+        entry.id = ContentUris.parseId(entryUri);
+        PhotoUtils.deleteThumb(context, entry.id);
+
         BackendUtils.requestDataSync(context);
         if(!entry.getPhotos().isEmpty()) {
             BackendUtils.requestPhotoSync(context);
