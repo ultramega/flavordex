@@ -9,6 +9,8 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ultramegasoft.flavordex2.FlavordexApp;
+import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
@@ -31,6 +33,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -43,6 +46,53 @@ import au.com.bytecode.opencsv.CSVWriter;
  */
 public class CSVUtils {
     private static final String TAG = "CSVUtils";
+
+    private static final List<String> LEGACY_FIELDS_COMMON = Arrays.asList(
+            "title",
+            "maker",
+            "origin",
+            "location",
+            "date",
+            "price",
+            "rating",
+            "notes",
+            "flavors",
+            "photos"
+    );
+
+    private static final List<String> LEGACY_FIELDS_BEER = Arrays.asList(
+            "style",
+            "serving",
+            "stats_ibu",
+            "stats_abv",
+            "stats_og",
+            "stats_fg"
+    );
+
+    private static final List<String> LEGACY_FIELDS_COFFEE = Arrays.asList(
+            "roaster",
+            "roast_date",
+            "grind",
+            "brew_method",
+            "stats_dose",
+            "stats_mass",
+            "stats_temp",
+            "stats_extime",
+            "stats_tds",
+            "stats_yield"
+    );
+
+    private static final List<String> LEGACY_FIELDS_WHISKEY = Arrays.asList(
+            "style",
+            "stats_age",
+            "stats_abv"
+    );
+
+    private static final List<String> LEGACY_FIELDS_WINE = Arrays.asList(
+            "varietal",
+            "stats_vintage",
+            "stats_abv"
+    );
 
     /**
      * Formatter for dates in CSV files
@@ -174,24 +224,15 @@ public class CSVUtils {
                     return data;
                 }
                 data.hasCategory = fields.contains(Tables.Entries.CAT);
-
-                final ContentResolver cr = context.getContentResolver();
+                detectFormat(data, fields);
 
                 final HashMap<String, String> rowMap = new HashMap<>();
-                EntryHolder entry;
                 while((line = reader.readNext()) != null) {
                     rowMap.clear();
                     for(int i = 0; i < line.length; i++) {
                         rowMap.put(fields.get(i), line[i]);
                     }
-                    entry = readCSVRow(cr, rowMap);
-
-                    if(TextUtils.isEmpty(entry.title)
-                            || (data.hasCategory && TextUtils.isEmpty(entry.catName))) {
-                        continue;
-                    }
-
-                    data.addEntry(entry, isDuplicate(cr, entry));
+                    readCSVRow(context, data, rowMap);
                 }
             }
             reader.close();
@@ -203,17 +244,50 @@ public class CSVUtils {
     }
 
     /**
+     * Determine the format of the CSV file.
+     *
+     * @param holder The CSVHolder
+     * @param fields The list of field names
+     */
+    private static void detectFormat(CSVHolder holder, List<String> fields) {
+        if(fields.containsAll(LEGACY_FIELDS_COMMON)) {
+            if(fields.containsAll(LEGACY_FIELDS_BEER)) {
+                holder.legacyFormat = FlavordexApp.CAT_BEER;
+            } else if(fields.containsAll(LEGACY_FIELDS_COFFEE)) {
+                holder.legacyFormat = FlavordexApp.CAT_COFFEE;
+            } else if(fields.containsAll(LEGACY_FIELDS_WHISKEY)) {
+                holder.legacyFormat = FlavordexApp.CAT_WHISKEY;
+            } else if(fields.containsAll(LEGACY_FIELDS_WINE)) {
+                holder.legacyFormat = FlavordexApp.CAT_WINE;
+            } else {
+                return;
+            }
+            holder.hasCategory = true;
+        }
+    }
+
+    /**
      * Read a row from a CSV file into an EntryHolder object.
      *
-     * @param cr     The ContentResolver
-     * @param rowMap A map of column names to values
-     * @return The entry
+     * @param context The Context
+     * @param holder  The CSVHolder
+     * @param rowMap  A map of column names to values
      */
-    private static EntryHolder readCSVRow(ContentResolver cr, HashMap<String, String> rowMap) {
+    private static void readCSVRow(Context context, CSVHolder holder,
+                                   HashMap<String, String> rowMap) {
         final EntryHolder entry = new EntryHolder();
-        entry.uuid = rowMap.get(Tables.Entries.UUID);
+
         entry.title = rowMap.get(Tables.Entries.TITLE);
-        entry.catName = rowMap.get(Tables.Entries.CAT);
+        if(holder.legacyFormat == null) {
+            entry.uuid = rowMap.get(Tables.Entries.UUID);
+            entry.catName = rowMap.get(Tables.Entries.CAT);
+            if(TextUtils.isEmpty(entry.title)
+                    || (holder.hasCategory && TextUtils.isEmpty(entry.catName))) {
+                return;
+            }
+        } else {
+            entry.catName = holder.legacyFormat;
+        }
         entry.maker = rowMap.get(Tables.Entries.MAKER);
         entry.origin = rowMap.get(Tables.Entries.ORIGIN);
         entry.price = rowMap.get(Tables.Entries.PRICE);
@@ -240,11 +314,17 @@ public class CSVUtils {
 
         entry.notes = rowMap.get(Tables.Entries.NOTES);
 
+        if(holder.legacyFormat != null) {
+            readLegacyExtras(entry, rowMap, holder.legacyFormat);
+            readLegacyFlavors(context, entry, rowMap, holder.legacyFormat);
+            readLegacyPhotos(context, entry, rowMap);
+        } else {
+            readFlavors(entry, rowMap);
+            readPhotos(context, entry, rowMap);
+        }
         readExtras(entry, rowMap);
-        readFlavors(entry, rowMap);
-        readPhotos(cr, entry, rowMap);
 
-        return entry;
+        holder.addEntry(entry, isDuplicate(context, entry));
     }
 
     /**
@@ -269,6 +349,47 @@ public class CSVUtils {
             }
         } catch(JSONException e) {
             Log.w(TAG, "Failed to parse extra fields for: " + entry.title, e);
+        }
+    }
+
+    /**
+     * Read the columns of a legacy format into extra fields.
+     *
+     * @param entry        The entry
+     * @param rowMap       The map of fields from the row
+     * @param legacyFormat The legacy format
+     */
+    private static void readLegacyExtras(EntryHolder entry, HashMap<String, String> rowMap,
+                                         String legacyFormat) {
+        for(Map.Entry<String, String> field : rowMap.entrySet()) {
+            if(LEGACY_FIELDS_COMMON.contains(field.getKey())) {
+                continue;
+            }
+            switch(legacyFormat) {
+                case FlavordexApp.CAT_BEER:
+                    if(!LEGACY_FIELDS_BEER.contains(field.getKey())) {
+                        continue;
+                    }
+                    break;
+                case FlavordexApp.CAT_COFFEE:
+                    if(!LEGACY_FIELDS_COFFEE.contains(field.getKey())) {
+                        continue;
+                    }
+                    break;
+                case FlavordexApp.CAT_WHISKEY:
+                    if(!LEGACY_FIELDS_WHISKEY.contains(field.getKey())) {
+                        continue;
+                    }
+                    break;
+                case FlavordexApp.CAT_WINE:
+                    if(!LEGACY_FIELDS_WINE.contains(field.getKey())) {
+                        continue;
+                    }
+                    break;
+                default:
+                    return;
+            }
+            entry.addExtra(0, "_" + field.getKey(), true, field.getValue());
         }
     }
 
@@ -302,13 +423,59 @@ public class CSVUtils {
     }
 
     /**
+     * Read the flavors from a legacy formatted CSV row.
+     *
+     * @param context      The Context
+     * @param entry        The entry
+     * @param rowMap       The map of fields from the row
+     * @param legacyFormat The legacy format
+     */
+    private static void readLegacyFlavors(Context context, EntryHolder entry,
+                                          HashMap<String, String> rowMap, String legacyFormat) {
+        final String flavorsField = rowMap.get(Tables.Flavors.TABLE_NAME);
+        if(TextUtils.isEmpty(flavorsField)) {
+            return;
+        }
+
+        final String[] flavorNames;
+        switch(legacyFormat) {
+            case FlavordexApp.CAT_BEER:
+                flavorNames = context.getResources().getStringArray(R.array.beer_flavor_names);
+                break;
+            case FlavordexApp.CAT_COFFEE:
+                flavorNames = context.getResources().getStringArray(R.array.coffee_flavor_names);
+                break;
+            case FlavordexApp.CAT_WHISKEY:
+                flavorNames = context.getResources().getStringArray(R.array.whiskey_flavor_names);
+                break;
+            case FlavordexApp.CAT_WINE:
+                flavorNames = context.getResources().getStringArray(R.array.wine_flavor_names);
+                break;
+            default:
+                return;
+        }
+
+        final String[] flavors = flavorsField.split(",");
+        if(flavors.length != flavorNames.length) {
+            return;
+        }
+
+        for(int i = 0; i < flavors.length; i++) {
+            int value = Integer.valueOf(flavors[i].trim());
+            value = value < 0 ? 0 : value;
+            value = value > 5 ? 5 : value;
+            entry.addFlavor(flavorNames[i], value);
+        }
+    }
+
+    /**
      * Parse the photos field from the CSV row.
      *
-     * @param cr     The ContentResolver
-     * @param entry  The entry
-     * @param rowMap The map of fields from the row
+     * @param context The Context
+     * @param entry   The entry
+     * @param rowMap  The map of fields from the row
      */
-    private static void readPhotos(ContentResolver cr, EntryHolder entry,
+    private static void readPhotos(Context context, EntryHolder entry,
                                    HashMap<String, String> rowMap) {
         final String photosField = rowMap.get(Tables.Photos.TABLE_NAME);
         if(TextUtils.isEmpty(photosField)) {
@@ -316,6 +483,7 @@ public class CSVUtils {
         }
 
         try {
+            final ContentResolver cr = context.getContentResolver();
             final JSONArray array = new JSONArray(photosField);
             Uri uri;
             String hash;
@@ -332,16 +500,45 @@ public class CSVUtils {
     }
 
     /**
+     * Read the photos from a legacy formatted CSV row.
+     *
+     * @param context The Context
+     * @param entry   The entry
+     * @param rowMap  The map of fields from the row
+     */
+    private static void readLegacyPhotos(Context context, EntryHolder entry,
+                                         HashMap<String, String> rowMap) {
+        final String photosField = rowMap.get(Tables.Photos.TABLE_NAME);
+        if(TextUtils.isEmpty(photosField)) {
+            return;
+        }
+
+        final ContentResolver cr = context.getContentResolver();
+        String path;
+        Uri uri;
+        String hash;
+        for(String photo : photosField.split(",")) {
+            path = photo.trim().substring(0, photo.indexOf('|'));
+            uri = PhotoUtils.parsePath(path);
+            hash = PhotoUtils.getMD5Hash(cr, uri);
+            if(hash != null) {
+                entry.addPhoto(0, hash, uri);
+            }
+        }
+    }
+
+    /**
      * Is the item a duplicate? Checks the database for an entry with the same UUID.
      *
-     * @param cr    The ContentResolver to use
-     * @param entry The entry
+     * @param context The Context
+     * @param entry   The entry
      * @return Whether the entry is a duplicate
      */
-    private static boolean isDuplicate(ContentResolver cr, EntryHolder entry) {
+    private static boolean isDuplicate(Context context, EntryHolder entry) {
         if(entry.uuid == null) {
             return false;
         }
+        final ContentResolver cr = context.getContentResolver();
         final String[] projection = new String[] {Tables.Entries._ID};
         final String where = Tables.Entries.UUID + " = ?";
         final String[] whereArgs = new String[] {entry.uuid};
@@ -392,6 +589,11 @@ public class CSVUtils {
          */
         public boolean hasCategory;
 
+        /**
+         * The legacy format if detected
+         */
+        public String legacyFormat;
+
         public CSVHolder() {
             entries = new ArrayList<>();
             duplicates = new ArrayList<>();
@@ -400,6 +602,8 @@ public class CSVUtils {
         private CSVHolder(Parcel in) {
             entries = in.createTypedArrayList(EntryHolder.CREATOR);
             duplicates = in.createTypedArrayList(EntryHolder.CREATOR);
+            hasCategory = in.readInt() == 1;
+            legacyFormat = in.readString();
         }
 
         /**
@@ -424,6 +628,8 @@ public class CSVUtils {
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeTypedList(entries);
             dest.writeTypedList(duplicates);
+            dest.writeInt(hasCategory ? 1 : 0);
+            dest.writeString(legacyFormat);
         }
     }
 }
