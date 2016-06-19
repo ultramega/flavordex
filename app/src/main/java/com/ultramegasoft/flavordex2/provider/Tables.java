@@ -56,6 +56,7 @@ public class Tables {
         public static final String PUBLISHED = "published";
         public static final String SYNCED = "synced";
         public static final String SHARED = "shared";
+        public static final String LINK = "link";
 
         /**
          * Content data types

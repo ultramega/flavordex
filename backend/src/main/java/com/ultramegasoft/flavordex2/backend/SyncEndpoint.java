@@ -134,6 +134,7 @@ public class SyncEndpoint {
 
             if(record.getEntries() != null) {
                 final HashMap<String, Boolean> entryStatuses = new HashMap<>();
+                final HashMap<String, Long> entryIds = new HashMap<>();
                 for(EntryRecord entryRecord : record.getEntries()) {
                     try {
                         status = helper.update(entryRecord);
@@ -141,12 +142,14 @@ public class SyncEndpoint {
                             dataChanged = true;
                         }
                         entryStatuses.put(entryRecord.getUuid(), status);
+                        entryIds.put(entryRecord.getUuid(), entryRecord.getId());
                     } catch(SQLException e) {
                         LOGGER.log(Level.SEVERE, "Failed to update entry record", e);
                         entryStatuses.put(entryRecord.getUuid(), false);
                     }
                 }
                 response.setEntryStatuses(entryStatuses);
+                response.setEntryIds(entryIds);
             }
 
             if(dataChanged) {

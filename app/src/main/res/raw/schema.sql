@@ -24,6 +24,7 @@ CREATE TABLE entries (
   published INTEGER DEFAULT 0,
   synced INTEGER DEFAULT 0,
   shared INTEGER DEFAULT 0,
+  link TEXT,
   UNIQUE(uuid) ON CONFLICT FAIL
 );
 --

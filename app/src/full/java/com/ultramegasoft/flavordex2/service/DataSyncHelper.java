@@ -26,6 +26,7 @@ import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -148,9 +149,12 @@ public class DataSyncHelper {
             final ContentValues values = new ContentValues();
             values.put(Tables.Entries.PUBLISHED, true);
             values.put(Tables.Entries.SYNCED, true);
+            long remoteId;
             for(Map.Entry<String, Object> status : response.getEntryStatuses().entrySet()) {
                 if((boolean)status.getValue()) {
                     whereArgs[0] = status.getKey();
+                    remoteId = Long.valueOf(response.getEntryIds().get(status.getKey()).toString());
+                    values.put(Tables.Entries.LINK, getLink(remoteId));
                     cr.update(Tables.Entries.CONTENT_URI, values, where, whereArgs);
                 }
             }
@@ -645,6 +649,7 @@ public class DataSyncHelper {
                 uri = Tables.Entries.CONTENT_URI;
                 values.put(Tables.Entries.CAT, catId);
                 values.put(Tables.Entries.UUID, record.getUuid());
+                values.put(Tables.Entries.LINK, getLink(record.getId()));
                 uri = cr.insert(uri, values);
                 if(uri == null) {
                     return;
@@ -877,5 +882,19 @@ public class DataSyncHelper {
         }
 
         return 0;
+    }
+
+    /**
+     * Get the public link for an entry based on its remote ID.
+     *
+     * @param remoteId The remote ID
+     * @return The link text version of the remote ID
+     */
+    private static String getLink(long remoteId) {
+        String link = String.format(Locale.US, "%010d", remoteId);
+        link = link.substring(8) + link.substring(0, 8);
+        link = Long.toString(Long.valueOf(link) + 1000000000, 34);
+        link = link.replace('0', 'y').replace('1', 'z');
+        return link;
     }
 }

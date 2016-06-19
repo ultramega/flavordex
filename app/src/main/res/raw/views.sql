@@ -16,7 +16,8 @@ a.notes AS notes,
 a.updated AS updated,
 a.published AS published,
 a.synced AS synced,
-a.shared AS shared
+a.shared AS shared,
+a.link AS link
 FROM entries a LEFT JOIN cats b LEFT JOIN makers c
 WHERE a.cat = b._id AND a.maker = c._id;
 --

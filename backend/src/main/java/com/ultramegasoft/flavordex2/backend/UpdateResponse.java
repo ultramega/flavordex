@@ -10,6 +10,7 @@ import java.util.HashMap;
 public class UpdateResponse {
     private HashMap<String, Boolean> catStatuses;
     private HashMap<String, Boolean> entryStatuses;
+    private HashMap<String, Long> entryIds;
 
     public HashMap<String, Boolean> getCatStatuses() {
         return catStatuses;
@@ -25,5 +26,13 @@ public class UpdateResponse {
 
     public void setEntryStatuses(HashMap<String, Boolean> entryStatuses) {
         this.entryStatuses = entryStatuses;
+    }
+
+    public HashMap<String, Long> getEntryIds() {
+        return entryIds;
+    }
+
+    public void setEntryIds(HashMap<String, Long> entryIds) {
+        this.entryIds = entryIds;
     }
 }
