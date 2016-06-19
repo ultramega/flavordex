@@ -96,6 +96,8 @@ public class AddEntryFragment extends Fragment {
         mPager.setOffscreenPageLimit(2);
         mPager.setAdapter(new PagerAdapter());
 
+        ((ViewPager.LayoutParams)root.findViewById(R.id.tabs).getLayoutParams()).isDecor = true;
+
         return root;
     }
 
