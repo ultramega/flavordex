@@ -321,6 +321,8 @@ public class DataSyncHelper {
                     record.setNotes(cursor.getString(cursor.getColumnIndex(Tables.Entries.NOTES)));
                     record.setUpdated(
                             cursor.getLong(cursor.getColumnIndex(Tables.Entries.UPDATED)));
+                    record.setShared(
+                            cursor.getLong(cursor.getColumnIndex(Tables.Entries.SHARED)) == 1);
 
                     id = cursor.getLong(cursor.getColumnIndex(Tables.Entries._ID));
                     record.setExtras(getEntryExtras(id));
@@ -635,6 +637,7 @@ public class DataSyncHelper {
             values.put(Tables.Entries.NOTES, record.getNotes());
             values.put(Tables.Entries.PUBLISHED, true);
             values.put(Tables.Entries.SYNCED, true);
+            values.put(Tables.Entries.SHARED, record.getShared());
             if(entryId > 0) {
                 uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId);
                 cr.update(uri, values, null, null);

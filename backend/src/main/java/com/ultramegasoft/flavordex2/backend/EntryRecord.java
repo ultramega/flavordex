@@ -21,6 +21,7 @@ public class EntryRecord {
     private float rating;
     private String notes;
     private long updated;
+    private boolean shared;
     private boolean deleted;
 
     private ArrayList<ExtraRecord> extras;
@@ -129,6 +130,14 @@ public class EntryRecord {
 
     public void setUpdated(long updated) {
         this.updated = updated;
+    }
+
+    public boolean isShared() {
+        return shared;
+    }
+
+    public void setShared(boolean shared) {
+        this.shared = shared;
     }
 
     public boolean isDeleted() {

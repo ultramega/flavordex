@@ -327,6 +327,7 @@ public class DatabaseHelper {
                     record.setRating(result.getFloat("rating"));
                     record.setNotes(result.getString("notes"));
                     record.setUpdated(result.getLong("updated"));
+                    record.setShared(result.getBoolean("shared"));
 
                     record.setExtras(getEntryExtras(record.getId()));
                     record.setFlavors(getEntryFlavors(record.getId()));
@@ -548,7 +549,7 @@ public class DatabaseHelper {
      */
     private boolean insertEntry(EntryRecord entry) throws SQLException {
         int changed;
-        String sql = "INSERT INTO entries (uuid, user, cat, title, maker, origin, price, location, date, rating, notes, updated, sync_time, client) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO entries (uuid, user, cat, title, maker, origin, price, location, date, rating, notes, updated, sync_time, client, shared) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         try {
             stmt.setString(1, entry.getUuid());
@@ -565,6 +566,7 @@ public class DatabaseHelper {
             stmt.setLong(12, entry.getUpdated());
             stmt.setLong(13, System.currentTimeMillis());
             stmt.setLong(14, mClientId);
+            stmt.setBoolean(15, entry.isShared());
             changed = stmt.executeUpdate();
 
             final ResultSet result = stmt.getGeneratedKeys();
@@ -609,7 +611,7 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     private boolean updateEntry(EntryRecord entry) throws SQLException {
-        final String sql = "UPDATE entries SET title = ?, maker = ?, origin = ?, price = ?, location = ?, date = ?, rating = ?, notes = ?, updated = ?, sync_time = ?, client = ? WHERE user = ? AND id = ? AND updated < ?";
+        final String sql = "UPDATE entries SET title = ?, maker = ?, origin = ?, price = ?, location = ?, date = ?, rating = ?, notes = ?, updated = ?, sync_time = ?, client = ?, shared = ? WHERE user = ? AND id = ? AND updated < ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
         try {
             stmt.setString(1, entry.getTitle());
@@ -623,9 +625,10 @@ public class DatabaseHelper {
             stmt.setLong(9, entry.getUpdated());
             stmt.setLong(10, System.currentTimeMillis());
             stmt.setLong(11, mClientId);
-            stmt.setLong(12, mUserId);
-            stmt.setLong(13, entry.getId());
-            stmt.setLong(14, entry.getUpdated());
+            stmt.setBoolean(12, entry.isShared());
+            stmt.setLong(13, mUserId);
+            stmt.setLong(14, entry.getId());
+            stmt.setLong(15, entry.getUpdated());
             if(stmt.executeUpdate() > 0) {
                 updateEntryExtras(entry);
                 updateEntryFlavors(entry);
