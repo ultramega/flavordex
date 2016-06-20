@@ -892,7 +892,7 @@ public class DataSyncHelper {
      */
     private static String getLink(long remoteId) {
         String link = String.format(Locale.US, "%010d", remoteId);
-        link = link.substring(-2) + link.substring(0, -2);
+        link = link.substring(link.length() - 2) + link.substring(0, link.length() - 2);
         link = Long.toString(Long.valueOf(link) + 1000000000, 34);
         link = link.replace('0', 'y').replace('1', 'z');
         return link;
