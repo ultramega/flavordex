@@ -94,6 +94,7 @@ public class BaseEntryListFragment extends ListFragment
             Tables.Entries.MAKER,
             Tables.Entries.RATING,
             Tables.Entries.DATE,
+            Tables.Entries.SHARED,
             Tables.Entries.LINK
     };
 
@@ -315,7 +316,9 @@ public class BaseEntryListFragment extends ListFragment
                     final String link =
                             cursor.getString(cursor.getColumnIndex(Tables.Entries.LINK));
                     EntryUtils.share(getContext(), title, rating, link);
-                    EntryUtils.setShareStatus(getContext(), id, true);
+                    if(cursor.getInt(cursor.getColumnIndex(Tables.Entries.SHARED)) == 0) {
+                        EntryUtils.setShareStatus(getContext(), id, true);
+                    }
                 }
                 return true;
             case R.id.menu_edit_entry:
