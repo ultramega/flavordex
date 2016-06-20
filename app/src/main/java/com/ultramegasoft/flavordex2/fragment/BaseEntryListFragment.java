@@ -93,7 +93,8 @@ public class BaseEntryListFragment extends ListFragment
             Tables.Entries.TITLE,
             Tables.Entries.MAKER,
             Tables.Entries.RATING,
-            Tables.Entries.DATE
+            Tables.Entries.DATE,
+            Tables.Entries.LINK
     };
 
     /**
@@ -306,11 +307,15 @@ public class BaseEntryListFragment extends ListFragment
         switch(item.getItemId()) {
             case R.id.menu_share:
                 if(cursor != null) {
+                    final long id = cursor.getLong(cursor.getColumnIndex(Tables.Entries._ID));
                     final String title =
                             cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
                     final float rating =
                             cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING));
-                    EntryUtils.share(getContext(), title, rating);
+                    final String link =
+                            cursor.getString(cursor.getColumnIndex(Tables.Entries.LINK));
+                    EntryUtils.share(getContext(), title, rating, link);
+                    EntryUtils.setShareStatus(getContext(), id, true);
                 }
                 return true;
             case R.id.menu_edit_entry:

@@ -29,6 +29,7 @@
     <string name="title_permission">Permission Requested</string>
     <string name="title_reset_flavor">Reset Flavor Chart</string>
     <string name="title_about">About Flavordex</string>
+    <string name="title_unshare_entry">Un-share Entry?</string>
 
     <string name="header_details">Details</string>
     <string name="header_rating">Rating</string>
@@ -46,6 +47,7 @@
     <string name="menu_save_entry">Save Entry</string>
     <string name="menu_delete_entry">Delete Entry</string>
     <string name="menu_share_entry">Share Entry</string>
+    <string name="menu_unshare_entry">Un-share Entry</string>
     <string name="menu_add_photo">Add Photo</string>
     <string name="menu_select_photo">Select Photo</string>
     <string name="menu_take_photo">Take Photo</string>
@@ -101,6 +103,7 @@
     <string name="message_version">Flavordex v.%s</string>
     <string name="message_copyright">Copyright © %d UltraMega Software</string>
     <string name="message_duplicate_photo">The selected photo has already been added.</string>
+    <string name="message_unshare_entry">The entry will no longer be visible online.</string>
 
     <string name="error_camera">Error: Unable to launch camera</string>
     <string name="error_required">required</string>
@@ -110,7 +113,8 @@
     <string name="error_insert_entry">Error: Failed to create new entry</string>
 
     <string name="share_subject">I logged %s on Flavordex</string>
-    <string name="share_body">I logged %1$s in my %2$s with a %3$.1f rating.\n\nvia Flavordex</string>
+    <string name="share_body">I logged %1$s in my %2$s with a %3$.1f rating.\n\nvia %2$s</string>
+    <string name="share_body_link">I logged %1$s in my %2$s with a %3$.1f rating. http://flavordex/j/%4$s\n\nvia %2$s</string>
 
     <string name="welcome_header">Welcome to Flavordex</string>
     <string name="welcome_description">Tasting Journal</string>

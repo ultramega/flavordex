@@ -3,6 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/menu_unshare"
+        android:visible="false"
+        android:orderInCategory="10"
+        android:title="@string/menu_unshare_entry"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/menu_delete_entry"
         android:orderInCategory="10"
         android:title="@string/menu_delete_entry"
