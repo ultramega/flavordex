@@ -114,7 +114,7 @@
 
     <string name="share_subject">I logged %s on Flavordex</string>
     <string name="share_body">I logged %1$s in my %2$s with a %3$.1f rating.\n\nvia %2$s</string>
-    <string name="share_body_link">I logged %1$s in my %2$s with a %3$.1f rating. http://flavordex/j/%4$s\n\nvia %2$s</string>
+    <string name="share_body_link">I logged %1$s in my %2$s with a %3$.1f rating. http://flavordex.com/j/%4$s\n\nvia %2$s</string>
 
     <string name="welcome_header">Welcome to Flavordex</string>
     <string name="welcome_description">Tasting Journal</string>
