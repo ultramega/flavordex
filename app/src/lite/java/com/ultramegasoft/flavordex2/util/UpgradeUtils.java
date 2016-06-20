@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
-import android.text.Html;
 
 import com.ultramegasoft.flavordex2.R;
 
@@ -69,7 +68,8 @@ public class UpgradeUtils {
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final String message = Html.fromHtml(getString(R.string.message_upgrade)).toString();
+            final String message =
+                    HtmlCompat.fromHtml(getString(R.string.message_upgrade)).toString();
             return new AlertDialog.Builder(getContext())
                     .setIcon(R.drawable.ic_info)
                     .setTitle(R.string.title_upgrade)
