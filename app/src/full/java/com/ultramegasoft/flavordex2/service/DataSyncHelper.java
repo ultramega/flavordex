@@ -642,6 +642,7 @@ public class DataSyncHelper {
             values.put(Tables.Entries.PUBLISHED, true);
             values.put(Tables.Entries.SYNCED, true);
             values.put(Tables.Entries.SHARED, record.getShared());
+            values.put(Tables.Entries.LINK, getLink(record.getId()));
             if(entryId > 0) {
                 uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId);
                 cr.update(uri, values, null, null);
@@ -649,7 +650,6 @@ public class DataSyncHelper {
                 uri = Tables.Entries.CONTENT_URI;
                 values.put(Tables.Entries.CAT, catId);
                 values.put(Tables.Entries.UUID, record.getUuid());
-                values.put(Tables.Entries.LINK, getLink(record.getId()));
                 uri = cr.insert(uri, values);
                 if(uri == null) {
                     return;
