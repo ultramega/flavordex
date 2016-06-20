@@ -33,7 +33,7 @@ import java.util.LinkedHashMap;
  *
  * @author Steve Guidetti
  */
-public class EditInfoFragment extends LoadingProgressFragment
+public abstract class AbsEditInfoFragment extends LoadingProgressFragment
         implements LoaderManager.LoaderCallbacks {
     /**
      * Keys for the Fragment arguments
@@ -118,11 +118,6 @@ public class EditInfoFragment extends LoadingProgressFragment
                 .getLocationName());
 
         return root;
-    }
-
-    @Override
-    protected int getLayoutId() {
-        return R.layout.fragment_edit_info;
     }
 
     /**

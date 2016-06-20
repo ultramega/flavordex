@@ -10,7 +10,6 @@ import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
@@ -19,8 +18,6 @@ import android.widget.EditText;
 import android.widget.FilterQueryProvider;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
-import android.widget.TableLayout;
-import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
@@ -35,7 +32,7 @@ import java.util.Map;
  *
  * @author Steve Guidetti
  */
-public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
+public abstract class AbsEntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Loader IDs
      */
@@ -57,11 +54,6 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
     public EditText mTxtNotes;
 
     /**
-     * The TableLayout for the main info
-     */
-    private TableLayout mInfoTable;
-
-    /**
      * Map of extra field names to their data
      */
     private final LinkedHashMap<String, ExtraFieldHolder> mExtras = new LinkedHashMap<>();
@@ -75,7 +67,7 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
      * @param fragment   The Fragment using this helper object
      * @param layoutRoot The root of the layout
      */
-    public EntryFormHelper(Fragment fragment, View layoutRoot) {
+    public AbsEntryFormHelper(Fragment fragment, View layoutRoot) {
         mFragment = fragment;
         loadLayout(layoutRoot);
         setupMakersAutoComplete();
@@ -87,8 +79,6 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
      * @param root The root of the layout
      */
     protected void loadLayout(View root) {
-        mInfoTable = (TableLayout)root.findViewById(R.id.entry_info);
-
         mTxtTitle = (EditText)root.findViewById(R.id.entry_title);
         mTxtMaker = (AutoCompleteTextView)root.findViewById(R.id.entry_maker);
         mTxtOrigin = (EditText)root.findViewById(R.id.entry_origin);
@@ -103,18 +93,7 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
      * @param extras The list of extras
      */
     public void setExtras(LinkedHashMap<String, ExtraFieldHolder> extras) {
-        final LayoutInflater inflater = LayoutInflater.from(mFragment.getContext());
         for(Map.Entry<String, ExtraFieldHolder> extra : extras.entrySet()) {
-            if(!extra.getValue().preset) {
-                final View root = inflater.inflate(R.layout.edit_info_extra, mInfoTable, false);
-                final TextView label = (TextView)root.findViewById(R.id.label);
-                final EditText value = (EditText)root.findViewById(R.id.value);
-                label.setText(mFragment.getString(R.string.label_field, extra.getValue().name));
-                initEditText(value, extra.getValue());
-                mInfoTable.addView(root);
-
-                mExtraViews.put(extra.getValue(), value);
-            }
             mExtras.put(extra.getKey(), extra.getValue());
         }
     }
@@ -161,7 +140,7 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
                 args.putParcelable("uri", uri);
 
                 mFragment.getLoaderManager()
-                        .restartLoader(LOADER_MAKERS, args, EntryFormHelper.this);
+                        .restartLoader(LOADER_MAKERS, args, AbsEntryFormHelper.this);
 
                 return adapter.getCursor();
             }
