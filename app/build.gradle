@@ -17,13 +17,13 @@ android {
     productFlavors {
         lite {
             applicationId 'com.ultramegasoft.flavordex2.lite'
-            versionCode 5
-            versionName '2.0.4-lite'
+            versionCode 6
+            versionName '2.1.0-lite'
         }
         full {
             applicationId "com.ultramegasoft.flavordex2"
-            versionCode 12
-            versionName '2.1.9'
+            versionCode 13
+            versionName '2.2.0'
         }
     }
     useLibrary 'org.apache.http.legacy'
