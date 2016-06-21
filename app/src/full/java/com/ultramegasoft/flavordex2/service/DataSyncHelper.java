@@ -18,6 +18,7 @@ import com.ultramegasoft.flavordex2.backend.sync.model.EntryRecord;
 import com.ultramegasoft.flavordex2.backend.sync.model.ExtraRecord;
 import com.ultramegasoft.flavordex2.backend.sync.model.FlavorRecord;
 import com.ultramegasoft.flavordex2.backend.sync.model.PhotoRecord;
+import com.ultramegasoft.flavordex2.backend.sync.model.RemoteIdsRecord;
 import com.ultramegasoft.flavordex2.backend.sync.model.UpdateRecord;
 import com.ultramegasoft.flavordex2.backend.sync.model.UpdateResponse;
 import com.ultramegasoft.flavordex2.provider.Tables;
@@ -101,6 +102,7 @@ public class DataSyncHelper {
         mSync = BackendUtils.getSync(credential);
         try {
             Log.d(TAG, "Syncing...");
+            runPrecheck();
             pushUpdates();
             fetchUpdates();
             Log.d(TAG, "Syncing complete.");
@@ -113,6 +115,31 @@ public class DataSyncHelper {
 
         sBackoffHelper.onFail();
         return false;
+    }
+
+    /**
+     * Run any tasks that have been requested.
+     *
+     * @throws IOException
+     */
+    private void runPrecheck() throws IOException {
+        if(BackendUtils.areRemoteIdsRequested(mContext)) {
+            Log.d(TAG, "Requesting remote IDs...");
+            final ContentResolver cr = mContext.getContentResolver();
+
+            final RemoteIdsRecord record = mSync.getRemoteIds().execute();
+
+            final String where = Tables.Cats.UUID + " = ?";
+            final String[] whereArgs = new String[1];
+            final ContentValues values = new ContentValues();
+            for(Map.Entry<String, Object> item : record.getEntryIds().entrySet()) {
+                whereArgs[0] = item.getKey();
+                values.put(Tables.Entries.LINK, getLink(Long.valueOf(item.getValue().toString())));
+                cr.update(Tables.Entries.CONTENT_URI, values, where, whereArgs);
+            }
+
+            BackendUtils.setRequestRemoteIds(mContext, false);
+        }
     }
 
     /**

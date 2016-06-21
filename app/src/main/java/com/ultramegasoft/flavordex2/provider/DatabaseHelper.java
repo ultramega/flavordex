@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.util.BackendUtils;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -66,6 +67,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 generateUuids(db);
             case 2:
                 execRawFile(db, R.raw.upgrade_v3);
+                BackendUtils.setRequestRemoteIds(mContext, true);
+                BackendUtils.requestDataSync(mContext);
         }
 
         execRawFile(db, R.raw.triggers);

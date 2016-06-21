@@ -41,6 +41,7 @@ public class BackendUtils {
     private static final String PREF_CLIENT_ID = "pref_client_id";
     private static final String PREF_DATA_SYNC_REQUESTED = "pref_data_sync_requested";
     private static final String PREF_PHOTO_SYNC_REQUESTED = "pref_photo_sync_requested";
+    private static final String PREF_REMOTE_IDS_REQUESTED = "pref_remote_ids_requested";
 
     /**
      * The API project number
@@ -262,6 +263,28 @@ public class BackendUtils {
         final Sync.Builder builder = new Sync.Builder(new ApacheHttpTransport(),
                 new AndroidJsonFactory(), credential);
         return (Sync)build(builder);
+    }
+
+    /**
+     * Set whether to request remote IDs from the backend.
+     *
+     * @param context   The Context
+     * @param requested Whether to request remote IDs
+     */
+    public static void setRequestRemoteIds(Context context, boolean requested) {
+        context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit()
+                .putBoolean(PREF_REMOTE_IDS_REQUESTED, requested).apply();
+    }
+
+    /**
+     * Are remote IDs requested?
+     *
+     * @param context The Context
+     * @return Whether remote IDs have been requested
+     */
+    public static boolean areRemoteIdsRequested(Context context) {
+        return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
+                .getBoolean(PREF_REMOTE_IDS_REQUESTED, false);
     }
 
     /**

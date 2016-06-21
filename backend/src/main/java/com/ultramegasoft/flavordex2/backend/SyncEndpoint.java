@@ -196,6 +196,37 @@ public class SyncEndpoint {
     }
 
     /**
+     * Get the list of remote entry IDs for the user.
+     *
+     * @param user The User
+     * @return A map of UUIDs and remote IDs
+     * @throws InternalServerErrorException
+     * @throws UnauthorizedException
+     */
+    @ApiMethod(name = "getRemoteIds", httpMethod = ApiMethod.HttpMethod.GET)
+    public RemoteIdsRecord getRemoteIds(User user) throws InternalServerErrorException,
+            UnauthorizedException {
+        if(user == null) {
+            throw new UnauthorizedException("Unauthorized");
+        }
+        final DatabaseHelper helper = new DatabaseHelper();
+        try {
+            helper.open();
+            helper.setUser(user.getEmail());
+
+            final RemoteIdsRecord record = new RemoteIdsRecord();
+            record.setEntryIds(helper.getEntryIds());
+
+            return record;
+        } catch(SQLException e) {
+            LOGGER.log(Level.SEVERE, "Failed to fetch updates", e);
+            throw new InternalServerErrorException("Failed to fetch updates");
+        } finally {
+            helper.close();
+        }
+    }
+
+    /**
      * Notify all clients belonging to the user the a sync is requested.
      *
      * @param helper The DatabaseHelper

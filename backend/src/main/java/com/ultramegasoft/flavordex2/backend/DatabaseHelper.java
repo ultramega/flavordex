@@ -263,6 +263,44 @@ public class DatabaseHelper {
     }
 
     /**
+     * Get the list of entry IDs for the user.
+     *
+     * @return The list of entry IDs for the user
+     * @throws SQLException
+     * @throws UnauthorizedException
+     */
+    public HashMap<String, Long> getEntryIds() throws SQLException, UnauthorizedException {
+        if(mUserId == 0) {
+            throw new UnauthorizedException("Unknown user");
+        }
+
+        final HashMap<String, Long> list = new HashMap<>();
+
+        final String sql = "SELECT id, uuid FROM entries WHERE user = ?";
+        final PreparedStatement stmt = mConnection.prepareStatement(sql);
+        try {
+            stmt.setLong(1, mUserId);
+
+            final ResultSet result = stmt.executeQuery();
+            try {
+                while(result.next()) {
+                    list.put(result.getString("uuid"), result.getLong("id"));
+                }
+            } finally {
+                if(result != null) {
+                    result.close();
+                }
+            }
+        } finally {
+            if(stmt != null) {
+                stmt.close();
+            }
+        }
+
+        return list;
+    }
+
+    /**
      * Get all entries updated by other clients since the client's last sync.
      *
      * @return The list of entries updated since the last sync

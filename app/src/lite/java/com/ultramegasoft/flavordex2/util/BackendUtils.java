@@ -13,4 +13,7 @@ public class BackendUtils {
 
     public static void requestPhotoSync(Context context) {
     }
+
+    public static void setRequestRemoteIds(Context context, boolean requested) {
+    }
 }
