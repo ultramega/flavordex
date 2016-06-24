@@ -27,12 +27,12 @@ import com.ultramegasoft.flavordex2.R;
  */
 public class DriveConnectDialog extends DialogFragment
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    private static final String TAG = "DriveConnectDialog";
+    public static final String TAG = "DriveConnectDialog";
 
     /**
      * Request codes for external Activities
      */
-    private static final int REQUEST_RESOLVE_CONNECTION = 800;
+    public static final int REQUEST_RESOLVE_CONNECTION = 800;
 
     /**
      * The Google Play Services client
@@ -103,9 +103,7 @@ public class DriveConnectDialog extends DialogFragment
     public void onConnectionFailed(@NonNull ConnectionResult result) {
         if(result.hasResolution()) {
             try {
-                final int requestCode = REQUEST_RESOLVE_CONNECTION
-                        + ((getFragmentManager().getFragments().indexOf(this) + 1) << 16);
-                result.startResolutionForResult(getActivity(), requestCode);
+                result.startResolutionForResult(getActivity(), REQUEST_RESOLVE_CONNECTION);
             } catch(IntentSender.SendIntentException e) {
                 Log.e(TAG, "Connection to Google Drive failed", e);
                 dismiss();

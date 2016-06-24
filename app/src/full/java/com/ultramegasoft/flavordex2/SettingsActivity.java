@@ -60,6 +60,18 @@ public class SettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == DriveConnectDialog.REQUEST_RESOLVE_CONNECTION) {
+            final Fragment fragment =
+                    getSupportFragmentManager().findFragmentByTag(DriveConnectDialog.TAG);
+            if(fragment != null) {
+                fragment.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+    }
+
     /**
      * The Fragment handling the preferences interface.
      */
