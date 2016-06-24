@@ -4,17 +4,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <permission
-        android:name="com.ultramegasoft.flavordex2.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="com.ultramegasoft.flavordex2.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.ultramegasoft.flavordex2.lite.permission.ACCESS_DATA" />
 
     <uses-feature
@@ -48,36 +42,25 @@
             android:enabled="true"
             android:exported="false" />
 
-        <receiver
-            android:name="com.google.android.gms.gcm.GcmReceiver"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="com.ultramegasoft.flavordex2" />
-            </intent-filter>
-        </receiver>
-
         <service
             android:name=".service.InstanceIDService"
-            android:exported="false">
+            tools:ignore="ExportedService">
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID" />
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name=".service.GcmService"
-            android:exported="false">
+            android:name=".service.FcmService"
+            tools:ignore="ExportedService">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name=".service.TaskService"
-            android:exported="true"
-            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            android:name=".service.SyncService"
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
             </intent-filter>
         </service>
         <service

@@ -3,25 +3,35 @@ package com.ultramegasoft.flavordex2.service;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.GcmTaskService;
-import com.google.android.gms.gcm.TaskParams;
+import com.firebase.jobdispatcher.JobParameters;
+import com.firebase.jobdispatcher.JobService;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 
 /**
- * Service to handle execution of scheduled tasks.
+ * Service to handle execution of scheduled jobs.
  *
  * @author Steve Guidetti
  */
-public class TaskService extends GcmTaskService {
+public class SyncService extends JobService {
     @Override
-    public int onRunTask(TaskParams params) {
-        final String tag = params.getTag();
-        if(BackendUtils.TASK_SYNC_DATA.equals(tag)) {
-            syncData();
+    public boolean onStartJob(final JobParameters parameters) {
+        final String tag = parameters.getTag();
+        if(BackendUtils.JOB_SYNC_DATA.equals(tag)) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    syncData();
+                    jobFinished(parameters, false);
+                }
+            }).start();
         }
-        return GcmNetworkManager.RESULT_SUCCESS;
+        return true;
+    }
+
+    @Override
+    public boolean onStopJob(JobParameters parameters) {
+        return false;
     }
 
     /**

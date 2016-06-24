@@ -10,9 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
-import com.google.android.gms.gcm.GcmNetworkManager;
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.service.TaskService;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 
 /**
@@ -89,8 +87,7 @@ public class FlavordexApp extends AbsFlavordexApp implements
             setLocationEnabled(sharedPreferences.getBoolean(key, false));
         } else if(PREF_SYNC_DATA.equals(key)) {
             if(!sharedPreferences.getBoolean(key, false)) {
-                GcmNetworkManager.getInstance(this)
-                        .cancelTask(BackendUtils.TASK_SYNC_DATA, TaskService.class);
+                BackendUtils.stopSync();
             }
         }
     }

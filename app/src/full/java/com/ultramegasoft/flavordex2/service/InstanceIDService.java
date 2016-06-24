@@ -3,7 +3,7 @@ package com.ultramegasoft.flavordex2.service;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.google.android.gms.iid.InstanceIDListenerService;
+import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.util.BackendUtils;
 
@@ -12,7 +12,7 @@ import com.ultramegasoft.flavordex2.util.BackendUtils;
  *
  * @author Steve Guidetti
  */
-public class InstanceIDService extends InstanceIDListenerService {
+public class InstanceIDService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
         super.onTokenRefresh();

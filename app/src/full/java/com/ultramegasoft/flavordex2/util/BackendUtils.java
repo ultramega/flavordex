@@ -5,19 +5,20 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.gcm.PeriodicTask;
-import com.google.android.gms.gcm.Task;
-import com.google.android.gms.iid.InstanceID;
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Trigger;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.services.json.AbstractGoogleJsonClient;
 import com.google.api.client.http.apache.ApacheHttpTransport;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.backend.registration.Registration;
 import com.ultramegasoft.flavordex2.backend.sync.Sync;
-import com.ultramegasoft.flavordex2.service.TaskService;
+import com.ultramegasoft.flavordex2.service.SyncService;
 
 import java.io.IOException;
 
@@ -30,9 +31,9 @@ public class BackendUtils {
     private static final String TAG = "BackendUtils";
 
     /**
-     * Task tags for the GCM Network Manager
+     * Job tags for the job dispatcher
      */
-    public static final String TASK_SYNC_DATA = "sync_data";
+    public static final String JOB_SYNC_DATA = "sync_data";
 
     /**
      * Keys for the backend shared preferences
@@ -42,11 +43,6 @@ public class BackendUtils {
     private static final String PREF_DATA_SYNC_REQUESTED = "pref_data_sync_requested";
     private static final String PREF_PHOTO_SYNC_REQUESTED = "pref_photo_sync_requested";
     private static final String PREF_REMOTE_IDS_REQUESTED = "pref_remote_ids_requested";
-
-    /**
-     * The API project number
-     */
-    private static final String PROJECT_NUMBER = "1001621163874";
 
     /**
      * The API project ID
@@ -59,23 +55,40 @@ public class BackendUtils {
     private static final String WEB_CLIENT_ID = "1001621163874-su48pt09eaj7rd4g0mni19ag4vv2g7p7.apps.googleusercontent.com";
 
     /**
+     * The job dispatcher
+     */
+    private static FirebaseJobDispatcher sJobDispatcher;
+
+    /**
      * Schedule the sync service to run.
      *
      * @param context The Context
      */
     public static void setupSync(Context context) {
-        final PeriodicTask task = new PeriodicTask.Builder()
-                .setTag(TASK_SYNC_DATA)
-                .setUpdateCurrent(true)
-                .setPersisted(false)
-                .setPeriod(30)
-                .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED)
-                .setService(TaskService.class)
+        if(sJobDispatcher == null) {
+            sJobDispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(context));
+        }
+        final Job job = sJobDispatcher.newJobBuilder()
+                .setService(SyncService.class)
+                .setTag(JOB_SYNC_DATA)
+                .setReplaceCurrent(true)
+                .setRecurring(true)
+                .setTrigger(Trigger.executionWindow(30, 60))
+                .setConstraints(Constraint.ON_ANY_NETWORK)
                 .build();
-        GcmNetworkManager.getInstance(context).schedule(task);
+        sJobDispatcher.schedule(job);
 
         requestDataSync(context);
         requestPhotoSync(context);
+    }
+
+    /**
+     * Cancel all sync jobs.
+     */
+    public static void stopSync() {
+        if(sJobDispatcher != null) {
+            sJobDispatcher.cancel(JOB_SYNC_DATA);
+        }
     }
 
     /**
@@ -187,12 +200,11 @@ public class BackendUtils {
         final GoogleAccountCredential credential = getCredential(context);
         credential.setSelectedAccountName(accountName);
 
-        final InstanceID instanceID = InstanceID.getInstance(context);
-
         try {
-            final String token =
-                    instanceID.getToken(PROJECT_NUMBER, GoogleCloudMessaging.INSTANCE_ID_SCOPE);
-
+            final String token = FirebaseInstanceId.getInstance().getToken();
+            if(token == null) {
+                return false;
+            }
             final Registration registration = BackendUtils.getRegistration(credential);
             final long clientId = registration.register(token).execute().getClientId();
             if(clientId > 0) {
@@ -228,8 +240,6 @@ public class BackendUtils {
 
         final Registration registration = getRegistration(credential);
         try {
-            InstanceID.getInstance(context)
-                    .deleteToken(PROJECT_NUMBER, GoogleCloudMessaging.INSTANCE_ID_SCOPE);
             registration.unregister(getClientId(context)).execute();
             setClientId(context, 0);
 
