@@ -120,7 +120,7 @@ public class DatabaseHelper {
 
         final RegistrationRecord record = new RegistrationRecord();
 
-        String sql = "DELETE FROM clients WHERE user = ? AND gcm_id = ?";
+        String sql = "DELETE FROM clients WHERE user = ? AND fcm_id = ?";
         PreparedStatement stmt = mConnection.prepareStatement(sql);
         try {
             stmt.setLong(1, mUserId);
@@ -132,7 +132,7 @@ public class DatabaseHelper {
             }
         }
 
-        sql = "INSERT INTO clients (user, gcm_id) VALUES (?, ?)";
+        sql = "INSERT INTO clients (user, fcm_id) VALUES (?, ?)";
         stmt = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         try {
             stmt.setLong(1, mUserId);
@@ -212,7 +212,7 @@ public class DatabaseHelper {
      * @throws SQLException
      */
     public void setGcmId(long clientId, String gcmId) throws SQLException {
-        final String sql = "UPDATE clients SET gcm_id = ? WHERE id = ?";
+        final String sql = "UPDATE clients SET fcm_id = ? WHERE id = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
         try {
             stmt.setString(1, gcmId);
@@ -237,7 +237,7 @@ public class DatabaseHelper {
             throw new UnauthorizedException("Unknown user");
         }
 
-        final String sql = "SELECT id, gcm_id FROM clients WHERE user = ?";
+        final String sql = "SELECT id, fcm_id FROM clients WHERE user = ?";
         final PreparedStatement stmt = mConnection.prepareStatement(sql);
         try {
             stmt.setLong(1, mUserId);
