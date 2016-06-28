@@ -1,6 +1,9 @@
 package com.ultramegasoft.flavordex2.service;
 
+import android.preference.PreferenceManager;
+
 import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
 
 /**
@@ -15,7 +18,10 @@ public class InstanceIDService extends FirebaseInstanceIdService {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                BackendUtils.registerClient(getApplicationContext());
+                if(PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                        .getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
+                    BackendUtils.registerClient(getApplicationContext());
+                }
             }
         }).run();
     }
