@@ -14,9 +14,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.MenuItem;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.ultramegasoft.flavordex2.dialog.BackendRegistrationDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.DriveConnectDialog;
@@ -88,6 +91,7 @@ public class SettingsActivity extends AppCompatActivity {
         private CheckBoxPreference mPrefLocation;
         private CheckBoxPreference mPrefSyncData;
         private CheckBoxPreference mPrefSyncPhotos;
+        private PreferenceCategory mCatSync;
 
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
@@ -99,6 +103,7 @@ public class SettingsActivity extends AppCompatActivity {
             mPrefLocation = (CheckBoxPreference)findPreference(FlavordexApp.PREF_DETECT_LOCATION);
             mPrefSyncData = (CheckBoxPreference)findPreference(FlavordexApp.PREF_SYNC_DATA);
             mPrefSyncPhotos = (CheckBoxPreference)findPreference(FlavordexApp.PREF_SYNC_PHOTOS);
+            mCatSync = (PreferenceCategory)findPreference("pref_cat_sync");
 
             setupEditCatsPref();
             setupLocationPref();
@@ -109,10 +114,12 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onResume() {
             super.onResume();
+            mCatSync.setEnabled(GoogleApiAvailability.getInstance()
+                    .isGooglePlayServicesAvailable(getContext()) == ConnectionResult.SUCCESS);
             mPrefLocation.setEnabled(PermissionUtils.hasLocationPerm(getContext())
                     || PermissionUtils.shouldAskLocationPerm(getActivity()));
-            mPrefSyncData.setEnabled(PermissionUtils.hasAccountsPerm(getContext())
-                    || PermissionUtils.shouldAskAccountsPerm(getActivity()));
+            mPrefSyncData.setEnabled((PermissionUtils.hasAccountsPerm(getContext())
+                    || PermissionUtils.shouldAskAccountsPerm(getActivity())));
         }
 
         @Override
