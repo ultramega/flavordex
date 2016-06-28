@@ -141,7 +141,8 @@ public class BackendRegistrationDialog extends BackgroundProgressDialog
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Toast.makeText(getContext(), R.string.error_register_failed, Toast.LENGTH_LONG).show();
+        dismiss();
     }
 
     /**
