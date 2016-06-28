@@ -5,7 +5,7 @@ package com.ultramegasoft.flavordex2.backend.model;
  *
  * @author Steve Guidetti
  */
-public class PhotoRecord {
+public class PhotoRecord extends Model {
     public long id;
     public long entry;
     public String hash;

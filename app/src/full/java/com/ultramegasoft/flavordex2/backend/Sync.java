@@ -48,8 +48,7 @@ public class Sync extends Endpoint {
     public UpdateResponse pushUpdates(UpdateRecord record) throws ApiException {
         final long id = BackendUtils.getClientId(getContext());
         try {
-            final String data = new Gson().toJson(record);
-            return new Gson().fromJson(post("pushUpdates", data, id), UpdateResponse.class);
+            return new Gson().fromJson(post("pushUpdates", record, id), UpdateResponse.class);
         } catch(JsonSyntaxException e) {
             throw new ParseException(e);
         }

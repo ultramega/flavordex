@@ -7,7 +7,7 @@ import java.util.ArrayList;
  *
  * @author Steve Guidetti
  */
-public class UpdateRecord {
+public class UpdateRecord extends Model {
     public long timestamp;
     public ArrayList<EntryRecord> entries;
     public ArrayList<CatRecord> cats;

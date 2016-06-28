@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.backend.model.Model;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -132,10 +133,20 @@ public abstract class Endpoint {
             if(data != null) {
                 conn.setDoOutput(true);
                 conn.setChunkedStreamingMode(0);
+
+                final String dataString;
+                if(data instanceof Model) {
+                    conn.setRequestProperty("Content-Type", "application/json");
+                    dataString = ((Model)data).toJson();
+                } else {
+                    conn.setRequestProperty("Content-Type", "text/plain");
+                    dataString = data.toString();
+                }
+
                 final DataOutputStream dos =
                         new DataOutputStream(new BufferedOutputStream(conn.getOutputStream()));
                 try {
-                    dos.writeChars(data.toString());
+                    dos.writeChars(dataString);
                 } finally {
                     dos.flush();
                     dos.close();

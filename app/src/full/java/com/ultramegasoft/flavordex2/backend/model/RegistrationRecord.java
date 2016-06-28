@@ -5,6 +5,6 @@ package com.ultramegasoft.flavordex2.backend.model;
  *
  * @author Steve Guidetti
  */
-public class RegistrationRecord {
+public class RegistrationRecord extends Model {
     public long clientId;
 }

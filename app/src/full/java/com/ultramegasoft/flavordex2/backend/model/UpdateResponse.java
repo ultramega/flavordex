@@ -7,7 +7,7 @@ import java.util.HashMap;
  *
  * @author Steve Guidetti
  */
-public class UpdateResponse {
+public class UpdateResponse extends Model {
     public HashMap<String, Boolean> catStatuses;
     public HashMap<String, Boolean> entryStatuses;
     public HashMap<String, Long> entryIds;

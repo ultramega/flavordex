@@ -7,7 +7,7 @@ import java.util.ArrayList;
  *
  * @author Steve Guidetti
  */
-public class EntryRecord {
+public class EntryRecord extends Model {
     public long id;
     public String uuid;
     public long cat;

@@ -5,7 +5,7 @@ package com.ultramegasoft.flavordex2.backend.model;
  *
  * @author Steve Guidetti
  */
-public class ExtraRecord {
+public class ExtraRecord extends Model {
     public long id;
     public String uuid;
     public long cat;

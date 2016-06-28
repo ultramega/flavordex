@@ -7,6 +7,6 @@ import java.util.HashMap;
  *
  * @author Steve Guidetti
  */
-public class RemoteIdsRecord {
+public class RemoteIdsRecord extends Model {
     public HashMap<String, Long> entryIds;
 }
