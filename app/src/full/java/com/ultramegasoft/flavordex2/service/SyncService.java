@@ -6,7 +6,7 @@ import android.preference.PreferenceManager;
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
 import com.ultramegasoft.flavordex2.FlavordexApp;
-import com.ultramegasoft.flavordex2.util.BackendUtils;
+import com.ultramegasoft.flavordex2.backend.BackendUtils;
 
 /**
  * Service to handle execution of scheduled jobs.

@@ -26,7 +26,7 @@ import android.view.animation.AnimationUtils;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.util.BackendUtils;
+import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.RadarEditWidget;
 import com.ultramegasoft.flavordex2.widget.RadarHolder;

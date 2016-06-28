@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.ultramegasoft.flavordex2.util.BackendUtils;
+import com.ultramegasoft.flavordex2.backend.BackendUtils;
 
 /**
  * Service to handle FCM messages.

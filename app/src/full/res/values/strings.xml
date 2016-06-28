@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="google_app_id">1001621163874</string>
+    <string name="api_url" translatable="false">http://api.flavordex.com/v1</string>
+    <string name="api_url_debug" translatable="false">http://10.0.2.2/flavordex_api/v1</string>
+    <string name="google_web_client_id" translatable="false">1001621163874-su48pt09eaj7rd4g0mni19ag4vv2g7p7.apps.googleusercontent.com</string>
     <string name="ext_csv" translatable="false">.csv</string>
 
     <string name="title_create_cat">Create Category</string>
@@ -88,7 +90,6 @@
     <string name="error_csv_export">Export failed</string>
     <string name="error_csv_export_file">Unable to create destination file</string>
     <string name="error_csv_parse">Unable to parse the .csv file</string>
-    <string name="error_get_accounts">Error: Unable to open the account chooser</string>
     <string name="error_register_failed">Error: Failed to connect to the sync service</string>
 
     <string name="about_gms">Google Play Services Legal Notice</string>

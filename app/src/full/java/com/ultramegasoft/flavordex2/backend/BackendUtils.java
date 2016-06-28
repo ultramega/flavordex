@@ -1,7 +1,6 @@
-package com.ultramegasoft.flavordex2.util;
+package com.ultramegasoft.flavordex2.backend;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -10,17 +9,9 @@ import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Job;
 import com.firebase.jobdispatcher.Trigger;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.googleapis.services.json.AbstractGoogleJsonClient;
-import com.google.api.client.http.apache.ApacheHttpTransport;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.ultramegasoft.flavordex2.FlavordexApp;
-import com.ultramegasoft.flavordex2.backend.registration.Registration;
-import com.ultramegasoft.flavordex2.backend.sync.Sync;
+import com.ultramegasoft.flavordex2.backend.model.RegistrationRecord;
 import com.ultramegasoft.flavordex2.service.SyncService;
-
-import java.io.IOException;
 
 /**
  * Helpers for accessing the backend.
@@ -43,16 +34,6 @@ public class BackendUtils {
     private static final String PREF_DATA_SYNC_REQUESTED = "pref_data_sync_requested";
     private static final String PREF_PHOTO_SYNC_REQUESTED = "pref_photo_sync_requested";
     private static final String PREF_REMOTE_IDS_REQUESTED = "pref_remote_ids_requested";
-
-    /**
-     * The API project ID
-     */
-    private static final String PROJECT_ID = "flavordex";
-
-    /**
-     * The project Web client ID
-     */
-    private static final String WEB_CLIENT_ID = "1001621163874-su48pt09eaj7rd4g0mni19ag4vv2g7p7.apps.googleusercontent.com";
 
     /**
      * The job dispatcher
@@ -154,16 +135,6 @@ public class BackendUtils {
     }
 
     /**
-     * Get a GoogleAccountCredential to authenticate with the backend.
-     *
-     * @param context The Context
-     * @return A GoogleAccountCredential
-     */
-    public static GoogleAccountCredential getCredential(Context context) {
-        return GoogleAccountCredential.usingAudience(context, "server:client_id:" + WEB_CLIENT_ID);
-    }
-
-    /**
      * Get the client identifier.
      *
      * @param context The Context
@@ -188,34 +159,22 @@ public class BackendUtils {
     /**
      * Register the client with the backend.
      *
-     * @param context     The Context
-     * @param accountName The name of the account to use
+     * @param context The Context
      * @return Whether the registration was successful
      */
-    public static boolean registerClient(Context context, String accountName) {
-        if(accountName == null) {
-            return false;
-        }
-
-        final GoogleAccountCredential credential = getCredential(context);
-        credential.setSelectedAccountName(accountName);
-
+    public static boolean registerClient(Context context) {
+        final Registration registration = new Registration(context);
+        final RegistrationRecord record;
         try {
-            final String token = FirebaseInstanceId.getInstance().getToken();
-            if(token == null) {
-                return false;
-            }
-            final Registration registration = BackendUtils.getRegistration(credential);
-            final long clientId = registration.register(token).execute().getClientId();
-            if(clientId > 0) {
-                BackendUtils.setClientId(context, clientId);
+            record = registration.register();
+            if(record != null) {
+                BackendUtils.setClientId(context, record.clientId);
                 PreferenceManager.getDefaultSharedPreferences(context).edit()
-                        .putString(FlavordexApp.PREF_ACCOUNT_NAME, accountName)
                         .putBoolean(FlavordexApp.PREF_SYNC_DATA, true).apply();
 
                 return true;
             }
-        } catch(IOException e) {
+        } catch(ApiException e) {
             Log.w(TAG, "Client registration failed", e);
         }
 
@@ -229,50 +188,16 @@ public class BackendUtils {
      * @return Whether the unregistration was successful
      */
     public static boolean unregisterClient(Context context) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
-        if(accountName == null) {
-            return false;
-        }
-
-        final GoogleAccountCredential credential = getCredential(context);
-        credential.setSelectedAccountName(accountName);
-
-        final Registration registration = getRegistration(credential);
         try {
-            registration.unregister(getClientId(context)).execute();
+            new Registration(context).unregister();
             setClientId(context, 0);
 
             return true;
-        } catch(IOException e) {
+        } catch(ApiException e) {
             Log.w(TAG, "Client unregistration failed", e);
         }
 
         return false;
-    }
-
-    /**
-     * Get a Registration endpoint client.
-     *
-     * @param credential The credential to use for authentication
-     * @return The Registration endpoint client
-     */
-    public static Registration getRegistration(GoogleAccountCredential credential) {
-        final Registration.Builder builder = new Registration.Builder(new ApacheHttpTransport(),
-                new AndroidJsonFactory(), credential);
-        return (Registration)build(builder);
-    }
-
-    /**
-     * Get a Sync endpoint client.
-     *
-     * @param credential The credential to use for authentication
-     * @return The Sync endpoint client
-     */
-    public static Sync getSync(GoogleAccountCredential credential) {
-        final Sync.Builder builder = new Sync.Builder(new ApacheHttpTransport(),
-                new AndroidJsonFactory(), credential);
-        return (Sync)build(builder);
     }
 
     /**
@@ -295,20 +220,6 @@ public class BackendUtils {
     public static boolean areRemoteIdsRequested(Context context) {
         return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
                 .getBoolean(PREF_REMOTE_IDS_REQUESTED, false);
-    }
-
-    /**
-     * Build an endpoint client from a Builder.
-     *
-     * @param builder The Builder
-     * @return The built endpoint client
-     */
-    private static AbstractGoogleJsonClient build(AbstractGoogleJsonClient.Builder builder) {
-        builder.setApplicationName(PROJECT_ID);
-        if(FlavordexApp.DEVELOPER_MODE) {
-            builder.setRootUrl("http://10.0.2.2:8080/_ah/api");
-        }
-        return builder.build();
     }
 
     /**

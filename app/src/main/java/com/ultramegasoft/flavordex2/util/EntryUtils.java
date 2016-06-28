@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;

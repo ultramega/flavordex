@@ -1,22 +1,30 @@
 package com.ultramegasoft.flavordex2.dialog;
 
-import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.ultramegasoft.flavordex2.FlavordexApp;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.ultramegasoft.flavordex2.R;
-import com.ultramegasoft.flavordex2.util.BackendUtils;
+import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 /**
@@ -24,7 +32,8 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
  *
  * @author Steve Guidetti
  */
-public class BackendRegistrationDialog extends BackgroundProgressDialog {
+public class BackendRegistrationDialog extends BackgroundProgressDialog
+        implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "BackendRegistrationDialog";
 
     /**
@@ -80,65 +89,68 @@ public class BackendRegistrationDialog extends BackgroundProgressDialog {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_SELECT_ACCOUNT) {
-            if(data != null) {
-                final String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                if(accountName != null) {
-                    registerClient(accountName);
-                    return;
-                }
+            final GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if(result.isSuccess()) {
+                firebaseAuthWithGoogle(result.getSignInAccount());
             }
         }
         setCancelable(true);
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        FirebaseAuth.getInstance().signInWithCredential(credential)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()) {
+                            registerClient();
+                        }
+                    }
+                });
     }
 
     /**
      * Select an account to use to access the backend.
      */
     public void selectAccount() {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        final String accountName = prefs.getString(FlavordexApp.PREF_ACCOUNT_NAME, null);
-        if(accountName == null) {
-            final GoogleAccountCredential credential = BackendUtils.getCredential(getContext());
-            final Intent intent = credential.newChooseAccountIntent();
-            if(intent.resolveActivity(getContext().getPackageManager()) != null) {
-                startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
-            } else {
-                Toast.makeText(getContext(), R.string.error_get_accounts, Toast.LENGTH_LONG).show();
-                dismiss();
-            }
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null) {
+            final GoogleSignInOptions gso =
+                    new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(getString(R.string.google_web_client_id))
+                            .requestEmail()
+                            .build();
+            final GoogleApiClient client = new GoogleApiClient.Builder(getContext())
+                    .enableAutoManage(getActivity(), this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                    .build();
+            startActivityForResult(Auth.GoogleSignInApi.getSignInIntent(client),
+                    REQUEST_SELECT_ACCOUNT);
         } else {
-            registerClient(accountName);
+            registerClient();
         }
     }
 
     /**
      * Register this client with the backend.
-     *
-     * @param accountName The account name
      */
-    private void registerClient(String accountName) {
-        new RegisterTask(accountName).execute();
+    private void registerClient() {
+        new RegisterTask().execute();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 
     /**
      * Task to register the client with the backend.
      */
     private class RegisterTask extends AsyncTask<Void, Void, Boolean> {
-        /**
-         * The account name
-         */
-        private final String mAccountName;
-
-        /**
-         * @param accountName The account name
-         */
-        public RegisterTask(String accountName) {
-            mAccountName = accountName;
-        }
-
         @Override
         protected Boolean doInBackground(Void... params) {
-            return BackendUtils.registerClient(getContext(), mAccountName);
+            return BackendUtils.registerClient(getContext());
         }
 
         @Override

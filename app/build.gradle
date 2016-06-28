@@ -26,17 +26,19 @@ android {
             versionName '2.2.0'
         }
     }
-    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    fullCompile project(path: ':backend', configuration: 'android-endpoints')
     fullCompile project(path: ':jobdispatcher')
     fullCompile 'com.android.support:preference-v7:24.0.0'
     fullCompile 'com.google.android.gms:play-services-auth:9.0.2'
     fullCompile 'com.google.android.gms:play-services-drive:9.0.2'
+    fullCompile 'com.google.firebase:firebase-auth:9.0.2'
     fullCompile 'com.google.firebase:firebase-messaging:9.0.2'
+    fullCompile 'com.google.code.gson:gson:2.7'
     compile 'com.android.support:support-v4:24.0.0'
     compile 'com.android.support:appcompat-v7:24.0.0'
 }
+
+apply plugin: 'com.google.gms.google-services'

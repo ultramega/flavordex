@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.util.BackendUtils;
+import com.ultramegasoft.flavordex2.backend.BackendUtils;
 
 /**
  * Full implementation of the Application. Adds support for location detection and data
@@ -30,7 +30,6 @@ public class FlavordexApp extends AbsFlavordexApp implements
     /**
      * Preference names
      */
-    public static final String PREF_ACCOUNT_NAME = "pref_account_name";
     public static final String PREF_SYNC_DATA = "pref_sync_data";
     public static final String PREF_SYNC_PHOTOS = "pref_sync_photos";
     public static final String PREF_SYNC_PHOTOS_UNMETERED = "pref_sync_photos_unmetered";
