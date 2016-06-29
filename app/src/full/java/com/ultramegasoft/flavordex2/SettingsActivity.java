@@ -14,16 +14,25 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.MenuItem;
 
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
+import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.dialog.BackendRegistrationDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.DriveConnectDialog;
-import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 /**
@@ -66,12 +75,15 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == DriveConnectDialog.REQUEST_RESOLVE_CONNECTION) {
-            final Fragment fragment =
-                    getSupportFragmentManager().findFragmentByTag(DriveConnectDialog.TAG);
-            if(fragment != null) {
-                fragment.onActivityResult(requestCode, resultCode, data);
-            }
+
+        switch(requestCode) {
+            case DriveConnectDialog.REQUEST_RESOLVE_CONNECTION:
+                final Fragment fragment =
+                        getSupportFragmentManager().findFragmentByTag(DriveConnectDialog.TAG);
+                if(fragment != null) {
+                    fragment.onActivityResult(requestCode, resultCode, data);
+                }
+                break;
         }
     }
 
@@ -89,9 +101,9 @@ public class SettingsActivity extends AppCompatActivity {
          * Preference items
          */
         private CheckBoxPreference mPrefLocation;
+        private SwitchPreferenceCompat mPrefAccount;
         private CheckBoxPreference mPrefSyncData;
         private CheckBoxPreference mPrefSyncPhotos;
-        private PreferenceCategory mCatSync;
 
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
@@ -101,12 +113,13 @@ public class SettingsActivity extends AppCompatActivity {
             addPreferencesFromResource(R.xml.preferences);
 
             mPrefLocation = (CheckBoxPreference)findPreference(FlavordexApp.PREF_DETECT_LOCATION);
+            mPrefAccount = (SwitchPreferenceCompat)findPreference(FlavordexApp.PREF_ACCOUNT);
             mPrefSyncData = (CheckBoxPreference)findPreference(FlavordexApp.PREF_SYNC_DATA);
             mPrefSyncPhotos = (CheckBoxPreference)findPreference(FlavordexApp.PREF_SYNC_PHOTOS);
-            mCatSync = (PreferenceCategory)findPreference("pref_cat_sync");
 
             setupEditCatsPref();
             setupLocationPref();
+            setupAccountPref();
             setupSyncDataPref();
             setupSyncPhotosPref();
         }
@@ -114,12 +127,8 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onResume() {
             super.onResume();
-            mCatSync.setEnabled(GoogleApiAvailability.getInstance()
-                    .isGooglePlayServicesAvailable(getContext()) == ConnectionResult.SUCCESS);
             mPrefLocation.setEnabled(PermissionUtils.hasLocationPerm(getContext())
                     || PermissionUtils.shouldAskLocationPerm(getActivity()));
-            mPrefSyncData.setEnabled((PermissionUtils.hasAccountsPerm(getContext())
-                    || PermissionUtils.shouldAskAccountsPerm(getActivity())));
         }
 
         @Override
@@ -163,6 +172,44 @@ public class SettingsActivity extends AppCompatActivity {
                                     || PermissionUtils.checkLocationPerm(SettingsFragment.this);
                         }
                     });
+        }
+
+        /**
+         * Check if Google Play Services is available and show an error dialog if it is not.
+         *
+         * @return Whether Google Play Services is available
+         */
+        private boolean isGoogleAvailable() {
+            final GoogleApiAvailability gaa = GoogleApiAvailability.getInstance();
+            final int availability = gaa.isGooglePlayServicesAvailable(getContext());
+            if(availability != ConnectionResult.SUCCESS) {
+                gaa.showErrorDialogFragment(getActivity(), availability, 0);
+                return false;
+            }
+            return true;
+        }
+
+        /**
+         * Set up the account preference.
+         */
+        private void setupAccountPref() {
+            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if(user != null) {
+                mPrefAccount.setSummary(getString(R.string.pref_summary_account_on,
+                        user.getDisplayName()));
+            }
+            mPrefAccount.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object o) {
+                    if((boolean)o) {
+                        if(isGoogleAvailable()) {
+                            startActivity(new Intent(getContext(), LoginActivity.class));
+                        }
+                        return false;
+                    }
+                    return true;
+                }
+            });
         }
 
         /**
@@ -229,6 +276,17 @@ public class SettingsActivity extends AppCompatActivity {
                 if(sharedPreferences.getBoolean(key, false)) {
                     mPrefLocation.setChecked(true);
                 }
+            } else if(FlavordexApp.PREF_ACCOUNT.equals(key)) {
+                if(sharedPreferences.getBoolean(key, false)) {
+                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if(user != null) {
+                        mPrefAccount.setSummary(getString(R.string.pref_summary_account_on,
+                                user.getDisplayName()));
+                    }
+                    mPrefAccount.setChecked(true);
+                } else {
+                    new LogoutTask(getContext()).execute();
+                }
             } else if(FlavordexApp.PREF_SYNC_DATA.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
                     mPrefSyncData.setChecked(true);
@@ -240,6 +298,62 @@ public class SettingsActivity extends AppCompatActivity {
                     BackendUtils.requestPhotoSync(getContext());
                 }
             }
+        }
+    }
+
+    /**
+     * Task to log the user out in the background.
+     */
+    private static class LogoutTask extends AsyncTask<Void, Void, Void> {
+        /**
+         * The Context
+         */
+        private final Context mContext;
+
+        /**
+         * @param context The Context
+         */
+        public LogoutTask(Context context) {
+            mContext = context.getApplicationContext();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if(user != null) {
+                for(UserInfo info : user.getProviderData()) {
+                    switch(info.getProviderId()) {
+                        case GoogleAuthProvider.PROVIDER_ID:
+                            logoutGoogle();
+                            break;
+                        case FacebookAuthProvider.PROVIDER_ID:
+                            logoutFacebook();
+                            break;
+                    }
+                }
+                FirebaseAuth.getInstance().signOut();
+            }
+            return null;
+        }
+
+        /**
+         * Log the user out from Google.
+         */
+        private void logoutGoogle() {
+            final GoogleApiClient apiClient = new GoogleApiClient.Builder(mContext)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .build();
+            final ConnectionResult result = apiClient.blockingConnect();
+            if(result.isSuccess()) {
+                Auth.GoogleSignInApi.signOut(apiClient);
+            }
+        }
+
+        /**
+         * Log the user out from Facebook.
+         */
+        private void logoutFacebook() {
+            LoginManager.getInstance().logOut();
         }
     }
 

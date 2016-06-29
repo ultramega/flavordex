@@ -2,7 +2,7 @@
 <resources>
     <string name="api_url" translatable="false">http://api.flavordex.com/v1</string>
     <string name="api_url_debug" translatable="false">http://10.0.2.2/flavordex_api/v1</string>
-    <string name="google_web_client_id" translatable="false">1001621163874-su48pt09eaj7rd4g0mni19ag4vv2g7p7.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">758135974289029</string>
     <string name="ext_csv" translatable="false">.csv</string>
 
     <string name="title_create_cat">Create Category</string>
@@ -16,6 +16,7 @@
     <string name="title_exporting">Exporting…</string>
     <string name="title_duplicates">Duplicates Detected</string>
     <string name="title_settings">Application Settings</string>
+    <string name="title_login">Log in…</string>
 
     <string name="header_cat_fields">Category Fields</string>
     <string name="header_cat_flavors">Category Flavors</string>
@@ -79,6 +80,9 @@
     <string name="pref_detect_location">Remember Locations</string>
     <string name="pref_summary_detect_location">Auto-fill location name based on previous entries.</string>
     <string name="pref_cat_sync">Synchronization</string>
+    <string name="pref_account">Account</string>
+    <string name="pref_summary_account_on">Logged in as %s</string>
+    <string name="pref_summary_account_off">Log in…</string>
     <string name="pref_sync_data">Sync Journal Data</string>
     <string name="pref_summary_sync_data">Sync journal data across your logged in devices.</string>
     <string name="pref_sync_photos">Sync Entry Photos</string>
@@ -91,6 +95,7 @@
     <string name="error_csv_export_file">Unable to create destination file</string>
     <string name="error_csv_parse">Unable to parse the .csv file</string>
     <string name="error_register_failed">Error: Failed to connect to the sync service</string>
+    <string name="error_login_failed">Error: Log in failed</string>
 
     <string name="about_gms">Google Play Services Legal Notice</string>
 </resources>

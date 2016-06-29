@@ -30,6 +30,7 @@ public class FlavordexApp extends AbsFlavordexApp implements
     /**
      * Preference names
      */
+    public static final String PREF_ACCOUNT = "pref_account";
     public static final String PREF_SYNC_DATA = "pref_sync_data";
     public static final String PREF_SYNC_PHOTOS = "pref_sync_photos";
     public static final String PREF_SYNC_PHOTOS_UNMETERED = "pref_sync_photos_unmetered";

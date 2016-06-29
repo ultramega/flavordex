@@ -6,7 +6,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="com.ultramegasoft.flavordex2.lite.permission.ACCESS_DATA" />
@@ -24,8 +23,8 @@
             android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAI1rmSd8q8YRnl84E-73ReAlo-79A956xNgMQxsA" />
         <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
         <activity
             android:name=".EditCatActivity"
@@ -35,6 +34,11 @@
             android:label="@string/title_settings"
             android:parentActivityName=".EntryListActivity"
             android:theme="@style/AppTheme.DialogWhenLarge" />
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_login"
+            android:parentActivityName=".SettingsActivity"
+            android:theme="@style/Theme.AppCompat.Dialog" />
 
         <provider
             android:name=".provider.FlavordexProvider"

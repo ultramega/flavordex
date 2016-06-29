@@ -11,11 +11,16 @@
             android:summary="@string/pref_summary_detect_location"
             android:title="@string/pref_detect_location" />
     </PreferenceCategory>
-    <PreferenceCategory
-        android:key="pref_cat_sync"
-        android:title="@string/pref_cat_sync">
+    <PreferenceCategory android:title="@string/pref_cat_sync">
+        <!--suppress AndroidElementNotAllowed -->
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="pref_account"
+            android:summaryOff="@string/pref_summary_account_off"
+            android:title="@string/pref_account" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:dependency="pref_account"
             android:key="pref_sync_data"
             android:summary="@string/pref_summary_sync_data"
             android:title="@string/pref_sync_data" />

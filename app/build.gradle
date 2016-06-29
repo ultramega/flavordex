@@ -34,6 +34,7 @@ dependencies {
     fullCompile 'com.android.support:preference-v7:24.0.0'
     fullCompile 'com.google.android.gms:play-services-auth:9.2.0'
     fullCompile 'com.google.android.gms:play-services-drive:9.2.0'
+    fullCompile 'com.facebook.android:facebook-android-sdk:[4,5)'
     fullCompile 'com.google.firebase:firebase-auth:9.2.0'
     fullCompile 'com.google.firebase:firebase-messaging:9.2.0'
     fullCompile 'com.google.code.gson:gson:2.7'
