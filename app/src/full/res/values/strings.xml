@@ -73,6 +73,7 @@
     <string name="message_request_storage_xport">Flavordex requires external storage access to enable CSV file importing and exporting.</string>
     <string name="message_registering_client">Registering device with the sync service…</string>
     <string name="message_connecting_drive">Connecting to Google Drive…</string>
+    <string name="message_authenticating">Authenticating…</string>
 
     <string name="pref_cat_general">General</string>
     <string name="pref_edit_cats">Edit Categories</string>

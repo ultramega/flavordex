@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -62,6 +63,11 @@ public class LoginActivity extends AppCompatActivity
      */
     private CallbackManager mFacebookCallbackManager;
 
+    /**
+     * The ViewSwitcher to switch between the login buttons and the progress indicator
+     */
+    private ViewSwitcher mSwitcher;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +92,8 @@ public class LoginActivity extends AppCompatActivity
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         setContentView(R.layout.activity_login);
+
+        mSwitcher = (ViewSwitcher)findViewById(R.id.switcher);
 
         setupGoogle((SignInButton)findViewById(R.id.button_google));
         setupFacebook((LoginButton)findViewById(R.id.button_facebook));
@@ -144,6 +152,7 @@ public class LoginActivity extends AppCompatActivity
      * Initiate the Google sign-in flow.
      */
     private void signInWithGoogle() {
+        mSwitcher.setDisplayedChild(1);
         startActivityForResult(Auth.GoogleSignInApi
                 .getSignInIntent(mGoogleApiClient), REQUEST_LOGIN_GOOGLE);
     }
@@ -176,11 +185,18 @@ public class LoginActivity extends AppCompatActivity
 
             @Override
             public void onCancel() {
+                mSwitcher.setDisplayedChild(0);
             }
 
             @Override
             public void onError(FacebookException e) {
                 showError();
+            }
+        });
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSwitcher.setDisplayedChild(1);
             }
         });
     }
@@ -201,12 +217,16 @@ public class LoginActivity extends AppCompatActivity
 
         switch(requestCode) {
             case REQUEST_LOGIN_GOOGLE:
-                final GoogleSignInResult result =
-                        Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-                if(result.isSuccess()) {
-                    firebaseAuthWithGoogle(result.getSignInAccount());
+                if(resultCode == RESULT_OK) {
+                    final GoogleSignInResult result =
+                            Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+                    if(result.isSuccess()) {
+                        firebaseAuthWithGoogle(result.getSignInAccount());
+                    } else {
+                        showError();
+                    }
                 } else {
-                    showError();
+                    mSwitcher.setDisplayedChild(0);
                 }
                 break;
             default:
@@ -224,5 +244,6 @@ public class LoginActivity extends AppCompatActivity
      */
     private void showError() {
         Toast.makeText(this, R.string.error_login_failed, Toast.LENGTH_LONG).show();
+        mSwitcher.setDisplayedChild(0);
     }
 }
