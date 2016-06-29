@@ -2,6 +2,7 @@ package com.ultramegasoft.flavordex2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,7 +17,6 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -30,6 +30,12 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.TwitterAuthProvider;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 /**
  * Activity to allow the user to log in using one of the auth providers.
@@ -64,6 +70,11 @@ public class LoginActivity extends AppCompatActivity
     private CallbackManager mFacebookCallbackManager;
 
     /**
+     * The TwitterLoginButton
+     */
+    private TwitterLoginButton mTwitterLoginButton;
+
+    /**
      * The ViewSwitcher to switch between the login buttons and the progress indicator
      */
     private ViewSwitcher mSwitcher;
@@ -89,14 +100,13 @@ public class LoginActivity extends AppCompatActivity
             }
         };
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
-
         setContentView(R.layout.activity_login);
 
         mSwitcher = (ViewSwitcher)findViewById(R.id.switcher);
 
         setupGoogle((SignInButton)findViewById(R.id.button_google));
         setupFacebook((LoginButton)findViewById(R.id.button_facebook));
+        setupTwitter((TwitterLoginButton)findViewById(R.id.button_twitter));
     }
 
     @Override
@@ -211,6 +221,49 @@ public class LoginActivity extends AppCompatActivity
         mAuth.signInWithCredential(credential);
     }
 
+    /**
+     * Set up Twitter sign-in.
+     *
+     * @param button The TwitterLoginButton
+     */
+    private void setupTwitter(TwitterLoginButton button) {
+        mTwitterLoginButton = button;
+        mTwitterLoginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                firebaseAuthWithTwitter(result.data);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwitcher.setDisplayedChild(0);
+                    }
+                });
+            }
+        });
+        mTwitterLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSwitcher.setDisplayedChild(1);
+            }
+        });
+    }
+
+    /**
+     * Authenticate with Firebase using a Twitter token.
+     *
+     * @param session The TwitterSession
+     */
+    private void firebaseAuthWithTwitter(TwitterSession session) {
+        final AuthCredential credential = TwitterAuthProvider.getCredential(
+                session.getAuthToken().token,
+                session.getAuthToken().secret);
+        mAuth.signInWithCredential(credential);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -231,6 +284,7 @@ public class LoginActivity extends AppCompatActivity
                 break;
             default:
                 mFacebookCallbackManager.onActivityResult(requestCode, resultCode, data);
+                mTwitterLoginButton.onActivityResult(requestCode, resultCode, data);
         }
     }
 

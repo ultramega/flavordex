@@ -1,4 +1,20 @@
+buildscript{
+    repositories{
+        mavenCentral()
+        maven { url 'https://maven.fabric.io/public' }
+    }
+    dependencies{
+        classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'io.fabric.tools:gradle:1.21.7'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories{
+    mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
+}
 
 android {
     compileSdkVersion 24
@@ -35,6 +51,9 @@ dependencies {
     fullCompile 'com.google.android.gms:play-services-auth:9.2.0'
     fullCompile 'com.google.android.gms:play-services-drive:9.2.0'
     fullCompile 'com.facebook.android:facebook-android-sdk:[4,5)'
+    fullCompile('com.twitter.sdk.android:twitter:1.14.0@aar') {
+        transitive = true;
+    }
     fullCompile 'com.google.firebase:firebase-auth:9.2.0'
     fullCompile 'com.google.firebase:firebase-messaging:9.2.0'
     fullCompile 'com.google.code.gson:gson:2.7'

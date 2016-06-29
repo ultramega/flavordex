@@ -25,6 +25,9 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="b44d8e5f1be7bf21052f7a3f76097ff04a8d6b0d" />
 
         <activity
             android:name=".EditCatActivity"

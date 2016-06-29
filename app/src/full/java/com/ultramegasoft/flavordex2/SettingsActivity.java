@@ -18,6 +18,7 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.MenuItem;
 
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -28,12 +29,17 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.TwitterAuthProvider;
 import com.google.firebase.auth.UserInfo;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.dialog.BackendRegistrationDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.DriveConnectDialog;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Activity for changing user preferences.
@@ -46,6 +52,10 @@ public class SettingsActivity extends AppCompatActivity {
      */
     private static final int REQUEST_EDIT_CAT = 400;
 
+    //// TODO: 6/29/2016 Obfuscate this somehow
+    private static final String TWITTER_KEY = "bnGTtGdFsxpA7oPEVb2l1SGx1";
+    private static final String TWITTER_SECRET = "NYYswsSXGCILj6b545jf35F1xjDHiVELh2FbyShU61w6Ri5Sht";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +64,11 @@ public class SettingsActivity extends AppCompatActivity {
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+        final TwitterAuthConfig twitterConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        Fabric.with(this, new Twitter(twitterConfig));
 
         if(savedInstanceState == null) {
             final Fragment fragment = new SettingsFragment();
@@ -329,6 +344,9 @@ public class SettingsActivity extends AppCompatActivity {
                         case FacebookAuthProvider.PROVIDER_ID:
                             logoutFacebook();
                             break;
+                        case TwitterAuthProvider.PROVIDER_ID:
+                            logoutTwitter();
+                            break;
                     }
                 }
                 FirebaseAuth.getInstance().signOut();
@@ -354,6 +372,13 @@ public class SettingsActivity extends AppCompatActivity {
          */
         private void logoutFacebook() {
             LoginManager.getInstance().logOut();
+        }
+
+        /**
+         * Log the user out from Twitter.
+         */
+        private void logoutTwitter() {
+            Twitter.getSessionManager().clearActiveSession();
         }
     }
 
