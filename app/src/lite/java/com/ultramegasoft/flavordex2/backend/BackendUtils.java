@@ -1,4 +1,4 @@
-package com.ultramegasoft.flavordex2.util;
+package com.ultramegasoft.flavordex2.backend;
 
 import android.content.Context;
 
