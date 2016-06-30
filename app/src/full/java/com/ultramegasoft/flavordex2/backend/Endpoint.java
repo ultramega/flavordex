@@ -8,6 +8,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
+import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.backend.model.Model;
@@ -37,6 +38,11 @@ public abstract class Endpoint {
     private final Uri mBaseUrl;
 
     /**
+     * The user agent string
+     */
+    private final String mUserAgent;
+
+    /**
      * Constructor.
      *
      * @param context The Context to use
@@ -47,6 +53,7 @@ public abstract class Endpoint {
         final Uri apiUri = Uri.parse(context.getString(
                 FlavordexApp.DEVELOPER_MODE ? R.string.api_url_debug : R.string.api_url));
         mBaseUrl = Uri.withAppendedPath(apiUri, getName());
+        mUserAgent = context.getString(R.string.user_agent, BuildConfig.VERSION_NAME);
     }
 
     /**
@@ -228,6 +235,7 @@ public abstract class Endpoint {
         conn.setDoInput(true);
         conn.setUseCaches(false);
         conn.setConnectTimeout(30000);
+        conn.setRequestProperty("User-Agent", mUserAgent);
 
         final FirebaseUser auth = FirebaseAuth.getInstance().getCurrentUser();
         if(auth != null) {
