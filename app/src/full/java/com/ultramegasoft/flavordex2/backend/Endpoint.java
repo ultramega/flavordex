@@ -143,10 +143,10 @@ public abstract class Endpoint {
 
                 final String dataString;
                 if(data instanceof Model) {
-                    conn.setRequestProperty("Content-Type", "application/json");
+                    conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
                     dataString = ((Model)data).toJson();
                 } else {
-                    conn.setRequestProperty("Content-Type", "text/plain");
+                    conn.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
                     dataString = data.toString();
                 }
 
