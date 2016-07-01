@@ -13,9 +13,7 @@ import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.backend.model.Model;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -150,14 +148,7 @@ public abstract class Endpoint {
                     dataString = data.toString();
                 }
 
-                final DataOutputStream dos =
-                        new DataOutputStream(new BufferedOutputStream(conn.getOutputStream()));
-                try {
-                    dos.writeBytes(dataString);
-                } finally {
-                    dos.flush();
-                    dos.close();
-                }
+                conn.getOutputStream().write(dataString.getBytes());
             }
 
             return readResponse(conn);
