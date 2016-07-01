@@ -153,7 +153,7 @@ public abstract class Endpoint {
                 final DataOutputStream dos =
                         new DataOutputStream(new BufferedOutputStream(conn.getOutputStream()));
                 try {
-                    dos.writeChars(dataString);
+                    dos.writeBytes(dataString);
                 } finally {
                     dos.flush();
                     dos.close();
