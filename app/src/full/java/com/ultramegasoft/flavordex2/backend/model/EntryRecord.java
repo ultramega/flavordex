@@ -20,7 +20,7 @@ public class EntryRecord extends Model {
     public long date;
     public float rating;
     public String notes;
-    public long updated;
+    public long age;
     public boolean shared;
     public boolean deleted;
 

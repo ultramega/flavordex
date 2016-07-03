@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,8 +21,7 @@ import com.ultramegasoft.flavordex2.backend.model.EntryRecord;
 import com.ultramegasoft.flavordex2.backend.model.ExtraRecord;
 import com.ultramegasoft.flavordex2.backend.model.FlavorRecord;
 import com.ultramegasoft.flavordex2.backend.model.PhotoRecord;
-import com.ultramegasoft.flavordex2.backend.model.RemoteIdsRecord;
-import com.ultramegasoft.flavordex2.backend.model.UpdateRecord;
+import com.ultramegasoft.flavordex2.backend.model.SyncRecord;
 import com.ultramegasoft.flavordex2.backend.model.UpdateResponse;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
@@ -93,11 +93,15 @@ public class DataSyncHelper {
         mSync = new Sync(mContext);
         try {
             Log.d(TAG, "Syncing...");
-            runPrecheck();
+            mSync.startSync();
             pushUpdates();
             fetchUpdates();
+            mSync.endSync();
             Log.d(TAG, "Syncing complete.");
 
+            if(mRequestPhotoSync) {
+                requestPhotoSync();
+            }
             sBackoffHelper.onSuccess();
             return true;
         } catch(ApiException e) {
@@ -109,72 +113,34 @@ public class DataSyncHelper {
     }
 
     /**
-     * Run any tasks that have been requested.
-     */
-    private void runPrecheck() throws ApiException {
-        if(BackendUtils.areRemoteIdsRequested(mContext)) {
-            Log.d(TAG, "Requesting remote IDs...");
-
-            final RemoteIdsRecord record = mSync.getRemoteIds();
-            if(record != null) {
-                final ContentResolver cr = mContext.getContentResolver();
-                final String where = Tables.Cats.UUID + " = ?";
-                final String[] whereArgs = new String[1];
-                final ContentValues values = new ContentValues();
-                for(Map.Entry<String, Long> item : record.entryIds.entrySet()) {
-                    whereArgs[0] = item.getKey();
-                    values.put(Tables.Entries.LINK, getLink(Long.valueOf(item.getValue().toString())));
-                    cr.update(Tables.Entries.CONTENT_URI, values, where, whereArgs);
-                }
-
-                BackendUtils.setRequestRemoteIds(mContext, false);
-            }
-        }
-    }
-
-    /**
      * Send updated journal data to the backend.
      */
     private void pushUpdates() throws ApiException {
         final ContentResolver cr = mContext.getContentResolver();
 
-        final UpdateRecord record = new UpdateRecord();
-        record.cats = getUpdatedCats();
-        record.entries = getUpdatedEntries();
-
-        final UpdateResponse response = mSync.pushUpdates(record);
-        if(response == null) {
-            return;
-        }
-
-        if(response.catStatuses != null) {
-            final String where = Tables.Cats.UUID + " = ?";
-            final String[] whereArgs = new String[1];
-            final ContentValues values = new ContentValues();
-            values.put(Tables.Cats.PUBLISHED, true);
-            values.put(Tables.Cats.SYNCED, true);
-            for(Map.Entry<String, Boolean> status : response.catStatuses.entrySet()) {
-                if(status.getValue()) {
-                    whereArgs[0] = status.getKey();
-                    cr.update(Tables.Cats.CONTENT_URI, values, where, whereArgs);
-                }
+        String where = Tables.Cats.UUID + " = ?";
+        final String[] whereArgs = new String[1];
+        final ContentValues values = new ContentValues();
+        values.put(Tables.Cats.PUBLISHED, true);
+        values.put(Tables.Cats.SYNCED, true);
+        for(CatRecord catRecord : getUpdatedCats()) {
+            final UpdateResponse response = mSync.putCat(catRecord);
+            if(response.success) {
+                whereArgs[0] = catRecord.uuid;
+                cr.update(Tables.Cats.CONTENT_URI, values, where, whereArgs);
             }
         }
 
-        if(response.entryStatuses != null) {
-            final String where = Tables.Entries.UUID + " = ?";
-            final String[] whereArgs = new String[1];
-            final ContentValues values = new ContentValues();
-            values.put(Tables.Entries.PUBLISHED, true);
-            values.put(Tables.Entries.SYNCED, true);
-            long remoteId;
-            for(Map.Entry<String, Boolean> status : response.entryStatuses.entrySet()) {
-                if(status.getValue()) {
-                    whereArgs[0] = status.getKey();
-                    remoteId = Long.valueOf(response.entryIds.get(status.getKey()).toString());
-                    values.put(Tables.Entries.LINK, getLink(remoteId));
-                    cr.update(Tables.Entries.CONTENT_URI, values, where, whereArgs);
-                }
+        where = Tables.Entries.UUID + " = ?";
+        values.clear();
+        values.put(Tables.Entries.PUBLISHED, true);
+        values.put(Tables.Entries.SYNCED, true);
+        for(EntryRecord entryRecord : getUpdatedEntries()) {
+            final UpdateResponse response = mSync.putEntry(entryRecord);
+            if(response.success) {
+                whereArgs[0] = entryRecord.uuid;
+                values.put(Tables.Entries.LINK, getLink(response.remoteId));
+                cr.update(Tables.Entries.CONTENT_URI, values, where, whereArgs);
             }
         }
 
@@ -199,7 +165,8 @@ public class DataSyncHelper {
                     record = new CatRecord();
                     record.deleted = true;
                     record.uuid = cursor.getString(cursor.getColumnIndex(Tables.Deleted.UUID));
-                    record.updated = cursor.getLong(cursor.getColumnIndex(Tables.Deleted.TIME));
+                    record.age =
+                            subTime(cursor.getLong(cursor.getColumnIndex(Tables.Deleted.TIME)));
                     records.add(record);
                 }
             } finally {
@@ -216,7 +183,8 @@ public class DataSyncHelper {
                     record = new CatRecord();
                     record.uuid = cursor.getString(cursor.getColumnIndex(Tables.Cats.UUID));
                     record.name = cursor.getString(cursor.getColumnIndex(Tables.Cats.NAME));
-                    record.updated = cursor.getLong(cursor.getColumnIndex(Tables.Cats.UPDATED));
+                    record.age =
+                            subTime(cursor.getLong(cursor.getColumnIndex(Tables.Cats.UPDATED)));
 
                     id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
                     record.extras = getCatExtras(id);
@@ -313,7 +281,8 @@ public class DataSyncHelper {
                     record = new EntryRecord();
                     record.deleted = true;
                     record.uuid = cursor.getString(cursor.getColumnIndex(Tables.Deleted.UUID));
-                    record.updated = cursor.getLong(cursor.getColumnIndex(Tables.Deleted.TIME));
+                    record.age =
+                            subTime(cursor.getLong(cursor.getColumnIndex(Tables.Deleted.TIME)));
                     records.add(record);
                 }
             } finally {
@@ -340,7 +309,8 @@ public class DataSyncHelper {
                     record.date = cursor.getLong(cursor.getColumnIndex(Tables.Entries.DATE));
                     record.rating = cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING));
                     record.notes = cursor.getString(cursor.getColumnIndex(Tables.Entries.NOTES));
-                    record.updated = cursor.getLong(cursor.getColumnIndex(Tables.Entries.UPDATED));
+                    record.age =
+                            subTime(cursor.getLong(cursor.getColumnIndex(Tables.Entries.UPDATED)));
                     record.shared =
                             cursor.getLong(cursor.getColumnIndex(Tables.Entries.SHARED)) == 1;
 
@@ -501,27 +471,65 @@ public class DataSyncHelper {
      * Fetch all the changed records from the backend.
      */
     private void fetchUpdates() throws ApiException {
-        final UpdateRecord record = mSync.fetchUpdates();
-        if(record == null) {
-            return;
-        }
+        final ContentResolver cr = mContext.getContentResolver();
+        final SyncRecord syncRecord = mSync.getUpdates();
 
-        if(record.cats != null) {
-            for(CatRecord catRecord : record.cats) {
-                parseCat(catRecord);
+        final String[] whereArgs = new String[2];
+        if(syncRecord.deletedCats != null) {
+            final String where = Tables.Cats.UUID + " = ? AND updated < ?";
+            for(Map.Entry<String, Long> entry : syncRecord.deletedCats.entrySet()) {
+                whereArgs[0] = entry.getKey();
+                whereArgs[1] = entry.getValue().toString();
+                cr.delete(Tables.Cats.CONTENT_URI, where, whereArgs);
             }
         }
 
-        if(record.entries != null) {
-            for(EntryRecord entryRecord : record.entries) {
-                parseEntry(entryRecord);
+        if(syncRecord.deletedEntries != null) {
+            final String where = Tables.Entries.UUID + " = ? AND updated < ?";
+            for(Map.Entry<String, Long> entry : syncRecord.deletedEntries.entrySet()) {
+                whereArgs[0] = entry.getKey();
+                whereArgs[1] = entry.getValue().toString();
+                cr.delete(Tables.Entries.CONTENT_URI, where, whereArgs);
             }
         }
 
-        mSync.confirmSync(record.timestamp);
+        final String[] projection = new String[] {BaseColumns._ID};
+        if(syncRecord.updatedCats != null) {
+            final String where = Tables.Cats.UUID + " = ? AND updated < ?";
+            for(Map.Entry<String, Long> entry : syncRecord.updatedCats.entrySet()) {
+                whereArgs[0] = entry.getKey();
+                whereArgs[1] = entry.getValue().toString();
+                final Cursor cursor =
+                        cr.query(Tables.Cats.CONTENT_URI, projection, where, whereArgs, null);
+                if(cursor != null) {
+                    try {
+                        if(cursor.moveToFirst()) {
+                            parseCat(mSync.getCat(entry.getKey()));
+                        }
+                    } finally {
+                        cursor.close();
+                    }
+                }
+            }
+        }
 
-        if(mRequestPhotoSync) {
-            requestPhotoSync();
+        if(syncRecord.updatedEntries != null) {
+            final String where = Tables.Entries.UUID + " = ? AND updated < ?";
+            for(Map.Entry<String, Long> entry : syncRecord.updatedEntries.entrySet()) {
+                whereArgs[0] = entry.getKey();
+                whereArgs[1] = entry.getValue().toString();
+                final Cursor cursor =
+                        cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs, null);
+                if(cursor != null) {
+                    try {
+                        if(cursor.moveToFirst()) {
+                            parseEntry(mSync.getEntry(entry.getKey()));
+                        }
+                    } finally {
+                        cursor.close();
+                    }
+                }
+            }
         }
     }
 
@@ -535,32 +543,24 @@ public class DataSyncHelper {
         final long catId = getCatId(record.uuid);
         Uri uri;
         final ContentValues values = new ContentValues();
-        if(record.deleted) {
-            if(catId > 0) {
-                uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, catId);
-                values.put(Tables.Cats.PUBLISHED, false);
-                cr.update(uri, values, null, null);
-                cr.delete(uri, null, null);
-            }
+        values.put(Tables.Cats.NAME, record.name);
+        values.put(Tables.Cats.UPDATED, subTime(record.age));
+        values.put(Tables.Cats.PUBLISHED, true);
+        values.put(Tables.Cats.SYNCED, true);
+        if(catId > 0) {
+            uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, catId);
+            cr.update(uri, values, null, null);
         } else {
-            values.put(Tables.Cats.NAME, record.name);
-            values.put(Tables.Cats.PUBLISHED, true);
-            values.put(Tables.Cats.SYNCED, true);
-            if(catId > 0) {
-                uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, catId);
-                cr.update(uri, values, null, null);
-            } else {
-                uri = Tables.Cats.CONTENT_URI;
-                values.put(Tables.Cats.UUID, record.uuid);
-                uri = cr.insert(uri, values);
-                if(uri == null) {
-                    return;
-                }
+            uri = Tables.Cats.CONTENT_URI;
+            values.put(Tables.Cats.UUID, record.uuid);
+            uri = cr.insert(uri, values);
+            if(uri == null) {
+                return;
             }
-
-            parseCatExtras(uri, record);
-            parseCatFlavors(uri, record);
         }
+
+        parseCatExtras(uri, record);
+        parseCatFlavors(uri, record);
     }
 
     /**
@@ -634,47 +634,39 @@ public class DataSyncHelper {
 
         Uri uri;
         final ContentValues values = new ContentValues();
-        if(record.deleted) {
-            if(entryId > 0) {
-                uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId);
-                values.put(Tables.Entries.PUBLISHED, false);
-                cr.update(uri, values, null, null);
-                cr.delete(uri, null, null);
-            }
+        final long catId = getCatId(record.catUuid);
+        if(catId == 0) {
+            return;
+        }
+        values.put(Tables.Entries.TITLE, record.title);
+        values.put(Tables.Entries.MAKER, record.maker);
+        values.put(Tables.Entries.ORIGIN, record.origin);
+        values.put(Tables.Entries.PRICE, record.price);
+        values.put(Tables.Entries.LOCATION, record.location);
+        values.put(Tables.Entries.DATE, record.date);
+        values.put(Tables.Entries.RATING, record.rating);
+        values.put(Tables.Entries.NOTES, record.notes);
+        values.put(Tables.Entries.UPDATED, subTime(record.age));
+        values.put(Tables.Entries.PUBLISHED, true);
+        values.put(Tables.Entries.SYNCED, true);
+        values.put(Tables.Entries.SHARED, record.shared);
+        values.put(Tables.Entries.LINK, getLink(record.id));
+        if(entryId > 0) {
+            uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId);
+            cr.update(uri, values, null, null);
         } else {
-            final long catId = getCatId(record.catUuid);
-            if(catId == 0) {
+            uri = Tables.Entries.CONTENT_URI;
+            values.put(Tables.Entries.CAT, catId);
+            values.put(Tables.Entries.UUID, record.uuid);
+            uri = cr.insert(uri, values);
+            if(uri == null) {
                 return;
             }
-            values.put(Tables.Entries.TITLE, record.title);
-            values.put(Tables.Entries.MAKER, record.maker);
-            values.put(Tables.Entries.ORIGIN, record.origin);
-            values.put(Tables.Entries.PRICE, record.price);
-            values.put(Tables.Entries.LOCATION, record.location);
-            values.put(Tables.Entries.DATE, record.date);
-            values.put(Tables.Entries.RATING, record.rating);
-            values.put(Tables.Entries.NOTES, record.notes);
-            values.put(Tables.Entries.PUBLISHED, true);
-            values.put(Tables.Entries.SYNCED, true);
-            values.put(Tables.Entries.SHARED, record.shared);
-            values.put(Tables.Entries.LINK, getLink(record.id));
-            if(entryId > 0) {
-                uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId);
-                cr.update(uri, values, null, null);
-            } else {
-                uri = Tables.Entries.CONTENT_URI;
-                values.put(Tables.Entries.CAT, catId);
-                values.put(Tables.Entries.UUID, record.uuid);
-                uri = cr.insert(uri, values);
-                if(uri == null) {
-                    return;
-                }
-            }
-
-            parseEntryExtras(uri, record);
-            parseEntryFlavors(uri, record);
-            parseEntryPhotos(uri, record);
         }
+
+        parseEntryExtras(uri, record);
+        parseEntryFlavors(uri, record);
+        parseEntryPhotos(uri, record);
     }
 
     /**
@@ -906,5 +898,15 @@ public class DataSyncHelper {
         link = Long.toString(Long.valueOf(link) + 1000000000, 34);
         link = link.replace('0', 'y').replace('1', 'z');
         return link;
+    }
+
+    /**
+     * Subtract a value from the current time in milliseconds.
+     *
+     * @param milliseconds The value to subtract
+     * @return The result value
+     */
+    private static long subTime(long milliseconds) {
+        return System.currentTimeMillis() - milliseconds;
     }
 }

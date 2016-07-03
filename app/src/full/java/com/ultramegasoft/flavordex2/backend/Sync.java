@@ -4,8 +4,9 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.ultramegasoft.flavordex2.backend.model.RemoteIdsRecord;
-import com.ultramegasoft.flavordex2.backend.model.UpdateRecord;
+import com.ultramegasoft.flavordex2.backend.model.CatRecord;
+import com.ultramegasoft.flavordex2.backend.model.EntryRecord;
+import com.ultramegasoft.flavordex2.backend.model.SyncRecord;
 import com.ultramegasoft.flavordex2.backend.model.UpdateResponse;
 
 /**
@@ -24,56 +25,98 @@ public class Sync extends Endpoint {
     }
 
     /**
-     * Get updated journal data from the backend.
+     * Start a synchronization session.
      *
-     * @return UpdateRecord containing remote change
      * @throws ApiException
      */
-    public UpdateRecord fetchUpdates() throws ApiException {
-        final long id = BackendUtils.getClientId(getContext());
+    public void startSync() throws ApiException {
+        post("startSync", null, BackendUtils.getClientId(getContext()));
+    }
+
+    /**
+     * End the synchronization session.
+     *
+     * @throws ApiException
+     */
+    public void endSync() throws ApiException {
+        post("endSync", null, BackendUtils.getClientId(getContext()));
+    }
+
+    /**
+     * Get a list of deleted and updated categories and entries.
+     *
+     * @return The SyncRecord
+     * @throws ApiException
+     */
+    public SyncRecord getUpdates() throws ApiException {
+        final String response = get("getUpdates", BackendUtils.getClientId(getContext()));
         try {
-            return new Gson().fromJson(get("fetchUpdates", id), UpdateRecord.class);
+            return new Gson().fromJson(response, SyncRecord.class);
         } catch(JsonSyntaxException e) {
             throw new ParseException(e);
         }
     }
 
     /**
-     * Send updated journal data to the backend.
+     * Get a single category.
      *
-     * @param record UpdateRecord containing local changes
+     * @param catUuid The UUID of the category
+     * @return The CatRecord
+     * @throws ApiException
+     */
+    public CatRecord getCat(String catUuid) throws ApiException {
+        final String response = get("getCat", BackendUtils.getClientId(getContext()), catUuid);
+        try {
+            return new Gson().fromJson(response, CatRecord.class);
+        } catch(JsonSyntaxException e) {
+            throw new ParseException(e);
+        }
+    }
+
+    /**
+     * Send a single category.
+     *
+     * @param catRecord The CatRecord
      * @return The UpdateResponse
      * @throws ApiException
      */
-    public UpdateResponse pushUpdates(UpdateRecord record) throws ApiException {
-        final long id = BackendUtils.getClientId(getContext());
+    public UpdateResponse putCat(CatRecord catRecord) throws ApiException {
+        final String response = post("putCat", catRecord, BackendUtils.getClientId(getContext()));
         try {
-            return new Gson().fromJson(post("pushUpdates", record, id), UpdateResponse.class);
+            return new Gson().fromJson(response, UpdateResponse.class);
         } catch(JsonSyntaxException e) {
             throw new ParseException(e);
         }
     }
 
     /**
-     * Confirm a successful sync with the backend.
+     * Get a single entry.
      *
-     * @param time The timestamp reported in the UpdateResponse
+     * @param entryUuid The UUID of the entry
+     * @return The EntryRecord
      * @throws ApiException
      */
-    public void confirmSync(long time) throws ApiException {
-        final long id = BackendUtils.getClientId(getContext());
-        post("confirmSync", time, id);
+    public EntryRecord getEntry(String entryUuid) throws ApiException {
+        final String response = get("getEntry", BackendUtils.getClientId(getContext()), entryUuid);
+        try {
+            return new Gson().fromJson(response, EntryRecord.class);
+        } catch(JsonSyntaxException e) {
+            throw new ParseException(e);
+        }
     }
 
     /**
-     * Get a list mapping UUIDs to remote IDs of all entries.
+     * Send a single entry.
      *
-     * @return The RemoteIdsRecord
+     * @param entryRecord The EntryRecord
+     * @return The UpdateResponse
      * @throws ApiException
      */
-    public RemoteIdsRecord getRemoteIds() throws ApiException {
+    public UpdateResponse putEntry(EntryRecord entryRecord) throws ApiException {
+        final String response =
+                post("putEntry", entryRecord, BackendUtils.getClientId(getContext()));
         try {
-            return new Gson().fromJson(get("getRemoteIds"), RemoteIdsRecord.class);
+            return new Gson().fromJson(response, UpdateResponse.class);
         } catch(JsonSyntaxException e) {
             throw new ParseException(e);
         }

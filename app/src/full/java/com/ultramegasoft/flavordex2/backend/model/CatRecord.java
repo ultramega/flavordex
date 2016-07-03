@@ -11,7 +11,7 @@ public class CatRecord extends Model {
     public long id;
     public String uuid;
     public String name;
-    public long updated;
+    public long age;
     public boolean deleted;
 
     public ArrayList<ExtraRecord> extras;
