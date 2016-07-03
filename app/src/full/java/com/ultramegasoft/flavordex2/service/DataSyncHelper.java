@@ -479,7 +479,7 @@ public class DataSyncHelper {
             final String where = Tables.Cats.UUID + " = ? AND updated < ?";
             for(Map.Entry<String, Long> entry : syncRecord.deletedCats.entrySet()) {
                 whereArgs[0] = entry.getKey();
-                whereArgs[1] = entry.getValue().toString();
+                whereArgs[1] = subTime(entry.getValue()) + "";
                 cr.delete(Tables.Cats.CONTENT_URI, where, whereArgs);
             }
         }
@@ -488,7 +488,7 @@ public class DataSyncHelper {
             final String where = Tables.Entries.UUID + " = ? AND updated < ?";
             for(Map.Entry<String, Long> entry : syncRecord.deletedEntries.entrySet()) {
                 whereArgs[0] = entry.getKey();
-                whereArgs[1] = entry.getValue().toString();
+                whereArgs[1] = subTime(entry.getValue()) + "";
                 cr.delete(Tables.Entries.CONTENT_URI, where, whereArgs);
             }
         }
@@ -498,7 +498,7 @@ public class DataSyncHelper {
             final String where = Tables.Cats.UUID + " = ? AND updated < ?";
             for(Map.Entry<String, Long> entry : syncRecord.updatedCats.entrySet()) {
                 whereArgs[0] = entry.getKey();
-                whereArgs[1] = entry.getValue().toString();
+                whereArgs[1] = subTime(entry.getValue()) + "";
                 final Cursor cursor =
                         cr.query(Tables.Cats.CONTENT_URI, projection, where, whereArgs, null);
                 if(cursor != null) {
@@ -517,7 +517,7 @@ public class DataSyncHelper {
             final String where = Tables.Entries.UUID + " = ? AND updated < ?";
             for(Map.Entry<String, Long> entry : syncRecord.updatedEntries.entrySet()) {
                 whereArgs[0] = entry.getKey();
-                whereArgs[1] = entry.getValue().toString();
+                whereArgs[1] = subTime(entry.getValue()) + "";
                 final Cursor cursor =
                         cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs, null);
                 if(cursor != null) {
