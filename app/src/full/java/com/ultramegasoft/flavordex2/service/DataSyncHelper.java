@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -474,9 +473,9 @@ public class DataSyncHelper {
         final ContentResolver cr = mContext.getContentResolver();
         final SyncRecord syncRecord = mSync.getUpdates();
 
-        final String[] whereArgs = new String[2];
+        String[] whereArgs = new String[2];
         if(syncRecord.deletedCats != null) {
-            final String where = Tables.Cats.UUID + " = ? AND updated < ?";
+            final String where = Tables.Cats.UUID + " = ? AND " + Tables.Cats.UPDATED + " < ?";
             for(Map.Entry<String, Long> entry : syncRecord.deletedCats.entrySet()) {
                 whereArgs[0] = entry.getKey();
                 whereArgs[1] = subTime(entry.getValue()) + "";
@@ -485,7 +484,8 @@ public class DataSyncHelper {
         }
 
         if(syncRecord.deletedEntries != null) {
-            final String where = Tables.Entries.UUID + " = ? AND updated < ?";
+            final String where =
+                    Tables.Entries.UUID + " = ? AND " + Tables.Entries.UPDATED + " < ?";
             for(Map.Entry<String, Long> entry : syncRecord.deletedEntries.entrySet()) {
                 whereArgs[0] = entry.getKey();
                 whereArgs[1] = subTime(entry.getValue()) + "";
@@ -493,17 +493,19 @@ public class DataSyncHelper {
             }
         }
 
-        final String[] projection = new String[] {BaseColumns._ID};
+        whereArgs = new String[1];
         if(syncRecord.updatedCats != null) {
-            final String where = Tables.Cats.UUID + " = ? AND updated < ?";
+            final String[] projection = new String[] {Tables.Cats.UPDATED};
+            final String where = Tables.Cats.UUID + " = ?";
             for(Map.Entry<String, Long> entry : syncRecord.updatedCats.entrySet()) {
                 whereArgs[0] = entry.getKey();
-                whereArgs[1] = subTime(entry.getValue()) + "";
                 final Cursor cursor =
                         cr.query(Tables.Cats.CONTENT_URI, projection, where, whereArgs, null);
                 if(cursor != null) {
                     try {
-                        if(cursor.moveToFirst()) {
+                        if(!cursor.moveToFirst() ||
+                                subTime(entry.getValue()) > cursor.getLong(cursor.getColumnIndex(
+                                        Tables.Cats.UPDATED))) {
                             parseCat(mSync.getCat(entry.getKey()));
                         }
                     } finally {
@@ -514,15 +516,17 @@ public class DataSyncHelper {
         }
 
         if(syncRecord.updatedEntries != null) {
-            final String where = Tables.Entries.UUID + " = ? AND updated < ?";
+            final String[] projection = new String[] {Tables.Entries.UPDATED};
+            final String where = Tables.Entries.UUID + " = ?";
             for(Map.Entry<String, Long> entry : syncRecord.updatedEntries.entrySet()) {
                 whereArgs[0] = entry.getKey();
-                whereArgs[1] = subTime(entry.getValue()) + "";
                 final Cursor cursor =
                         cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs, null);
                 if(cursor != null) {
                     try {
-                        if(cursor.moveToFirst()) {
+                        if(!cursor.moveToFirst() ||
+                                subTime(entry.getValue()) > cursor.getLong(cursor.getColumnIndex(
+                                        Tables.Entries.UPDATED))) {
                             parseEntry(mSync.getEntry(entry.getKey()));
                         }
                     } finally {
