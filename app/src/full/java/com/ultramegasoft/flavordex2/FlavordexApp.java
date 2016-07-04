@@ -84,6 +84,7 @@ public class FlavordexApp extends AbsFlavordexApp implements
             case PREF_DETECT_LOCATION:
                 setLocationEnabled(sharedPreferences.getBoolean(key, false));
                 break;
+            case PREF_ACCOUNT:
             case PREF_SYNC_DATA:
                 if(sharedPreferences.getBoolean(key, false)) {
                     BackendUtils.requestDataSync(this);

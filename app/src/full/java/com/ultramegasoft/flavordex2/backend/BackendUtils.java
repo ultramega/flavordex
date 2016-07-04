@@ -1,6 +1,7 @@
 package com.ultramegasoft.flavordex2.backend;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -44,8 +45,9 @@ public class BackendUtils {
      * @param context The Context
      */
     public static void requestDataSync(Context context) {
-        if(!PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if(!prefs.getBoolean(FlavordexApp.PREF_ACCOUNT, false) ||
+                !prefs.getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
             return;
         }
         if(sJobDispatcher == null) {
@@ -76,8 +78,9 @@ public class BackendUtils {
      * @param context The Context
      */
     public static void requestPhotoSync(Context context) {
-        if(!PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false)) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if(!prefs.getBoolean(FlavordexApp.PREF_ACCOUNT, false) ||
+                !prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false)) {
             return;
         }
         if(sJobDispatcher == null) {
