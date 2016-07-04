@@ -55,7 +55,7 @@ public class BackendUtils {
                 .setService(SyncService.class)
                 .setTag(JOB_SYNC_DATA)
                 .setReplaceCurrent(true)
-                .setTrigger(Trigger.executionWindow(5, 30))
+                .setTrigger(Trigger.NOW)
                 .setConstraints(Constraint.ON_ANY_NETWORK)
                 .build();
         sJobDispatcher.schedule(job);
@@ -92,7 +92,7 @@ public class BackendUtils {
                 .setService(SyncService.class)
                 .setTag(JOB_SYNC_PHOTOS)
                 .setReplaceCurrent(true)
-                .setTrigger(Trigger.executionWindow(5, 30))
+                .setTrigger(Trigger.NOW)
                 .setConstraints(constraints)
                 .build();
         sJobDispatcher.schedule(job);
