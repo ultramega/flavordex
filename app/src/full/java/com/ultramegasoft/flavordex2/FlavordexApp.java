@@ -9,7 +9,9 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.provider.Tables;
 
@@ -73,6 +75,15 @@ public class FlavordexApp extends AbsFlavordexApp implements
         super.onCreate();
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
+
+        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                prefs.edit().putBoolean(PREF_ACCOUNT, firebaseAuth.getCurrentUser() != null)
+                        .apply();
+            }
+        });
+
         if(prefs.getBoolean(PREF_DETECT_LOCATION, false)) {
             setLocationEnabled(true);
         }
