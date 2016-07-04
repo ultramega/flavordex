@@ -301,15 +301,12 @@ public class SettingsActivity extends AppCompatActivity {
                     mPrefAccount.setChecked(true);
                 } else {
                     new LogoutTask(getContext()).execute();
+                    mPrefAccount.setChecked(false);
                 }
             } else if(FlavordexApp.PREF_SYNC_DATA.equals(key)) {
-                if(sharedPreferences.getBoolean(key, false)) {
-                    mPrefSyncData.setChecked(true);
-                }
+                mPrefSyncData.setChecked(sharedPreferences.getBoolean(key, false));
             } else if(FlavordexApp.PREF_SYNC_PHOTOS.equals(key)) {
-                if(sharedPreferences.getBoolean(key, false)) {
-                    mPrefSyncPhotos.setChecked(true);
-                }
+                mPrefSyncPhotos.setChecked(sharedPreferences.getBoolean(key, false));
             }
         }
     }
