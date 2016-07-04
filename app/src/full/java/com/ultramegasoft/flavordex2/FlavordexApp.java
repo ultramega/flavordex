@@ -76,6 +76,8 @@ public class FlavordexApp extends AbsFlavordexApp implements
         if(prefs.getBoolean(PREF_DETECT_LOCATION, false)) {
             setLocationEnabled(true);
         }
+        BackendUtils.requestDataSync(this);
+        BackendUtils.requestPhotoSync(this);
     }
 
     @Override
