@@ -10,8 +10,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
-import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
+import com.ultramegasoft.flavordex2.provider.Tables;
 
 /**
  * Full implementation of the Application. Adds support for location detection and data
@@ -76,19 +76,31 @@ public class FlavordexApp extends AbsFlavordexApp implements
         if(prefs.getBoolean(PREF_DETECT_LOCATION, false)) {
             setLocationEnabled(true);
         }
-        if(prefs.getBoolean(PREF_SYNC_DATA, false)) {
-            BackendUtils.setupSync(this);
-        }
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(PREF_DETECT_LOCATION.equals(key)) {
-            setLocationEnabled(sharedPreferences.getBoolean(key, false));
-        } else if(PREF_SYNC_DATA.equals(key)) {
-            if(!sharedPreferences.getBoolean(key, false)) {
-                BackendUtils.stopSync();
-            }
+        switch(key) {
+            case PREF_DETECT_LOCATION:
+                setLocationEnabled(sharedPreferences.getBoolean(key, false));
+                break;
+            case PREF_SYNC_DATA:
+                if(sharedPreferences.getBoolean(key, false)) {
+                    BackendUtils.requestDataSync(this);
+                } else {
+                    BackendUtils.cancelDataSync();
+                }
+                break;
+            case PREF_SYNC_PHOTOS:
+                if(sharedPreferences.getBoolean(key, false)) {
+                    BackendUtils.requestPhotoSync(this);
+                } else {
+                    BackendUtils.cancelPhotoSync();
+                }
+                break;
+            case PREF_SYNC_PHOTOS_UNMETERED:
+                BackendUtils.requestPhotoSync(this);
+                break;
         }
     }
 

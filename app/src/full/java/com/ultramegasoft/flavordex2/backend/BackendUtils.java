@@ -25,15 +25,13 @@ public class BackendUtils {
      * Job tags for the job dispatcher
      */
     public static final String JOB_SYNC_DATA = "sync_data";
+    public static final String JOB_SYNC_PHOTOS = "sync_photo";
 
     /**
      * Keys for the backend shared preferences
      */
     private static final String PREFS_KEY = "backend";
     private static final String PREF_CLIENT_ID = "pref_client_id";
-    private static final String PREF_DATA_SYNC_REQUESTED = "pref_data_sync_requested";
-    private static final String PREF_PHOTO_SYNC_REQUESTED = "pref_photo_sync_requested";
-    private static final String PREF_REMOTE_IDS_REQUESTED = "pref_remote_ids_requested";
 
     /**
      * The job dispatcher
@@ -41,11 +39,15 @@ public class BackendUtils {
     private static FirebaseJobDispatcher sJobDispatcher;
 
     /**
-     * Schedule the sync service to run.
+     * Request a data sync.
      *
      * @param context The Context
      */
-    public static void setupSync(Context context) {
+    public static void requestDataSync(Context context) {
+        if(!PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
+            return;
+        }
         if(sJobDispatcher == null) {
             sJobDispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(context));
         }
@@ -53,54 +55,19 @@ public class BackendUtils {
                 .setService(SyncService.class)
                 .setTag(JOB_SYNC_DATA)
                 .setReplaceCurrent(true)
-                .setRecurring(true)
-                .setTrigger(Trigger.executionWindow(30, 60))
+                .setTrigger(Trigger.executionWindow(5, 30))
                 .setConstraints(Constraint.ON_ANY_NETWORK)
                 .build();
         sJobDispatcher.schedule(job);
-
-        requestDataSync(context);
-        requestPhotoSync(context);
     }
 
     /**
-     * Cancel all sync jobs.
+     * Cancel the data sync.
      */
-    public static void stopSync() {
+    public static void cancelDataSync() {
         if(sJobDispatcher != null) {
             sJobDispatcher.cancel(JOB_SYNC_DATA);
         }
-    }
-
-    /**
-     * Request a data sync.
-     *
-     * @param context The Context
-     */
-    public static void requestDataSync(Context context) {
-        requestDataSync(context, true);
-    }
-
-    /**
-     * Set whether a data sync is requested.
-     *
-     * @param context       The Context
-     * @param syncRequested Whether a data sync is requested
-     */
-    public static void requestDataSync(Context context, boolean syncRequested) {
-        context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit()
-                .putBoolean(PREF_DATA_SYNC_REQUESTED, syncRequested).apply();
-    }
-
-    /**
-     * Is a data sync requested?
-     *
-     * @param context The Context
-     * @return Whether a data sync was requested
-     */
-    public static boolean isDataSyncRequested(Context context) {
-        return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
-                .getBoolean(PREF_DATA_SYNC_REQUESTED, true);
     }
 
     /**
@@ -109,29 +76,35 @@ public class BackendUtils {
      * @param context The Context
      */
     public static void requestPhotoSync(Context context) {
-        requestPhotoSync(context, true);
+        if(!PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false)) {
+            return;
+        }
+        if(sJobDispatcher == null) {
+            sJobDispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(context));
+        }
+        int constraints = Constraint.ON_ANY_NETWORK;
+        if(PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(FlavordexApp.PREF_SYNC_PHOTOS_UNMETERED, true)) {
+            constraints |= Constraint.ON_UNMETERED_NETWORK;
+        }
+        final Job job = sJobDispatcher.newJobBuilder()
+                .setService(SyncService.class)
+                .setTag(JOB_SYNC_PHOTOS)
+                .setReplaceCurrent(true)
+                .setTrigger(Trigger.executionWindow(5, 30))
+                .setConstraints(constraints)
+                .build();
+        sJobDispatcher.schedule(job);
     }
 
     /**
-     * Set whether a photo sync is requested.
-     *
-     * @param context       The Context
-     * @param syncRequested Whether a photo sync is requested
+     * Cancel the photo sync.
      */
-    public static void requestPhotoSync(Context context, boolean syncRequested) {
-        context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit()
-                .putBoolean(PREF_PHOTO_SYNC_REQUESTED, syncRequested).apply();
-    }
-
-    /**
-     * Is a photo sync requested?
-     *
-     * @param context The Context
-     * @return Whether a photo sync was requested
-     */
-    public static boolean isPhotoSyncRequested(Context context) {
-        return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
-                .getBoolean(PREF_PHOTO_SYNC_REQUESTED, true);
+    public static void cancelPhotoSync() {
+        if(sJobDispatcher != null) {
+            sJobDispatcher.cancel(JOB_SYNC_PHOTOS);
+        }
     }
 
     /**
@@ -198,96 +171,5 @@ public class BackendUtils {
         }
 
         return false;
-    }
-
-    /**
-     * Set whether to request remote IDs from the backend.
-     *
-     * @param context   The Context
-     * @param requested Whether to request remote IDs
-     */
-    public static void setRequestRemoteIds(Context context, boolean requested) {
-        context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit()
-                .putBoolean(PREF_REMOTE_IDS_REQUESTED, requested).apply();
-    }
-
-    /**
-     * Are remote IDs requested?
-     *
-     * @param context The Context
-     * @return Whether remote IDs have been requested
-     */
-    public static boolean areRemoteIdsRequested(Context context) {
-        return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
-                .getBoolean(PREF_REMOTE_IDS_REQUESTED, false);
-    }
-
-    /**
-     * Helper class to implement exponential backoff.
-     */
-    public static class ExponentialBackoffHelper {
-        /**
-         * The base interval of delay times in milliseconds
-         */
-        private final long mRetryInterval;
-
-        /**
-         * The amount of tolerance in the random offset in delay times in milliseconds
-         */
-        private final long mRetryTolerance;
-
-        /**
-         * The maximum delay time in milliseconds
-         */
-        private final long mMaxRetryDelay;
-
-        /**
-         * The current failure count
-         */
-        private long mFailureCount = 0;
-
-        /**
-         * The minimum timestamp of the next allowed execution
-         */
-        private long mRetryTime = 0;
-
-        /**
-         * @param interval  The base interval of delay times in seconds
-         * @param tolerance The amount of tolerance in the random offset in delay times in seconds
-         * @param maxDelay  The maximum delay time in seconds
-         */
-        public ExponentialBackoffHelper(long interval, long tolerance, long maxDelay) {
-            mRetryInterval = interval * 1000;
-            mRetryTolerance = tolerance * 1000;
-            mMaxRetryDelay = maxDelay * 1000;
-        }
-
-        /**
-         * Should the task be executed?
-         *
-         * @return Whether the retry delay has been met
-         */
-        public boolean shouldExecute() {
-            return System.currentTimeMillis() > mRetryTime;
-        }
-
-        /**
-         * Call when the task has executed successfully to reset the failure count.
-         */
-        public void onSuccess() {
-            mFailureCount = mRetryTime = 0;
-        }
-
-        /**
-         * Call when the task has failed to execute.
-         */
-        public void onFail() {
-            mFailureCount++;
-            long delay = (long)(Math.pow(2, mFailureCount) * mRetryInterval);
-            delay = delay > mMaxRetryDelay ? mMaxRetryDelay : delay;
-            delay += (Math.random() - 0.5) * mRetryTolerance;
-            mRetryTime = System.currentTimeMillis() + delay;
-            Log.d(TAG, "Task failed! Retrying in " + delay + "ms");
-        }
     }
 }

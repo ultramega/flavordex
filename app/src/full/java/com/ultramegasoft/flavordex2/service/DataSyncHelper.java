@@ -38,20 +38,9 @@ public class DataSyncHelper {
     private static final String TAG = "DataSyncHelper";
 
     /**
-     * Helper to implement exponential backoff
-     */
-    private static final BackendUtils.ExponentialBackoffHelper sBackoffHelper =
-            new BackendUtils.ExponentialBackoffHelper(30, 30, 60 * 15);
-
-    /**
      * The Context
      */
     private final Context mContext;
-
-    /**
-     * Helper for syncing photos
-     */
-    private final PhotoSyncHelper mPhotoSyncHelper;
 
     /**
      * Whether to request a photo sync
@@ -64,12 +53,10 @@ public class DataSyncHelper {
     private Sync mSync;
 
     /**
-     * @param context         The Context
-     * @param photoSyncHelper Helper for syncing photos
+     * @param context The Context
      */
-    public DataSyncHelper(Context context, PhotoSyncHelper photoSyncHelper) {
+    public DataSyncHelper(Context context) {
         mContext = context;
-        mPhotoSyncHelper = photoSyncHelper;
     }
 
     /**
@@ -78,10 +65,6 @@ public class DataSyncHelper {
      * @return Whether the sync completed successfully
      */
     public boolean sync() {
-        if(!sBackoffHelper.shouldExecute()) {
-            return false;
-        }
-
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         if(FirebaseAuth.getInstance().getCurrentUser() == null ||
                 BackendUtils.getClientId(mContext) == 0) {
@@ -101,13 +84,11 @@ public class DataSyncHelper {
             if(mRequestPhotoSync) {
                 requestPhotoSync();
             }
-            sBackoffHelper.onSuccess();
             return true;
         } catch(ApiException e) {
             Log.w(TAG, "Syncing with the backend failed", e);
         }
 
-        sBackoffHelper.onFail();
         return false;
     }
 
@@ -791,10 +772,6 @@ public class DataSyncHelper {
      */
     private void requestPhotoSync() {
         mRequestPhotoSync = false;
-        if(mPhotoSyncHelper != null && mPhotoSyncHelper.connect()) {
-            mPhotoSyncHelper.fetchPhotos();
-            return;
-        }
         BackendUtils.requestPhotoSync(mContext);
     }
 

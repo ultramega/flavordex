@@ -305,12 +305,10 @@ public class SettingsActivity extends AppCompatActivity {
             } else if(FlavordexApp.PREF_SYNC_DATA.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
                     mPrefSyncData.setChecked(true);
-                    BackendUtils.setupSync(getContext());
                 }
             } else if(FlavordexApp.PREF_SYNC_PHOTOS.equals(key)) {
                 if(sharedPreferences.getBoolean(key, false)) {
                     mPrefSyncPhotos.setChecked(true);
-                    BackendUtils.requestPhotoSync(getContext());
                 }
             }
         }

@@ -1,11 +1,7 @@
 package com.ultramegasoft.flavordex2.service;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
-import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
 
 /**
@@ -16,16 +12,21 @@ import com.ultramegasoft.flavordex2.backend.BackendUtils;
 public class SyncService extends JobService {
     @Override
     public boolean onStartJob(final JobParameters parameters) {
-        final String tag = parameters.getTag();
-        if(BackendUtils.JOB_SYNC_DATA.equals(tag)) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    syncData();
-                    jobFinished(parameters, false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                switch(parameters.getTag()) {
+                    case BackendUtils.JOB_SYNC_DATA:
+                        jobFinished(parameters, !syncData());
+                        break;
+                    case BackendUtils.JOB_SYNC_PHOTOS:
+                        jobFinished(parameters, !syncPhotos());
+                        break;
+                    default:
+                        jobFinished(parameters, false);
                 }
-            }).start();
-        }
+            }
+        }).start();
         return true;
     }
 
@@ -35,38 +36,26 @@ public class SyncService extends JobService {
     }
 
     /**
-     * Sync data with the backend and photos with Google Drive.
+     * Sync data with the backend.
      */
-    private void syncData() {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    private boolean syncData() {
+        return new DataSyncHelper(this).sync();
+    }
 
-        if(prefs.getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
-            PhotoSyncHelper photoSyncHelper = null;
+    /**
+     * Sync photos with Google Drive.
+     */
+    private boolean syncPhotos() {
+        final PhotoSyncHelper photoSyncHelper = new PhotoSyncHelper(this);
+        if(photoSyncHelper.connect()) {
+            photoSyncHelper.deletePhotos();
+            photoSyncHelper.fetchPhotos();
+            photoSyncHelper.pushPhotos();
+            photoSyncHelper.disconnect();
 
-            if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false)) {
-                photoSyncHelper = new PhotoSyncHelper(this);
-                if(BackendUtils.isPhotoSyncRequested(this)) {
-                    BackendUtils.requestPhotoSync(this, false);
-                    if(photoSyncHelper.connect()) {
-                        photoSyncHelper.deletePhotos();
-                        photoSyncHelper.fetchPhotos();
-                        photoSyncHelper.pushPhotos();
-                    } else {
-                        BackendUtils.requestPhotoSync(this);
-                    }
-                }
-            }
-
-            if(BackendUtils.isDataSyncRequested(this)) {
-                BackendUtils.requestDataSync(this, false);
-                if(!new DataSyncHelper(this, photoSyncHelper).sync()) {
-                    BackendUtils.requestDataSync(this);
-                }
-            }
-
-            if(photoSyncHelper != null) {
-                photoSyncHelper.disconnect();
-            }
+            return true;
         }
+
+        return false;
     }
 }

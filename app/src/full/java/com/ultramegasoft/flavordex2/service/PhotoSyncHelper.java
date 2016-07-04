@@ -6,11 +6,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v4.net.ConnectivityManagerCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -29,8 +27,8 @@ import com.google.android.gms.drive.metadata.CustomPropertyKey;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.ultramegasoft.flavordex2.FlavordexApp;
-import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
+import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
@@ -49,12 +47,6 @@ import java.util.ArrayList;
  */
 public class PhotoSyncHelper {
     private static final String TAG = "PhotoSyncHelper";
-
-    /**
-     * Helper to implement exponential backoff
-     */
-    private static final BackendUtils.ExponentialBackoffHelper sBackoffHelper =
-            new BackendUtils.ExponentialBackoffHelper(30, 30, 60 * 15);
 
     /**
      * The custom property key to identify photos
@@ -104,10 +96,6 @@ public class PhotoSyncHelper {
             return true;
         }
 
-        if(!sBackoffHelper.shouldExecute()) {
-            return false;
-        }
-
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             mShouldSync = false;
             mMediaMounted = false;
@@ -126,14 +114,6 @@ public class PhotoSyncHelper {
             mMediaMounted = false;
         }
 
-        if(prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS_UNMETERED, true)) {
-            final ConnectivityManager cm =
-                    (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-            if(ConnectivityManagerCompat.isActiveNetworkMetered(cm)) {
-                mShouldSync = false;
-            }
-        }
-
         mClient = new GoogleApiClient.Builder(mContext)
                 .addApi(Drive.API)
                 .addScope(Drive.SCOPE_APPFOLDER)
@@ -144,7 +124,6 @@ public class PhotoSyncHelper {
             Drive.DriveApi.requestSync(mClient).await();
             mDriveFolder = Drive.DriveApi.getAppFolder(mClient);
             if(mDriveFolder != null) {
-                sBackoffHelper.onSuccess();
                 return true;
             }
             Log.w(TAG, "Failed to get application folder.");
@@ -169,7 +148,6 @@ public class PhotoSyncHelper {
 
         Log.w(TAG, "Connection failed! Reason: " + result.getErrorMessage());
         mClient.disconnect();
-        sBackoffHelper.onFail();
         return false;
     }
 

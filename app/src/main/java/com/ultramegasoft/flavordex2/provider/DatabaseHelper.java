@@ -67,7 +67,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 generateUuids(db);
             case 2:
                 execRawFile(db, R.raw.upgrade_v3);
-                BackendUtils.setRequestRemoteIds(mContext, true);
                 BackendUtils.requestDataSync(mContext);
         }
 
