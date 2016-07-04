@@ -29,7 +29,7 @@ public class Registration extends Endpoint {
      * @throws ApiException
      */
     public RegistrationRecord register() throws ApiException {
-        final String fcmId = FirebaseInstanceId.getInstance().getId();
+        final String fcmId = FirebaseInstanceId.getInstance().getToken();
         if(fcmId != null) {
             try {
                 return new Gson().fromJson(post("register", fcmId), RegistrationRecord.class);
