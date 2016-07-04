@@ -1,5 +1,7 @@
 package com.ultramegasoft.flavordex2.backend;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -12,6 +14,7 @@ import com.firebase.jobdispatcher.Job;
 import com.firebase.jobdispatcher.Trigger;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.backend.model.RegistrationRecord;
+import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.service.SyncService;
 
 /**
@@ -33,6 +36,7 @@ public class BackendUtils {
      */
     private static final String PREFS_KEY = "backend";
     private static final String PREF_CLIENT_ID = "pref_client_id";
+    private static final String PREF_UID = "pref_uid";
 
     /**
      * The job dispatcher
@@ -130,6 +134,30 @@ public class BackendUtils {
     public static void setClientId(Context context, long clientId) {
         context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit()
                 .putLong(PREF_CLIENT_ID, clientId).apply();
+    }
+
+    /**
+     * Set the user ID, resetting the synchronization state if changed.
+     *
+     * @param context The Context
+     * @param uid     The user ID
+     */
+    public static void setUid(Context context, String uid) {
+        final SharedPreferences prefs =
+                context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
+        if(!uid.equals(prefs.getString(PREF_UID, null))) {
+            final ContentResolver cr = context.getContentResolver();
+
+            final ContentValues values = new ContentValues();
+            values.put(Tables.Cats.SYNCED, false);
+            cr.update(Tables.Cats.CONTENT_URI, values, null, null);
+
+            values.clear();
+            values.put(Tables.Entries.SYNCED, false);
+            cr.update(Tables.Entries.CONTENT_URI, values, null, null);
+
+            prefs.edit().putString(PREF_UID, uid).apply();
+        }
     }
 
     /**
