@@ -31,8 +31,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.google.firebase.auth.UserInfo;
-import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterCore;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.dialog.BackendRegistrationDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
@@ -68,7 +68,7 @@ public class SettingsActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         final TwitterAuthConfig twitterConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-        Fabric.with(this, new Twitter(twitterConfig));
+        Fabric.with(this, new TwitterCore(twitterConfig));
 
         if(savedInstanceState == null) {
             final Fragment fragment = new SettingsFragment();
@@ -376,7 +376,7 @@ public class SettingsActivity extends AppCompatActivity {
          * Log the user out from Twitter.
          */
         private void logoutTwitter() {
-            Twitter.getSessionManager().clearActiveSession();
+            TwitterCore.getInstance().getSessionManager().clearActiveSession();
         }
     }
 
