@@ -4,17 +4,16 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.backend.ApiException;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.backend.Sync;
+import com.ultramegasoft.flavordex2.backend.UnauthorizedException;
 import com.ultramegasoft.flavordex2.backend.model.CatRecord;
 import com.ultramegasoft.flavordex2.backend.model.EntryRecord;
 import com.ultramegasoft.flavordex2.backend.model.ExtraRecord;
@@ -62,20 +61,19 @@ public class DataSyncHelper {
     /**
      * Sync data with the backend.
      *
-     * @return Whether the sync completed successfully
+     * @return Whether the sync should be retried
      */
     public boolean sync() {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-        if(FirebaseAuth.getInstance().getCurrentUser() == null ||
-                BackendUtils.getClientId(mContext) == 0) {
-            Log.i(TAG, "Client not registered. Aborting and disabling service.");
-            prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_DATA, false).apply();
-            return false;
-        }
         mSync = new Sync(mContext);
         try {
             Log.d(TAG, "Syncing...");
-            mSync.startSync();
+            try {
+                mSync.startSync();
+            } catch(UnauthorizedException e) {
+                Log.i(TAG, "Authorization with the backend failed. Attempting to re-register...");
+                BackendUtils.registerClient(mContext);
+                mSync.startSync();
+            }
             pushUpdates();
             fetchUpdates();
             mSync.endSync();
@@ -84,6 +82,12 @@ public class DataSyncHelper {
             if(mRequestPhotoSync) {
                 requestPhotoSync();
             }
+            return true;
+        } catch(UnauthorizedException e) {
+            Log.w(TAG, "Authorization with the backend failed. Aborting and disabling service.");
+            BackendUtils.setClientId(mContext, 0);
+            PreferenceManager.getDefaultSharedPreferences(mContext).edit()
+                    .putBoolean(FlavordexApp.PREF_SYNC_DATA, false).apply();
             return true;
         } catch(ApiException e) {
             Log.w(TAG, "Syncing with the backend failed", e);
