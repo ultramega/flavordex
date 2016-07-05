@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.provider.Tables;
 
@@ -32,6 +33,8 @@ public class FlavordexApp extends AbsFlavordexApp implements
     /**
      * Preference names
      */
+    public static final String PREF_FIRST_RUN = "pref_first_run";
+    public static final String PREF_VERSION = "pref_version";
     public static final String PREF_ACCOUNT = "pref_account";
     public static final String PREF_SYNC_DATA = "pref_sync_data";
     public static final String PREF_SYNC_PHOTOS = "pref_sync_photos";
@@ -79,8 +82,16 @@ public class FlavordexApp extends AbsFlavordexApp implements
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                prefs.edit().putBoolean(PREF_ACCOUNT, firebaseAuth.getCurrentUser() != null)
-                        .apply();
+                final FirebaseUser user = firebaseAuth.getCurrentUser();
+                if(user != null) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            BackendUtils.setUid(FlavordexApp.this, user.getUid());
+                        }
+                    }).start();
+                }
+                prefs.edit().putBoolean(PREF_ACCOUNT, user != null).apply();
             }
         });
 

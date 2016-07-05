@@ -36,7 +36,6 @@ import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
-import com.ultramegasoft.flavordex2.backend.BackendUtils;
 
 /**
  * Activity to allow the user to log in using one of the auth providers.
@@ -95,7 +94,6 @@ public class LoginActivity extends AppCompatActivity
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 final FirebaseUser user = firebaseAuth.getCurrentUser();
                 if(user != null) {
-                    BackendUtils.setUid(LoginActivity.this, user.getUid());
                     finish();
                 }
             }

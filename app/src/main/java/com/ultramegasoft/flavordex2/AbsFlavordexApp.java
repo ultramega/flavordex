@@ -21,7 +21,6 @@ public abstract class AbsFlavordexApp extends Application {
     /**
      * Preference names
      */
-    public static final String PREF_FIRST_RUN = "pref_first_run";
     public static final String PREF_LIST_SORT_FIELD = "pref_list_sort_field";
     public static final String PREF_LIST_SORT_REVERSED = "pref_list_sort_reversed";
     public static final String PREF_LIST_CAT_ID = "pref_list_cat_id";

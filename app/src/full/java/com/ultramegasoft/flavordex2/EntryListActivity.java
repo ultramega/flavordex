@@ -2,17 +2,23 @@ package com.ultramegasoft.flavordex2;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.FacebookSdk;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterCore;
 import com.ultramegasoft.flavordex2.dialog.AppChooserDialog;
 import com.ultramegasoft.flavordex2.dialog.FileImportDialog;
 import com.ultramegasoft.flavordex2.dialog.FileSelectorDialog;
 import com.ultramegasoft.flavordex2.fragment.EntryListFragment;
 import com.ultramegasoft.flavordex2.util.AppImportUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Full implementation of the main application Activity. Adds import and export menu items.
@@ -22,6 +28,20 @@ import com.ultramegasoft.flavordex2.util.PermissionUtils;
  */
 public class EntryListActivity extends BaseEntryListActivity
         implements FileSelectorDialog.OnFileSelectedCallbacks {
+    //// TODO: 6/29/2016 Obfuscate this somehow
+    private static final String TWITTER_KEY = "bnGTtGdFsxpA7oPEVb2l1SGx1";
+    private static final String TWITTER_SECRET = "NYYswsSXGCILj6b545jf35F1xjDHiVELh2FbyShU61w6Ri5Sht";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+        final TwitterAuthConfig twitterConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        Fabric.with(this, new TwitterCore(twitterConfig));
+
+    }
+
     @Override
     protected void loadPreferences(SharedPreferences prefs) {
         super.loadPreferences(prefs);
@@ -30,6 +50,17 @@ public class EntryListActivity extends BaseEntryListActivity
                 AppChooserDialog.showDialog(getSupportFragmentManager(), true);
             }
             prefs.edit().putBoolean(FlavordexApp.PREF_FIRST_RUN, false).apply();
+        }
+
+        final int oldVersion = prefs.getInt(FlavordexApp.PREF_VERSION, 0);
+        final int newVersion = BuildConfig.VERSION_CODE;
+        if(newVersion > oldVersion) {
+            if(oldVersion < 14) {
+                if(prefs.getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
+                    startActivity(new Intent(this, LoginActivity.class));
+                }
+            }
+            prefs.edit().putInt(FlavordexApp.PREF_VERSION, newVersion).apply();
         }
     }
 
