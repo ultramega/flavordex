@@ -109,9 +109,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
-            PreferenceManager.getDefaultSharedPreferences(getContext())
-                    .registerOnSharedPreferenceChangeListener(this);
-
             addPreferencesFromResource(R.xml.preferences);
 
             mPrefLocation = (CheckBoxPreference)findPreference(FlavordexApp.PREF_DETECT_LOCATION);
@@ -124,6 +121,9 @@ public class SettingsActivity extends AppCompatActivity {
             setupAccountPref();
             setupSyncDataPref();
             setupSyncPhotosPref();
+
+            PreferenceManager.getDefaultSharedPreferences(getContext())
+                    .registerOnSharedPreferenceChangeListener(this);
         }
 
         @Override
