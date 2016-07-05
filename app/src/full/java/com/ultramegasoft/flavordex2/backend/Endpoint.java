@@ -3,8 +3,10 @@ package com.ultramegasoft.flavordex2.backend;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
@@ -18,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Represents an endpoint of the API.
@@ -25,6 +28,8 @@ import java.net.URL;
  * @author Steve Guidetti
  */
 public abstract class Endpoint {
+    private static final String TAG = "Endpoint";
+
     /**
      * The Context
      */
@@ -41,6 +46,11 @@ public abstract class Endpoint {
     private final String mUserAgent;
 
     /**
+     * The user's authorization token
+     */
+    private String mAuthToken;
+
+    /**
      * Constructor.
      *
      * @param context The Context to use
@@ -52,6 +62,17 @@ public abstract class Endpoint {
                 FlavordexApp.DEVELOPER_MODE ? R.string.api_url_debug : R.string.api_url));
         mBaseUrl = Uri.withAppendedPath(apiUri, getName());
         mUserAgent = context.getString(R.string.user_agent, BuildConfig.VERSION_NAME);
+
+        final FirebaseUser auth = FirebaseAuth.getInstance().getCurrentUser();
+        if(auth != null) {
+            final Task<GetTokenResult> tokenTask = auth.getToken(true);
+            try {
+                final GetTokenResult result = Tasks.await(tokenTask);
+                mAuthToken = result.getToken();
+            } catch(ExecutionException | InterruptedException e) {
+                Log.e(TAG, "Failed to obtain authorization token", e);
+            }
+        }
     }
 
     /**
@@ -228,13 +249,8 @@ public abstract class Endpoint {
         conn.setConnectTimeout(30000);
         conn.setRequestProperty("User-Agent", mUserAgent);
 
-        final FirebaseUser auth = FirebaseAuth.getInstance().getCurrentUser();
-        if(auth != null) {
-            final Task<GetTokenResult> tokenTask = auth.getToken(true);
-            while(!tokenTask.isComplete()) {
-            }
-            final String token = tokenTask.getResult().getToken();
-            conn.setRequestProperty("Auth-Token", token);
+        if(mAuthToken != null) {
+            conn.setRequestProperty("Auth-Token", mAuthToken);
         }
         return conn;
     }
