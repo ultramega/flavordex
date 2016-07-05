@@ -141,7 +141,6 @@ public class LoginActivity extends AppCompatActivity
         final GoogleSignInOptions gso =
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestIdToken(getString(R.string.default_web_client_id))
-                        .requestEmail()
                         .build();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
@@ -185,7 +184,6 @@ public class LoginActivity extends AppCompatActivity
     private void setupFacebook(LoginButton button) {
         mFacebookCallbackManager = CallbackManager.Factory.create();
 
-        button.setReadPermissions("email", "public_profile");
         button.registerCallback(mFacebookCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
