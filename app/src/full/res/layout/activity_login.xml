@@ -9,25 +9,46 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:orientation="vertical">
 
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/button_google"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp" />
+        <FrameLayout
+            android:layout_width="250dp"
+            android:layout_height="65dp"
+            android:layout_margin="6dp"
+            android:background="@drawable/login_button_frame">
 
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/button_facebook"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp" />
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/button_google"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
 
-        <com.twitter.sdk.android.core.identity.TwitterLoginButton
-            android:id="@+id/button_twitter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_margin="6dp"
+            android:background="@drawable/login_button_frame">
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/button_facebook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_margin="6dp"
+            android:background="@drawable/login_button_frame">
+
+            <com.twitter.sdk.android.core.identity.TwitterLoginButton
+                android:id="@+id/button_twitter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
