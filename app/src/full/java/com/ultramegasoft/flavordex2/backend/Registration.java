@@ -32,7 +32,12 @@ public class Registration extends Endpoint {
         final String fcmId = FirebaseInstanceId.getInstance().getToken();
         if(fcmId != null) {
             try {
-                return new Gson().fromJson(post("register", fcmId), RegistrationRecord.class);
+                final RegistrationRecord record =
+                        new Gson().fromJson(post("register", fcmId), RegistrationRecord.class);
+                if(record.clientId <= 0) {
+                    throw new ApiException("Received invalid client ID: " + record.clientId);
+                }
+                return record;
             } catch(JsonSyntaxException e) {
                 throw new ParseException(e);
             }
