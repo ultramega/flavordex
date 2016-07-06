@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="api_url" translatable="false">http://api.flavordex.com/v1</string>
-    <string name="api_url_debug" translatable="false">http://10.0.2.2/flavordex_api/v1</string>
+    <string name="api_url" translatable="false">https://api.flavordex.com/v1</string>
+    <string name="api_url_debug" translatable="false">https://10.0.2.2/flavordex_api/v1</string>
     <string name="user_agent" translatable="false">Flavordex/%s (Linux; Android)</string>
     <string name="facebook_app_id">758135974289029</string>
     <string name="ext_csv" translatable="false">.csv</string>

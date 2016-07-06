@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2.backend;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -20,7 +21,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.concurrent.ExecutionException;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * Represents an endpoint of the API.
@@ -29,6 +42,10 @@ import java.util.concurrent.ExecutionException;
  */
 public abstract class Endpoint {
     private static final String TAG = "Endpoint";
+
+    static {
+        configureSSL();
+    }
 
     /**
      * The Context
@@ -63,6 +80,52 @@ public abstract class Endpoint {
         mBaseUrl = Uri.withAppendedPath(apiUri, getName());
         mUserAgent = context.getString(R.string.user_agent, BuildConfig.VERSION_NAME);
 
+        loadAuthToken();
+    }
+
+    /**
+     * Set up the SSL environment for HTTPS connections.
+     */
+    private static void configureSSL() {
+        if(FlavordexApp.DEVELOPER_MODE) {
+            @SuppressLint("TrustAllX509TrustManager")
+            final TrustManager trustManager = new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+
+                @Override
+                public void checkClientTrusted(X509Certificate[] arg0, String arg1)
+                        throws CertificateException {
+                }
+
+                @Override
+                public void checkServerTrusted(X509Certificate[] arg0, String arg1)
+                        throws CertificateException {
+                }
+            };
+
+            try {
+                SSLContext sslContext = SSLContext.getInstance("TLS");
+                sslContext.init(null, new TrustManager[] {trustManager}, new SecureRandom());
+                HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+            } catch(KeyManagementException | NoSuchAlgorithmException e) {
+                Log.e(TAG, "Unable to disable SSL certificate checking for debugging", e);
+            }
+
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String s, SSLSession sslSession) {
+                    return FlavordexApp.DEVELOPER_MODE;
+                }
+            });
+        }
+    }
+
+    /**
+     * Load the user's auth token if it is available.
+     */
+    private void loadAuthToken() {
         final FirebaseUser auth = FirebaseAuth.getInstance().getCurrentUser();
         if(auth != null) {
             final Task<GetTokenResult> tokenTask = auth.getToken(true);
