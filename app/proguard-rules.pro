@@ -35,3 +35,7 @@
 
 # TODO: Remove when upgrading Google Play Services
 -keep public @com.google.android.gms.common.util.DynamiteApi class * { *; }
+
+# Gson
+-keepattributes Signature
+-keep class com.ultramegasoft.flavordex2.backend.model.** { *; }
