@@ -3,7 +3,9 @@
     <string name="api_url" translatable="false">https://api.flavordex.com/v1</string>
     <string name="api_url_debug" translatable="false">https://10.0.2.2/flavordex_api/v1</string>
     <string name="user_agent" translatable="false">Flavordex/%s (Linux; Android)</string>
-    <string name="facebook_app_id">758135974289029</string>
+    <string name="facebook_app_id" translatable="false">758135974289029</string>
+    <string name="twitter_key" translatable="false">bnGTtGdFsxpA7oPEVb2l1SGx1</string>
+    <string name="twitter_secret" translatable="false">NYYswsSXGCILj6b545jf35F1xjDHiVELh2FbyShU61w6Ri5Sht</string>
     <string name="ext_csv" translatable="false">.csv</string>
 
     <string name="title_create_cat">Create Category</string>

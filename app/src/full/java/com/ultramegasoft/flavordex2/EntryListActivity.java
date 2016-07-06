@@ -28,16 +28,13 @@ import io.fabric.sdk.android.Fabric;
  */
 public class EntryListActivity extends BaseEntryListActivity
         implements FileSelectorDialog.OnFileSelectedCallbacks {
-    //// TODO: 6/29/2016 Obfuscate this somehow
-    private static final String TWITTER_KEY = "bnGTtGdFsxpA7oPEVb2l1SGx1";
-    private static final String TWITTER_SECRET = "NYYswsSXGCILj6b545jf35F1xjDHiVELh2FbyShU61w6Ri5Sht";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
 
-        final TwitterAuthConfig twitterConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        final TwitterAuthConfig twitterConfig = new TwitterAuthConfig(
+                getString(R.string.twitter_key), getString(R.string.twitter_secret));
         Fabric.with(this, new TwitterCore(twitterConfig));
 
     }
