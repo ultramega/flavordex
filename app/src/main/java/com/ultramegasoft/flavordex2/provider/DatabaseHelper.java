@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
@@ -54,7 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertWhiskeyPreset(db);
         insertCoffeePreset(db);
 
-        if(FlavordexApp.DEVELOPER_MODE) {
+        if(BuildConfig.DEBUG) {
             execRawFile(db, R.raw.testdata);
         }
     }

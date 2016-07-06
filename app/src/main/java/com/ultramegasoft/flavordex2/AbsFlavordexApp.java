@@ -14,11 +14,6 @@ import java.util.HashMap;
  */
 public abstract class AbsFlavordexApp extends Application {
     /**
-     * Enable developer features
-     */
-    public static final boolean DEVELOPER_MODE = true;
-
-    /**
      * Preference names
      */
     public static final String PREF_LIST_SORT_FIELD = "pref_list_sort_field";
@@ -48,7 +43,7 @@ public abstract class AbsFlavordexApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if(DEVELOPER_MODE) {
+        if(BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectAll()
                     .penaltyLog()

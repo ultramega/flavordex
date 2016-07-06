@@ -12,7 +12,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.ultramegasoft.flavordex2.BuildConfig;
-import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.backend.model.Model;
 
@@ -76,7 +75,7 @@ public abstract class Endpoint {
         mContext = context;
         //noinspection ConstantConditions
         final Uri apiUri = Uri.parse(context.getString(
-                FlavordexApp.DEVELOPER_MODE ? R.string.api_url_debug : R.string.api_url));
+                BuildConfig.DEBUG ? R.string.api_url_debug : R.string.api_url));
         mBaseUrl = Uri.withAppendedPath(apiUri, getName());
         mUserAgent = context.getString(R.string.user_agent, BuildConfig.VERSION_NAME);
 
@@ -87,7 +86,7 @@ public abstract class Endpoint {
      * Set up the SSL environment for HTTPS connections.
      */
     private static void configureSSL() {
-        if(FlavordexApp.DEVELOPER_MODE) {
+        if(BuildConfig.DEBUG) {
             @SuppressLint("TrustAllX509TrustManager")
             final TrustManager trustManager = new X509TrustManager() {
                 public X509Certificate[] getAcceptedIssuers() {
@@ -116,7 +115,7 @@ public abstract class Endpoint {
             HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
                 @Override
                 public boolean verify(String s, SSLSession sslSession) {
-                    return FlavordexApp.DEVELOPER_MODE;
+                    return BuildConfig.DEBUG;
                 }
             });
         }
