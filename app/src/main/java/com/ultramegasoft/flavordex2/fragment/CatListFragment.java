@@ -1,5 +1,6 @@
 package com.ultramegasoft.flavordex2.fragment;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -11,27 +12,30 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.ultramegasoft.flavordex2.EditCatActivity;
 import com.ultramegasoft.flavordex2.EntryListActivity;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.dialog.CatDeleteDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.CatListAdapter;
 
 /**
- * Base class for the Fragment for showing the list of categories.
+ * Fragment for showing the list of categories.
  *
  * @author Steve Guidetti
  */
-public class BaseCatListFragment extends ListFragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+public class CatListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * The Adapter backing the list
      */
@@ -45,6 +49,8 @@ public class BaseCatListFragment extends ListFragment
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         prefs.edit().remove(FlavordexApp.PREF_LIST_CAT_ID).apply();
+
+        registerForContextMenu(getListView());
     }
 
     /**
@@ -77,6 +83,48 @@ public class BaseCatListFragment extends ListFragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.cat_list_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menu_add_cat:
+                startActivity(new Intent(getContext(), EditCatActivity.class));
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        final AdapterView.AdapterContextMenuInfo info =
+                (AdapterView.AdapterContextMenuInfo)menuInfo;
+        if(mAdapter.getShowAllCats() && info.position == 0) {
+            return;
+        }
+        getActivity().getMenuInflater().inflate(R.menu.cat_context_menu, menu);
+
+        if(mAdapter.getItem(info.position).preset) {
+            menu.findItem(R.id.menu_delete).setEnabled(false).setVisible(false);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        final AdapterView.AdapterContextMenuInfo info =
+                (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        switch(item.getItemId()) {
+            case R.id.menu_edit:
+                EditCatActivity.startActivity(getContext(), info.id,
+                        mAdapter.getItem(info.position).name);
+                return true;
+            case R.id.menu_delete:
+                CatDeleteDialog.showDialog(getFragmentManager(), null, 0, info.id);
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     @Override

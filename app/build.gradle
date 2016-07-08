@@ -20,8 +20,11 @@ android {
     compileSdkVersion 24
     buildToolsVersion '24'
     defaultConfig {
+        applicationId "com.ultramegasoft.flavordex2"
         minSdkVersion 15
         targetSdkVersion 24
+        versionCode 14
+        versionName '2.3.0'
     }
     buildTypes {
         release {
@@ -30,36 +33,23 @@ android {
             shrinkResources true
         }
     }
-    productFlavors {
-        lite {
-            applicationId 'com.ultramegasoft.flavordex2.lite'
-            versionCode 6
-            versionName '2.1.0-lite'
-            ext.enableCrashlytics = false
-        }
-        full {
-            applicationId "com.ultramegasoft.flavordex2"
-            versionCode 14
-            versionName '2.3.0'
-        }
-    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    fullCompile project(path: ':jobdispatcher')
-    fullCompile 'com.android.support:preference-v7:24.0.0'
-    fullCompile 'com.google.android.gms:play-services-auth:9.2.0'
-    fullCompile 'com.google.android.gms:play-services-drive:9.2.0'
-    fullCompile 'com.facebook.android:facebook-android-sdk:[4,5)'
-    fullCompile('com.twitter.sdk.android:twitter-core:1.7.0@aar') {
-        transitive = true;
-    }
-    fullCompile 'com.google.firebase:firebase-auth:9.2.0'
-    fullCompile 'com.google.firebase:firebase-messaging:9.2.0'
-    fullCompile 'com.google.code.gson:gson:2.7'
+    compile project(path: ':jobdispatcher')
+    compile 'com.google.code.gson:gson:2.7'
     compile 'com.android.support:support-v4:24.0.0'
     compile 'com.android.support:appcompat-v7:24.0.0'
+    compile 'com.android.support:preference-v7:24.0.0'
+    compile 'com.google.firebase:firebase-auth:9.2.0'
+    compile 'com.google.firebase:firebase-messaging:9.2.0'
+    compile 'com.google.android.gms:play-services-auth:9.2.0'
+    compile 'com.google.android.gms:play-services-drive:9.2.0'
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
+    compile('com.twitter.sdk.android:twitter-core:1.7.0@aar') {
+        transitive = true;
+    }
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -14,21 +14,22 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.ultramegasoft.flavordex2.EditCatActivity;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.CatListAdapter;
 
 /**
- * Base class for the Dialog to select a category.
+ * Dialog to select a category.
  *
  * @author Steve Guidetti
  */
-public class BaseCatListDialog extends DialogFragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+public class CatListDialog extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "CatListDialog";
 
     /**
@@ -98,7 +99,7 @@ public class BaseCatListDialog extends DialogFragment
      *
      * @return The View to place inside the Dialog
      */
-    protected ListView getLayout() {
+    private ListView getLayout() {
         final ListView listView = new ListView(getContext());
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -106,6 +107,8 @@ public class BaseCatListDialog extends DialogFragment
                 onCatSelected(position, id);
             }
         });
+        listView.addFooterView(LayoutInflater.from(getContext())
+                .inflate(R.layout.cat_add_list_item, listView, false));
 
         return listView;
     }
@@ -117,6 +120,10 @@ public class BaseCatListDialog extends DialogFragment
      * @param id       The ID of the item
      */
     protected void onCatSelected(int position, long id) {
+        if(position == mAdapter.getCount()) {
+            startActivity(new Intent(getContext(), EditCatActivity.class));
+            return;
+        }
         final Fragment target = getTargetFragment();
         if(target != null) {
             final Intent intent = new Intent();

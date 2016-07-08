@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
@@ -37,18 +38,18 @@ import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
+import com.ultramegasoft.flavordex2.dialog.ExportDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryDeleter;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
 
 /**
- * Base class for the main entry list Fragment. Shows a list of all the journal entries in a
- * category.
+ * The main entry list Fragment. Shows a list of all the journal entries in a category.
  *
  * @author Steve Guidetti
  */
-public class BaseEntryListFragment extends ListFragment
+public class EntryListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * Keys for the Fragment arguments
@@ -76,6 +77,7 @@ public class BaseEntryListFragment extends ListFragment
      * Keys for the saved state
      */
     private static final String STATE_SELECTED_ITEM = "selected_item";
+    private static final String STATE_EXPORT_MODE = "export_mode";
 
     /**
      * Loader IDs
@@ -107,6 +109,17 @@ public class BaseEntryListFragment extends ListFragment
      * The main list Toolbar
      */
     private Toolbar mToolbar;
+
+    /**
+     * The Toolbar for export selection mode
+     */
+    private Toolbar mExportToolbar;
+
+    /**
+     * Toolbar Animations
+     */
+    private Animation mExportInAnimation;
+    private Animation mExportOutAnimation;
 
     /**
      * The current activated item if in two-pane mode
@@ -142,6 +155,11 @@ public class BaseEntryListFragment extends ListFragment
      * The category name
      */
     private String mCatName;
+
+    /**
+     * Whether the list is in export selection mode
+     */
+    private boolean mExportMode = false;
 
     /**
      * The Adapter for the ListView
@@ -184,9 +202,11 @@ public class BaseEntryListFragment extends ListFragment
         mActivatedItem = args.getLong(ARG_SELECTED_ITEM, mActivatedItem);
         mWhere = args.getString(ARG_WHERE);
         mWhereArgs = args.getStringArray(ARG_WHERE_ARGS);
+        mExportMode = args.getBoolean(ARG_EXPORT_MODE, mExportMode);
 
         if(savedInstanceState != null) {
             mActivatedItem = savedInstanceState.getLong(STATE_SELECTED_ITEM, mActivatedItem);
+            mExportMode = savedInstanceState.getBoolean(STATE_EXPORT_MODE, mExportMode);
         }
 
         final SharedPreferences prefs = PreferenceManager
@@ -208,6 +228,8 @@ public class BaseEntryListFragment extends ListFragment
         mAdapter = new EntryListAdapter(getContext());
         setListShown(false);
         setListAdapter(mAdapter);
+
+        setExportMode(mExportMode, false);
 
         getLoaderManager().initLoader(LOADER_ENTRIES, null, this);
         if(mCatId > 0) {
@@ -243,6 +265,10 @@ public class BaseEntryListFragment extends ListFragment
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
+        if(mExportMode) {
+            invalidateExportMenu();
+            return;
+        }
         super.onListItemClick(listView, view, position, id);
         mActivatedItem = id;
         final Cursor cursor = (Cursor)mAdapter.getItem(position);
@@ -255,6 +281,7 @@ public class BaseEntryListFragment extends ListFragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(STATE_SELECTED_ITEM, mActivatedItem);
+        outState.putBoolean(STATE_EXPORT_MODE, mExportMode);
     }
 
     @Override
@@ -503,12 +530,94 @@ public class BaseEntryListFragment extends ListFragment
     }
 
     /**
+     * Enable or disable export mode.
+     *
+     * @param exportMode Whether to enable export mode
+     * @param animate    Whether to animate the export toolbar
+     */
+    public void setExportMode(boolean exportMode, boolean animate) {
+        final ListView listView = getListView();
+        if(exportMode) {
+            listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+        } else {
+            setActivateOnItemClick(mTwoPane);
+            for(long id : getListView().getCheckedItemIds()) {
+                listView.setItemChecked(mAdapter.getItemIndex(id), false);
+            }
+        }
+        mAdapter.setMultiChoiceMode(exportMode);
+        listView.setItemChecked(mAdapter.getItemIndex(mActivatedItem), !exportMode && mTwoPane);
+        showExportToolbar(exportMode, animate);
+
+        mExportMode = exportMode;
+    }
+
+    /**
+     * Show or hide the export Toolbar.
+     *
+     * @param show Whether to show the export Toolbar
+     */
+    private void showExportToolbar(boolean show, boolean animate) {
+        if(mExportToolbar == null) {
+            mExportToolbar = (Toolbar)getActivity().findViewById(R.id.export_toolbar);
+            mExportToolbar.inflateMenu(R.menu.export_menu);
+            mExportToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch(item.getItemId()) {
+                        case R.id.menu_export_selected:
+                            ExportDialog.showDialog(getFragmentManager(),
+                                    getListView().getCheckedItemIds());
+                            setExportMode(false, true);
+                            return true;
+                        case R.id.menu_cancel:
+                            setExportMode(false, true);
+                            return true;
+                        case R.id.menu_check_all:
+                        case R.id.menu_uncheck_all:
+                            final ListView listView = getListView();
+                            final boolean check = item.getItemId() == R.id.menu_check_all;
+                            for(int i = 0; i < mAdapter.getCount(); i++) {
+                                listView.setItemChecked(i, check);
+                            }
+                            invalidateExportMenu();
+                            return true;
+                    }
+                    return false;
+                }
+            });
+
+            mExportInAnimation = AnimationUtils.loadAnimation(getContext(),
+                    R.anim.toolbar_slide_in_bottom);
+            mExportOutAnimation = AnimationUtils.loadAnimation(getContext(),
+                    R.anim.toolbar_slide_out_bottom);
+        }
+
+        invalidateExportMenu();
+
+        mExportToolbar.setVisibility(show ? View.VISIBLE : View.GONE);
+        if(animate) {
+            mExportToolbar.startAnimation(show ? mExportInAnimation : mExportOutAnimation);
+        }
+    }
+
+    /**
+     * Update the enabled state of the export button based on whether any items are checked.
+     */
+    private void invalidateExportMenu() {
+        if(mExportToolbar != null) {
+            mExportToolbar.getMenu().findItem(R.id.menu_export_selected)
+                    .setEnabled(getListView().getCheckedItemCount() > 0);
+        }
+    }
+
+    /**
      * Set the selected list item.
      *
      * @param position The index of the item to activate
      */
     protected void setActivatedPosition(int position) {
-        if(position != ListView.INVALID_POSITION) {
+        if(!mExportMode && position != ListView.INVALID_POSITION) {
             getListView().setItemChecked(position, true);
         }
     }
@@ -551,8 +660,27 @@ public class BaseEntryListFragment extends ListFragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch(loader.getId()) {
             case LOADER_ENTRIES:
-                mAdapter.swapCursor(data);
-                setActivatedPosition(mAdapter.getItemIndex(mActivatedItem));
+                if(mExportMode) {
+                    final ListView listView = getListView();
+                    final long[] checkedItems = listView.getCheckedItemIds();
+                    for(int i = 0; i < mAdapter.getCount(); i++) {
+                        listView.setItemChecked(i, false);
+                    }
+
+                    mAdapter.swapCursor(data);
+                    int pos;
+                    for(long checked : checkedItems) {
+                        pos = mAdapter.getItemIndex(checked);
+                        if(pos != ListView.INVALID_POSITION) {
+                            listView.setItemChecked(pos, true);
+                        }
+                    }
+
+                    invalidateExportMenu();
+                } else {
+                    mAdapter.swapCursor(data);
+                    setActivatedPosition(mAdapter.getItemIndex(mActivatedItem));
+                }
                 setListShown(true);
                 break;
             case LOADER_CAT:

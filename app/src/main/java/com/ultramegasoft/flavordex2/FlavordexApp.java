@@ -1,6 +1,8 @@
 package com.ultramegasoft.flavordex2;
 
+import android.app.Application;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
@@ -8,6 +10,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
@@ -16,15 +19,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.provider.Tables;
 
+import java.util.HashMap;
+
 /**
- * Full implementation of the Application. Adds support for location detection and data
- * synchronization.
+ * Stores global runtime information needed by the application.
  *
  * @author Steve Guidetti
- * @see AbsFlavordexApp
  */
-public class FlavordexApp extends AbsFlavordexApp implements
-        SharedPreferences.OnSharedPreferenceChangeListener {
+public class FlavordexApp extends Application
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
     /**
      * The Authority string for the application
      */
@@ -33,6 +36,9 @@ public class FlavordexApp extends AbsFlavordexApp implements
     /**
      * Preference names
      */
+    public static final String PREF_LIST_SORT_FIELD = "pref_list_sort_field";
+    public static final String PREF_LIST_SORT_REVERSED = "pref_list_sort_reversed";
+    public static final String PREF_LIST_CAT_ID = "pref_list_cat_id";
     public static final String PREF_FIRST_RUN = "pref_first_run";
     public static final String PREF_VERSION = "pref_version";
     public static final String PREF_ACCOUNT = "pref_account";
@@ -40,6 +46,26 @@ public class FlavordexApp extends AbsFlavordexApp implements
     public static final String PREF_SYNC_PHOTOS = "pref_sync_photos";
     public static final String PREF_SYNC_PHOTOS_UNMETERED = "pref_sync_photos_unmetered";
     public static final String PREF_DETECT_LOCATION = "pref_detect_location";
+
+    /**
+     * Entry category preset names
+     */
+    public static final String CAT_BEER = "_beer";
+    public static final String CAT_WINE = "_wine";
+    public static final String CAT_WHISKEY = "_whiskey";
+    public static final String CAT_COFFEE = "_coffee";
+
+    /**
+     * Map of preset category names to string resource IDs
+     */
+    private static final HashMap<String, Integer> sCatNameMap = new HashMap<String, Integer>() {
+        {
+            put(CAT_BEER, R.string.cat_beer);
+            put(CAT_WINE, R.string.cat_wine);
+            put(CAT_WHISKEY, R.string.cat_whiskey);
+            put(CAT_COFFEE, R.string.cat_coffee);
+        }
+    };
 
     /**
      * Listener for location updates
@@ -76,6 +102,18 @@ public class FlavordexApp extends AbsFlavordexApp implements
     @Override
     public void onCreate() {
         super.onCreate();
+        if(BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyFlashScreen()
+                    .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build());
+        }
+
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
 
@@ -127,6 +165,21 @@ public class FlavordexApp extends AbsFlavordexApp implements
                 BackendUtils.requestPhotoSync(this);
                 break;
         }
+    }
+
+    /**
+     * Get the real display name of an entry category from a raw database name value, translating
+     * internal names as needed.
+     *
+     * @param context The Context
+     * @param name    The name from the database
+     * @return The real display name
+     */
+    public static String getRealCatName(Context context, String name) {
+        if(sCatNameMap.containsKey(name)) {
+            return context.getString(sCatNameMap.get(name));
+        }
+        return name;
     }
 
     /**

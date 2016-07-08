@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -14,23 +15,33 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.FacebookSdk;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterCore;
 import com.ultramegasoft.flavordex2.dialog.AboutDialog;
+import com.ultramegasoft.flavordex2.dialog.AppChooserDialog;
+import com.ultramegasoft.flavordex2.dialog.FileImportDialog;
+import com.ultramegasoft.flavordex2.dialog.FileSelectorDialog;
 import com.ultramegasoft.flavordex2.fragment.CatListFragment;
 import com.ultramegasoft.flavordex2.fragment.EntryListFragment;
 import com.ultramegasoft.flavordex2.fragment.EntrySearchFragment;
 import com.ultramegasoft.flavordex2.fragment.ViewEntryFragment;
 import com.ultramegasoft.flavordex2.fragment.WelcomeFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.AppImportUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
+import io.fabric.sdk.android.Fabric;
+
 /**
- * Base class for the main application Activity. This shows a list of the categories or all the
- * journal entries in a category. On narrow screens, selecting an entry launches a new Activity to
- * show details. On wide screens, selecting an entry shows details in a Fragment in this Activity.
+ * The main application Activity. This shows a list of the categories or all the journal entries in
+ * a category. On narrow screens, selecting an entry launches a new Activity to show details. On
+ * wide screens, selecting an entry shows details in a Fragment in this Activity.
  *
  * @author Steve Guidetti
  */
-public abstract class BaseEntryListActivity extends AppCompatActivity {
+public class EntryListActivity extends AppCompatActivity
+        implements FileSelectorDialog.OnFileSelectedCallbacks {
     /**
      * Request codes for external Activities
      */
@@ -104,6 +115,12 @@ public abstract class BaseEntryListActivity extends AppCompatActivity {
             mSelectedItem = savedInstanceState.getLong(STATE_SELECTED_ENTRY, mSelectedItem);
             mFilters = savedInstanceState.getParcelable(STATE_FILTERS);
         }
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+        final TwitterAuthConfig twitterConfig = new TwitterAuthConfig(
+                getString(R.string.twitter_key), getString(R.string.twitter_secret));
+        Fabric.with(this, new TwitterCore(twitterConfig));
     }
 
     @Override
@@ -120,6 +137,24 @@ public abstract class BaseEntryListActivity extends AppCompatActivity {
      * @param prefs The default SharedPreferences
      */
     protected void loadPreferences(SharedPreferences prefs) {
+        if(prefs.getBoolean(FlavordexApp.PREF_FIRST_RUN, true)) {
+            if(AppImportUtils.isAnyAppInstalled(this)) {
+                AppChooserDialog.showDialog(getSupportFragmentManager(), true);
+            }
+            prefs.edit().putBoolean(FlavordexApp.PREF_FIRST_RUN, false).apply();
+        }
+
+        final int oldVersion = prefs.getInt(FlavordexApp.PREF_VERSION, 0);
+        final int newVersion = BuildConfig.VERSION_CODE;
+        if(newVersion > oldVersion) {
+            if(oldVersion < 14) {
+                if(prefs.getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
+                    startActivity(new Intent(this, LoginActivity.class));
+                }
+            }
+            prefs.edit().putInt(FlavordexApp.PREF_VERSION, newVersion).apply();
+        }
+
         final long catId = prefs.getLong(FlavordexApp.PREF_LIST_CAT_ID, -1);
         if(catId > -1) {
             onCatSelected(catId, false);
@@ -133,10 +168,43 @@ public abstract class BaseEntryListActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        final boolean showFileXport = Environment.getExternalStorageDirectory().canWrite()
+                || PermissionUtils.shouldAskExternalStoragePerm(this);
+        final boolean showAppImport = AppImportUtils.isAnyAppInstalled(this);
+        menu.findItem(R.id.menu_xport).setVisible(showFileXport || showAppImport);
+        menu.findItem(R.id.menu_import).setVisible(showFileXport);
+        menu.findItem(R.id.menu_export).setVisible(showFileXport);
+        menu.findItem(R.id.menu_import_app).setVisible(showAppImport);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_search:
                 onOpenSearch();
+                return true;
+            case R.id.menu_import:
+                if(!PermissionUtils.checkExternalStoragePerm(this,
+                        R.string.message_request_storage_xport)) {
+                    return true;
+                }
+                final String rootPath = Environment.getExternalStorageDirectory().getPath();
+                FileSelectorDialog.showDialog(getSupportFragmentManager(), null, 0, rootPath, false,
+                        ".csv");
+                return true;
+            case R.id.menu_import_app:
+                AppChooserDialog.showDialog(getSupportFragmentManager(), false);
+                return true;
+            case R.id.menu_export:
+                if(PermissionUtils.checkExternalStoragePerm(this,
+                        R.string.message_request_storage_xport)) {
+                    enableExportMode();
+                }
+                return true;
+            case R.id.menu_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.menu_about:
                 AboutDialog.showDialog(getSupportFragmentManager());
@@ -264,6 +332,23 @@ public abstract class BaseEntryListActivity extends AppCompatActivity {
         final Fragment fragment = EntryListFragment.getInstance(catId, mTwoPane, mSelectedItem,
                 false, where, whereArgs);
         getSupportFragmentManager().beginTransaction().replace(R.id.entry_list, fragment).commit();
+    }
+
+    @Override
+    public void onFileSelected(String filePath) {
+        FileImportDialog.showDialog(getSupportFragmentManager(), filePath);
+    }
+
+    /**
+     * Enable export mode.
+     */
+    private void enableExportMode() {
+        final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.entry_list);
+        if(fragment instanceof EntryListFragment) {
+            ((EntryListFragment)fragment).setExportMode(true, true);
+        } else {
+            onCatSelected(0, true);
+        }
     }
 
     @Override

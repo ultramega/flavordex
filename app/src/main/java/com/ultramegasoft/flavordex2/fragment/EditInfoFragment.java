@@ -29,11 +29,11 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 
 /**
- * Base class for the Fragment for editing details for a new or existing journal entry.
+ * Fragment for editing details for a new or existing journal entry.
  *
  * @author Steve Guidetti
  */
-public abstract class AbsEditInfoFragment extends LoadingProgressFragment
+public class EditInfoFragment extends LoadingProgressFragment
         implements LoaderManager.LoaderCallbacks {
     /**
      * Keys for the Fragment arguments
@@ -118,6 +118,11 @@ public abstract class AbsEditInfoFragment extends LoadingProgressFragment
                 .getLocationName());
 
         return root;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_edit_info;
     }
 
     /**

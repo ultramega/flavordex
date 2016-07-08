@@ -8,4 +8,12 @@
         <item quantity="one">App</item>
         <item quantity="other">Apps</item>
     </plurals>
+    <plurals name="duplicates">
+        <item quantity="one">duplicate</item>
+        <item quantity="other">duplicates</item>
+    </plurals>
+    <plurals name="were">
+        <item quantity="one">was</item>
+        <item quantity="other">were</item>
+    </plurals>
 </resources>
