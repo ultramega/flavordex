@@ -31,7 +31,6 @@ public class PermissionUtils {
      */
     public static final int REQUEST_STORAGE = 10;
     public static final int REQUEST_LOCATION = 20;
-    public static final int REQUEST_ACCOUNTS = 30;
 
     /**
      * Keys for the backend shared preferences
@@ -39,7 +38,6 @@ public class PermissionUtils {
     private static final String PREFS_KEY = "perms";
     private static final String PREF_ASKED_STORAGE = "pref_asked_storage";
     private static final String PREF_ASKED_LOCATION = "pref_asked_location";
-    private static final String PREF_ASKED_ACCOUNTS = "pref_asked_accounts";
 
     /**
      * Check whether we have permission to read and write external storage.
@@ -216,84 +214,6 @@ public class PermissionUtils {
         return !getPreferences(activity).getBoolean(PREF_ASKED_LOCATION, false)
                 || ActivityCompat.shouldShowRequestPermissionRationale(activity,
                 Manifest.permission.ACCESS_COARSE_LOCATION);
-    }
-
-    /**
-     * Check whether we have permission to access the user's accounts.
-     *
-     * @param context The Context
-     * @return Whether we have permission to access the user's accounts
-     */
-    public static boolean hasAccountsPerm(Context context) {
-        return PermissionChecker.checkSelfPermission(context,
-                Manifest.permission.GET_ACCOUNTS) == PermissionChecker.PERMISSION_GRANTED;
-    }
-
-    /**
-     * Make a request for accounts permission from the user if they are not already granted.
-     *
-     * @param activity The Activity making the request
-     * @return Whether we already have accounts permission
-     */
-    public static boolean checkAccountsPerm(FragmentActivity activity) {
-        if(hasAccountsPerm(activity)) {
-            return true;
-        }
-
-        requestAccountsPerm(activity);
-
-        return false;
-    }
-
-    /**
-     * Make a request for accounts permission from the user if they are not already granted.
-     *
-     * @param fragment The Fragment making the request
-     * @return Whether we already have accounts permission
-     */
-    public static boolean checkAccountsPerm(Fragment fragment) {
-        if(hasAccountsPerm(fragment.getContext())) {
-            return true;
-        }
-
-        requestAccountsPerm(fragment);
-
-        return false;
-    }
-
-    /**
-     * Make the actual request from the user for accounts permission.
-     *
-     * @param activity The Activity making the request
-     */
-    public static void requestAccountsPerm(Activity activity) {
-        ActivityCompat.requestPermissions(activity,
-                new String[] {Manifest.permission.GET_ACCOUNTS}, REQUEST_ACCOUNTS);
-        getPreferences(activity).edit().putBoolean(PREF_ASKED_ACCOUNTS, true).apply();
-    }
-
-    /**
-     * Make the actual request from the user for accounts permission.
-     *
-     * @param fragment The Fragment making the request
-     */
-    public static void requestAccountsPerm(Fragment fragment) {
-        fragment.requestPermissions(new String[] {Manifest.permission.GET_ACCOUNTS},
-                REQUEST_ACCOUNTS);
-        getPreferences(fragment.getContext()).edit().putBoolean(PREF_ASKED_ACCOUNTS, true).apply();
-    }
-
-    /**
-     * Should we ask for accounts permission? Returns true if the user has not checked 'Never ask
-     * again.'
-     *
-     * @param activity The Activity making the request
-     * @return Whether we should ask for accounts permission
-     */
-    public static boolean shouldAskAccountsPerm(Activity activity) {
-        return !getPreferences(activity).getBoolean(PREF_ASKED_ACCOUNTS, false)
-                || ActivityCompat.shouldShowRequestPermissionRationale(activity,
-                Manifest.permission.GET_ACCOUNTS);
     }
 
     /**
