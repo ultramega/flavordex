@@ -12,6 +12,8 @@ import android.util.Log;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
+import com.ultramegasoft.flavordex2.util.csv.CSVReader;
+import com.ultramegasoft.flavordex2.util.csv.CSVWriter;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
@@ -35,9 +37,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-
-import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * Helpers for importing and exporting CSV files.

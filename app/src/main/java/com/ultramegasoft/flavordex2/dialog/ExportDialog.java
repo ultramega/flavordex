@@ -33,6 +33,7 @@ import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.CSVUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
+import com.ultramegasoft.flavordex2.util.csv.CSVWriter;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 
 import java.io.File;
@@ -41,8 +42,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * Dialog for exporting journal entries to CSV files.
