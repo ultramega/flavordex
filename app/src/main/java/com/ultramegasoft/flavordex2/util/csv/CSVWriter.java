@@ -1,10 +1,10 @@
 package com.ultramegasoft.flavordex2.util.csv;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,16 +15,18 @@ import java.util.List;
  * @author Steve Guidetti
  */
 public class CSVWriter implements Closeable {
+    private static final String TAG = "CSVWriter";
+
     /**
      * The Writer representing the CSV file
      */
-    private final PrintWriter mWriter;
+    private final Writer mWriter;
 
     /**
      * @param writer The Writer representing the CSV file
      */
     public CSVWriter(Writer writer) {
-        mWriter = new PrintWriter(writer);
+        mWriter = writer;
     }
 
     /**
@@ -37,7 +39,11 @@ public class CSVWriter implements Closeable {
         for(Object field : values) {
             fields.add(prepareValue(field));
         }
-        mWriter.println(TextUtils.join(",", fields));
+        try {
+            mWriter.write(TextUtils.join(",", fields) + "\r\n");
+        } catch(IOException e) {
+            Log.e(TAG, "Error writing to CSV file.", e);
+        }
     }
 
     /**
