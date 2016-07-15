@@ -41,7 +41,10 @@ public class BeerSearchFormFragment extends EntrySearchFragment.SearchFormFragme
         switch(extra.name) {
             case Tables.Extras.Beer.SERVING:
                 if(!extra.value.equals("0")) {
-                    parseExtraField(extra, COMP_EQ);
+                    final int offset = Integer.parseInt(extra.value) - 1;
+                    final ExtraFieldHolder offsetExtra =
+                            new ExtraFieldHolder(extra.id, extra.name, true, offset + "");
+                    parseExtraField(offsetExtra, COMP_EQ);
                 }
                 return true;
         }

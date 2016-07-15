@@ -38,6 +38,7 @@
 
     <string-array name="beer_serving_types_search">
         <item>Any</item>
+        <item>Unknown</item>
         <item>Draft</item>
         <item>Cask</item>
         <item>Bottle</item>

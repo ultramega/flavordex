@@ -64,6 +64,7 @@
 
     <string-array name="coffee_brew_methods_search">
         <item>Any</item>
+        <item>Unknown</item>
         <item>Press</item>
         <item>Drip</item>
         <item>Percolator</item>

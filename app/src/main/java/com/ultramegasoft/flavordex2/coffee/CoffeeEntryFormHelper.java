@@ -5,7 +5,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TableRow;
@@ -57,16 +56,6 @@ public class CoffeeEntryFormHelper extends EntryFormHelper {
         mTxtRoastDate = (EditText)root.findViewById(R.id.entry_roast_date);
         mTxtGrind = (EditText)root.findViewById(R.id.entry_grind);
         mSpnBrewMethod = (Spinner)root.findViewById(R.id.entry_brew_method);
-
-        mSpnBrewMethod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setIsEspresso(position == 4);
-            }
-
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
         mTxtDose = (EditText)root.findViewById(R.id.entry_stats_dose);
         mTxtEspMass = (EditText)root.findViewById(R.id.entry_stats_esp_mass);
         mTxtWaterMass = (EditText)root.findViewById(R.id.entry_stats_water_mass);
@@ -152,7 +141,7 @@ public class CoffeeEntryFormHelper extends EntryFormHelper {
      *
      * @param isEspresso Whether this is an espresso
      */
-    private void setIsEspresso(boolean isEspresso) {
+    public void setIsEspresso(boolean isEspresso) {
         final ExtraFieldHolder field = getExtras().get(Tables.Extras.Coffee.STATS_MASS);
         if(field != null) {
             if(isEspresso) {
