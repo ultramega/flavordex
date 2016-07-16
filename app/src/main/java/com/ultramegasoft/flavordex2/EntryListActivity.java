@@ -311,7 +311,8 @@ public class EntryListActivity extends AppCompatActivity
             args.putParcelable(EntrySearchFragment.ARG_FILTERS, mFilters);
             final Fragment fragment = new EntrySearchFragment();
             fragment.setArguments(args);
-            fm.beginTransaction().replace(R.id.entry_detail_container, fragment).commit();
+            fm.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .replace(R.id.entry_detail_container, fragment).commit();
         } else {
             final Intent intent = new Intent(this, EntrySearchActivity.class);
             intent.putExtra(EntrySearchActivity.EXTRA_FILTERS, mFilters);
@@ -371,8 +372,8 @@ public class EntryListActivity extends AppCompatActivity
                 }
                 return;
             } else if(fragment instanceof EntrySearchFragment){
-                fm.beginTransaction().replace(R.id.entry_detail_container, mWelcomeFragment)
-                        .commit();
+                fm.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                        .replace(R.id.entry_detail_container, mWelcomeFragment).commit();
                 return;
             }
         }
