@@ -370,6 +370,10 @@ public class EntryListActivity extends AppCompatActivity
                     }
                 }
                 return;
+            } else if(fragment instanceof EntrySearchFragment){
+                fm.beginTransaction().replace(R.id.entry_detail_container, mWelcomeFragment)
+                        .commit();
+                return;
             }
         }
         super.onBackPressed();
