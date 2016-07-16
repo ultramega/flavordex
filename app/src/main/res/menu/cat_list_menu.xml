@@ -6,5 +6,5 @@
         android:id="@+id/menu_add_cat"
         android:icon="@drawable/ic_note_add"
         android:title="@string/menu_add_cat"
-        app:showAsAction="ifRoom|withText" />
+        app:showAsAction="ifRoom" />
 </menu>
