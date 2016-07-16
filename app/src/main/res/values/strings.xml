@@ -36,6 +36,7 @@
     <string name="title_categories">Categories</string>
     <string name="title_all_entries">All Entries</string>
     <string name="title_cat_entries">%s Entries</string>
+    <string name="title_search_results">Search Results</string>
     <string name="title_permission">Permission Requested</string>
     <string name="title_reset_flavor">Reset Flavor Chart</string>
     <string name="title_export">Export Entries</string>

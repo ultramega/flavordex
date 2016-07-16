@@ -502,7 +502,9 @@ public class EntryListFragment extends ListFragment
      */
     private void setCatName(String catName) {
         final String subtitle;
-        if(catName == null) {
+        if(mWhere != null) {
+            subtitle = getString(R.string.title_search_results);
+        } else if(catName == null) {
             subtitle = getString(R.string.title_all_entries);
         } else {
             mCatName = catName;
