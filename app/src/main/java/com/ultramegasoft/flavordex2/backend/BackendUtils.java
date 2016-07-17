@@ -84,7 +84,8 @@ public class BackendUtils {
     public static void requestPhotoSync(Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if(!prefs.getBoolean(FlavordexApp.PREF_ACCOUNT, false) ||
-                !prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false)) {
+                !prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false) ||
+                !prefs.getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
             return;
         }
         if(sJobDispatcher == null) {

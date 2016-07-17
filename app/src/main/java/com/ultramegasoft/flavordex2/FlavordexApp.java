@@ -150,8 +150,10 @@ public class FlavordexApp extends Application
             case PREF_SYNC_DATA:
                 if(sharedPreferences.getBoolean(key, false)) {
                     BackendUtils.requestDataSync(this);
+                    BackendUtils.requestPhotoSync(this);
                 } else {
                     BackendUtils.cancelDataSync();
+                    BackendUtils.cancelPhotoSync();
                 }
                 break;
             case PREF_SYNC_PHOTOS:
