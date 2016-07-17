@@ -10,6 +10,8 @@ INSERT INTO photos VALUES (4, 4, NULL, 'IMG_1897.JPG', NULL, 0);
 --
 INSERT INTO photos VALUES (5, 4, NULL, 'IMG_1896.JPG', NULL, 1);
 --
+INSERT INTO photos VALUES (6, 5, NULL, 'logo.png', NULL, 0);
+--
 INSERT INTO makers VALUES (1, 'Jefferson''s', 'Canada');
 --
 INSERT INTO makers VALUES (2, 'Russian River Brewing Company', 'Santa Rosa, CA');
@@ -18,7 +20,7 @@ INSERT INTO makers VALUES (3, 'Four Vines', 'Graton, Sonoma County, California')
 --
 INSERT INTO makers VALUES (4, '', 'Southern Oromia region, Sidamo');
 --
-INSERT INTO makers VALUES (5, 'Stevo', 'California');
+INSERT INTO makers VALUES (5, 'UltraMega', 'California');
 --
 INSERT INTO flavors VALUES (60, 5, 'Flavor', 0);
 --
