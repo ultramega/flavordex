@@ -6,7 +6,7 @@
         android:id="@+id/menu_search"
         android:title="@string/menu_search"
         android:icon="@drawable/ic_search"
-        app:showAsAction="ifRoom|withText" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_xport"
         android:orderInCategory="100"
