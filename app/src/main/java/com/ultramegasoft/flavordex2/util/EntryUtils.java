@@ -300,11 +300,13 @@ public class EntryUtils {
         final Uri uri = Uri.withAppendedPath(entryUri, "photos");
         final ContentValues values = new ContentValues();
         PhotoHolder photo;
+        Uri photoUri;
         for(int i = 0; i < photos.size(); i++) {
             photo = photos.get(i);
-            photo.uri = PhotoUtils.getFileUri(cr, photo.uri);
-            if(photo.uri == null) {
-                continue;
+            photoUri = PhotoUtils.getFileUri(cr, photo.uri);
+            if(photoUri != null) {
+                photo.uri = photoUri;
+                photo.hash = PhotoUtils.getMD5Hash(cr, photoUri);
             }
             values.put(Tables.Photos.HASH, photo.hash);
             values.put(Tables.Photos.PATH, photo.uri.getLastPathSegment());

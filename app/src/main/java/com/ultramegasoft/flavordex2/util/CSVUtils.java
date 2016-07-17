@@ -319,7 +319,7 @@ public class CSVUtils {
             readLegacyPhotos(context, entry, rowMap);
         } else {
             readFlavors(entry, rowMap);
-            readPhotos(context, entry, rowMap);
+            readPhotos(entry, rowMap);
         }
         readExtras(entry, rowMap);
 
@@ -470,28 +470,21 @@ public class CSVUtils {
     /**
      * Parse the photos field from the CSV row.
      *
-     * @param context The Context
      * @param entry   The entry
      * @param rowMap  The map of fields from the row
      */
-    private static void readPhotos(Context context, EntryHolder entry,
-                                   HashMap<String, String> rowMap) {
+    private static void readPhotos(EntryHolder entry, HashMap<String, String> rowMap) {
         final String photosField = rowMap.get(Tables.Photos.TABLE_NAME);
         if(TextUtils.isEmpty(photosField)) {
             return;
         }
 
         try {
-            final ContentResolver cr = context.getContentResolver();
             final JSONArray array = new JSONArray(photosField);
             Uri uri;
-            String hash;
             for(int i = 0; i < array.length(); i++) {
                 uri = PhotoUtils.parsePath(array.optString(i));
-                hash = PhotoUtils.getMD5Hash(cr, uri);
-                if(hash != null) {
-                    entry.addPhoto(0, hash, uri);
-                }
+                entry.addPhoto(0, null, uri);
             }
         } catch(JSONException e) {
             Log.w(TAG, "Failed to parse photos for: " + entry.title);
