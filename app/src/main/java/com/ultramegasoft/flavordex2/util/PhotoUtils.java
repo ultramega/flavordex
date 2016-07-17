@@ -528,6 +528,8 @@ public class PhotoUtils {
             } finally {
                 inputStream.close();
             }
+        } catch(FileNotFoundException e) {
+            Log.i(TAG, e.getMessage());
         } catch(NoSuchAlgorithmException | IOException e) {
             Log.e(TAG, "Failed to generate MD5 hash", e);
         }
