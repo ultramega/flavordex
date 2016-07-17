@@ -45,6 +45,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
      */
     private static final int LOADER_FLAVOR = 0;
     private static final int LOADER_DEFAULT_FLAVOR = 1;
+    private static final int LOADER_RESET_FLAVOR = 2;
 
     /**
      * Request codes for external Activities
@@ -197,7 +198,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
                 case REQUEST_RESET:
-                    getLoaderManager().initLoader(LOADER_DEFAULT_FLAVOR, null, this);
+                    getLoaderManager().initLoader(LOADER_RESET_FLAVOR, null, this);
                     break;
             }
         }
@@ -274,6 +275,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                 return new CursorLoader(getContext(), uri, null, null, null,
                         Tables.EntriesFlavors.POS + " ASC");
             case LOADER_DEFAULT_FLAVOR:
+            case LOADER_RESET_FLAVOR:
                 final long catId = getArguments().getLong(ViewEntryFragment.ARG_ENTRY_CAT_ID);
                 uri = Uri.withAppendedPath(Tables.Cats.CONTENT_ID_URI_BASE, catId + "/flavor");
                 return new CursorLoader(getContext(), uri, null, null, null,
@@ -299,6 +301,10 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                     value = data.getInt(data.getColumnIndex(Tables.EntriesFlavors.VALUE));
                     flavorValues.add(new RadarHolder(name, value));
                 }
+                if(flavorValues.isEmpty()){
+                    getLoaderManager().initLoader(LOADER_DEFAULT_FLAVOR, null, this);
+                    break;
+                }
                 mData = flavorValues;
                 if(mRadarView.getVisibility() != View.VISIBLE) {
                     mRadarView.startAnimation(AnimationUtils.loadAnimation(getContext(),
@@ -309,16 +315,19 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                 }
                 break;
             case LOADER_DEFAULT_FLAVOR:
+            case LOADER_RESET_FLAVOR:
                 while(data.moveToNext()) {
                     name = data.getString(data.getColumnIndex(Tables.Flavors.NAME));
                     flavorValues.add(new RadarHolder(name, 0));
                 }
 
                 mRadarView.setData(flavorValues);
-                if(!mEditMode) {
-                    setEditMode(true, true);
-                } else {
-                    mRadarView.turnTo(0);
+                if(loader.getId() == LOADER_RESET_FLAVOR) {
+                    if(!mEditMode) {
+                        setEditMode(true, true);
+                    } else {
+                        mRadarView.turnTo(0);
+                    }
                 }
                 break;
         }
