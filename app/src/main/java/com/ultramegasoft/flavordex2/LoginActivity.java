@@ -46,6 +46,7 @@ import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.ultramegasoft.flavordex2.backend.BackendUtils;
 
 /**
  * Activity to allow the user to log in using one of the auth providers.
@@ -160,14 +161,22 @@ public class LoginActivity extends AppCompatActivity
         mTxtPassword = (EditText)findViewById(R.id.password);
         mTxtError = (TextView)findViewById(R.id.error);
 
-        findViewById(R.id.button_email).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((View)view.getParent()).setVisibility(View.GONE);
-                findViewById(R.id.email_form).setVisibility(View.VISIBLE);
-                mTxtEmail.requestFocus();
-            }
-        });
+        final String savedEmail = BackendUtils.getEmail(this);
+        if(savedEmail == null) {
+            findViewById(R.id.button_email).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((View)view.getParent()).setVisibility(View.GONE);
+                    findViewById(R.id.email_form).setVisibility(View.VISIBLE);
+                    mTxtEmail.requestFocus();
+                }
+            });
+        } else {
+            ((View)findViewById(R.id.button_email).getParent()).setVisibility(View.GONE);
+            findViewById(R.id.email_form).setVisibility(View.VISIBLE);
+            mTxtEmail.setText(savedEmail);
+            mTxtPassword.requestFocus();
+        }
 
         findViewById(R.id.button_register).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,6 +216,8 @@ public class LoginActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()) {
                             onEmailLoginError();
+                        } else {
+                            BackendUtils.setEmail(LoginActivity.this, email);
                         }
                     }
                 });
@@ -260,6 +271,8 @@ public class LoginActivity extends AppCompatActivity
                                 } catch(Exception e) {
                                     Log.e(TAG, e.getMessage());
                                 }
+                            } else {
+                                BackendUtils.setEmail(LoginActivity.this, email);
                             }
                         }
                     });

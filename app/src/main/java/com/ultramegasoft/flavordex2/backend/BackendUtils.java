@@ -37,6 +37,7 @@ public class BackendUtils {
     private static final String PREFS_KEY = "backend";
     private static final String PREF_CLIENT_ID = "pref_client_id";
     private static final String PREF_UID = "pref_uid";
+    private static final String PREF_EMAIL = "pref_email";
 
     /**
      * The job dispatcher
@@ -203,5 +204,27 @@ public class BackendUtils {
         }
 
         return false;
+    }
+
+    /**
+     * Get the saved email address.
+     *
+     * @param context The Context
+     * @return The saved email address, or null if it does not exist
+     */
+    public static String getEmail(Context context) {
+        return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
+                .getString(PREF_EMAIL, null);
+    }
+
+    /**
+     * Set the saved email address.
+     *
+     * @param context The Context
+     * @param email   The email address
+     */
+    public static void setEmail(Context context, String email) {
+        context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit()
+                .putString(PREF_EMAIL, email).apply();
     }
 }
