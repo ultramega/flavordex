@@ -11,12 +11,28 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <FrameLayout
+            android:layout_width="250dp"
+            android:layout_height="65dp"
+            android:layout_margin="6dp"
+            android:background="@drawable/login_button_frame">
+
+            <Button
+                android:id="@+id/button_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/button_email" />
+        </FrameLayout>
+
         <LinearLayout
+            android:id="@+id/email_form"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_margin="6dp"
             android:background="@drawable/login_button_frame"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/error"

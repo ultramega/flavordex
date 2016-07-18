@@ -113,6 +113,7 @@
     <string name="button_export">Export</string>
     <string name="button_grant_permission">Grant Permission</string>
     <string name="button_search">Search Entries</string>
+    <string name="button_email">Login with email address</string>
     <string name="button_login">Login</string>
     <string name="button_register">Create Account</string>
 

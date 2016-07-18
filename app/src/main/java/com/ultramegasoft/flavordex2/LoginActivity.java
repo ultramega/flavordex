@@ -160,6 +160,15 @@ public class LoginActivity extends AppCompatActivity
         mTxtPassword = (EditText)findViewById(R.id.password);
         mTxtError = (TextView)findViewById(R.id.error);
 
+        findViewById(R.id.button_email).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((View)view.getParent()).setVisibility(View.GONE);
+                findViewById(R.id.email_form).setVisibility(View.VISIBLE);
+                mTxtEmail.requestFocus();
+            }
+        });
+
         findViewById(R.id.button_register).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
