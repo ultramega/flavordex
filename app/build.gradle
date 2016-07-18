@@ -39,9 +39,9 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(path: ':jobdispatcher')
     compile 'com.google.code.gson:gson:2.7'
-    compile 'com.android.support:support-v4:24.0.0'
-    compile 'com.android.support:appcompat-v7:24.0.0'
-    compile 'com.android.support:preference-v7:24.0.0'
+    compile 'com.android.support:support-v4:24.1.0'
+    compile 'com.android.support:appcompat-v7:24.1.0'
+    compile 'com.android.support:preference-v7:24.1.0'
     compile 'com.google.firebase:firebase-auth:9.2.1'
     compile 'com.google.firebase:firebase-messaging:9.2.1'
     compile 'com.google.android.gms:play-services-auth:9.2.1'
