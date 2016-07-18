@@ -197,8 +197,9 @@ public class SettingsActivity extends AppCompatActivity {
         private void setupAccountPref() {
             final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if(user != null) {
-                mPrefAccount.setSummary(getString(R.string.pref_summary_account_on,
-                        user.getDisplayName()));
+                final String name = user.getDisplayName() == null ? user.getEmail()
+                        : user.getDisplayName();
+                mPrefAccount.setSummary(getString(R.string.pref_summary_account_on, name));
             }
             mPrefAccount.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
