@@ -7,8 +7,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
@@ -25,9 +29,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
@@ -44,6 +54,8 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
  */
 public class LoginActivity extends AppCompatActivity
         implements GoogleApiClient.OnConnectionFailedListener {
+    private static final String TAG = "LoginActivity";
+
     /**
      * Request codes for external Activities
      */
@@ -75,6 +87,13 @@ public class LoginActivity extends AppCompatActivity
     private TwitterLoginButton mTwitterLoginButton;
 
     /**
+     * Views for email authentication
+     */
+    private EditText mTxtEmail;
+    private EditText mTxtPassword;
+    private TextView mTxtError;
+
+    /**
      * The ViewSwitcher to switch between the login buttons and the progress indicator
      */
     private ViewSwitcher mSwitcher;
@@ -103,6 +122,7 @@ public class LoginActivity extends AppCompatActivity
 
         mSwitcher = (ViewSwitcher)findViewById(R.id.switcher);
 
+        setupEmail();
         setupGoogle((SignInButton)findViewById(R.id.button_google));
         setupFacebook((LoginButton)findViewById(R.id.button_facebook));
         setupTwitter((TwitterLoginButton)findViewById(R.id.button_twitter));
@@ -130,6 +150,111 @@ public class LoginActivity extends AppCompatActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Set up email based authentication.
+     */
+    private void setupEmail() {
+        mTxtEmail = (EditText)findViewById(R.id.email);
+        mTxtPassword = (EditText)findViewById(R.id.password);
+        mTxtError = (TextView)findViewById(R.id.error);
+
+        findViewById(R.id.button_register).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mTxtError.setVisibility(View.GONE);
+                mTxtEmail.setError(null);
+                mTxtPassword.setError(null);
+                registerWithEmail();
+            }
+        });
+
+        findViewById(R.id.button_login).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mTxtError.setVisibility(View.GONE);
+                mTxtEmail.setError(null);
+                mTxtPassword.setError(null);
+                loginWithEmail();
+            }
+        });
+    }
+
+    /**
+     * Log in with email and password.
+     */
+    private void loginWithEmail() {
+        mSwitcher.setDisplayedChild(1);
+        final String email = mTxtEmail.getText().toString();
+        final String password = mTxtPassword.getText().toString();
+        if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            onEmailLoginError();
+            return;
+        }
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(!task.isSuccessful()) {
+                            onEmailLoginError();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Display the email login error.
+     */
+    private void onEmailLoginError() {
+        mTxtEmail.setText(null);
+        mTxtPassword.setText(null);
+        mTxtError.setVisibility(View.VISIBLE);
+        mSwitcher.setDisplayedChild(0);
+        mTxtEmail.requestFocus();
+    }
+
+    /**
+     * Register a new email based user.
+     */
+    private void registerWithEmail() {
+        boolean valid = true;
+        final String email = mTxtEmail.getText().toString();
+        final String password = mTxtPassword.getText().toString();
+        if(TextUtils.isEmpty(email)) {
+            mTxtEmail.setError(getString(R.string.error_required));
+            valid = false;
+        }
+        if(TextUtils.isEmpty(password)) {
+            mTxtPassword.setError(getString(R.string.error_required));
+            valid = false;
+        }
+        if(valid) {
+            mSwitcher.setDisplayedChild(1);
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if(!task.isSuccessful()) {
+                                mSwitcher.setDisplayedChild(0);
+                                try {
+                                    throw task.getException();
+                                } catch(FirebaseAuthWeakPasswordException e) {
+                                    mTxtPassword.setError(getString(R.string.error_weak_password));
+                                    mTxtPassword.requestFocus();
+                                } catch(FirebaseAuthInvalidCredentialsException e) {
+                                    mTxtEmail.setError(getString(R.string.error_invalid_email));
+                                    mTxtEmail.requestFocus();
+                                } catch(FirebaseAuthUserCollisionException e) {
+                                    mTxtEmail.setError(getString(R.string.error_user_exists));
+                                    mTxtEmail.requestFocus();
+                                } catch(Exception e) {
+                                    Log.e(TAG, e.getMessage());
+                                }
+                            }
+                        }
+                    });
+        }
     }
 
     /**
