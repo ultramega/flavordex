@@ -11,8 +11,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
@@ -36,6 +36,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
@@ -47,6 +48,7 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
+import com.ultramegasoft.flavordex2.dialog.MessageDialog;
 
 /**
  * Activity to allow the user to log in using one of the auth providers.
@@ -92,7 +94,7 @@ public class LoginActivity extends AppCompatActivity
      */
     private EditText mTxtEmail;
     private EditText mTxtPassword;
-    private TextView mTxtError;
+    private Button mButtonResetPassword;
 
     /**
      * The ViewSwitcher to switch between the login buttons and the progress indicator
@@ -159,7 +161,7 @@ public class LoginActivity extends AppCompatActivity
     private void setupEmail() {
         mTxtEmail = (EditText)findViewById(R.id.email);
         mTxtPassword = (EditText)findViewById(R.id.password);
-        mTxtError = (TextView)findViewById(R.id.error);
+        mButtonResetPassword = (Button)findViewById(R.id.button_reset_password);
 
         final String savedEmail = BackendUtils.getEmail(this);
         if(savedEmail == null) {
@@ -181,7 +183,6 @@ public class LoginActivity extends AppCompatActivity
         findViewById(R.id.button_register).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mTxtError.setVisibility(View.GONE);
                 mTxtEmail.setError(null);
                 mTxtPassword.setError(null);
                 registerWithEmail();
@@ -191,10 +192,18 @@ public class LoginActivity extends AppCompatActivity
         findViewById(R.id.button_login).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mTxtError.setVisibility(View.GONE);
                 mTxtEmail.setError(null);
                 mTxtPassword.setError(null);
                 loginWithEmail();
+            }
+        });
+
+        mButtonResetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mTxtEmail.setError(null);
+                mTxtPassword.setError(null);
+                resetPassword();
             }
         });
     }
@@ -203,19 +212,30 @@ public class LoginActivity extends AppCompatActivity
      * Log in with email and password.
      */
     private void loginWithEmail() {
+        if(!validateEmailForm()) {
+            return;
+        }
         mSwitcher.setDisplayedChild(1);
         final String email = mTxtEmail.getText().toString();
         final String password = mTxtPassword.getText().toString();
-        if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            onEmailLoginError();
-            return;
-        }
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()) {
-                            onEmailLoginError();
+                            mSwitcher.setDisplayedChild(0);
+                            try {
+                                throw task.getException();
+                            } catch(FirebaseAuthInvalidUserException e) {
+                                mTxtEmail.setError(getString(R.string.error_unknown_user));
+                                mTxtEmail.requestFocus();
+                            } catch(FirebaseAuthInvalidCredentialsException e) {
+                                mButtonResetPassword.setVisibility(View.VISIBLE);
+                                mTxtPassword.setError(getString(R.string.error_incorrect_password));
+                                mTxtPassword.requestFocus();
+                            } catch(Exception e) {
+                                Log.e(TAG, e.getMessage());
+                            }
                         } else {
                             BackendUtils.setEmail(LoginActivity.this, email);
                         }
@@ -224,59 +244,91 @@ public class LoginActivity extends AppCompatActivity
     }
 
     /**
-     * Display the email login error.
-     */
-    private void onEmailLoginError() {
-        mTxtEmail.setText(null);
-        mTxtPassword.setText(null);
-        mTxtError.setVisibility(View.VISIBLE);
-        mSwitcher.setDisplayedChild(0);
-        mTxtEmail.requestFocus();
-    }
-
-    /**
      * Register a new email based user.
      */
     private void registerWithEmail() {
-        boolean valid = true;
+        if(!validateEmailForm()) {
+            return;
+        }
         final String email = mTxtEmail.getText().toString();
         final String password = mTxtPassword.getText().toString();
-        if(TextUtils.isEmpty(email)) {
+        mSwitcher.setDisplayedChild(1);
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(!task.isSuccessful()) {
+                            mSwitcher.setDisplayedChild(0);
+                            try {
+                                throw task.getException();
+                            } catch(FirebaseAuthWeakPasswordException e) {
+                                mTxtPassword.setError(getString(R.string.error_weak_password));
+                                mTxtPassword.requestFocus();
+                            } catch(FirebaseAuthInvalidCredentialsException e) {
+                                mTxtEmail.setError(getString(R.string.error_invalid_email));
+                                mTxtEmail.requestFocus();
+                            } catch(FirebaseAuthUserCollisionException e) {
+                                mTxtEmail.setError(getString(R.string.error_user_exists));
+                                mTxtEmail.requestFocus();
+                            } catch(Exception e) {
+                                Log.e(TAG, e.getMessage());
+                            }
+                        } else {
+                            BackendUtils.setEmail(LoginActivity.this, email);
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Perform initial validation of the email and password fields.
+     *
+     * @return Whether the form fields are valid
+     */
+    private boolean validateEmailForm() {
+        boolean valid = true;
+        if(TextUtils.isEmpty(mTxtEmail.getText().toString())) {
             mTxtEmail.setError(getString(R.string.error_required));
             valid = false;
         }
-        if(TextUtils.isEmpty(password)) {
+        if(TextUtils.isEmpty(mTxtPassword.getText().toString())) {
             mTxtPassword.setError(getString(R.string.error_required));
             valid = false;
         }
-        if(valid) {
-            mSwitcher.setDisplayedChild(1);
-            mAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(!task.isSuccessful()) {
-                                mSwitcher.setDisplayedChild(0);
-                                try {
-                                    throw task.getException();
-                                } catch(FirebaseAuthWeakPasswordException e) {
-                                    mTxtPassword.setError(getString(R.string.error_weak_password));
-                                    mTxtPassword.requestFocus();
-                                } catch(FirebaseAuthInvalidCredentialsException e) {
-                                    mTxtEmail.setError(getString(R.string.error_invalid_email));
-                                    mTxtEmail.requestFocus();
-                                } catch(FirebaseAuthUserCollisionException e) {
-                                    mTxtEmail.setError(getString(R.string.error_user_exists));
-                                    mTxtEmail.requestFocus();
-                                } catch(Exception e) {
-                                    Log.e(TAG, e.getMessage());
-                                }
-                            } else {
-                                BackendUtils.setEmail(LoginActivity.this, email);
-                            }
-                        }
-                    });
+        return valid;
+    }
+
+    /**
+     * Send the password reset email.
+     */
+    private void resetPassword() {
+        final String email = mTxtEmail.getText().toString();
+        if(TextUtils.isEmpty(email)) {
+            mTxtEmail.setError(getString(R.string.error_required));
+            mTxtEmail.requestFocus();
+            return;
         }
+        mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(!task.isSuccessful()) {
+                    try {
+                        throw task.getException();
+                    } catch(FirebaseAuthInvalidUserException e) {
+                        mTxtEmail.setError(getString(R.string.error_unknown_user));
+                    } catch(Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                } else {
+                    mButtonResetPassword.setVisibility(View.GONE);
+                    final String message = getString(R.string.message_reset_password, email);
+                    MessageDialog.showDialog(getSupportFragmentManager(),
+                            getString(R.string.title_reset_password), message);
+                    mTxtPassword.setText(null);
+                    mTxtPassword.requestFocus();
+                }
+            }
+        });
     }
 
     /**
