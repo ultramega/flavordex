@@ -24,6 +24,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,6 +33,7 @@ import com.google.firebase.auth.TwitterAuthProvider;
 import com.google.firebase.auth.UserInfo;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
+import com.ultramegasoft.flavordex2.dialog.AccountDialog;
 import com.ultramegasoft.flavordex2.dialog.BackendRegistrationDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.DriveConnectDialog;
@@ -98,12 +100,14 @@ public class SettingsActivity extends AppCompatActivity {
          * Key for the category editing preference
          */
         private static final String PREF_EDIT_CATS = "pref_edit_cats";
+        private static final String PREF_EDIT_ACCOUNT = "pref_edit_account";
 
         /**
          * Preference items
          */
         private CheckBoxPreference mPrefLocation;
         private SwitchPreferenceCompat mPrefAccount;
+        private Preference mPrefEditAccount;
         private CheckBoxPreference mPrefSyncData;
         private CheckBoxPreference mPrefSyncPhotos;
 
@@ -113,12 +117,14 @@ public class SettingsActivity extends AppCompatActivity {
 
             mPrefLocation = (CheckBoxPreference)findPreference(FlavordexApp.PREF_DETECT_LOCATION);
             mPrefAccount = (SwitchPreferenceCompat)findPreference(FlavordexApp.PREF_ACCOUNT);
+            mPrefEditAccount = findPreference(PREF_EDIT_ACCOUNT);
             mPrefSyncData = (CheckBoxPreference)findPreference(FlavordexApp.PREF_SYNC_DATA);
             mPrefSyncPhotos = (CheckBoxPreference)findPreference(FlavordexApp.PREF_SYNC_PHOTOS);
 
             setupEditCatsPref();
             setupLocationPref();
             setupAccountPref();
+            setupEditAccountPref();
             setupSyncDataPref();
             setupSyncPhotosPref();
 
@@ -216,6 +222,38 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         /**
+         * Set up the edit account preference.
+         */
+        private void setupEditAccountPref() {
+            invalidateEditAccountPref();
+            mPrefEditAccount
+                    .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                        @Override
+                        public boolean onPreferenceClick(Preference preference) {
+                            AccountDialog.showDialog(getFragmentManager());
+                            return false;
+                        }
+                    });
+        }
+
+        /**
+         * Update the visibility of the edit account preference based on whether the current user
+         * is authenticated using the email provider.
+         */
+        private void invalidateEditAccountPref() {
+            mPrefEditAccount.setVisible(false);
+            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if(user != null) {
+                for(UserInfo info : user.getProviderData()) {
+                    if(info.getProviderId().equals(EmailAuthProvider.PROVIDER_ID)) {
+                        mPrefEditAccount.setVisible(true);
+                        return;
+                    }
+                }
+            }
+        }
+
+        /**
          * Set up the data syncing preference.
          */
         private void setupSyncDataPref() {
@@ -292,6 +330,7 @@ public class SettingsActivity extends AppCompatActivity {
                     new LogoutTask(getContext()).execute();
                     mPrefAccount.setChecked(false);
                 }
+                invalidateEditAccountPref();
             } else if(FlavordexApp.PREF_SYNC_DATA.equals(key)) {
                 mPrefSyncData.setChecked(sharedPreferences.getBoolean(key, false));
             } else if(FlavordexApp.PREF_SYNC_PHOTOS.equals(key)) {

@@ -50,6 +50,7 @@
     <string name="title_settings">Application Settings</string>
     <string name="title_login">Log in…</string>
     <string name="title_reset_password">Reset Password</string>
+    <string name="title_account">Edit Account</string>
     <string name="title_about">About Flavordex</string>
 
     <string name="header_details">Details</string>
@@ -60,6 +61,8 @@
     <string name="header_cat_flavors">Category Flavors</string>
     <string name="header_cat_title">Category Title</string>
     <string name="header_select_app">Select %s</string>
+    <string name="header_email">Email Address</string>
+    <string name="header_password">Password</string>
 
     <string name="menu_search">Search</string>
     <string name="menu_sort">Sort List</string>
@@ -95,6 +98,7 @@
 
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
+    <string name="button_close">Close</string>
     <string name="button_clear">Clear</string>
     <string name="button_undo">Undo</string>
     <string name="button_add_photo">Add Photo</string>
@@ -118,6 +122,8 @@
     <string name="button_login">Login</string>
     <string name="button_register">Create Account</string>
     <string name="button_reset_password">Forgot password?</string>
+    <string name="button_change_email">Change Email</string>
+    <string name="button_change_password">Change Password</string>
 
     <string name="hint_empty" translatable="false">\?</string>
     <string name="hint_entry_title">Entry Title</string>
@@ -133,6 +139,8 @@
     <string name="hint_flavor_name">Flavor Name</string>
     <string name="hint_email">Email Address</string>
     <string name="hint_password">Password</string>
+    <string name="hint_current_password">Current Password</string>
+    <string name="hint_new_password">New Password</string>
 
     <string name="label_cat">Category: </string>
     <string name="label_title">Title: </string>
@@ -183,6 +191,8 @@
     <string name="message_connecting_drive">Connecting to Google Drive…</string>
     <string name="message_authenticating">Authenticating…</string>
     <string name="message_reset_password">An email has been sent to &lt;b>%s&lt;/b> with instructions.</string>
+    <string name="message_email_changed">Success! Your email address has been changed.</string>
+    <string name="message_password_changed">Success! Your password has been changed.</string>
 
     <string name="pref_cat_general">General</string>
     <string name="pref_edit_cats">Edit Categories</string>
@@ -193,6 +203,8 @@
     <string name="pref_account">Account</string>
     <string name="pref_summary_account_on">Logged in as %s</string>
     <string name="pref_summary_account_off">Log in…</string>
+    <string name="pref_edit_account">Edit Account</string>
+    <string name="pref_summary_edit_account">Change your email address or password.</string>
     <string name="pref_sync_data">Sync Journal Data</string>
     <string name="pref_summary_sync_data">Sync journal data across your logged in devices.</string>
     <string name="pref_sync_photos">Sync Entry Photos</string>
@@ -212,6 +224,7 @@
     <string name="error_csv_parse">Unable to parse the .csv file</string>
     <string name="error_register_failed">Error: Failed to connect to the sync service</string>
     <string name="error_login_failed">Error: Log in failed</string>
+    <string name="error_not_logged_in">Error: You are not logged in</string>
     <string name="error_invalid_email">invalid email</string>
     <string name="error_user_exists">user already exists</string>
     <string name="error_unknown_user">user does not exist</string>

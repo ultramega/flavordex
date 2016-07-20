@@ -18,6 +18,10 @@
             android:key="pref_account"
             android:summaryOff="@string/pref_summary_account_off"
             android:title="@string/pref_account" />
+        <Preference
+            android:key="pref_edit_account"
+            android:summary="@string/pref_summary_edit_account"
+            android:title="@string/pref_edit_account" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:dependency="pref_account"
