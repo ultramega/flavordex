@@ -207,6 +207,7 @@ public class LoginActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()) {
                             mSwitcher.setDisplayedChild(0);
+                            mTxtPassword.setText(null);
                             try {
                                 throw task.getException();
                             } catch(FirebaseAuthInvalidUserException e) {
@@ -242,6 +243,7 @@ public class LoginActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()) {
                             mSwitcher.setDisplayedChild(0);
+                            mTxtPassword.setText(null);
                             try {
                                 throw task.getException();
                             } catch(FirebaseAuthWeakPasswordException e) {
