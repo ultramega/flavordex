@@ -30,6 +30,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.backend.BackendUtils;
 
 /**
  * Dialog for changing the email address or password for an email based account.
@@ -229,6 +230,7 @@ public class AccountDialog extends DialogFragment {
                                 } else {
                                     mTxtPassword.setText(null);
                                     mCurrentEmail = mUser.getEmail();
+                                    BackendUtils.setEmail(getContext(), mCurrentEmail);
                                     mTxtMessage.setText(R.string.message_email_changed);
                                 }
                             }
