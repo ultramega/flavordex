@@ -95,7 +95,8 @@ public class SettingsActivity extends AppCompatActivity {
      * The Fragment handling the preferences interface.
      */
     public static class SettingsFragment extends PreferenceFragmentCompat
-            implements SharedPreferences.OnSharedPreferenceChangeListener {
+            implements SharedPreferences.OnSharedPreferenceChangeListener,
+            FirebaseAuth.AuthStateListener {
         /**
          * Key for the category editing preference
          */
@@ -110,6 +111,11 @@ public class SettingsActivity extends AppCompatActivity {
         private Preference mPrefEditAccount;
         private CheckBoxPreference mPrefSyncData;
         private CheckBoxPreference mPrefSyncPhotos;
+
+        /**
+         * The FirebaseAuth instance
+         */
+        private FirebaseAuth mAuth;
 
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
@@ -130,6 +136,20 @@ public class SettingsActivity extends AppCompatActivity {
 
             PreferenceManager.getDefaultSharedPreferences(getContext())
                     .registerOnSharedPreferenceChangeListener(this);
+
+            mAuth = FirebaseAuth.getInstance();
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            mAuth.addAuthStateListener(this);
+        }
+
+        @Override
+        public void onStop() {
+            super.onStop();
+            mAuth.removeAuthStateListener(this);
         }
 
         @Override
@@ -201,12 +221,6 @@ public class SettingsActivity extends AppCompatActivity {
          * Set up the account preference.
          */
         private void setupAccountPref() {
-            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if(user != null) {
-                final String name = user.getDisplayName() == null ? user.getEmail()
-                        : user.getDisplayName();
-                mPrefAccount.setSummary(getString(R.string.pref_summary_account_on, name));
-            }
             mPrefAccount.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
@@ -318,15 +332,7 @@ public class SettingsActivity extends AppCompatActivity {
                     mPrefLocation.setChecked(true);
                 }
             } else if(FlavordexApp.PREF_ACCOUNT.equals(key)) {
-                if(sharedPreferences.getBoolean(key, false)) {
-                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if(user != null) {
-                        final String name = user.getDisplayName() == null ? user.getEmail()
-                                : user.getDisplayName();
-                        mPrefAccount.setSummary(getString(R.string.pref_summary_account_on, name));
-                    }
-                    mPrefAccount.setChecked(true);
-                } else {
+                if(!sharedPreferences.getBoolean(key, false)) {
                     new LogoutTask(getContext()).execute();
                     mPrefAccount.setChecked(false);
                 }
@@ -335,6 +341,17 @@ public class SettingsActivity extends AppCompatActivity {
                 mPrefSyncData.setChecked(sharedPreferences.getBoolean(key, false));
             } else if(FlavordexApp.PREF_SYNC_PHOTOS.equals(key)) {
                 mPrefSyncPhotos.setChecked(sharedPreferences.getBoolean(key, false));
+            }
+        }
+
+        @Override
+        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if(user != null) {
+                final String name = user.getDisplayName() == null ? user.getEmail()
+                        : user.getDisplayName();
+                mPrefAccount.setSummary(getString(R.string.pref_summary_account_on, name));
+                mPrefAccount.setChecked(true);
             }
         }
     }
