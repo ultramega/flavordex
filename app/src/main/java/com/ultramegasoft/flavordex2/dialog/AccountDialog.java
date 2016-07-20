@@ -227,8 +227,16 @@ public class AccountDialog extends DialogFragment {
                                             | FirebaseAuthRecentLoginRequiredException e) {
                                         onUserError();
                                     } catch(Exception e) {
-                                        Log.e(TAG, e.getMessage());
-                                        onUnknownError();
+                                        if(e.getMessage().contains("INVALID_EMAIL")) {
+                                            mTxtEmail.setError(getString(R.string.error_invalid_email));
+                                            mTxtEmail.requestFocus();
+                                        } else if(e.getMessage().contains("EMAIL_EXISTS")) {
+                                            mTxtEmail.setError(getString(R.string.error_user_exists));
+                                            mTxtEmail.requestFocus();
+                                        } else {
+                                            Log.e(TAG, e.getMessage());
+                                            onUnknownError();
+                                        }
                                     }
                                 } else {
                                     mTxtPassword.setText(null);
