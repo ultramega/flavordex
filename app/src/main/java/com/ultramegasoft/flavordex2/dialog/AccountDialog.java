@@ -79,11 +79,13 @@ public class AccountDialog extends DialogFragment {
                                 } catch(FirebaseAuthInvalidUserException e) {
                                     onUserError();
                                 } catch(FirebaseAuthInvalidCredentialsException e) {
+                                    mTxtPassword.setText(null);
                                     mTxtPassword
                                             .setError(getString(R.string.error_incorrect_password));
+                                    mTxtPassword.requestFocus();
                                 } catch(Exception e) {
                                     Log.e(TAG, e.getMessage());
-                                    dismiss();
+                                    onUnknownError();
                                 }
                             } else {
                                 doTask();
@@ -225,7 +227,8 @@ public class AccountDialog extends DialogFragment {
                                             | FirebaseAuthRecentLoginRequiredException e) {
                                         onUserError();
                                     } catch(Exception e) {
-                                        Log.e(TAG, e.getMessage(), e);
+                                        Log.e(TAG, e.getMessage());
+                                        onUnknownError();
                                     }
                                 } else {
                                     mTxtPassword.setText(null);
@@ -250,6 +253,7 @@ public class AccountDialog extends DialogFragment {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if(!task.isSuccessful()) {
+                                    mTxtNewPassword.setText(null);
                                     try {
                                         throw task.getException();
                                     } catch(FirebaseAuthWeakPasswordException e) {
@@ -261,6 +265,7 @@ public class AccountDialog extends DialogFragment {
                                         onUserError();
                                     } catch(Exception e) {
                                         Log.e(TAG, e.getMessage());
+                                        onUnknownError();
                                     }
                                 } else {
                                     mTxtPassword.setText(null);
@@ -280,5 +285,13 @@ public class AccountDialog extends DialogFragment {
         FirebaseAuth.getInstance().signOut();
         Toast.makeText(getContext(), R.string.error_not_logged_in, Toast.LENGTH_LONG).show();
         dismiss();
+    }
+
+    /**
+     * Show an error message when an unknown error occurs.
+     */
+    private void onUnknownError() {
+        checkForm();
+        Toast.makeText(getContext(), R.string.error_unexpected, Toast.LENGTH_LONG).show();
     }
 }

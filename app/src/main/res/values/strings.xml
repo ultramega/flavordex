@@ -225,6 +225,7 @@
     <string name="error_register_failed">Error: Failed to connect to the sync service</string>
     <string name="error_login_failed">Error: Log in failed</string>
     <string name="error_not_logged_in">Error: You are not logged in</string>
+    <string name="error_unexpected">Error: An unexpected error occurred</string>
     <string name="error_invalid_email">invalid email</string>
     <string name="error_user_exists">user already exists</string>
     <string name="error_unknown_user">user does not exist</string>
