@@ -8,7 +8,7 @@ Flavordex is a customizable tasting journal for Android devices.
 
 ## Setup
 
-This project will not work out of the box. The application make use of several external APIs, and
+This project will not work out of the box. The application makes use of several external APIs, and
 the credentials are not included in the public repository for security reasons. You'll have to
 provide your own credentials to get the project up and running.
 
