@@ -16,7 +16,7 @@ provide your own credentials to get the project up and running.
    * For [Fabric](https://get.fabric.io/), instead of adding the API key to the manifest, place it
      in the *fabric.properties* file using the key `apiKey`.
    * For [Facebook](https://developers.facebook.com/) and [Twitter](https://apps.twitter.com/),
-     place the credentials in a resource file called *keys.xml*:
+     place the credentials in a values resource file called *keys.xml*:
    
         <?xml version="1.0" encoding="utf-8"?>
         <resources>
