@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The MIT License (MIT)
+  Copyright © 2016 Steve Guidetti
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the “Software”), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+  -->
+<resources>
+    <string name="wine_hint_entry_title">Wine Name</string>
+    <string name="wine_hint_maker">Winery</string>
+    <string name="wine_hint_varietal">Varietal</string>
+    <string name="wine_hint_vintage">Year</string>
+    <string name="wine_hint_abv">ABV</string>
+
+    <string name="wine_label_maker">Winery: </string>
+    <string name="wine_label_varietal">Varietal: </string>
+    <string name="wine_label_stats">Stats</string>
+    <string name="wine_label_vintage">Vintage: </string>
+    <string name="wine_label_abv">ABV: </string>
+
+    <string name="wine_field_entry_title">Wine Name</string>
+    <string name="wine_field_maker">Winery</string>
+    <string name="wine_field_varietal">Varietal</string>
+    <string name="wine_field_vintage">Year</string>
+    <string name="wine_field_abv">ABV</string>
+
+    <string-array name="wine_varietals">
+        <item>Albariño</item>
+        <item>Aligoté</item>
+        <item>Amarone</item>
+        <item>Arneis</item>
+        <item>Asti Spumante</item>
+        <item>Auslese</item>
+        <item>Banylus</item>
+        <item>Barbaresco</item>
+        <item>Barbera</item>
+        <item>Bardolino</item>
+        <item>Barolo</item>
+        <item>Beaujolais</item>
+        <item>Blanc de Blancs</item>
+        <item>Blanc de Noirs</item>
+        <item>Blush</item>
+        <item>Boal</item>
+        <item>Bordeaux-style Red Blend</item>
+        <item>Brunello</item>
+        <item>Bual</item>
+        <item>Cabernet Franc</item>
+        <item>Cabernet Sauvignon</item>
+        <item>Carignan</item>
+        <item>Carmenere</item>
+        <item>Cava</item>
+        <item>Champagne</item>
+        <item>Charbono</item>
+        <item>Chardonnay</item>
+        <item>Châteauneuf-du-Pape</item>
+        <item>Chenin Blanc</item>
+        <item>Chianti</item>
+        <item>Chianti Classico</item>
+        <item>Claret</item>
+        <item>Colombard</item>
+        <item>Constantia</item>
+        <item>Cortese</item>
+        <item>Dolcetto</item>
+        <item>Eiswein</item>
+        <item>Frascati</item>
+        <item>Fumé Blanc</item>
+        <item>Gamay</item>
+        <item>Gattinara</item>
+        <item>Gewürztraminer</item>
+        <item>Grappa</item>
+        <item>Greek Red</item>
+        <item>Greek White</item>
+        <item>Grenache</item>
+        <item>Grüner Veltliner</item>
+        <item>Italian Red</item>
+        <item>Italian White</item>
+        <item>Johannisberg Riesling</item>
+        <item>Kir</item>
+        <item>Lambrusco</item>
+        <item>Liebfraumilch</item>
+        <item>Madeira</item>
+        <item>Malbec</item>
+        <item>Marc</item>
+        <item>Marsala</item>
+        <item>Marsanne</item>
+        <item>Mead</item>
+        <item>Meritage</item>
+        <item>Merlot</item>
+        <item>Montepulciano</item>
+        <item>Moscato</item>
+        <item>Mourvèdre</item>
+        <item>Müller-Thurgau</item>
+        <item>Muscat</item>
+        <item>Nebbiolo</item>
+        <item>Petit Verdot</item>
+        <item>Petite Sirah</item>
+        <item>Pinot Blanc</item>
+        <item>Pinot Grigio</item>
+        <item>Pinot Gris</item>
+        <item>Pinot Meunier</item>
+        <item>Pinot Noir</item>
+        <item>Pinotage</item>
+        <item>Port</item>
+        <item>Portuguese Red</item>
+        <item>Portuguese White</item>
+        <item>Red Blend</item>
+        <item>Retsina</item>
+        <item>Rhône-style Red Blend</item>
+        <item>Rhône-style White Blend</item>
+        <item>Riesling</item>
+        <item>Rosé</item>
+        <item>Roussanne</item>
+        <item>Sangiovese</item>
+        <item>Sauterns</item>
+        <item>Sauvignon Blanc</item>
+        <item>Sémillon</item>
+        <item>Sherry</item>
+        <item>Shiraz</item>
+        <item>Soave</item>
+        <item>Spanish Red</item>
+        <item>Spanish White</item>
+        <item>Sparkling</item>
+        <item>Syrah</item>
+        <item>Tempranillo</item>
+        <item>Tokay</item>
+        <item>Traminer</item>
+        <item>Trebbiano</item>
+        <item>Ugni Blanc</item>
+        <item>Valpolicella</item>
+        <item>Verdicchio</item>
+        <item>Viognier</item>
+        <item>White Blend</item>
+        <item>Zinfandel</item>
+    </string-array>
+
+    <string-array name="wine_flavor_names">
+        <item>Body</item>
+        <item>Fruit</item>
+        <item>Citrus</item>
+        <item>Berry</item>
+        <item>Floral</item>
+        <item>Spice</item>
+        <item>Herb</item>
+        <item>Nut</item>
+        <item>Earth</item>
+        <item>Wood</item>
+        <item>Caramel</item>
+        <item>Sweet</item>
+        <item>Sour</item>
+        <item>Astringent</item>
+        <item>Linger</item>
+        <item>Heat</item>
+    </string-array>
+</resources>

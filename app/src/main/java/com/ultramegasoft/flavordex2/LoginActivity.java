@@ -1,0 +1,506 @@
+/*
+ * The MIT License (MIT)
+ * Copyright © 2016 Steve Guidetti
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package com.ultramegasoft.flavordex2;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import android.widget.ViewSwitcher;
+
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.TwitterAuthProvider;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.ultramegasoft.flavordex2.backend.BackendUtils;
+import com.ultramegasoft.flavordex2.dialog.MessageDialog;
+
+/**
+ * Activity to allow the user to log in using one of the auth providers.
+ *
+ * @author Steve Guidetti
+ */
+public class LoginActivity extends AppCompatActivity
+        implements GoogleApiClient.OnConnectionFailedListener {
+    private static final String TAG = "LoginActivity";
+
+    /**
+     * Request codes for external Activities
+     */
+    private static final int REQUEST_LOGIN_GOOGLE = 900;
+
+    /**
+     * The Google API client
+     */
+    private GoogleApiClient mGoogleApiClient;
+
+    /**
+     * The FirebaseAuth instance
+     */
+    private FirebaseAuth mAuth;
+
+    /**
+     * The Firebase AuthStateListener
+     */
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
+
+    /**
+     * The Facebook CallbackManager
+     */
+    private CallbackManager mFacebookCallbackManager;
+
+    /**
+     * The TwitterLoginButton
+     */
+    private TwitterLoginButton mTwitterLoginButton;
+
+    /**
+     * Views for email authentication
+     */
+    private EditText mTxtEmail;
+    private EditText mTxtPassword;
+    private Button mButtonResetPassword;
+
+    /**
+     * The ViewSwitcher to switch between the login buttons and the progress indicator
+     */
+    private ViewSwitcher mSwitcher;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mAuth = FirebaseAuth.getInstance();
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                final FirebaseUser user = firebaseAuth.getCurrentUser();
+                if(user != null) {
+                    finish();
+                }
+            }
+        };
+
+        setContentView(R.layout.activity_login);
+
+        mSwitcher = (ViewSwitcher)findViewById(R.id.switcher);
+
+        setupEmail();
+        setupGoogle((SignInButton)findViewById(R.id.button_google));
+        setupFacebook((LoginButton)findViewById(R.id.button_facebook));
+        setupTwitter((TwitterLoginButton)findViewById(R.id.button_twitter));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mAuthStateListener != null) {
+            mAuth.removeAuthStateListener(mAuthStateListener);
+        }
+    }
+
+    /**
+     * Set up email based authentication.
+     */
+    private void setupEmail() {
+        mTxtEmail = (EditText)findViewById(R.id.email);
+        mTxtPassword = (EditText)findViewById(R.id.password);
+        mButtonResetPassword = (Button)findViewById(R.id.button_reset_password);
+
+        final String savedEmail = BackendUtils.getEmail(this);
+        if(savedEmail == null) {
+            findViewById(R.id.button_email).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((View)view.getParent()).setVisibility(View.GONE);
+                    findViewById(R.id.email_form).setVisibility(View.VISIBLE);
+                    mTxtEmail.requestFocus();
+                }
+            });
+        } else {
+            ((View)findViewById(R.id.button_email).getParent()).setVisibility(View.GONE);
+            findViewById(R.id.email_form).setVisibility(View.VISIBLE);
+            mTxtEmail.setText(savedEmail);
+            mTxtPassword.requestFocus();
+        }
+
+        findViewById(R.id.button_register).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mTxtEmail.setError(null);
+                mTxtPassword.setError(null);
+                registerWithEmail();
+            }
+        });
+
+        findViewById(R.id.button_login).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mTxtEmail.setError(null);
+                mTxtPassword.setError(null);
+                loginWithEmail();
+            }
+        });
+
+        mButtonResetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mTxtEmail.setError(null);
+                mTxtPassword.setError(null);
+                resetPassword();
+            }
+        });
+    }
+
+    /**
+     * Log in with email and password.
+     */
+    private void loginWithEmail() {
+        if(!validateEmailForm()) {
+            return;
+        }
+        mSwitcher.setDisplayedChild(1);
+        final String email = mTxtEmail.getText().toString();
+        final String password = mTxtPassword.getText().toString();
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(!task.isSuccessful()) {
+                            mSwitcher.setDisplayedChild(0);
+                            mTxtPassword.setText(null);
+                            try {
+                                throw task.getException();
+                            } catch(FirebaseAuthInvalidUserException e) {
+                                mTxtEmail.setError(getString(R.string.error_unknown_user));
+                                mTxtEmail.requestFocus();
+                            } catch(FirebaseAuthInvalidCredentialsException e) {
+                                mButtonResetPassword.setVisibility(View.VISIBLE);
+                                mTxtPassword.setError(getString(R.string.error_incorrect_password));
+                                mTxtPassword.requestFocus();
+                            } catch(Exception e) {
+                                Log.e(TAG, e.getMessage());
+                            }
+                        } else {
+                            BackendUtils.setEmail(LoginActivity.this, email);
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Register a new email based user.
+     */
+    private void registerWithEmail() {
+        if(!validateEmailForm()) {
+            return;
+        }
+        final String email = mTxtEmail.getText().toString();
+        final String password = mTxtPassword.getText().toString();
+        mSwitcher.setDisplayedChild(1);
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(!task.isSuccessful()) {
+                            mSwitcher.setDisplayedChild(0);
+                            mTxtPassword.setText(null);
+                            try {
+                                throw task.getException();
+                            } catch(FirebaseAuthWeakPasswordException e) {
+                                mTxtPassword.setError(getString(R.string.error_weak_password));
+                                mTxtPassword.requestFocus();
+                            } catch(FirebaseAuthInvalidCredentialsException e) {
+                                mTxtEmail.setError(getString(R.string.error_invalid_email));
+                                mTxtEmail.requestFocus();
+                            } catch(FirebaseAuthUserCollisionException e) {
+                                mTxtEmail.setError(getString(R.string.error_user_exists));
+                                mTxtEmail.requestFocus();
+                            } catch(Exception e) {
+                                Log.e(TAG, e.getMessage());
+                            }
+                        } else {
+                            BackendUtils.setEmail(LoginActivity.this, email);
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Perform initial validation of the email and password fields.
+     *
+     * @return Whether the form fields are valid
+     */
+    private boolean validateEmailForm() {
+        boolean valid = true;
+        if(TextUtils.isEmpty(mTxtEmail.getText().toString())) {
+            mTxtEmail.setError(getString(R.string.error_required));
+            valid = false;
+        }
+        if(TextUtils.isEmpty(mTxtPassword.getText().toString())) {
+            mTxtPassword.setError(getString(R.string.error_required));
+            valid = false;
+        }
+        return valid;
+    }
+
+    /**
+     * Send the password reset email.
+     */
+    private void resetPassword() {
+        final String email = mTxtEmail.getText().toString();
+        if(TextUtils.isEmpty(email)) {
+            mTxtEmail.setError(getString(R.string.error_required));
+            mTxtEmail.requestFocus();
+            return;
+        }
+        mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(!task.isSuccessful()) {
+                    try {
+                        throw task.getException();
+                    } catch(FirebaseAuthInvalidUserException e) {
+                        mTxtEmail.setError(getString(R.string.error_unknown_user));
+                    } catch(Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                } else {
+                    mButtonResetPassword.setVisibility(View.GONE);
+                    final String message = getString(R.string.message_reset_password, email);
+                    MessageDialog.showDialog(getSupportFragmentManager(),
+                            getString(R.string.title_reset_password), message);
+                    mTxtPassword.setText(null);
+                    mTxtPassword.requestFocus();
+                }
+            }
+        });
+    }
+
+    /**
+     * Set up Google sign-in.
+     *
+     * @param button The SignInButton
+     */
+    private void setupGoogle(SignInButton button) {
+        final GoogleSignInOptions gso =
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(getString(R.string.default_web_client_id))
+                        .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        button.setSize(SignInButton.SIZE_WIDE);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signInWithGoogle();
+            }
+        });
+    }
+
+    /**
+     * Initiate the Google sign-in flow.
+     */
+    private void signInWithGoogle() {
+        mSwitcher.setDisplayedChild(1);
+        startActivityForResult(Auth.GoogleSignInApi
+                .getSignInIntent(mGoogleApiClient), REQUEST_LOGIN_GOOGLE);
+    }
+
+    /**
+     * Authenticate with Firebase using a Google token.
+     *
+     * @param account The GoogleSignInAccount
+     */
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        final AuthCredential credential =
+                GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        mAuth.signInWithCredential(credential);
+    }
+
+    /**
+     * Set up Facebook sign-in.
+     *
+     * @param button The LoginButton
+     */
+    private void setupFacebook(LoginButton button) {
+        mFacebookCallbackManager = CallbackManager.Factory.create();
+
+        button.registerCallback(mFacebookCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                firebaseAuthWithFacebook(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                mSwitcher.setDisplayedChild(0);
+            }
+
+            @Override
+            public void onError(FacebookException e) {
+                showError();
+            }
+        });
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSwitcher.setDisplayedChild(1);
+            }
+        });
+    }
+
+    /**
+     * Authenticate with Firebase using a Facebook token.
+     *
+     * @param token The AccessToken
+     */
+    private void firebaseAuthWithFacebook(AccessToken token) {
+        final AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential);
+    }
+
+    /**
+     * Set up Twitter sign-in.
+     *
+     * @param button The TwitterLoginButton
+     */
+    private void setupTwitter(TwitterLoginButton button) {
+        mTwitterLoginButton = button;
+        mTwitterLoginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                firebaseAuthWithTwitter(result.data);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwitcher.setDisplayedChild(0);
+                    }
+                });
+            }
+        });
+        mTwitterLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSwitcher.setDisplayedChild(1);
+            }
+        });
+    }
+
+    /**
+     * Authenticate with Firebase using a Twitter token.
+     *
+     * @param session The TwitterSession
+     */
+    private void firebaseAuthWithTwitter(TwitterSession session) {
+        final AuthCredential credential = TwitterAuthProvider.getCredential(
+                session.getAuthToken().token,
+                session.getAuthToken().secret);
+        mAuth.signInWithCredential(credential);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode) {
+            case REQUEST_LOGIN_GOOGLE:
+                if(resultCode == RESULT_OK) {
+                    final GoogleSignInResult result =
+                            Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+                    if(result.isSuccess()) {
+                        firebaseAuthWithGoogle(result.getSignInAccount());
+                    } else {
+                        showError();
+                    }
+                } else {
+                    mSwitcher.setDisplayedChild(0);
+                }
+                break;
+            default:
+                mFacebookCallbackManager.onActivityResult(requestCode, resultCode, data);
+                mTwitterLoginButton.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        showError();
+    }
+
+    /**
+     * Show a message indicating a login failure.
+     */
+    private void showError() {
+        Toast.makeText(this, R.string.error_login_failed, Toast.LENGTH_LONG).show();
+        mSwitcher.setDisplayedChild(0);
+    }
+}

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The MIT License (MIT)
+  Copyright © 2016 Steve Guidetti
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the “Software”), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="AppTheme" parent="Theme.AppCompat">
+        <item name="android:colorBackground" tools:ignore="PrivateResource">@color/background_material_dark</item>
+    </style>
+
+    <style name="AppTheme.DialogWhenLarge" parent="Theme.AppCompat.DialogWhenLarge">
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
+
+    <style name="Header" parent="TextAppearance.AppCompat.Large">
+        <item name="android:textStyle">bold</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:textIsSelectable">true</item>
+    </style>
+
+    <style name="SubHeader" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginBottom">6dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/divider</item>
+    </style>
+
+    <style name="FieldText" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:padding">4dp</item>
+    </style>
+
+    <style name="TableText" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:textIsSelectable">true</item>
+    </style>
+
+    <style name="TableText.Large">
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="TableText.Header">
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center|top</item>
+        <item name="android:textIsSelectable">false</item>
+    </style>
+
+    <style name="TableText.Label">
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:gravity">right|center_vertical</item>
+        <item name="android:textIsSelectable">false</item>
+    </style>
+
+    <style name="TableText.Label.Large">
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="TableText.Sub">
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TableText.Stats">
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:background">@drawable/stat_field</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:layout_margin">2dp</item>
+    </style>
+
+    <style name="TextInput">
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:width">0dp</item>
+        <item name="android:maxLength">256</item>
+    </style>
+
+    <style name="TextInput.Name">
+        <item name="android:capitalize">words</item>
+    </style>
+
+    <style name="TextInput.Name.Large">
+        <item name="android:textSize">22sp</item>
+        <item name="android:padding">12dp</item>
+    </style>
+
+    <style name="TextInput.Stats">
+        <item name="android:maxLength">30</item>
+    </style>
+
+    <style name="Spinner" parent="Widget.AppCompat.Spinner.Underlined" />
+
+    <style name="Link" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">?android:attr/textColorLink</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">middle</item>
+    </style>
+
+    <style name="ListRatingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/ratingbar_small</item>
+        <item name="android:minHeight">18dp</item>
+        <item name="android:maxHeight">18dp</item>
+        <item name="android:isIndicator">true</item>
+    </style>
+</resources>

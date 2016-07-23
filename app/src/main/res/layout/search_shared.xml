@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The MIT License (MIT)
+  Copyright © 2016 Steve Guidetti
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the “Software”), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+  -->
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        style="@style/SubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/header_rating" />
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:layout_gravity="center_vertical"
+                android:text="@string/label_min" />
+
+            <RatingBar
+                android:id="@+id/entry_rating_min"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:numStars="5"
+                android:stepSize="0.5" />
+
+            <TextView
+                android:id="@+id/rating_min_text"
+                style="@style/Base.TextAppearance.AppCompat.Large"
+                android:layout_gravity="center_vertical"
+                android:text="0.0"
+                tools:ignore="HardcodedText" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:layout_gravity="center_vertical"
+                android:text="@string/label_max" />
+
+            <RatingBar
+                android:id="@+id/entry_rating_max"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:numStars="5"
+                android:rating="5"
+                android:stepSize="0.5" />
+
+            <TextView
+                android:id="@+id/rating_max_text"
+                style="@style/Base.TextAppearance.AppCompat.Large"
+                android:layout_gravity="center_vertical"
+                android:text="5.0"
+                tools:ignore="HardcodedText" />
+        </TableRow>
+    </TableLayout>
+
+    <TextView
+        style="@style/SubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/header_notes" />
+
+    <EditText
+        android:id="@+id/entry_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:hint="@string/hint_notes"
+        android:minLines="2" />
+</merge>

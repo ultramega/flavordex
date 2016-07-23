@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The MIT License (MIT)
+  Copyright © 2016 Steve Guidetti
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the “Software”), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+  -->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp">
+
+        <include layout="@layout/view_info_head" />
+
+        <TableLayout
+            android:id="@+id/entry_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:shrinkColumns="1"
+            android:stretchColumns="1">
+
+            <TableRow android:background="@drawable/divider">
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/coffee_label_maker" />
+
+                <LinearLayout android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/entry_maker"
+                        style="@style/TableText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:width="0dp" />
+
+                    <TextView
+                        android:id="@+id/entry_origin"
+                        style="@style/TableText.Sub"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:width="0dp" />
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow android:background="@drawable/divider">
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/coffee_label_roaster" />
+
+                <TextView
+                    android:id="@+id/entry_roaster"
+                    style="@style/TableText"
+                    android:width="0dp" />
+            </TableRow>
+
+            <TableRow android:background="@drawable/divider">
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/coffee_label_roast_date" />
+
+                <TextView
+                    android:id="@+id/entry_roast_date"
+                    style="@style/TableText"
+                    android:width="0dp" />
+            </TableRow>
+
+            <TableRow android:background="@drawable/divider">
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/coffee_label_grind" />
+
+                <TextView
+                    android:id="@+id/entry_grind"
+                    style="@style/TableText"
+                    android:width="0dp" />
+            </TableRow>
+
+            <TableRow android:background="@drawable/divider">
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_price" />
+
+                <TextView
+                    android:id="@+id/entry_price"
+                    style="@style/TableText"
+                    android:width="0dp" />
+            </TableRow>
+
+            <TableRow android:background="@drawable/divider">
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/coffee_label_brew_method" />
+
+                <TextView
+                    android:id="@+id/entry_brew_method"
+                    style="@style/TableText"
+                    android:width="0dp" />
+            </TableRow>
+
+            <TableRow android:background="@drawable/divider">
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_tasted" />
+
+                <LinearLayout android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/entry_location"
+                        style="@style/TableText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:width="0dp" />
+
+                    <TextView
+                        android:id="@+id/entry_date"
+                        style="@style/TableText.Sub"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:width="0dp" />
+                </LinearLayout>
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            style="@style/SubHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coffee_label_stats" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:shrinkColumns="1"
+            android:stretchColumns="1">
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/coffee_label_dose" />
+
+                <TextView
+                    android:id="@+id/entry_stats_dose"
+                    style="@style/TableText.Stats" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/label_mass"
+                    style="@style/TableText.Label"
+                    android:text="@string/coffee_label_water_mass" />
+
+                <TextView
+                    android:id="@+id/entry_stats_mass"
+                    style="@style/TableText.Stats" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/label_ratio"
+                    style="@style/TableText.Label"
+                    android:text="@string/coffee_label_cbr" />
+
+                <TextView
+                    android:id="@+id/entry_stats_ratio"
+                    style="@style/TableText.Stats" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/coffee_label_temp" />
+
+                <TextView
+                    android:id="@+id/entry_stats_temp"
+                    style="@style/TableText.Stats" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/coffee_label_ext_time" />
+
+                <TextView
+                    android:id="@+id/entry_stats_ext_time"
+                    style="@style/TableText.Stats" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/coffee_label_tds" />
+
+                <TextView
+                    android:id="@+id/entry_stats_tds"
+                    style="@style/TableText.Stats" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/coffee_label_yield" />
+
+                <TextView
+                    android:id="@+id/entry_stats_yield"
+                    style="@style/TableText.Stats" />
+            </TableRow>
+        </TableLayout>
+
+        <include layout="@layout/view_info_foot" />
+    </LinearLayout>
+</ScrollView>

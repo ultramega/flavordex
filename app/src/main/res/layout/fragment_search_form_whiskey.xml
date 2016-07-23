@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The MIT License (MIT)
+  Copyright © 2016 Steve Guidetti
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the “Software”), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+  -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TableLayout
+        android:id="@+id/entry_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="1"
+        android:stretchColumns="1">
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_title" />
+
+            <EditText
+                android:id="@+id/entry_title"
+                style="@style/TextInput.Name"
+                android:hint="@string/whiskey_hint_entry_title" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/whiskey_label_type" />
+
+            <AutoCompleteTextView
+                android:id="@+id/entry_type"
+                style="@style/TextInput.Name"
+                android:completionThreshold="1"
+                android:hint="@string/whiskey_hint_type"
+                android:imeOptions="actionNext" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_maker" />
+
+            <AutoCompleteTextView
+                android:id="@+id/entry_maker"
+                style="@style/TextInput.Name"
+                android:hint="@string/whiskey_hint_maker" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_origin" />
+
+            <EditText
+                android:id="@+id/entry_origin"
+                style="@style/TextInput.Name"
+                android:hint="@string/hint_origin" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/label_price" />
+
+            <EditText
+                android:id="@+id/entry_price"
+                style="@style/TextInput.Name"
+                android:hint="@string/hint_price" />
+        </TableRow>
+
+        <include layout="@layout/search_info_shared" />
+    </TableLayout>
+
+    <include layout="@layout/stats_form_whiskey" />
+
+    <include layout="@layout/search_shared" />
+</LinearLayout>

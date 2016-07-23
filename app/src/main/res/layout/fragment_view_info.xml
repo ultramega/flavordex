@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The MIT License (MIT)
+  Copyright © 2016 Steve Guidetti
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the “Software”), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+  -->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp">
+
+        <include layout="@layout/view_info_head" />
+
+        <TableLayout
+            android:id="@+id/entry_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:shrinkColumns="1"
+            android:stretchColumns="1">
+
+            <TableRow android:background="@drawable/divider">
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_maker" />
+
+                <LinearLayout android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/entry_maker"
+                        style="@style/TableText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:width="0dp" />
+
+                    <TextView
+                        android:id="@+id/entry_origin"
+                        style="@style/TableText.Sub"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:width="0dp" />
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow android:background="@drawable/divider">
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_price" />
+
+                <TextView
+                    android:id="@+id/entry_price"
+                    style="@style/TableText"
+                    android:width="0dp" />
+            </TableRow>
+
+            <TableRow android:background="@drawable/divider">
+
+                <TextView
+                    style="@style/TableText.Label"
+                    android:text="@string/label_tasted" />
+
+                <LinearLayout android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/entry_location"
+                        style="@style/TableText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:width="0dp" />
+
+                    <TextView
+                        android:id="@+id/entry_date"
+                        style="@style/TableText.Sub"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:width="0dp" />
+                </LinearLayout>
+            </TableRow>
+        </TableLayout>
+
+        <include layout="@layout/view_info_foot" />
+    </LinearLayout>
+</ScrollView>

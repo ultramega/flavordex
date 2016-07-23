@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The MIT License (MIT)
+  Copyright © 2016 Steve Guidetti
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the “Software”), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+  -->
+<resources>
+    <string name="beer_hint_entry_title">Beer Name</string>
+    <string name="beer_hint_maker">Brewer</string>
+    <string name="beer_hint_style">Style</string>
+    <string name="beer_hint_serving">Serving Type</string>
+    <string name="beer_hint_ibu">IBU</string>
+    <string name="beer_hint_abv">ABV</string>
+    <string name="beer_hint_og">OG</string>
+    <string name="beer_hint_fg">FG</string>
+
+    <string name="beer_label_maker">Brewer: </string>
+    <string name="beer_label_style">Style: </string>
+    <string name="beer_label_served">Served: </string>
+    <string name="beer_label_stats">Stats</string>
+    <string name="beer_label_ibu">IBU: </string>
+    <string name="beer_label_abv">ABV: </string>
+    <string name="beer_label_og">OG: </string>
+    <string name="beer_label_fg">FG: </string>
+
+    <string name="beer_field_entry_title">Beer Name</string>
+    <string name="beer_field_maker">Brewer</string>
+    <string name="beer_field_style">Style</string>
+    <string name="beer_field_serving">Serving Type</string>
+    <string name="beer_field_ibu">IBU</string>
+    <string name="beer_field_abv">ABV</string>
+    <string name="beer_field_og">OG</string>
+    <string name="beer_field_fg">FG</string>
+
+    <string-array name="beer_serving_types">
+        <item>Unknown</item>
+        <item>Draft</item>
+        <item>Cask</item>
+        <item>Bottle</item>
+        <item>Can</item>
+        <item>Growler</item>
+    </string-array>
+
+    <string-array name="beer_serving_types_search">
+        <item>Any</item>
+        <item>Unknown</item>
+        <item>Draft</item>
+        <item>Cask</item>
+        <item>Bottle</item>
+        <item>Can</item>
+        <item>Growler</item>
+    </string-array>
+
+    <string-array name="beer_styles">
+        <item>Adjunct Lager</item>
+        <item>Altbier</item>
+        <item>Amber Ale</item>
+        <item>Amber Lager</item>
+        <item>Ancient Herbed Ale</item>
+        <item>Baltic Porter</item>
+        <item>Barley Wine</item>
+        <item>Barleywine</item>
+        <item>Belgian Dark Ale</item>
+        <item>Belgian IPA</item>
+        <item>Belgian Pale Ale</item>
+        <item>Belgian Strong Dark Ale</item>
+        <item>Belgian Strong Pale Ale</item>
+        <item>Berliner Weisse</item>
+        <item>Bière Brut</item>
+        <item>Bière de Champagne</item>
+        <item>Bière De Garde</item>
+        <item>Bitter</item>
+        <item>Black &amp; Tan</item>
+        <item>Black Ale</item>
+        <item>Blonde Ale</item>
+        <item>Bock</item>
+        <item>Braggot</item>
+        <item>Brown Ale</item>
+        <item>California Common</item>
+        <item>Chile Beer</item>
+        <item>Cream Ale</item>
+        <item>Czech Pilsener</item>
+        <item>Dark Wheat Ale</item>
+        <item>Doppelbock</item>
+        <item>Dortmunder Lager</item>
+        <item>Double IPA</item>
+        <item>Double Pilsner</item>
+        <item>Double Stout</item>
+        <item>Dubbel</item>
+        <item>Dunkel</item>
+        <item>Dunkelweizen</item>
+        <item>Eisbock</item>
+        <item>English Barleywine</item>
+        <item>English Bitter</item>
+        <item>English Brown Ale</item>
+        <item>English Dark Mild Ale</item>
+        <item>English India Pale Ale</item>
+        <item>English IPA</item>
+        <item>English Pale Ale</item>
+        <item>English Pale Mild Ale</item>
+        <item>English Porter</item>
+        <item>English Stout</item>
+        <item>English Strong Ale</item>
+        <item>Euro Dark Lager</item>
+        <item>Euro Pale Lager</item>
+        <item>Euro Strong Lager</item>
+        <item>Export Lager</item>
+        <item>Export Stout</item>
+        <item>Extra Special Bitter</item>
+        <item>Extra Strong Bitter</item>
+        <item>Farmhouse Ale</item>
+        <item>Faro</item>
+        <item>Flanders Oud Bruin</item>
+        <item>Flanders Red Ale</item>
+        <item>Foreign Stout</item>
+        <item>Fruit Beer</item>
+        <item>Fruit Lambic</item>
+        <item>German Pilsener</item>
+        <item>Golden Ale</item>
+        <item>Gose</item>
+        <item>Gueuze</item>
+        <item>Happoshu</item>
+        <item>Hefeweizen</item>
+        <item>Helles Bock</item>
+        <item>Herbed Beer</item>
+        <item>Imperial IPA</item>
+        <item>Imperial Pilsner</item>
+        <item>Imperial Stout</item>
+        <item>India Pale Ale</item>
+        <item>IPA</item>
+        <item>Irish Dry Stout</item>
+        <item>Irish Red Ale</item>
+        <item>Japanese Rice Lager</item>
+        <item>Kölsch</item>
+        <item>Keller Bier</item>
+        <item>Kristalweizen</item>
+        <item>Kvass</item>
+        <item>Lambic</item>
+        <item>Light Ale</item>
+        <item>Light Lager</item>
+        <item>Low Alcohol Beer</item>
+        <item>Märzen</item>
+        <item>Märzenbier</item>
+        <item>Maibock</item>
+        <item>Malt Liquor</item>
+        <item>Mild</item>
+        <item>Milk Stout</item>
+        <item>Munich Dunkel Lager</item>
+        <item>Munich Helles Lager</item>
+        <item>Oatmeal Stout</item>
+        <item>Oktoberfestbier</item>
+        <item>Old Ale</item>
+        <item>Oud Bruin</item>
+        <item>Pale Ale</item>
+        <item>Pale Lager</item>
+        <item>Pale Wheat Ale</item>
+        <item>Pilsener</item>
+        <item>Porter</item>
+        <item>Porter</item>
+        <item>Pumpkin Ale</item>
+        <item>Quadrupel</item>
+        <item>Rauchbier</item>
+        <item>Red Ale</item>
+        <item>Red Lager</item>
+        <item>Roggenbier</item>
+        <item>Russian Imperial Stout</item>
+        <item>Rye Beer</item>
+        <item>Sahti</item>
+        <item>Saison</item>
+        <item>Schwarzbier</item>
+        <item>Scottish Ale</item>
+        <item>Scottish Gruit</item>
+        <item>Smoked Beer</item>
+        <item>Spiced Beer</item>
+        <item>Steam Beer</item>
+        <item>Stout</item>
+        <item>Strong Ale</item>
+        <item>Sweet Stout</item>
+        <item>Traditional Bock</item>
+        <item>Tripel</item>
+        <item>Unblended Lambic</item>
+        <item>Vegetable Beer</item>
+        <item>Vienna Lager</item>
+        <item>Wee Heavy</item>
+        <item>Weissbier</item>
+        <item>Weizenbock</item>
+        <item>Wheatwine</item>
+        <item>Wild Ale</item>
+        <item>Winter Warmer</item>
+        <item>Witbier</item>
+        <item>Zwickel Bier</item>
+    </string-array>
+
+    <string-array name="beer_flavor_names">
+        <item>Body</item>
+        <item>Syrup</item>
+        <item>Fruit</item>
+        <item>Citrus</item>
+        <item>Hops</item>
+        <item>Linger</item>
+        <item>Spice</item>
+        <item>Herb</item>
+        <item>Malt</item>
+        <item>Alcohol</item>
+        <item>Sweet</item>
+        <item>Sour</item>
+        <item>Bitter</item>
+        <item>Astringent</item>
+    </string-array>
+</resources>
