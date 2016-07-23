@@ -2,9 +2,9 @@
 
 Flavordex is a customizable tasting journal for Android devices.
 
-[Official Website](http://flavordex.com/)
-[Google Play Page](https://play.google.com/store/apps/details?id=com.ultramegasoft.flavordex2)
-[Amazon Appstore Page](https://www.amazon.com/gp/mas/dl/android?p=com.ultramegasoft.flavordex2)
+   * [Official Website](http://flavordex.com/)
+   * [Google Play Page](https://play.google.com/store/apps/details?id=com.ultramegasoft.flavordex2)
+   * [Amazon Appstore Page](https://www.amazon.com/gp/mas/dl/android?p=com.ultramegasoft.flavordex2)
 
 ## Setup
 
