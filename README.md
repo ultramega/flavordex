@@ -25,6 +25,12 @@ provide your own credentials to get the project up and running.
             <string name="twitter_secret" translatable="false"></string>
         </resources>
 
+## Backend Server
+
+To set up a server to enable data syncing, you'll need the
+[Flavordex API Server](https://github.com/ultramega/flavordex-api-server), which is a PHP/MySQL
+application.
+
 ## License
 
 The source code for Flavordex is released under the terms of the
