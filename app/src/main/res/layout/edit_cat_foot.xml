@@ -79,7 +79,7 @@
                 android:src="@drawable/ic_add" />
         </LinearLayout>
 
-        <com.ultramegasoft.flavordex2.widget.RadarView
+        <com.ultramegasoft.radarchart.RadarView
             android:id="@+id/radar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

@@ -40,7 +40,7 @@ import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
-import com.ultramegasoft.flavordex2.widget.RadarHolder;
+import com.ultramegasoft.radarchart.RadarHolder;
 
 import java.util.ArrayList;
 import java.util.UUID;

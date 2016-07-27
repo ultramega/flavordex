@@ -60,6 +60,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(path: ':radarchart')
     compile project(path: ':jobdispatcher')
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.android.support:support-v4:24.1.1'

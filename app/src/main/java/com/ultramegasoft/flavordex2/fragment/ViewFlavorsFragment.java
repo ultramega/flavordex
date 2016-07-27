@@ -50,9 +50,9 @@ import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
-import com.ultramegasoft.flavordex2.widget.RadarEditWidget;
-import com.ultramegasoft.flavordex2.widget.RadarHolder;
-import com.ultramegasoft.flavordex2.widget.RadarView;
+import com.ultramegasoft.radarchart.RadarEditWidget;
+import com.ultramegasoft.radarchart.RadarHolder;
+import com.ultramegasoft.radarchart.RadarView;
 
 import java.util.ArrayList;
 

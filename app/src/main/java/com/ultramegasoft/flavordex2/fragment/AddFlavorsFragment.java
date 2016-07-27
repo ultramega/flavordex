@@ -37,9 +37,9 @@ import android.view.ViewGroup;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
-import com.ultramegasoft.flavordex2.widget.RadarEditWidget;
-import com.ultramegasoft.flavordex2.widget.RadarHolder;
-import com.ultramegasoft.flavordex2.widget.RadarView;
+import com.ultramegasoft.radarchart.RadarEditWidget;
+import com.ultramegasoft.radarchart.RadarHolder;
+import com.ultramegasoft.radarchart.RadarView;
 
 import java.util.ArrayList;
 

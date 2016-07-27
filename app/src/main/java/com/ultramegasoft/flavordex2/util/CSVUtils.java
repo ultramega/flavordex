@@ -39,7 +39,7 @@ import com.ultramegasoft.flavordex2.util.csv.CSVWriter;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
-import com.ultramegasoft.flavordex2.widget.RadarHolder;
+import com.ultramegasoft.radarchart.RadarHolder;
 
 import org.json.JSONArray;
 import org.json.JSONException;

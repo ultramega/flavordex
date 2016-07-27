@@ -27,14 +27,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.ultramegasoft.flavordex2.widget.RadarView
+    <com.ultramegasoft.radarchart.RadarView
         android:id="@+id/radar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:visibility="invisible" />
 
-    <com.ultramegasoft.flavordex2.widget.RadarEditWidget
+    <com.ultramegasoft.radarchart.RadarEditWidget
         android:id="@+id/edit_widget"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
