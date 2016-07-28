@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/flavordex2.iml" filepath="$PROJECT_DIR$/flavordex2.iml" />
       <module fileurl="file://$PROJECT_DIR$/jobdispatcher/jobdispatcher.iml" filepath="$PROJECT_DIR$/jobdispatcher/jobdispatcher.iml" />
-      <module fileurl="file://$PROJECT_DIR$/radarchart/radarchart.iml" filepath="$PROJECT_DIR$/radarchart/radarchart.iml" />
     </modules>
   </component>
 </project>
