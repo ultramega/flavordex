@@ -69,7 +69,7 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:9.4.0'
     compile 'com.google.android.gms:play-services-auth:9.4.0'
     compile 'com.google.android.gms:play-services-drive:9.4.0'
-    compile 'com.ultramegasoft.radarchart:radar-chart:0.1.0'
+    compile 'com.ultramegasoft.radarchart:radar-chart:0.1.1'
     //noinspection GradleDynamicVersion
     compile 'com.facebook.android:facebook-android-sdk:4.+'
     compile('com.twitter.sdk.android:twitter-core:1.7.0@aar') {

@@ -39,7 +39,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#AA000000"
         android:visibility="gone"
         app:showButtonBar="true" />
 </RelativeLayout>
