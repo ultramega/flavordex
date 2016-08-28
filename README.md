@@ -8,7 +8,7 @@ Flavordex is a customizable tasting journal for Android devices.
    * [Windows Version](https://github.com/ultramega/flavordex-uwp)
 
 Cross-platform testing for Flavordex.com is provided by:  
-[![BrowserStack](http://flavordex.com/img/browserstack-logo_2x.png)](https://www.browserstack.com)
+[![BrowserStack](http://flavordex.com/img/browserstack-logo-2x.png)](https://www.browserstack.com)
 
 ## Setup
 
