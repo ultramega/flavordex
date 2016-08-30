@@ -27,6 +27,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -144,6 +145,10 @@ public class DataSyncHelper {
         for(EntryRecord entryRecord : getUpdatedEntries()) {
             final UpdateResponse response = mSync.putEntry(entryRecord);
             if(response.success) {
+                if(entryRecord.shared && response.posterChanged) {
+                    pushPosterImage(entryRecord);
+                }
+
                 whereArgs[0] = entryRecord.uuid;
                 values.put(Tables.Entries.LINK, getLink(response.remoteId));
                 cr.update(Tables.Entries.CONTENT_URI, values, where, whereArgs);
@@ -422,8 +427,8 @@ public class DataSyncHelper {
                 String path;
                 while(cursor.moveToNext()) {
                     hash = cursor.getString(cursor.getColumnIndex(Tables.Photos.HASH));
+                    id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
                     if(hash == null) {
-                        id = cursor.getLong(cursor.getColumnIndex(Tables.Photos._ID));
                         path = cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH));
                         if(path != null) {
                             hash = generatePhotoHash(id, path);
@@ -433,6 +438,7 @@ public class DataSyncHelper {
                         }
                     }
                     record = new PhotoRecord();
+                    record.id = id;
                     record.hash = hash;
                     record.driveId =
                             cursor.getString(cursor.getColumnIndex(Tables.Photos.DRIVE_ID));
@@ -447,6 +453,49 @@ public class DataSyncHelper {
         }
 
         return null;
+    }
+
+    /**
+     * Upload the poster image for an entry.
+     *
+     * @param entryRecord The entry
+     * @throws ApiException
+     */
+    private void pushPosterImage(EntryRecord entryRecord) throws ApiException {
+        if(entryRecord.photos.isEmpty()) {
+            return;
+        }
+
+        final ContentResolver cr = mContext.getContentResolver();
+        final PhotoRecord photo = entryRecord.photos.get(0);
+        final Uri uri = Uri.withAppendedPath(Tables.Photos.CONTENT_ID_URI_BASE, photo.id + "");
+        final String[] projection = new String[] {Tables.Photos.PATH};
+        final Cursor cursor = cr.query(uri, projection, null, null, Tables.Photos.POS);
+        if(cursor != null) {
+            try {
+                if(cursor.moveToFirst()) {
+                    final Uri photoUri = PhotoUtils.parsePath(cursor.getString(0));
+                    if(photoUri == null) {
+                        return;
+                    }
+
+                    final int width = 900;
+                    Bitmap bitmap = PhotoUtils.loadBitmap(mContext, photoUri, width, width);
+                    if(bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
+                        return;
+                    }
+
+                    if(bitmap.getWidth() > width) {
+                        final int height =
+                                (int)(bitmap.getHeight() * ((double)width / bitmap.getWidth()));
+                        bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+                    }
+                    mSync.putPosterImage(entryRecord.uuid, photo.hash, bitmap);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
     }
 
     /**

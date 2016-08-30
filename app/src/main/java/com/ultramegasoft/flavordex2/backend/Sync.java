@@ -23,6 +23,7 @@
 package com.ultramegasoft.flavordex2.backend;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -142,5 +143,18 @@ public class Sync extends Endpoint {
         } catch(JsonSyntaxException e) {
             throw new ParseException(e);
         }
+    }
+
+    /**
+     * Send the poster image for an entry.
+     *
+     * @param entryUuid The UUID of the entry
+     * @param photoHash The hash to identify the image
+     * @param image     The image
+     * @throws ApiException
+     */
+    public void putPosterImage(String entryUuid, String photoHash, Bitmap image)
+            throws ApiException {
+        post("putPosterImage", image, entryUuid, photoHash);
     }
 }

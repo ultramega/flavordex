@@ -24,6 +24,7 @@ package com.ultramegasoft.flavordex2.backend;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -254,6 +255,32 @@ public abstract class Endpoint {
                 }
 
                 conn.getOutputStream().write(dataString.getBytes());
+            }
+
+            return readResponse(conn);
+        } catch(IOException e) {
+            throw new ApiException("Request failed", e);
+        }
+    }
+
+    /**
+     * Perform a POST request containing an image on the API.
+     *
+     * @param method The method to access
+     * @param data   The data to send
+     * @param params The parameters for the method
+     * @return The response from the API.
+     * @throws ApiException
+     */
+    public String post(String method, Bitmap data, Object... params) throws ApiException {
+        try {
+            final HttpURLConnection conn = openConnection(method, params);
+            conn.setRequestMethod("POST");
+            if(data != null) {
+                conn.setDoOutput(true);
+                conn.setChunkedStreamingMode(0);
+
+                data.compress(Bitmap.CompressFormat.JPEG, 90, conn.getOutputStream());
             }
 
             return readResponse(conn);
