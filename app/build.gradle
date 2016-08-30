@@ -46,8 +46,8 @@ android {
         applicationId "com.ultramegasoft.flavordex2"
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 16
-        versionName '2.3.2'
+        versionCode 17
+        versionName '2.4.0'
     }
     buildTypes {
         release {
