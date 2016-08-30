@@ -51,7 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * The current version of the schema, incremented by 1 for each iteration
      */
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     /**
      * The Context
@@ -90,6 +90,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 generateUuids(db);
             case 2:
                 execRawFile(db, R.raw.upgrade_v3);
+            case 3:
+                execRawFile(db, R.raw.upgrade_v4);
                 BackendUtils.requestDataSync(mContext);
         }
 
