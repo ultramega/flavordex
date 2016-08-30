@@ -480,6 +480,7 @@ public class DataSyncHelper {
                     }
 
                     final int width = 900;
+                    //noinspection SuspiciousNameCombination
                     Bitmap bitmap = PhotoUtils.loadBitmap(mContext, photoUri, width, width);
                     if(bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
                         return;
