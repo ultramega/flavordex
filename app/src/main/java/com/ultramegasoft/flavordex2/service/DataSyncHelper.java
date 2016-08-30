@@ -417,7 +417,7 @@ public class DataSyncHelper {
         final ContentResolver cr = mContext.getContentResolver();
         final Uri uri =
                 Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, entryId + "/photos");
-        final Cursor cursor = cr.query(uri, null, null, null, null);
+        final Cursor cursor = cr.query(uri, null, null, null, Tables.Photos.POS);
         if(cursor != null) {
             try {
                 final ArrayList<PhotoRecord> records = new ArrayList<>();
