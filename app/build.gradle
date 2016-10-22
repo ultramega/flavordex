@@ -40,12 +40,12 @@ repositories {
 }
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '24.0.3'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.ultramegasoft.flavordex2"
         minSdkVersion 15
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 18
         versionName '2.4.1'
     }
@@ -63,9 +63,9 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(path: ':jobdispatcher')
     compile 'com.google.code.gson:gson:2.7'
-    compile 'com.android.support:support-v4:24.2.1'
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:preference-v7:24.2.1'
+    compile 'com.android.support:support-v4:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:preference-v7:25.0.0'
     compile 'com.google.firebase:firebase-auth:9.6.1'
     compile 'com.google.firebase:firebase-messaging:9.6.1'
     compile 'com.google.android.gms:play-services-auth:9.6.1'
