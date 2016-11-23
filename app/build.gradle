@@ -41,7 +41,7 @@ repositories {
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '25.0.1'
     defaultConfig {
         applicationId "com.ultramegasoft.flavordex2"
         minSdkVersion 15
@@ -63,13 +63,13 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(path: ':jobdispatcher')
     compile 'com.google.code.gson:gson:2.7'
-    compile 'com.android.support:support-v4:25.0.0'
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile 'com.android.support:preference-v7:25.0.0'
-    compile 'com.google.firebase:firebase-auth:9.8.00'
-    compile 'com.google.firebase:firebase-messaging:9.8.00'
-    compile 'com.google.android.gms:play-services-auth:9.8.00'
-    compile 'com.google.android.gms:play-services-drive:9.8.00'
+    compile 'com.android.support:support-v4:25.0.1'
+    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:preference-v7:25.0.1'
+    compile 'com.google.firebase:firebase-auth:10.0.0'
+    compile 'com.google.firebase:firebase-messaging:10.0.0'
+    compile 'com.google.android.gms:play-services-auth:10.0.0'
+    compile 'com.google.android.gms:play-services-drive:10.0.0'
     compile 'com.ultramegasoft.radarchart:radar-chart:0.1.2'
     //noinspection GradleDynamicVersion
     compile 'com.facebook.android:facebook-android-sdk:4.+'
