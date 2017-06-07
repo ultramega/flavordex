@@ -128,6 +128,7 @@ public class DateInputWidget extends LinearLayout
     /**
      * Interface for listeners for date changes.
      */
+    @SuppressWarnings("EmptyMethod")
     public interface OnDateChangeListener {
         /**
          * Called when the date is set
