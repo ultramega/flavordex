@@ -51,11 +51,11 @@ public class AppImportUtils {
     /**
      * Application IDs
      */
-    public static final int APP_FD2_LITE = 0;
-    public static final int APP_BEER = 1;
-    public static final int APP_WINE = 2;
-    public static final int APP_WHISKEY = 3;
-    public static final int APP_COFFEE = 4;
+    private static final int APP_FD2_LITE = 0;
+    private static final int APP_BEER = 1;
+    private static final int APP_WINE = 2;
+    private static final int APP_WHISKEY = 3;
+    private static final int APP_COFFEE = 4;
 
     /**
      * The package names for the apps
@@ -155,7 +155,7 @@ public class AppImportUtils {
      * @param app     The app
      * @return Whether the app is installed
      */
-    public static boolean isAppInstalled(Context context, int app) {
+    private static boolean isAppInstalled(Context context, int app) {
         return isAppInstalled(context, app, false);
     }
 

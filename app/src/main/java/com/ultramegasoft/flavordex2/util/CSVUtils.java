@@ -118,7 +118,7 @@ public class CSVUtils {
     /**
      * Formatter for dates in CSV files
      */
-    public static final SimpleDateFormat sDateFormatter =
+    private static final SimpleDateFormat sDateFormatter =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'", Locale.US) {
                 {
                     setTimeZone(TimeZone.getTimeZone("UTC"));

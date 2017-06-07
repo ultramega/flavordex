@@ -278,7 +278,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
      *
      * @param uri The Uri for the new image
      */
-    public void replacePhoto(Uri uri) {
+    private void replacePhoto(Uri uri) {
         if(uri == null || getPhotos().isEmpty()) {
             return;
         }

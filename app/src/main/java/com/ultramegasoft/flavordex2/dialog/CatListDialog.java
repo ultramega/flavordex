@@ -63,7 +63,7 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
     /**
      * The Adapter backing the list
      */
-    protected CatListAdapter mAdapter;
+    private CatListAdapter mAdapter;
 
     /**
      * Show the dialog.
@@ -141,7 +141,7 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
      * @param position The position index of the item
      * @param id       The ID of the item
      */
-    protected void onCatSelected(int position, long id) {
+    private void onCatSelected(int position, long id) {
         if(position == mAdapter.getCount()) {
             startActivity(new Intent(getContext(), EditCatActivity.class));
             return;

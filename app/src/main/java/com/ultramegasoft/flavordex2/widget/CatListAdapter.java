@@ -158,7 +158,7 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
      * @param cursor The Cursor
      * @param cats   The ArrayList to add data to
      */
-    protected void readCursor(Cursor cursor, ArrayList<Category> cats) {
+    private void readCursor(Cursor cursor, ArrayList<Category> cats) {
         cursor.moveToPosition(-1);
         while(cursor.moveToNext()) {
             cats.add(readCursorRow(cursor));
@@ -206,8 +206,8 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
                 convertView, parent);
     }
 
-    protected View createView(LayoutInflater inflater, int layoutId, int position, View convertView,
-                              ViewGroup parent) {
+    private View createView(LayoutInflater inflater, int layoutId, int position, View convertView,
+                            ViewGroup parent) {
         if(convertView == null) {
             convertView = inflater.inflate(layoutId, parent, false);
 

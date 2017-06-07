@@ -35,6 +35,7 @@ import java.util.ArrayList;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("WeakerAccess")
 public class EntryHolder implements Parcelable {
     public static final Creator<EntryHolder> CREATOR = new Creator<EntryHolder>() {
         @Override

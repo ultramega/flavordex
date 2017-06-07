@@ -61,7 +61,7 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     /**
      * The Adapter backing the list
      */
-    protected CatListAdapter mAdapter;
+    private CatListAdapter mAdapter;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

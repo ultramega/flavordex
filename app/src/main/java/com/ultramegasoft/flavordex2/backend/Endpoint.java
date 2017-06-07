@@ -61,7 +61,7 @@ import javax.net.ssl.X509TrustManager;
  *
  * @author Steve Guidetti
  */
-public abstract class Endpoint {
+abstract class Endpoint {
     private static final String TAG = "Endpoint";
 
     static {
@@ -93,7 +93,7 @@ public abstract class Endpoint {
      *
      * @param context The Context to use
      */
-    public Endpoint(Context context) {
+    Endpoint(Context context) {
         mContext = context;
         //noinspection ConstantConditions
         final Uri apiUri = Uri.parse(context.getString(
@@ -171,7 +171,7 @@ public abstract class Endpoint {
      *
      * @return The Context
      */
-    protected Context getContext() {
+    Context getContext() {
         return mContext;
     }
 
@@ -194,7 +194,7 @@ public abstract class Endpoint {
      * @return The response from the API.
      * @throws ApiException
      */
-    protected String get(String method, Object... params) throws ApiException {
+    String get(String method, Object... params) throws ApiException {
         try {
             final HttpURLConnection conn = openConnection(method, params);
             conn.setRequestMethod("GET");
@@ -223,7 +223,7 @@ public abstract class Endpoint {
      * @return The response from the API.
      * @throws ApiException
      */
-    protected String post(String method, Object data) throws ApiException {
+    String post(String method, Object data) throws ApiException {
         return post(method, data, new Object[0]);
     }
 
@@ -236,7 +236,7 @@ public abstract class Endpoint {
      * @return The response from the API.
      * @throws ApiException
      */
-    protected String post(String method, Object data, Object... params) throws ApiException {
+    String post(String method, Object data, Object... params) throws ApiException {
         try {
             final HttpURLConnection conn = openConnection(method, params);
             conn.setRequestMethod("POST");

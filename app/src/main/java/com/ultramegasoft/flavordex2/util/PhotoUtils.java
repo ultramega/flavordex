@@ -289,7 +289,7 @@ public class PhotoUtils {
      * @param context The Context
      * @param id      Te ID for the entry
      */
-    public static void generateThumb(Context context, long id) {
+    private static void generateThumb(Context context, long id) {
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             return;
         }
@@ -408,7 +408,7 @@ public class PhotoUtils {
      * @return A File object pointing to the file
      * @throws IOException
      */
-    public static File getOutputMediaFile() throws IOException {
+    private static File getOutputMediaFile() throws IOException {
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             throw new IOException("Media storage not mounted");
         }
@@ -470,7 +470,7 @@ public class PhotoUtils {
      * @param file The File to write to or null to create one
      * @return The file Uri for the new file
      */
-    public static Uri savePhotoFromUri(ContentResolver cr, Uri uri, File file) {
+    private static Uri savePhotoFromUri(ContentResolver cr, Uri uri, File file) {
         try {
             if(file == null) {
                 file = getOutputMediaFile();

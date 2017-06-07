@@ -105,7 +105,7 @@ public abstract class ImportDialog extends DialogFragment {
     /**
      * Update the status of the dialog buttons.
      */
-    protected final void invalidateButtons() {
+    final void invalidateButtons() {
         final AlertDialog dialog = (AlertDialog)getDialog();
         if(dialog != null) {
             final boolean itemSelected = mListView.getCheckedItemCount() > 0;
@@ -118,7 +118,7 @@ public abstract class ImportDialog extends DialogFragment {
      *
      * @param shown Whether to show the list
      */
-    protected void setListShown(boolean shown) {
+    void setListShown(boolean shown) {
         if(shown) {
             mProgressBar.setVisibility(View.GONE);
             mListContainer.setVisibility(View.VISIBLE);
@@ -133,7 +133,7 @@ public abstract class ImportDialog extends DialogFragment {
      *
      * @return The ListView
      */
-    protected ListView getListView() {
+    ListView getListView() {
         return mListView;
     }
 
@@ -142,7 +142,7 @@ public abstract class ImportDialog extends DialogFragment {
      *
      * @param adapter A ListAdapter
      */
-    protected void setListAdapter(ListAdapter adapter) {
+    void setListAdapter(ListAdapter adapter) {
         mListView.setAdapter(adapter);
     }
 
@@ -151,7 +151,7 @@ public abstract class ImportDialog extends DialogFragment {
      *
      * @return The ListAdapter
      */
-    protected ListAdapter getListAdapter() {
+    ListAdapter getListAdapter() {
         return mListView.getAdapter();
     }
 }

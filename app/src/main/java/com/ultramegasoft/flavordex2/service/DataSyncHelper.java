@@ -54,7 +54,7 @@ import java.util.Map;
  *
  * @author Steve Guidetti
  */
-public class DataSyncHelper {
+class DataSyncHelper {
     private static final String TAG = "DataSyncHelper";
 
     /**

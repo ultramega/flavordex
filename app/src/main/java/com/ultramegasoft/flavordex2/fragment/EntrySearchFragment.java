@@ -244,7 +244,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         /**
          * The types of comparisons available to make between values
          */
-        protected static final String COMP_LIKE = "LIKE";
+        static final String COMP_LIKE = "LIKE";
         protected static final String COMP_EQ = "=";
         protected static final String COMP_NE = "!=";
         protected static final String COMP_GT = ">";
@@ -489,7 +489,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         /**
          * Parse the form fields.
          */
-        protected void parseFields() {
+        void parseFields() {
             parseTextField(mFormHelper.mTxtTitle, Tables.Entries.TITLE);
             parseTextField(mFormHelper.mTxtMaker, Tables.Entries.MAKER);
             parseTextField(mFormHelper.mTxtOrigin, Tables.Entries.ORIGIN);

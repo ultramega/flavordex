@@ -67,7 +67,7 @@ import java.util.ArrayList;
  *
  * @author Steve Guidetti
  */
-public class PhotoSyncHelper {
+class PhotoSyncHelper {
     private static final String TAG = "PhotoSyncHelper";
 
     /**
@@ -188,7 +188,7 @@ public class PhotoSyncHelper {
      *
      * @return Whether the client is connected
      */
-    public boolean isConnected() {
+    private boolean isConnected() {
         return mDriveFolder != null;
     }
 
@@ -357,7 +357,7 @@ public class PhotoSyncHelper {
     /**
      * Ensure that the local Drive IDs exists in the Drive folder.
      */
-    public void validateDriveIds() {
+    private void validateDriveIds() {
         Log.d(TAG, "Validating Drive IDs.");
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {

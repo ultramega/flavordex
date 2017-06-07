@@ -262,6 +262,7 @@ public class DateInputWidget extends LinearLayout
      *
      * @param showTime Whether to show the time
      */
+    @SuppressWarnings("WeakerAccess")
     public void setShowTime(boolean showTime) {
         mLayoutTime.setVisibility(showTime ? VISIBLE : GONE);
     }
@@ -280,6 +281,7 @@ public class DateInputWidget extends LinearLayout
      *
      * @param allowClear Whether to allow clearing of the date
      */
+    @SuppressWarnings("WeakerAccess")
     public void setAllowClear(boolean allowClear) {
         mAllowClear = allowClear;
         final boolean showClear = allowClear && mDate != null;

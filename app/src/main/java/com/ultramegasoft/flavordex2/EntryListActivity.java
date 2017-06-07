@@ -155,7 +155,7 @@ public class EntryListActivity extends AppCompatActivity
      *
      * @param prefs The default SharedPreferences
      */
-    protected void loadPreferences(SharedPreferences prefs) {
+    private void loadPreferences(SharedPreferences prefs) {
         if(prefs.getBoolean(FlavordexApp.PREF_FIRST_RUN, true)) {
             if(AppImportUtils.isAnyAppInstalled(this)) {
                 AppChooserDialog.showDialog(getSupportFragmentManager(), true);

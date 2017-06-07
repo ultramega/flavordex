@@ -73,7 +73,7 @@ public class FileSelectorDialog extends DialogFragment {
     /**
      * Keys for the result data Intent
      */
-    public static final String EXTRA_PATH = "path";
+    private static final String EXTRA_PATH = "path";
 
     /**
      * Keys for the saved state
@@ -166,9 +166,9 @@ public class FileSelectorDialog extends DialogFragment {
      * @param nameFilter       Filter out files that do not contain this string
      * @param path             The current path
      */
-    public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
-                                  String rootPath, boolean allowDirectories, String nameFilter,
-                                  String path) {
+    private static void showDialog(FragmentManager fm, Fragment target, int requestCode,
+                                   String rootPath, boolean allowDirectories, String nameFilter,
+                                   String path) {
         final DialogFragment fragment = new FileSelectorDialog();
         fragment.setTargetFragment(target, requestCode);
 

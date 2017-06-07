@@ -51,8 +51,8 @@ public class PermissionUtils {
     /**
      * Request codes
      */
-    public static final int REQUEST_STORAGE = 10;
-    public static final int REQUEST_LOCATION = 20;
+    private static final int REQUEST_STORAGE = 10;
+    private static final int REQUEST_LOCATION = 20;
 
     /**
      * Keys for the backend shared preferences
@@ -141,7 +141,7 @@ public class PermissionUtils {
      *
      * @param fragment The Fragment making the request
      */
-    public static void requestExternalStoragePerm(Fragment fragment) {
+    private static void requestExternalStoragePerm(Fragment fragment) {
         fragment.requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
                 REQUEST_STORAGE);
         getPreferences(fragment.getContext()).edit().putBoolean(PREF_ASKED_STORAGE, true).apply();
@@ -208,7 +208,7 @@ public class PermissionUtils {
      *
      * @param activity The Activity making the request
      */
-    public static void requestLocationPerm(Activity activity) {
+    private static void requestLocationPerm(Activity activity) {
         ActivityCompat.requestPermissions(activity,
                 new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
         getPreferences(activity).edit().putBoolean(PREF_ASKED_LOCATION, true).apply();
@@ -219,7 +219,7 @@ public class PermissionUtils {
      *
      * @param fragment The Fragment making the request
      */
-    public static void requestLocationPerm(Fragment fragment) {
+    private static void requestLocationPerm(Fragment fragment) {
         fragment.requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION},
                 REQUEST_LOCATION);
         getPreferences(fragment.getContext()).edit().putBoolean(PREF_ASKED_LOCATION, true).apply();
@@ -281,7 +281,7 @@ public class PermissionUtils {
      * @param context The Context
      * @return The SharedPreferences
      */
-    protected static SharedPreferences getPreferences(Context context) {
+    private static SharedPreferences getPreferences(Context context) {
         return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
     }
 

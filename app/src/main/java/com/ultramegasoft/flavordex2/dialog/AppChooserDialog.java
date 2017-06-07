@@ -153,7 +153,7 @@ public class AppChooserDialog extends DialogFragment {
     /**
      * Update the status of the dialog buttons.
      */
-    protected final void invalidateButtons() {
+    private void invalidateButtons() {
         final AlertDialog dialog = (AlertDialog)getDialog();
         final boolean itemSelected = mListView.getCheckedItemCount() > 0;
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(itemSelected);

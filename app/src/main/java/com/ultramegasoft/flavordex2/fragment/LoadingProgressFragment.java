@@ -73,7 +73,7 @@ public abstract class LoadingProgressFragment extends Fragment {
      *
      * @param animate Whether to show the fade animation
      */
-    public void hideLoadingIndicator(boolean animate) {
+    void hideLoadingIndicator(boolean animate) {
         mLoadingOverlay.setVisibility(View.GONE);
         mLayout.setVisibility(View.VISIBLE);
         if(animate) {

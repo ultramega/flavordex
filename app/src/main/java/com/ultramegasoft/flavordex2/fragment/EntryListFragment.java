@@ -81,7 +81,7 @@ public class EntryListFragment extends ListFragment
     private static final String ARG_SELECTED_ITEM = "selected_item";
     private static final String ARG_WHERE = "where";
     private static final String ARG_WHERE_ARGS = "where_args";
-    protected static final String ARG_EXPORT_MODE = "export_mode";
+    private static final String ARG_EXPORT_MODE = "export_mode";
 
     /**
      * Request codes for external Activities
@@ -104,8 +104,8 @@ public class EntryListFragment extends ListFragment
     /**
      * Loader IDs
      */
-    protected static final int LOADER_ENTRIES = 0;
-    protected static final int LOADER_CAT = 1;
+    private static final int LOADER_ENTRIES = 0;
+    private static final int LOADER_CAT = 1;
 
     /**
      * The fields to query from the database
@@ -123,7 +123,7 @@ public class EntryListFragment extends ListFragment
     /**
      * Whether the Activity is in two-pane mode
      */
-    protected boolean mTwoPane;
+    private boolean mTwoPane;
 
     /**
      * The main list Toolbar
@@ -144,7 +144,7 @@ public class EntryListFragment extends ListFragment
     /**
      * The current activated item if in two-pane mode
      */
-    protected long mActivatedItem = -1;
+    private long mActivatedItem = -1;
 
     /**
      * The where string to use in the database query
@@ -184,7 +184,7 @@ public class EntryListFragment extends ListFragment
     /**
      * The Adapter for the ListView
      */
-    protected EntryListAdapter mAdapter;
+    private EntryListAdapter mAdapter;
 
     /**
      * Get an instance of this Fragment.
@@ -539,7 +539,7 @@ public class EntryListFragment extends ListFragment
      * Turn on activate-on-click mode. When this mode is on, list items will be given the activated
      * state when touched.
      */
-    protected void setActivateOnItemClick(boolean activateOnItemClick) {
+    private void setActivateOnItemClick(boolean activateOnItemClick) {
         getListView().setChoiceMode(activateOnItemClick
                 ? ListView.CHOICE_MODE_SINGLE
                 : ListView.CHOICE_MODE_NONE);
@@ -632,7 +632,7 @@ public class EntryListFragment extends ListFragment
      *
      * @param position The index of the item to activate
      */
-    protected void setActivatedPosition(int position) {
+    private void setActivatedPosition(int position) {
         if(!mExportMode && position != ListView.INVALID_POSITION) {
             getListView().setItemChecked(position, true);
         }
