@@ -25,7 +25,7 @@
     <string name="app_name" translatable="false">Flavordex</string>
     <string name="date_format" translatable="false">MMM dd, yyyy</string>
     <string name="date_time_format" translatable="false">MMM dd, yyyy h:mm a</string>
-    <string name="api_url" translatable="false">https://api.flavordex.com/v1</string>
+    <string name="api_url" translatable="false">https://flavordex.ultramegasoft.com/api/v1</string>
     <string name="api_url_debug" translatable="false">https://10.0.2.2/flavordex_api/v1</string>
     <string name="user_agent" translatable="false">Flavordex/%s (Linux; Android)</string>
     <string name="ext_csv" translatable="false">.csv</string>
