@@ -23,6 +23,7 @@
   -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:baselineAligned="false"
@@ -33,7 +34,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="2dp"
-        android:paddingTop="2dp">
+        android:paddingTop="2dp"
+        tools:ignore="UselessParent">
 
         <TextView
             android:id="@android:id/text1"
