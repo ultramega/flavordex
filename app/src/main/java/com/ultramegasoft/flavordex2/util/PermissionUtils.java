@@ -268,7 +268,7 @@ public class PermissionUtils {
                     }
                     if(grantResults[i] == PermissionChecker.PERMISSION_GRANTED) {
                         PreferenceManager.getDefaultSharedPreferences(context).edit()
-                                .putBoolean(FlavordexApp.PREF_DETECT_LOCATION, true).commit();
+                                .putBoolean(FlavordexApp.PREF_DETECT_LOCATION, true).apply();
                     }
                 }
                 break;

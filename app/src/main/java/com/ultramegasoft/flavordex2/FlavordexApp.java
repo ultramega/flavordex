@@ -260,7 +260,7 @@ public class FlavordexApp extends Application
             }
         } catch(SecurityException e) {
             PreferenceManager.getDefaultSharedPreferences(this).edit()
-                    .putBoolean(PREF_DETECT_LOCATION, false).commit();
+                    .putBoolean(PREF_DETECT_LOCATION, false).apply();
         }
     }
 
