@@ -27,6 +27,7 @@ package com.ultramegasoft.flavordex2.backend;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("SameParameterValue")
 public class ApiException extends Exception {
     public ApiException() {
         super();

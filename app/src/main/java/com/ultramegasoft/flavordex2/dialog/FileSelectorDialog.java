@@ -58,6 +58,7 @@ import java.util.Arrays;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("SameParameterValue")
 public class FileSelectorDialog extends DialogFragment {
     private static final String TAG = "FileSelectorDialog";
 

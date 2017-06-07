@@ -45,6 +45,7 @@ import java.util.List;
  * @author Steve Guidetti
  * @see android.widget.ArrayAdapter
  */
+@SuppressWarnings("SameParameterValue")
 public class SpecialArrayAdapter<T> extends BaseAdapter implements Filterable {
     private List<T> mObjects;
     private final Object mLock = new Object();

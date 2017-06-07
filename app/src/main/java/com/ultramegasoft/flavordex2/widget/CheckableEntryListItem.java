@@ -93,6 +93,7 @@ public class CheckableEntryListItem extends LinearLayout implements Checkable {
      *
      * @param multiChoice Whether this list item is being used in a multiple choice mode ListView
      */
+    @SuppressWarnings("SameParameterValue")
     public void setMultiChoice(boolean multiChoice) {
         mMultiChoice = multiChoice;
     }

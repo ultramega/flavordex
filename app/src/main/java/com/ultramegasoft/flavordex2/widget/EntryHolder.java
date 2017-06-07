@@ -114,6 +114,7 @@ public class EntryHolder implements Parcelable {
      * @param preset Whether this is a preset extra
      * @param value  The value of the field
      */
+    @SuppressWarnings("SameParameterValue")
     public void addExtra(long id, String name, boolean preset, String value) {
         mExtras.add(new ExtraFieldHolder(id, name, preset, value));
     }

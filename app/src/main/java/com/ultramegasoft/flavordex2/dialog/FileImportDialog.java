@@ -242,6 +242,7 @@ public class FileImportDialog extends ImportDialog
     /**
      * Dialog to show the user when duplicate entries are detected.
      */
+    @SuppressWarnings("SameParameterValue")
     public static class DuplicatesDialog extends DialogFragment {
         private static final String TAG = "DuplicatesDialog";
 

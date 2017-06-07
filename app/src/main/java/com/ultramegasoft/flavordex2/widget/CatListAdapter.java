@@ -125,6 +125,7 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
      *
      * @param showAllCats Whether to show the All Categories item
      */
+    @SuppressWarnings("SameParameterValue")
     public void setShowAllCats(boolean showAllCats) {
         if(showAllCats == mShowAllCats) {
             return;

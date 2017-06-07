@@ -306,6 +306,7 @@ public class PermissionUtils {
          * @param target      The target Fragment
          * @param message     The rationale message
          */
+        @SuppressWarnings("SameParameterValue")
         public static void showDialog(FragmentManager fm, String permission, int requestCode,
                                       CharSequence message, Fragment target) {
             final DialogFragment fragment = new PermissionDialog();

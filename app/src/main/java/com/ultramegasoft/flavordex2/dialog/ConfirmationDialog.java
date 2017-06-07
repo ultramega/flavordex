@@ -41,6 +41,7 @@ import com.ultramegasoft.flavordex2.util.HtmlCompat;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("SameParameterValue")
 public class ConfirmationDialog extends DialogFragment {
     private static final String TAG = "ConfirmationDialog";
 
