@@ -292,6 +292,7 @@ public class LoginActivity extends AppCompatActivity
      *
      * @return Whether the form fields are valid
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean validateEmailForm() {
         boolean valid = true;
         if(TextUtils.isEmpty(mTxtEmail.getText().toString())) {

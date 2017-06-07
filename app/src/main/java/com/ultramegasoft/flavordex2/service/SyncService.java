@@ -60,6 +60,7 @@ public class SyncService extends JobService {
     /**
      * Sync data with the backend.
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean syncData() {
         return new DataSyncHelper(this).sync();
     }
@@ -67,6 +68,7 @@ public class SyncService extends JobService {
     /**
      * Sync photos with Google Drive.
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean syncPhotos() {
         final PhotoSyncHelper photoSyncHelper = new PhotoSyncHelper(this);
         if(photoSyncHelper.connect()) {

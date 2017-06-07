@@ -545,6 +545,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
          * @param extra The extra field
          * @return Whether the field was parsed
          */
+        @SuppressWarnings("BooleanMethodIsAlwaysInverted")
         protected boolean parsePresetField(ExtraFieldHolder extra) {
             return false;
         }
