@@ -261,7 +261,7 @@ public class CatDeleteDialog extends DialogFragment
          * @param context The Context
          * @param catId   The category database ID
          */
-        public CatDeleteTask(Context context, long catId) {
+        CatDeleteTask(Context context, long catId) {
             mContext = context.getApplicationContext();
             mCatId = catId;
         }

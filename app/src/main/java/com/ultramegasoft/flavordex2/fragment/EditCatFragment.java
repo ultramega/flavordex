@@ -587,7 +587,7 @@ public class EditCatFragment extends LoadingProgressFragment
          * @param context The Context
          * @param catId   The category ID
          */
-        public DataLoader(Context context, long catId) {
+        DataLoader(Context context, long catId) {
             super(context);
             mResolver = context.getContentResolver();
             mCatId = catId;
@@ -678,7 +678,7 @@ public class EditCatFragment extends LoadingProgressFragment
         /**
          * The holder for return data
          */
-        public static class Holder {
+        static class Holder {
             /**
              * The name of the category
              */
@@ -737,7 +737,7 @@ public class EditCatFragment extends LoadingProgressFragment
          * @param flavors The flavors for the category
          * @param catId   The category database ID, if updating
          */
-        public DataSaver(Context context, ContentValues catInfo, ArrayList<Field> extras,
+        DataSaver(Context context, ContentValues catInfo, ArrayList<Field> extras,
                          ArrayList<Field> flavors, long catId) {
             mContext = context.getApplicationContext();
             mResolver = context.getContentResolver();
@@ -875,7 +875,7 @@ public class EditCatFragment extends LoadingProgressFragment
          * @param id   The database ID for this field, or 0 if new
          * @param name The name of this field
          */
-        public Field(long id, String name) {
+        Field(long id, String name) {
             this(id, name, false);
         }
 
@@ -884,7 +884,7 @@ public class EditCatFragment extends LoadingProgressFragment
          * @param name   The name of this field
          * @param delete The initial deleted status of the field
          */
-        public Field(long id, String name, boolean delete) {
+        Field(long id, String name, boolean delete) {
             this.id = id;
             this.name = name;
             this.delete = delete;

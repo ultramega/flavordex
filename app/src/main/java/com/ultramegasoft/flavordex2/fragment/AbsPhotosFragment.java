@@ -53,7 +53,7 @@ import java.util.ArrayList;
  *
  * @author Steve Guidetti
  */
-public abstract class AbsPhotosFragment extends Fragment {
+abstract class AbsPhotosFragment extends Fragment {
     private static final String TAG = "AbsPhotosFragment";
 
     /**
@@ -324,7 +324,7 @@ public abstract class AbsPhotosFragment extends Fragment {
         /**
          * @param uri The Uri to load
          */
-        public PhotoLoader(Uri uri) {
+        PhotoLoader(Uri uri) {
             mUri = uri;
         }
 

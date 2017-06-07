@@ -215,7 +215,7 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
          * @param width   The container width
          * @param height  The container height
          */
-        public PhotoLoader(Context context, Uri uri, int width, int height) {
+        PhotoLoader(Context context, Uri uri, int width, int height) {
             super(context);
             mUri = uri;
             mWidth = width;

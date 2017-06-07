@@ -40,15 +40,15 @@ import java.util.LinkedHashMap;
  *
  * @author Steve Guidetti
  */
-public class WineEntryFormHelper extends EntryFormHelper {
+class WineEntryFormHelper extends EntryFormHelper {
     /**
      * The views for the form fields
      */
-    public AutoCompleteTextView mTxtVarietal;
-    public EditText mTxtVintage;
-    public EditText mTxtABV;
+    AutoCompleteTextView mTxtVarietal;
+    EditText mTxtVintage;
+    EditText mTxtABV;
 
-    public WineEntryFormHelper(Fragment fragment, View layoutRoot) {
+    WineEntryFormHelper(Fragment fragment, View layoutRoot) {
         super(fragment, layoutRoot);
     }
 

@@ -218,7 +218,7 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
              */
             private final Context mContext;
 
-            public ImportTask() {
+            ImportTask() {
                 mContext = getContext().getApplicationContext();
             }
 

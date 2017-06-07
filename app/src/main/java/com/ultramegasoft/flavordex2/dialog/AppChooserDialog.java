@@ -214,7 +214,7 @@ public class AppChooserDialog extends DialogFragment {
          * @param context     The Context
          * @param multiChoice Whether to allow multiple selections
          */
-        public AppListAdapter(Context context, boolean multiChoice) {
+        AppListAdapter(Context context, boolean multiChoice) {
             mContext = context;
             mMultiChoice = multiChoice;
             mData = AppImportUtils.getInstalledApps(context.getPackageManager());
@@ -370,7 +370,7 @@ public class AppChooserDialog extends DialogFragment {
              */
             private final Context mContext;
 
-            public ImportTask() {
+            ImportTask() {
                 mContext = getContext().getApplicationContext();
             }
 

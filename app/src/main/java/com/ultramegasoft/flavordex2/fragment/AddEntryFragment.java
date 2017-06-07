@@ -237,7 +237,7 @@ public class AddEntryFragment extends Fragment {
                 R.string.title_add_photos
         };
 
-        public PagerAdapter() {
+        PagerAdapter() {
             super(getChildFragmentManager());
             mFragments[0] = getEntryInfoClass().getName();
         }
@@ -345,7 +345,7 @@ public class AddEntryFragment extends Fragment {
             /**
              * @param context The Context
              */
-            public DataSaver(Context context) {
+            DataSaver(Context context) {
                 mContext = context.getApplicationContext();
             }
 

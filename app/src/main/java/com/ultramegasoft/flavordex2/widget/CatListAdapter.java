@@ -260,7 +260,7 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
         /**
          * The display name of the category
          */
-        public final String realName;
+        final String realName;
 
         /**
          * Whether this is a preset category
@@ -270,7 +270,7 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
         /**
          * The number of entries in this category
          */
-        public final int numEntries;
+        final int numEntries;
 
         /**
          * @param context    The Context
@@ -279,7 +279,7 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
          * @param preset     Whether this is a preset category
          * @param numEntries The number of entries in this category
          */
-        public Category(Context context, long id, String name, boolean preset, int numEntries) {
+        Category(Context context, long id, String name, boolean preset, int numEntries) {
             this.id = id;
             this.name = name;
             this.realName = FlavordexApp.getRealCatName(context, name);
@@ -302,7 +302,7 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
      * Holder for View references
      */
     private static class Holder {
-        public TextView textView;
-        public TextView textView2;
+        TextView textView;
+        TextView textView2;
     }
 }

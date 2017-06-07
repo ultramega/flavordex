@@ -586,7 +586,7 @@ public class PhotoUtils {
      * @param uri The photo Uri
      * @return The file name or full Uri string
      */
-    public static String getPathString(Uri uri) {
+    static String getPathString(Uri uri) {
         if("file".equals(uri.getScheme())) {
             final File file = new File(uri.getPath());
             try {

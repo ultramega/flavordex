@@ -367,7 +367,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
          */
         private final ArrayList<PhotoHolder> mData;
 
-        public PagerAdapter() {
+        PagerAdapter() {
             super(getChildFragmentManager());
             mData = getPhotos();
         }
@@ -414,7 +414,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
          * @param entryId The entry ID
          * @param photo   The photo to save
          */
-        public PhotoSaver(Context context, long entryId, PhotoHolder photo) {
+        PhotoSaver(Context context, long entryId, PhotoHolder photo) {
             mContext = context.getApplicationContext();
             mEntryId = entryId;
             mPhoto = photo;
@@ -492,7 +492,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
          * @param entryId The entry ID
          * @param photo   The photo to delete
          */
-        public PhotoDeleter(Context context, long entryId, PhotoHolder photo) {
+        PhotoDeleter(Context context, long entryId, PhotoHolder photo) {
             mContext = context.getApplicationContext();
             mEntryId = entryId;
             mPhoto = photo;

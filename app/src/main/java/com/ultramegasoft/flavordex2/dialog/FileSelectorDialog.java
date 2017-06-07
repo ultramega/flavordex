@@ -389,8 +389,8 @@ public class FileSelectorDialog extends DialogFragment {
         /**
          * Item type IDs
          */
-        public static final int FILE_TYPE = 0;
-        public static final int DIR_TYPE = 1;
+        static final int FILE_TYPE = 0;
+        static final int DIR_TYPE = 1;
 
         /**
          * The Context
@@ -410,14 +410,14 @@ public class FileSelectorDialog extends DialogFragment {
         /**
          * @param context The Context
          */
-        public FileListAdapter(Context context) {
+        FileListAdapter(Context context) {
             mContext = context;
         }
 
         /**
          * Reset the data backing the Adapter.
          */
-        public void reset() {
+        void reset() {
             mData.clear();
             mTypes.clear();
             notifyDataSetChanged();
@@ -429,7 +429,7 @@ public class FileSelectorDialog extends DialogFragment {
          * @param files The list of file names
          * @param dirs  The list of directory names
          */
-        public void setData(String[] files, String[] dirs) {
+        void setData(String[] files, String[] dirs) {
             reset();
             addItems(dirs, DIR_TYPE);
             addItems(files, FILE_TYPE);
@@ -441,7 +441,7 @@ public class FileSelectorDialog extends DialogFragment {
          * @param items The item names
          * @param type  The item type
          */
-        public void addItems(String[] items, int type) {
+        void addItems(String[] items, int type) {
             if(items == null) {
                 return;
             }

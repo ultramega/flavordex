@@ -384,7 +384,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
          * @param entryId The entry to save flavors to
          * @param data    The radar chart data to insert
          */
-        public DataSaver(Context context, long entryId, ArrayList<RadarHolder> data) {
+        DataSaver(Context context, long entryId, ArrayList<RadarHolder> data) {
             mContext = context.getApplicationContext();
             mEntryId = entryId;
             mData = data;

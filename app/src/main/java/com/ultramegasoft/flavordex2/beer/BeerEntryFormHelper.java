@@ -41,18 +41,18 @@ import java.util.LinkedHashMap;
  *
  * @author Steve Guidetti
  */
-public class BeerEntryFormHelper extends EntryFormHelper {
+class BeerEntryFormHelper extends EntryFormHelper {
     /**
      * The Views for the form fields
      */
-    public AutoCompleteTextView mTxtStyle;
-    public Spinner mSpnServing;
-    public EditText mTxtIBU;
-    public EditText mTxtABV;
-    public EditText mTxtOG;
-    public EditText mTxtFG;
+    AutoCompleteTextView mTxtStyle;
+    Spinner mSpnServing;
+    EditText mTxtIBU;
+    EditText mTxtABV;
+    EditText mTxtOG;
+    EditText mTxtFG;
 
-    public BeerEntryFormHelper(Fragment fragment, View layoutRoot) {
+    BeerEntryFormHelper(Fragment fragment, View layoutRoot) {
         super(fragment, layoutRoot);
     }
 

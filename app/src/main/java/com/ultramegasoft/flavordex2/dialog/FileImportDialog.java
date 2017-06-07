@@ -371,7 +371,7 @@ public class FileImportDialog extends ImportDialog
              */
             private final Context mContext;
 
-            public SaveTask() {
+            SaveTask() {
                 mContext = getContext().getApplicationContext();
             }
 

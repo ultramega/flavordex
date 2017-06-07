@@ -44,22 +44,22 @@ import java.util.Locale;
  *
  * @author Steve Guidetti
  */
-public class CoffeeEntryFormHelper extends EntryFormHelper {
+class CoffeeEntryFormHelper extends EntryFormHelper {
     /**
      * The Views for the form fields
      */
-    public EditText mTxtRoaster;
-    public EditText mTxtRoastDate;
-    public EditText mTxtGrind;
-    public Spinner mSpnBrewMethod;
-    public EditText mTxtDose;
-    public EditText mTxtEspMass;
-    public EditText mTxtWaterMass;
-    public EditText mTxtTemp;
-    public EditText mTxtExtTimeM;
-    public EditText mTxtExtTimeS;
-    public EditText mTxtTDS;
-    public EditText mTxtYield;
+    EditText mTxtRoaster;
+    EditText mTxtRoastDate;
+    EditText mTxtGrind;
+    Spinner mSpnBrewMethod;
+    EditText mTxtDose;
+    EditText mTxtEspMass;
+    EditText mTxtWaterMass;
+    EditText mTxtTemp;
+    EditText mTxtExtTimeM;
+    EditText mTxtExtTimeS;
+    EditText mTxtTDS;
+    EditText mTxtYield;
 
     /**
      * Table rows that are shown conditionally
@@ -67,7 +67,7 @@ public class CoffeeEntryFormHelper extends EntryFormHelper {
     private TableRow mRowEspMass;
     private TableRow mRowWaterMass;
 
-    public CoffeeEntryFormHelper(Fragment fragment, View layoutRoot) {
+    CoffeeEntryFormHelper(Fragment fragment, View layoutRoot) {
         super(fragment, layoutRoot);
     }
 
@@ -163,7 +163,7 @@ public class CoffeeEntryFormHelper extends EntryFormHelper {
      *
      * @param isEspresso Whether this is an espresso
      */
-    public void setIsEspresso(boolean isEspresso) {
+    void setIsEspresso(boolean isEspresso) {
         final ExtraFieldHolder field = getExtras().get(Tables.Extras.Coffee.STATS_MASS);
         if(field != null) {
             if(isEspresso) {

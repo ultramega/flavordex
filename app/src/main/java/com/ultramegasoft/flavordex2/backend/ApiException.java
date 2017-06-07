@@ -29,19 +29,19 @@ package com.ultramegasoft.flavordex2.backend;
  */
 @SuppressWarnings("SameParameterValue")
 public class ApiException extends Exception {
-    public ApiException() {
+    ApiException() {
         super();
     }
 
-    public ApiException(String message) {
+    ApiException(String message) {
         super(message);
     }
 
-    public ApiException(String message, Throwable cause) {
+    ApiException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ApiException(Throwable cause) {
+    ApiException(Throwable cause) {
         super(cause);
     }
 }

@@ -104,7 +104,7 @@ class PhotoSyncHelper {
     /**
      * @param context The Context
      */
-    public PhotoSyncHelper(Context context) {
+    PhotoSyncHelper(Context context) {
         mContext = context;
     }
 
@@ -113,7 +113,7 @@ class PhotoSyncHelper {
      *
      * @return Whether the client connected successfully
      */
-    public boolean connect() {
+    boolean connect() {
         if(isConnected()) {
             return true;
         }
@@ -176,7 +176,7 @@ class PhotoSyncHelper {
     /**
      * Disconnect the client from Google Drive.
      */
-    public void disconnect() {
+    void disconnect() {
         if(mClient != null) {
             mDriveFolder = null;
             mClient.disconnect();
@@ -195,7 +195,7 @@ class PhotoSyncHelper {
     /**
      * Upload photos without a Drive ID.
      */
-    public void pushPhotos() {
+    void pushPhotos() {
         Log.d(TAG, "Pushing photos.");
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
@@ -273,7 +273,7 @@ class PhotoSyncHelper {
     /**
      * Delete photos from Drive that were removed from the app.
      */
-    public void deletePhotos() {
+    void deletePhotos() {
         Log.d(TAG, "Deleting photos.");
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
@@ -305,7 +305,7 @@ class PhotoSyncHelper {
     /**
      * Download all photos without a local path.
      */
-    public void fetchPhotos() {
+    void fetchPhotos() {
         validateDriveIds();
         Log.d(TAG, "Fetching photos.");
         final ContentResolver cr = mContext.getContentResolver();

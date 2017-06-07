@@ -352,7 +352,7 @@ public class ExportDialog extends DialogFragment {
             /**
              * @param writer The CSVWriter to use for writing
              */
-            public DataExporter(CSVWriter writer) {
+            DataExporter(CSVWriter writer) {
                 mContext = getContext().getApplicationContext();
                 mResolver = mContext.getContentResolver();
                 mWriter = writer;

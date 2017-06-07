@@ -187,7 +187,7 @@ public class EditEntryActivity extends AppCompatActivity {
          * @param context The Context
          * @param entry   The entry to save
          */
-        public DataSaver(Context context, EntryHolder entry) {
+        DataSaver(Context context, EntryHolder entry) {
             mContext = context.getApplicationContext();
             mEntry = entry;
         }

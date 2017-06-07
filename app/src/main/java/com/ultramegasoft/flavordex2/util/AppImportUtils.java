@@ -531,61 +531,61 @@ public class AppImportUtils {
     /**
      * Extra column names for the beer entries table.
      */
-    public static final class BeerColumns extends EntriesColumns {
-        public static final String STYLE = "style";
-        public static final String SERVING = "serving";
-        public static final String STATS_IBU = "stats_ibu";
-        public static final String STATS_ABV = "stats_abv";
-        public static final String STATS_OG = "stats_og";
-        public static final String STATS_FG = "stats_fg";
+    private static final class BeerColumns extends EntriesColumns {
+        static final String STYLE = "style";
+        static final String SERVING = "serving";
+        static final String STATS_IBU = "stats_ibu";
+        static final String STATS_ABV = "stats_abv";
+        static final String STATS_OG = "stats_og";
+        static final String STATS_FG = "stats_fg";
     }
 
     /**
      * Extra column names for the wine entries table.
      */
-    public static final class WineColumns extends EntriesColumns {
-        public static final String VARIETAL = "varietal";
-        public static final String STATS_VINTAGE = "stats_vintage";
-        public static final String STATS_ABV = "stats_abv";
+    private static final class WineColumns extends EntriesColumns {
+        static final String VARIETAL = "varietal";
+        static final String STATS_VINTAGE = "stats_vintage";
+        static final String STATS_ABV = "stats_abv";
     }
 
     /**
      * Extra column names for the whiskey entries table.
      */
-    public static final class WhiskeyColumns extends EntriesColumns {
-        public static final String TYPE = "style";
-        public static final String STATS_AGE = "stats_age";
-        public static final String STATS_ABV = "stats_abv";
+    private static final class WhiskeyColumns extends EntriesColumns {
+        static final String TYPE = "style";
+        static final String STATS_AGE = "stats_age";
+        static final String STATS_ABV = "stats_abv";
     }
 
     /**
      * Extra column names for the coffee entries table.
      */
-    public static final class CoffeeColumns extends EntriesColumns {
-        public static final String ROASTER = "roaster";
-        public static final String ROAST_DATE = "roast_date";
-        public static final String GRIND = "grind";
-        public static final String BREW_METHOD = "brew_method";
-        public static final String STATS_DOSE = "stats_dose";
-        public static final String STATS_MASS = "stats_mass";
-        public static final String STATS_TEMP = "stats_temp";
-        public static final String STATS_EXTIME = "stats_extime";
-        public static final String STATS_TDS = "stats_tds";
-        public static final String STATS_YIELD = "stats_yield";
+    private static final class CoffeeColumns extends EntriesColumns {
+        static final String ROASTER = "roaster";
+        static final String ROAST_DATE = "roast_date";
+        static final String GRIND = "grind";
+        static final String BREW_METHOD = "brew_method";
+        static final String STATS_DOSE = "stats_dose";
+        static final String STATS_MASS = "stats_mass";
+        static final String STATS_TEMP = "stats_temp";
+        static final String STATS_EXTIME = "stats_extime";
+        static final String STATS_TDS = "stats_tds";
+        static final String STATS_YIELD = "stats_yield";
     }
 
     /**
      * Column names for the flavors table.
      */
-    public static class FlavorsColumns implements BaseColumns {
-        public static final String FLAVOR = "flavor";
-        public static final String VALUE = "value";
+    private static class FlavorsColumns implements BaseColumns {
+        static final String FLAVOR = "flavor";
+        static final String VALUE = "value";
     }
 
     /**
      * Column names for the photos table.
      */
-    public static class PhotosColumns implements BaseColumns {
-        public static final String PATH = "path";
+    private static class PhotosColumns implements BaseColumns {
+        static final String PATH = "path";
     }
 }

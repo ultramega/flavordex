@@ -390,7 +390,7 @@ public class SettingsActivity extends AppCompatActivity {
         /**
          * @param context The Context
          */
-        public LogoutTask(Context context) {
+        LogoutTask(Context context) {
             mContext = context.getApplicationContext();
         }
 
@@ -456,7 +456,7 @@ public class SettingsActivity extends AppCompatActivity {
         /**
          * @param context The Context
          */
-        public UnregisterTask(Context context) {
+        UnregisterTask(Context context) {
             mContext = context.getApplicationContext();
         }
 

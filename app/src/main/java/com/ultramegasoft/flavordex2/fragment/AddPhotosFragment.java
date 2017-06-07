@@ -137,8 +137,8 @@ public class AddPhotosFragment extends AbsPhotosFragment {
         /**
          * View types
          */
-        public static final int NORMAL_VIEW_TYPE = 0;
-        public static final int ADD_BUTTON_VIEW_TYPE = 1;
+        static final int NORMAL_VIEW_TYPE = 0;
+        static final int ADD_BUTTON_VIEW_TYPE = 1;
 
         /**
          * Empty PhotoHolder to serve as a placeholder for the add button
@@ -160,7 +160,7 @@ public class AddPhotosFragment extends AbsPhotosFragment {
          */
         private final int mFrameSize;
 
-        public ImageAdapter() {
+        ImageAdapter() {
             mData = new ArrayList<>(getPhotos());
             mData.add(mPlaceholder);
             mFrameSize = getResources().getDimensionPixelSize(R.dimen.photo_grid_size);
@@ -292,7 +292,7 @@ public class AddPhotosFragment extends AbsPhotosFragment {
      * Holder for View references
      */
     private class Holder {
-        public ImageView image;
-        public View removeButton;
+        ImageView image;
+        View removeButton;
     }
 }

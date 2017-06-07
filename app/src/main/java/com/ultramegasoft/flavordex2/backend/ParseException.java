@@ -32,7 +32,7 @@ public class ParseException extends ApiException {
         super();
     }
 
-    public ParseException(Throwable cause) {
+    ParseException(Throwable cause) {
         super(cause);
     }
 }

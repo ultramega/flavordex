@@ -105,7 +105,7 @@ abstract class BackgroundThumbLoader<K> {
         /**
          * @param thumb The thumbnail
          */
-        public LoadTask(Thumb thumb) {
+        LoadTask(Thumb thumb) {
             mThumb = thumb;
         }
 
@@ -141,7 +141,7 @@ abstract class BackgroundThumbLoader<K> {
          * @param key       The key to reference this thumbnail
          * @param imageView The ImageView
          */
-        public Thumb(Object key, ImageView imageView) {
+        Thumb(Object key, ImageView imageView) {
             this.key = key;
             imageView.setImageDrawable(new ThumbDrawable(key));
             mReference = new WeakReference<>(imageView);
@@ -170,7 +170,7 @@ abstract class BackgroundThumbLoader<K> {
          * @param key The key to reference this thumbnail
          */
         @SuppressWarnings("deprecation")
-        public ThumbDrawable(Object key) {
+        ThumbDrawable(Object key) {
             this.key = key;
         }
     }

@@ -35,7 +35,7 @@ import com.ultramegasoft.flavordex2.backend.model.RegistrationRecord;
  * @author Steve Guidetti
  */
 public class Registration extends Endpoint {
-    public Registration(Context context) {
+    Registration(Context context) {
         super(context);
     }
 
@@ -49,7 +49,7 @@ public class Registration extends Endpoint {
      *
      * @return The RegistrationRecord or null if the client is not registered with FCM
      */
-    public RegistrationRecord register() throws ApiException {
+    RegistrationRecord register() throws ApiException {
         final String fcmId = FirebaseInstanceId.getInstance().getToken();
         if(fcmId != null) {
             try {
@@ -69,7 +69,7 @@ public class Registration extends Endpoint {
     /**
      * Unregister the client from the backend.
      */
-    public void unregister() throws ApiException {
+    void unregister() throws ApiException {
         final long id = BackendUtils.getClientId(getContext());
         if(id > 0) {
             post("unregister", id);

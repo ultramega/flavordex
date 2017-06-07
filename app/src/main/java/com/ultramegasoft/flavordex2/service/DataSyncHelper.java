@@ -75,7 +75,7 @@ class DataSyncHelper {
     /**
      * @param context The Context
      */
-    public DataSyncHelper(Context context) {
+    DataSyncHelper(Context context) {
         mContext = context;
     }
 
@@ -84,7 +84,7 @@ class DataSyncHelper {
      *
      * @return Whether the sync should be retried
      */
-    public boolean sync() {
+    boolean sync() {
         mSync = new Sync(mContext);
         try {
             Log.d(TAG, "Syncing...");

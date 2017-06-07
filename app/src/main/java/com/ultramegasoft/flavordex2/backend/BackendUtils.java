@@ -144,7 +144,7 @@ public class BackendUtils {
      * @param context The Context
      * @return The client identifier
      */
-    public static long getClientId(Context context) {
+    static long getClientId(Context context) {
         return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
                 .getLong(PREF_CLIENT_ID, 0);
     }

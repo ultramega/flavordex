@@ -34,7 +34,7 @@ import com.ultramegasoft.flavordex2.FlavordexApp;
  *
  * @author Steve Guidetti
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"WeakerAccess","unused"})
 public class Tables {
     /**
      * The Authority string for the application

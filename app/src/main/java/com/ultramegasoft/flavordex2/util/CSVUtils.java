@@ -606,9 +606,9 @@ public class CSVUtils {
         /**
          * The legacy format if detected
          */
-        public String legacyFormat;
+        String legacyFormat;
 
-        public CSVHolder() {
+        CSVHolder() {
             entries = new ArrayList<>();
             duplicates = new ArrayList<>();
         }
@@ -626,7 +626,7 @@ public class CSVUtils {
          * @param entry     The entry
          * @param duplicate Whether this is a possible duplicate
          */
-        public void addEntry(EntryHolder entry, boolean duplicate) {
+        void addEntry(EntryHolder entry, boolean duplicate) {
             entries.add(entry);
             if(duplicate) {
                 duplicates.add(entry);

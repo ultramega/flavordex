@@ -285,7 +285,7 @@ public class EditInfoFragment extends LoadingProgressFragment
          * @param catId   The category ID
          * @param entryId The entry ID, if editing
          */
-        public DataLoader(Context context, long catId, long entryId) {
+        DataLoader(Context context, long catId, long entryId) {
             super(context);
             mResolver = context.getContentResolver();
             mCatId = catId;
