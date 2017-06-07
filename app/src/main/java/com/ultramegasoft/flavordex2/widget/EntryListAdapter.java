@@ -25,6 +25,7 @@ package com.ultramegasoft.flavordex2.widget;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.support.v4.util.LongSparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,6 @@ import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -68,7 +68,7 @@ public class EntryListAdapter extends CursorAdapter {
     /**
      * Map of item IDs to their position index in the list
      */
-    private final HashMap<Long, Integer> mItemPositions = new HashMap<>();
+    private final LongSparseArray<Integer> mItemPositions = new LongSparseArray<>();
 
     /**
      * Whether multiple choice mode is enabled
