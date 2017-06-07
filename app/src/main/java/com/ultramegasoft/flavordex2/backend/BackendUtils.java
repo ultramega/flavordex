@@ -213,19 +213,14 @@ public class BackendUtils {
      * Unregister the client from the backend.
      *
      * @param context The Context
-     * @return Whether the unregistration was successful
      */
-    public static boolean unregisterClient(Context context) {
+    public static void unregisterClient(Context context) {
         try {
             new Registration(context).unregister();
             setClientId(context, 0);
-
-            return true;
         } catch(ApiException e) {
             Log.w(TAG, "Client unregistration failed", e);
         }
-
-        return false;
     }
 
     /**
