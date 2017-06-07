@@ -29,6 +29,4 @@ package com.ultramegasoft.flavordex2.backend.model;
  */
 public class UpdateResponse extends Model {
     public boolean success;
-    public long remoteId;
-    public boolean posterChanged;
 }

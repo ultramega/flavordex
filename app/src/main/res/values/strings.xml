@@ -65,7 +65,6 @@
     <string name="title_importing">Importing…</string>
     <string name="title_exporting">Exporting…</string>
     <string name="title_duplicates">Duplicates Detected</string>
-    <string name="title_unshare_entry">Un-share Entry?</string>
     <string name="title_settings">Application Settings</string>
     <string name="title_login">Log in…</string>
     <string name="title_reset_password">Reset Password</string>
@@ -94,7 +93,6 @@
     <string name="menu_save_entry">Save Entry</string>
     <string name="menu_delete_entry">Delete Entry</string>
     <string name="menu_share_entry">Share Entry</string>
-    <string name="menu_unshare_entry">Un-share Entry</string>
     <string name="menu_add_photo">Add Photo</string>
     <string name="menu_select_photo">Select Photo</string>
     <string name="menu_take_photo">Take Photo</string>
@@ -205,7 +203,6 @@
     <string name="message_version">Flavordex v.%s</string>
     <string name="message_copyright">Copyright © %d UltraMega Software</string>
     <string name="message_duplicate_photo">The selected photo has already been added.</string>
-    <string name="message_unshare_entry">The entry will no longer be visible online.</string>
     <string name="message_registering_client">Registering device with the sync service…</string>
     <string name="message_connecting_drive">Connecting to Google Drive…</string>
     <string name="message_authenticating">Authenticating…</string>
@@ -253,7 +250,6 @@
 
     <string name="share_subject">I logged %s on Flavordex</string>
     <string name="share_body">I logged %1$s in my %2$s with a %3$.1f rating.\n\nvia %2$s</string>
-    <string name="share_body_link">I logged %1$s in my %2$s with a %3$.1f rating. http://flavordex.com/j/%4$s\n\nvia %2$s</string>
 
     <string name="welcome_header">Welcome to Flavordex</string>
     <string name="welcome_description">Tasting Journal</string>

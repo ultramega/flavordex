@@ -43,7 +43,6 @@ public class EntryRecord extends Model {
     public float rating;
     public String notes;
     public long age;
-    public boolean shared;
     public boolean deleted;
 
     public ArrayList<ExtraRecord> extras;

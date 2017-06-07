@@ -55,7 +55,6 @@ import com.ultramegasoft.flavordex2.coffee.ViewCoffeeInfoFragment;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryDeleter;
-import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.whiskey.ViewWhiskeyInfoFragment;
 import com.ultramegasoft.flavordex2.wine.ViewWineInfoFragment;
 
@@ -77,7 +76,6 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
      * Request code for deleting an entry
      */
     private static final int REQUEST_DELETE_ENTRY = 500;
-    private static final int REQUEST_UNSHARE = 501;
 
     /**
      * The database ID for this entry
@@ -150,11 +148,6 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
                         getString(R.string.message_confirm_delete, mEntryTitle),
                         R.drawable.ic_delete);
                 return true;
-            case R.id.menu_unshare:
-                ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_UNSHARE,
-                        getString(R.string.title_unshare_entry),
-                        getString(R.string.message_unshare_entry));
-                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -165,9 +158,6 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
             switch(requestCode) {
                 case REQUEST_DELETE_ENTRY:
                     new EntryDeleter(getContext(), mEntryId).execute();
-                    return;
-                case REQUEST_UNSHARE:
-                    EntryUtils.setShareStatus(getContext(), mEntryId, false);
                     return;
             }
         }

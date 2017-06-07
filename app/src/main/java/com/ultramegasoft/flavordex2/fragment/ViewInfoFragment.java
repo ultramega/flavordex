@@ -102,16 +102,6 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     private float mRating;
 
     /**
-     * Whether the entry is publicly shared
-     */
-    private boolean mShared;
-
-    /**
-     * The public link for the entry
-     */
-    private String mLink;
-
-    /**
      * List of extra field TableRows
      */
     private final ArrayList<View> mExtraRows = new ArrayList<>();
@@ -158,36 +148,15 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.view_info_menu, menu);
-
-        final MenuItem shareItem = menu.findItem(R.id.menu_share);
-        final ShareActionProvider actionProvider =
-                (ShareActionProvider)MenuItemCompat.getActionProvider(shareItem);
-        if(actionProvider != null) {
-            actionProvider.setOnShareTargetSelectedListener(
-                    new ShareActionProvider.OnShareTargetSelectedListener() {
-                        @Override
-                        public boolean onShareTargetSelected(ShareActionProvider source,
-                                                             Intent intent) {
-                            if(!mShared) {
-                                EntryUtils.setShareStatus(getContext(), mEntryId, true);
-                            }
-                            return false;
-                        }
-                    }
-            );
-        }
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        menu.findItem(R.id.menu_unshare).setVisible(mShared);
-
         final MenuItem shareItem = menu.findItem(R.id.menu_share);
         if(shareItem != null) {
-            final Intent shareIntent =
-                    EntryUtils.getShareIntent(getContext(), mTitle, mRating, mLink);
+            final Intent shareIntent = EntryUtils.getShareIntent(getContext(), mTitle, mRating);
             final ShareActionProvider actionProvider =
                     (ShareActionProvider)MenuItemCompat.getActionProvider(shareItem);
             if(actionProvider != null) {
@@ -376,8 +345,6 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                     mEntryCat = data.getString(data.getColumnIndex(Tables.Entries.CAT));
                     mTitle = data.getString(data.getColumnIndex(Tables.Entries.TITLE));
                     mRating = data.getFloat(data.getColumnIndex(Tables.Entries.RATING));
-                    mShared = data.getLong(data.getColumnIndex(Tables.Entries.SHARED)) == 1;
-                    mLink = data.getString(data.getColumnIndex(Tables.Entries.LINK));
                     populateViews(data);
                 }
                 break;

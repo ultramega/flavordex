@@ -410,38 +410,14 @@ public class EntryUtils {
     }
 
     /**
-     * Set whether an entry is publicly shared.
-     *
-     * @param context The Context
-     * @param entryId The entry's database ID
-     * @param shared  Whether the entry is publicly shared
-     */
-    public static void setShareStatus(final Context context, long entryId, boolean shared) {
-        final ContentResolver cr = context.getContentResolver();
-        final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId);
-        final ContentValues values = new ContentValues();
-        values.put(Tables.Entries.SHARED, shared);
-        values.put(Tables.Entries.UPDATED, System.currentTimeMillis());
-        values.put(Tables.Entries.SYNCED, false);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                cr.update(uri, values, null, null);
-                BackendUtils.requestDataSync(context);
-            }
-        }).start();
-    }
-
-    /**
      * Sent a sharing Intent.
      *
      * @param context The Context
      * @param title   The message title
      * @param rating  The rating to show
-     * @param link    The public link ID
      */
-    public static void share(Context context, String title, float rating, String link) {
-        final Intent intent = getShareIntent(context, title, rating, link);
+    public static void share(Context context, String title, float rating) {
+        final Intent intent = getShareIntent(context, title, rating);
         if(intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(Intent.createChooser(intent,
                     context.getString(R.string.menu_share_entry)));
@@ -456,14 +432,13 @@ public class EntryUtils {
      * @param context The Context
      * @param title   The message title
      * @param rating  The rating to show
-     * @param link    The public link ID
      * @return A send action Intent
      */
-    public static Intent getShareIntent(Context context, String title, float rating, String link) {
+    public static Intent getShareIntent(Context context, String title, float rating) {
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, getShareSubject(context, title));
-        intent.putExtra(Intent.EXTRA_TEXT, getShareBody(context, title, rating, link));
+        intent.putExtra(Intent.EXTRA_TEXT, getShareBody(context, title, rating));
 
         return intent;
     }
@@ -474,14 +449,10 @@ public class EntryUtils {
      * @param context The Context
      * @param title   The message title
      * @param rating  The rating to show
-     * @param link    The public link ID
      * @return The message body
      */
-    private static String getShareBody(Context context, String title, float rating, String link) {
+    private static String getShareBody(Context context, String title, float rating) {
         final String app = context.getString(R.string.app_name);
-        if(link != null) {
-            return context.getString(R.string.share_body_link, title, app, rating, link);
-        }
         return context.getString(R.string.share_body, title, app, rating);
     }
 

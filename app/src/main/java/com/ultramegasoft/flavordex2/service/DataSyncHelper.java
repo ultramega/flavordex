@@ -27,7 +27,6 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -48,7 +47,6 @@ import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -145,12 +143,7 @@ public class DataSyncHelper {
         for(EntryRecord entryRecord : getUpdatedEntries()) {
             final UpdateResponse response = mSync.putEntry(entryRecord);
             if(response.success) {
-                if(entryRecord.shared && response.posterChanged) {
-                    pushPosterImage(entryRecord);
-                }
-
                 whereArgs[0] = entryRecord.uuid;
-                values.put(Tables.Entries.LINK, getLink(response.remoteId));
                 cr.update(Tables.Entries.CONTENT_URI, values, where, whereArgs);
             }
         }
@@ -322,8 +315,6 @@ public class DataSyncHelper {
                     record.notes = cursor.getString(cursor.getColumnIndex(Tables.Entries.NOTES));
                     record.age =
                             subTime(cursor.getLong(cursor.getColumnIndex(Tables.Entries.UPDATED)));
-                    record.shared =
-                            cursor.getLong(cursor.getColumnIndex(Tables.Entries.SHARED)) == 1;
 
                     id = cursor.getLong(cursor.getColumnIndex(Tables.Entries._ID));
                     record.extras = getEntryExtras(id);
@@ -453,50 +444,6 @@ public class DataSyncHelper {
         }
 
         return null;
-    }
-
-    /**
-     * Upload the poster image for an entry.
-     *
-     * @param entryRecord The entry
-     * @throws ApiException
-     */
-    private void pushPosterImage(EntryRecord entryRecord) throws ApiException {
-        if(entryRecord.photos.isEmpty()) {
-            return;
-        }
-
-        final ContentResolver cr = mContext.getContentResolver();
-        final PhotoRecord photo = entryRecord.photos.get(0);
-        final Uri uri = Uri.withAppendedPath(Tables.Photos.CONTENT_ID_URI_BASE, photo.id + "");
-        final String[] projection = new String[] {Tables.Photos.PATH};
-        final Cursor cursor = cr.query(uri, projection, null, null, Tables.Photos.POS);
-        if(cursor != null) {
-            try {
-                if(cursor.moveToFirst()) {
-                    final Uri photoUri = PhotoUtils.parsePath(cursor.getString(0));
-                    if(photoUri == null) {
-                        return;
-                    }
-
-                    final int width = 900;
-                    //noinspection SuspiciousNameCombination
-                    Bitmap bitmap = PhotoUtils.loadBitmap(mContext, photoUri, width, width);
-                    if(bitmap == null || bitmap.getWidth() <= 0 || bitmap.getHeight() <= 0) {
-                        return;
-                    }
-
-                    if(bitmap.getWidth() > width) {
-                        final int height =
-                                (int)(bitmap.getHeight() * ((double)width / bitmap.getWidth()));
-                        bitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
-                    }
-                    mSync.putPosterImage(entryRecord.uuid, photo.hash, bitmap);
-                }
-            } finally {
-                cursor.close();
-            }
-        }
     }
 
     /**
@@ -710,8 +657,6 @@ public class DataSyncHelper {
         values.put(Tables.Entries.UPDATED, subTime(record.age));
         values.put(Tables.Entries.PUBLISHED, true);
         values.put(Tables.Entries.SYNCED, true);
-        values.put(Tables.Entries.SHARED, record.shared);
-        values.put(Tables.Entries.LINK, getLink(record.id));
         if(entryId > 0) {
             uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId);
             cr.update(uri, values, null, null);
@@ -941,20 +886,6 @@ public class DataSyncHelper {
         }
 
         return 0;
-    }
-
-    /**
-     * Get the public link for an entry based on its remote ID.
-     *
-     * @param remoteId The remote ID
-     * @return The link text version of the remote ID
-     */
-    private static String getLink(long remoteId) {
-        String link = String.format(Locale.US, "%010d", remoteId);
-        link = link.substring(link.length() - 2) + link.substring(0, link.length() - 2);
-        link = Long.toString(Long.valueOf(link) + 1000000000, 34);
-        link = link.replace('0', 'y').replace('1', 'z');
-        return link;
     }
 
     /**
