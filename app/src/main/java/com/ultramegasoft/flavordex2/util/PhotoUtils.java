@@ -406,7 +406,6 @@ public class PhotoUtils {
      * Get the output file for a new captured image.
      *
      * @return A File object pointing to the file
-     * @throws IOException
      */
     private static File getOutputMediaFile() throws IOException {
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
@@ -422,7 +421,6 @@ public class PhotoUtils {
      * Get the directory where captured images are stored.
      *
      * @return The media storage directory
-     * @throws IOException
      */
     public static File getMediaStorageDir() throws IOException {
         final File mediaStorageDir =

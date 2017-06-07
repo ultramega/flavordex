@@ -48,7 +48,6 @@ public class Registration extends Endpoint {
      * Register the client with the backend.
      *
      * @return The RegistrationRecord or null if the client is not registered with FCM
-     * @throws ApiException
      */
     public RegistrationRecord register() throws ApiException {
         final String fcmId = FirebaseInstanceId.getInstance().getToken();
@@ -69,8 +68,6 @@ public class Registration extends Endpoint {
 
     /**
      * Unregister the client from the backend.
-     *
-     * @throws ApiException
      */
     public void unregister() throws ApiException {
         final long id = BackendUtils.getClientId(getContext());

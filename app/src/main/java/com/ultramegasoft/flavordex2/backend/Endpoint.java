@@ -181,7 +181,6 @@ abstract class Endpoint {
      * @param method The method to access
      * @param params The parameters for the method
      * @return The response from the API.
-     * @throws ApiException
      */
     String get(String method, Object... params) throws ApiException {
         try {
@@ -199,7 +198,6 @@ abstract class Endpoint {
      * @param method The method to access
      * @param data   The data to send
      * @return The response from the API.
-     * @throws ApiException
      */
     String post(String method, Object data) throws ApiException {
         return post(method, data, new Object[0]);
@@ -212,7 +210,6 @@ abstract class Endpoint {
      * @param data   The data to send
      * @param params The parameters for the method
      * @return The response from the API.
-     * @throws ApiException
      */
     String post(String method, Object data, Object... params) throws ApiException {
         try {
@@ -245,8 +242,6 @@ abstract class Endpoint {
      *
      * @param conn The HTTP connection
      * @return The response body as a string
-     * @throws IOException
-     * @throws ApiException
      */
     private String readResponse(HttpURLConnection conn) throws IOException, ApiException {
         try {
@@ -287,7 +282,6 @@ abstract class Endpoint {
      * @param method The method to access
      * @param params The parameters for the method
      * @return The HTTP connection
-     * @throws IOException
      */
     private HttpURLConnection openConnection(String method, Object... params) throws IOException {
         final Uri uri = mBaseUrl.buildUpon()
@@ -302,7 +296,6 @@ abstract class Endpoint {
      *
      * @param url The URL to connect to
      * @return The HTTP connection
-     * @throws IOException
      */
     private HttpURLConnection openConnection(URL url) throws IOException {
         final HttpURLConnection conn = (HttpURLConnection)url.openConnection();

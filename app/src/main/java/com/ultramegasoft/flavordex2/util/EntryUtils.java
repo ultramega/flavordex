@@ -59,7 +59,6 @@ public class EntryUtils {
      * @param context The Context
      * @param entry   The entry
      * @return The Uri for the new entry
-     * @throws SQLiteException
      */
     public static Uri insertEntry(Context context, EntryHolder entry) throws SQLiteException {
         final ContentResolver cr = context.getContentResolver();
@@ -149,7 +148,6 @@ public class EntryUtils {
      * @param cr    The ContentResolver
      * @param entry The entry
      * @return The Uri for the category
-     * @throws SQLiteException
      */
     private static Uri getCatUri(ContentResolver cr, EntryHolder entry) throws SQLiteException {
         if(entry.catId > 0) {

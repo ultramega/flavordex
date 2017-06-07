@@ -48,8 +48,6 @@ public class Sync extends Endpoint {
 
     /**
      * Start a synchronization session.
-     *
-     * @throws ApiException
      */
     public void startSync() throws ApiException {
         post("startSync", null, BackendUtils.getClientId(getContext()));
@@ -57,8 +55,6 @@ public class Sync extends Endpoint {
 
     /**
      * End the synchronization session.
-     *
-     * @throws ApiException
      */
     public void endSync() throws ApiException {
         post("endSync", null, BackendUtils.getClientId(getContext()));
@@ -68,7 +64,6 @@ public class Sync extends Endpoint {
      * Get a list of deleted and updated categories and entries.
      *
      * @return The SyncRecord
-     * @throws ApiException
      */
     public SyncRecord getUpdates() throws ApiException {
         final String response = get("getUpdates", BackendUtils.getClientId(getContext()));
@@ -84,7 +79,6 @@ public class Sync extends Endpoint {
      *
      * @param catUuid The UUID of the category
      * @return The CatRecord
-     * @throws ApiException
      */
     public CatRecord getCat(String catUuid) throws ApiException {
         final String response = get("getCat", BackendUtils.getClientId(getContext()), catUuid);
@@ -100,7 +94,6 @@ public class Sync extends Endpoint {
      *
      * @param catRecord The CatRecord
      * @return The UpdateResponse
-     * @throws ApiException
      */
     public UpdateResponse putCat(CatRecord catRecord) throws ApiException {
         final String response = post("putCat", catRecord, BackendUtils.getClientId(getContext()));
@@ -116,7 +109,6 @@ public class Sync extends Endpoint {
      *
      * @param entryUuid The UUID of the entry
      * @return The EntryRecord
-     * @throws ApiException
      */
     public EntryRecord getEntry(String entryUuid) throws ApiException {
         final String response = get("getEntry", BackendUtils.getClientId(getContext()), entryUuid);
@@ -132,7 +124,6 @@ public class Sync extends Endpoint {
      *
      * @param entryRecord The EntryRecord
      * @return The UpdateResponse
-     * @throws ApiException
      */
     public UpdateResponse putEntry(EntryRecord entryRecord) throws ApiException {
         final String response =
