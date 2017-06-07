@@ -85,16 +85,6 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
         mContext = imageView.getContext().getApplicationContext();
     }
 
-    /**
-     * @param imageView The ImageView to hold the image
-     * @param width     The width of the container
-     * @param height    The height of the container
-     * @param uri       The Uri to the photo file to load from disk
-     */
-    public ImageLoader(ImageView imageView, int width, int height, Uri uri) {
-        this(imageView, width, height, uri, null);
-    }
-
     @Override
     protected Bitmap doInBackground(Void... args) {
         final Bitmap bitmap = PhotoUtils.loadBitmap(mContext, mUri, mWidth, mHeight);
