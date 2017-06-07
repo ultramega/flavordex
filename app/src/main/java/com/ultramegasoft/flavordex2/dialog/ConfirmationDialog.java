@@ -90,21 +90,6 @@ public class ConfirmationDialog extends DialogFragment {
      * @param requestCode A number to identify this request
      * @param title       The dialog title
      * @param message     The dialog message
-     * @param data        An Intent to store additional data
-     */
-    public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
-                                  String title, String message, Intent data) {
-        showDialog(fm, target, requestCode, title, message, R.drawable.ic_warning, data);
-    }
-
-    /**
-     * Show a confirmation dialog.
-     *
-     * @param fm          The FragmentManager to use
-     * @param target      The Fragment to notify of the result
-     * @param requestCode A number to identify this request
-     * @param title       The dialog title
-     * @param message     The dialog message
      * @param icon        Resource ID for the dialog icon
      * @param data        An Intent to store additional data
      */

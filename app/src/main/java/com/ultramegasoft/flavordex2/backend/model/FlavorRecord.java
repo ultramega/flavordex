@@ -27,6 +27,7 @@ package com.ultramegasoft.flavordex2.backend.model;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("unused")
 public class FlavorRecord extends Model {
     public long id;
     public long cat;

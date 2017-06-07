@@ -99,33 +99,6 @@ public class PermissionUtils {
     }
 
     /**
-     * Make a request for external storage permissions from the user if they are not already
-     * granted.
-     *
-     * @param fragment  The Fragment making the request
-     * @param rationale Rationale for requesting external storage permissions
-     * @return Whether we already have external storage permissions
-     */
-    public static boolean checkExternalStoragePerm(Fragment fragment, int rationale) {
-        if(hasExternalStoragePerm(fragment.getContext())) {
-            return true;
-        }
-
-        if(fragment.shouldShowRequestPermissionRationale(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            PermissionDialog.showDialog(fragment.getFragmentManager(),
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_STORAGE,
-                    fragment.getString(rationale), fragment);
-            getPreferences(fragment.getContext()).edit().putBoolean(PREF_ASKED_STORAGE, true)
-                    .apply();
-        } else {
-            requestExternalStoragePerm(fragment);
-        }
-
-        return false;
-    }
-
-    /**
      * Make the actual request from the user for external storage permissions.
      *
      * @param activity The Activity making the request
@@ -134,17 +107,6 @@ public class PermissionUtils {
         ActivityCompat.requestPermissions(activity,
                 new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE);
         getPreferences(activity).edit().putBoolean(PREF_ASKED_STORAGE, true).apply();
-    }
-
-    /**
-     * Make the actual request from the user for external storage permissions.
-     *
-     * @param fragment The Fragment making the request
-     */
-    private static void requestExternalStoragePerm(Fragment fragment) {
-        fragment.requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                REQUEST_STORAGE);
-        getPreferences(fragment.getContext()).edit().putBoolean(PREF_ASKED_STORAGE, true).apply();
     }
 
     /**
@@ -174,22 +136,6 @@ public class PermissionUtils {
     /**
      * Make a request for location permissions from the user if they are not already granted.
      *
-     * @param activity The Activity making the request
-     * @return Whether we already have location permissions
-     */
-    public static boolean checkLocationPerm(FragmentActivity activity) {
-        if(hasLocationPerm(activity)) {
-            return true;
-        }
-
-        requestLocationPerm(activity);
-
-        return false;
-    }
-
-    /**
-     * Make a request for location permissions from the user if they are not already granted.
-     *
      * @param fragment The Fragment making the request
      * @return Whether we already have location permissions
      */
@@ -201,17 +147,6 @@ public class PermissionUtils {
         requestLocationPerm(fragment);
 
         return false;
-    }
-
-    /**
-     * Make the actual request from the user for location permissions.
-     *
-     * @param activity The Activity making the request
-     */
-    private static void requestLocationPerm(Activity activity) {
-        ActivityCompat.requestPermissions(activity,
-                new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
-        getPreferences(activity).edit().putBoolean(PREF_ASKED_LOCATION, true).apply();
     }
 
     /**

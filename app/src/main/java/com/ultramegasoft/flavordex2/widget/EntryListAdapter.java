@@ -48,6 +48,7 @@ import java.util.Locale;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("unused")
 public class EntryListAdapter extends CursorAdapter {
     /**
      * Background loader for thumbnails

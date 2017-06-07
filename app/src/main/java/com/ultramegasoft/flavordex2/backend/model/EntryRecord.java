@@ -29,6 +29,7 @@ import java.util.ArrayList;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("unused")
 public class EntryRecord extends Model {
     public long id;
     public String uuid;

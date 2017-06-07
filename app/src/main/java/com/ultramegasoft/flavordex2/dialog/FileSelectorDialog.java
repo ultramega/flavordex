@@ -138,18 +138,6 @@ public class FileSelectorDialog extends DialogFragment {
      * @param requestCode      The request code
      * @param rootPath         The initial starting path
      * @param allowDirectories Whether to allow directories to be selected
-     */
-    public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
-                                  String rootPath, boolean allowDirectories) {
-        showDialog(fm, target, requestCode, rootPath, allowDirectories, null, rootPath);
-    }
-
-    /**
-     * @param fm               The FragmentManager to use
-     * @param target           The Fragment to send results to
-     * @param requestCode      The request code
-     * @param rootPath         The initial starting path
-     * @param allowDirectories Whether to allow directories to be selected
      * @param nameFilter       Filter out files that do not contain this string
      */
     public static void showDialog(FragmentManager fm, Fragment target, int requestCode,

@@ -179,17 +179,6 @@ abstract class Endpoint {
      * Perform a GET request on the API.
      *
      * @param method The method to access
-     * @return The response from the API.
-     * @throws ApiException
-     */
-    protected String get(String method) throws ApiException {
-        return get(method, new Object[0]);
-    }
-
-    /**
-     * Perform a GET request on the API.
-     *
-     * @param method The method to access
      * @param params The parameters for the method
      * @return The response from the API.
      * @throws ApiException
@@ -202,17 +191,6 @@ abstract class Endpoint {
         } catch(IOException e) {
             throw new ApiException("Request failed", e);
         }
-    }
-
-    /**
-     * Perform a POST request on the API.
-     *
-     * @param method The method to access
-     * @return The response from the API.
-     * @throws ApiException
-     */
-    protected String post(String method) throws ApiException {
-        return post(method, null);
     }
 
     /**

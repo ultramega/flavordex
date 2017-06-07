@@ -231,6 +231,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
     /**
      * Fragment containing the main search form.
      */
+    @SuppressWarnings("unused")
     public static class SearchFormFragment extends Fragment
             implements LoaderManager.LoaderCallbacks<Cursor> {
         /**

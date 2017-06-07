@@ -27,6 +27,7 @@ package com.ultramegasoft.flavordex2.backend.model;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("unused")
 public class PhotoRecord extends Model {
     public long id;
     public long entry;

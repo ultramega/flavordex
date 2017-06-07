@@ -27,6 +27,7 @@ package com.ultramegasoft.flavordex2.backend.model;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("unused")
 public class ExtraRecord extends Model {
     public long id;
     public String uuid;

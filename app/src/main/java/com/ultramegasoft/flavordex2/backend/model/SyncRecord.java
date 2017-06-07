@@ -29,7 +29,7 @@ import java.util.HashMap;
  *
  * @author Steve Guidetti
  */
-@SuppressWarnings("CanBeFinal")
+@SuppressWarnings({"CanBeFinal", "unused"})
 public class SyncRecord extends Model {
     public HashMap<String, Long> deletedCats;
     public HashMap<String, Long> updatedCats;

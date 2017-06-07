@@ -51,6 +51,7 @@ import java.util.Locale;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("unused")
 public class DateInputWidget extends LinearLayout
         implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     /**

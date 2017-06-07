@@ -82,6 +82,7 @@ public class CheckableEntryListItem extends LinearLayout implements Checkable {
      *
      * @return Whether this list item is being used in a multiple choice mode ListView
      */
+    @SuppressWarnings("unused")
     public boolean isMultiChoice() {
         return mMultiChoice;
     }
