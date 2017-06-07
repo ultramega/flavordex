@@ -37,7 +37,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.facebook.FacebookSdk;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.ultramegasoft.flavordex2.dialog.AboutDialog;
@@ -137,8 +136,6 @@ public class EntryListActivity extends AppCompatActivity
             mSelectedItem = savedInstanceState.getLong(STATE_SELECTED_ENTRY, mSelectedItem);
             mFilters = savedInstanceState.getParcelable(STATE_FILTERS);
         }
-
-        FacebookSdk.sdkInitialize(getApplicationContext());
 
         final TwitterAuthConfig twitterConfig = new TwitterAuthConfig(
                 getString(R.string.twitter_key), getString(R.string.twitter_secret));
