@@ -27,7 +27,7 @@ package com.ultramegasoft.flavordex2.backend.model;
  *
  * @author Steve Guidetti
  */
-@SuppressWarnings({"CanBeFinal", "unused"})
+@SuppressWarnings("unused")
 public class UpdateResponse extends Model {
     public boolean success;
 }
