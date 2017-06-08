@@ -315,7 +315,8 @@ public class EditInfoFragment extends LoadingProgressFragment
          */
         private EntryHolder loadEntry(Uri entryUri) {
             final EntryHolder entry = new EntryHolder();
-            final Cursor cursor = getContext().getContentResolver().query(entryUri, null, null, null, null);
+            final Cursor cursor =
+                    getContext().getContentResolver().query(entryUri, null, null, null, null);
             if(cursor != null) {
                 try {
                     if(cursor.moveToFirst()) {

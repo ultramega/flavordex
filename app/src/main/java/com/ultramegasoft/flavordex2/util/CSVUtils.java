@@ -492,8 +492,8 @@ public class CSVUtils {
     /**
      * Parse the photos field from the CSV row.
      *
-     * @param entry   The entry
-     * @param rowMap  The map of fields from the row
+     * @param entry  The entry
+     * @param rowMap The map of fields from the row
      */
     private static void readPhotos(EntryHolder entry, HashMap<String, String> rowMap) {
         final String photosField = rowMap.get(Tables.Photos.TABLE_NAME);

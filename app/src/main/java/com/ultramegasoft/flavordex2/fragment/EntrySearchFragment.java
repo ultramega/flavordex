@@ -191,7 +191,8 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch(id) {
             case LOADER_CAT:
-                return new CursorLoader(getContext(), Tables.Cats.CONTENT_URI, null, null, null, null);
+                return new CursorLoader(getContext(), Tables.Cats.CONTENT_URI, null, null, null,
+                        null);
         }
         return null;
     }

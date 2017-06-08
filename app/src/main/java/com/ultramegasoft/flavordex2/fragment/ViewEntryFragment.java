@@ -195,7 +195,8 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
                 if(fragment instanceof EntryListFragment) {
                     ((EntryListFragment)fragment).clearSelection();
                 } else if(fragment instanceof CatListFragment) {
-                    final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+                    final ActionBar actionBar =
+                            ((AppCompatActivity)getActivity()).getSupportActionBar();
                     if(actionBar != null) {
                         actionBar.setSubtitle(null);
                     }

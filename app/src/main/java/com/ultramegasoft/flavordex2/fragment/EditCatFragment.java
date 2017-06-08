@@ -738,7 +738,7 @@ public class EditCatFragment extends LoadingProgressFragment
          * @param catId   The category database ID, if updating
          */
         DataSaver(Context context, ContentValues catInfo, ArrayList<Field> extras,
-                         ArrayList<Field> flavors, long catId) {
+                  ArrayList<Field> flavors, long catId) {
             mContext = context.getApplicationContext();
             mResolver = context.getContentResolver();
             mCatInfo = catInfo;

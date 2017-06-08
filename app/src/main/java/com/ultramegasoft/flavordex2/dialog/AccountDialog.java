@@ -250,10 +250,12 @@ public class AccountDialog extends DialogFragment {
                                         onUserError();
                                     } catch(Exception e) {
                                         if(e.getMessage().contains("INVALID_EMAIL")) {
-                                            mTxtEmail.setError(getString(R.string.error_invalid_email));
+                                            mTxtEmail.setError(
+                                                    getString(R.string.error_invalid_email));
                                             mTxtEmail.requestFocus();
                                         } else if(e.getMessage().contains("EMAIL_EXISTS")) {
-                                            mTxtEmail.setError(getString(R.string.error_user_exists));
+                                            mTxtEmail.setError(
+                                                    getString(R.string.error_user_exists));
                                             mTxtEmail.requestFocus();
                                         } else {
                                             Log.e(TAG, e.getMessage());

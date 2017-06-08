@@ -530,7 +530,7 @@ public class PhotoUtils {
      * @return The MD5 hash of the file or null on failure
      */
     public static String getMD5Hash(ContentResolver cr, Uri uri) {
-        if(uri == null){
+        if(uri == null) {
             return null;
         }
         try {

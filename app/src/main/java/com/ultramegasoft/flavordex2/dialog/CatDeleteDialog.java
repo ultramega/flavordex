@@ -271,7 +271,8 @@ public class CatDeleteDialog extends DialogFragment
             final ContentResolver cr = mContext.getContentResolver();
 
             Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_CAT_URI_BASE, mCatId);
-            final Cursor cursor = cr.query(uri, new String[] {Tables.Entries._ID}, null, null, null);
+            final Cursor cursor =
+                    cr.query(uri, new String[] {Tables.Entries._ID}, null, null, null);
             if(cursor != null) {
                 try {
                     while(cursor.moveToNext()) {

@@ -259,7 +259,8 @@ public class FileImportDialog extends ImportDialog
          * @param requestCode A number to identify this request
          * @param num         The number of duplicates
          */
-        public static void showDialog(FragmentManager fm, Fragment target, int requestCode, int num) {
+        public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
+                                      int num) {
             final DialogFragment fragment = new DuplicatesDialog();
             fragment.setTargetFragment(target, requestCode);
 

@@ -390,7 +390,7 @@ public class EntryListActivity extends AppCompatActivity
                     }
                 }
                 return;
-            } else if(fragment instanceof EntrySearchFragment){
+            } else if(fragment instanceof EntrySearchFragment) {
                 fm.beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                         .replace(R.id.entry_detail_container, mWelcomeFragment).commit();
                 return;

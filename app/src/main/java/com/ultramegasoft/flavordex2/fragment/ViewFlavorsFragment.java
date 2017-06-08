@@ -323,7 +323,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                     value = data.getInt(data.getColumnIndex(Tables.EntriesFlavors.VALUE));
                     flavorValues.add(new RadarHolder(name, value));
                 }
-                if(flavorValues.isEmpty()){
+                if(flavorValues.isEmpty()) {
                     getLoaderManager().initLoader(LOADER_DEFAULT_FLAVOR, null, this);
                     break;
                 }
