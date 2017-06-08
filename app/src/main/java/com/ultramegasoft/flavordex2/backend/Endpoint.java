@@ -149,7 +149,7 @@ abstract class Endpoint {
     private void loadAuthToken() {
         final FirebaseUser auth = FirebaseAuth.getInstance().getCurrentUser();
         if(auth != null) {
-            final Task<GetTokenResult> tokenTask = auth.getToken(true);
+            final Task<GetTokenResult> tokenTask = auth.getIdToken(true);
             try {
                 final GetTokenResult result = Tasks.await(tokenTask);
                 mAuthToken = result.getToken();
