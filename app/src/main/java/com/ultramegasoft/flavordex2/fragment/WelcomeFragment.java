@@ -36,6 +36,8 @@ import com.ultramegasoft.flavordex2.R;
 import java.util.Calendar;
 
 /**
+ * Fragment to welcome the user to the app.
+ *
  * @author Steve Guidetti
  */
 public class WelcomeFragment extends Fragment {
