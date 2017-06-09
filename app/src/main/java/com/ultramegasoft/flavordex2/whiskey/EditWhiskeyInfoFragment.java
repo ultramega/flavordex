@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.whiskey;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.ultramegasoft.flavordex2.R;
@@ -39,8 +40,9 @@ public class EditWhiskeyInfoFragment extends EditInfoFragment {
         return R.layout.fragment_edit_info_whiskey;
     }
 
+    @NonNull
     @Override
-    protected EntryFormHelper createHelper(View root) {
+    protected EntryFormHelper createHelper(@NonNull View root) {
         return new WhiskeyEntryFormHelper(this, root);
     }
 }

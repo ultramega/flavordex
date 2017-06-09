@@ -23,6 +23,8 @@
 package com.ultramegasoft.flavordex2.widget;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +61,9 @@ public class SpecialArrayAdapter<T> extends BaseAdapter implements Filterable {
 
     private Context mContext;
 
+    @Nullable
     private ArrayList<T> mOriginalValues;
+    @Nullable
     private SpecialArrayFilter mFilter;
 
     private LayoutInflater mInflater;
@@ -98,32 +102,36 @@ public class SpecialArrayAdapter<T> extends BaseAdapter implements Filterable {
                 }
             };
 
-    public SpecialArrayAdapter(Context context, int textViewResourceId) {
+    public SpecialArrayAdapter(@NonNull Context context, int textViewResourceId) {
         init(context, textViewResourceId, 0, new ArrayList<T>());
     }
 
-    public SpecialArrayAdapter(Context context, int resource, int textViewResourceId) {
+    public SpecialArrayAdapter(@NonNull Context context, int resource, int textViewResourceId) {
         init(context, resource, textViewResourceId, new ArrayList<T>());
     }
 
-    public SpecialArrayAdapter(Context context, int textViewResourceId, T[] objects) {
+    public SpecialArrayAdapter(@NonNull Context context, int textViewResourceId,
+                               @NonNull T[] objects) {
         init(context, textViewResourceId, 0, Arrays.asList(objects));
     }
 
-    public SpecialArrayAdapter(Context context, int resource, int textViewResourceId, T[] objects) {
+    public SpecialArrayAdapter(@NonNull Context context, int resource, int textViewResourceId,
+                               @NonNull T[] objects) {
         init(context, resource, textViewResourceId, Arrays.asList(objects));
     }
 
-    public SpecialArrayAdapter(Context context, int textViewResourceId, List<T> objects) {
+    public SpecialArrayAdapter(@NonNull Context context, int textViewResourceId,
+                               @NonNull List<T> objects) {
         init(context, textViewResourceId, 0, objects);
     }
 
-    public SpecialArrayAdapter(Context context, int resource, int textViewResourceId,
-                               List<T> objects) {
+    public SpecialArrayAdapter(@NonNull Context context, int resource, int textViewResourceId,
+                               @NonNull List<T> objects) {
         init(context, resource, textViewResourceId, objects);
     }
 
-    private void init(Context context, int resource, int textViewResourceId, List<T> objects) {
+    private void init(@NonNull Context context, int resource, int textViewResourceId,
+                      @NonNull List<T> objects) {
         mContext = context;
         mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mResource = mDropDownResource = resource;
@@ -131,7 +139,7 @@ public class SpecialArrayAdapter<T> extends BaseAdapter implements Filterable {
         mFieldId = textViewResourceId;
     }
 
-    public void add(T object) {
+    public void add(@NonNull T object) {
         if(mOriginalValues != null) {
             synchronized(mLock) {
                 mOriginalValues.add(object);
@@ -144,7 +152,7 @@ public class SpecialArrayAdapter<T> extends BaseAdapter implements Filterable {
         }
     }
 
-    public void insert(T object, int index) {
+    public void insert(@NonNull T object, int index) {
         if(mOriginalValues != null) {
             synchronized(mLock) {
                 mOriginalValues.add(index, object);
@@ -157,7 +165,7 @@ public class SpecialArrayAdapter<T> extends BaseAdapter implements Filterable {
         }
     }
 
-    public void remove(T object) {
+    public void remove(@NonNull T object) {
         if(mOriginalValues != null) {
             synchronized(mLock) {
                 mOriginalValues.remove(object);
@@ -183,7 +191,7 @@ public class SpecialArrayAdapter<T> extends BaseAdapter implements Filterable {
         }
     }
 
-    public void sort(Comparator<? super T> comparator) {
+    public void sort(@Nullable Comparator<? super T> comparator) {
         Collections.sort(mObjects, comparator);
         if(mNotifyOnChange) {
             notifyDataSetChanged();
@@ -200,32 +208,38 @@ public class SpecialArrayAdapter<T> extends BaseAdapter implements Filterable {
         mNotifyOnChange = notifyOnChange;
     }
 
+    @NonNull
     public Context getContext() {
         return mContext;
     }
 
+    @Override
     public int getCount() {
         return mObjects.size();
     }
 
+    @Override
     public T getItem(int position) {
         return mObjects.get(position);
     }
 
-    public int getPosition(T item) {
+    public int getPosition(@NonNull T item) {
         return mObjects.indexOf(item);
     }
 
+    @Override
     public long getItemId(int position) {
         return position;
     }
 
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         return createViewFromResource(position, convertView, parent, mResource);
     }
 
-    private View createViewFromResource(int position, View convertView, ViewGroup parent,
-                                        int resource) {
+    @NonNull
+    private View createViewFromResource(int position, @Nullable View convertView,
+                                        @NonNull ViewGroup parent, int resource) {
         final View view;
         final TextView text;
 
@@ -261,13 +275,14 @@ public class SpecialArrayAdapter<T> extends BaseAdapter implements Filterable {
         return createViewFromResource(position, convertView, parent, mDropDownResource);
     }
 
-    public static SpecialArrayAdapter<CharSequence> createFromResource(Context context,
+    public static SpecialArrayAdapter<CharSequence> createFromResource(@NonNull Context context,
                                                                        int textArrayResId,
                                                                        int textViewResId) {
         final CharSequence[] strings = context.getResources().getTextArray(textArrayResId);
         return new SpecialArrayAdapter<>(context, textViewResId, strings);
     }
 
+    @Override
     public Filter getFilter() {
         if(mFilter == null) {
             mFilter = new SpecialArrayFilter();
@@ -344,7 +359,8 @@ public class SpecialArrayAdapter<T> extends BaseAdapter implements Filterable {
          * @param original The string to convert
          * @return The converted string
          */
-        private String normalizeString(String original) {
+        @NonNull
+        private String normalizeString(@NonNull String original) {
             final char[] chars = original.toLowerCase().toCharArray();
             for(int i = 0; i < chars.length; i++) {
                 final Character replace = sNormalizeMap.get(chars[i]);

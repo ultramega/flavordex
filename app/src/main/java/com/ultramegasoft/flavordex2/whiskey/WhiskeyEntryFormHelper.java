@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.whiskey;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -48,12 +49,12 @@ class WhiskeyEntryFormHelper extends EntryFormHelper {
     EditText mTxtAge;
     EditText mTxtABV;
 
-    WhiskeyEntryFormHelper(Fragment fragment, View layoutRoot) {
+    WhiskeyEntryFormHelper(@NonNull Fragment fragment, @NonNull View layoutRoot) {
         super(fragment, layoutRoot);
     }
 
     @Override
-    protected void loadLayout(View root) {
+    protected void loadLayout(@NonNull View root) {
         super.loadLayout(root);
         mTxtType = (AutoCompleteTextView)root.findViewById(R.id.entry_type);
         mTxtType.setAdapter(ArrayAdapter.createFromResource(mFragment.getContext(),
@@ -64,7 +65,7 @@ class WhiskeyEntryFormHelper extends EntryFormHelper {
     }
 
     @Override
-    public void setExtras(LinkedHashMap<String, ExtraFieldHolder> extras) {
+    public void setExtras(@NonNull LinkedHashMap<String, ExtraFieldHolder> extras) {
         super.setExtras(extras);
         initEditText(mTxtType, extras.get(Tables.Extras.Whiskey.STYLE));
         initEditText(mTxtAge, extras.get(Tables.Extras.Whiskey.STATS_AGE));

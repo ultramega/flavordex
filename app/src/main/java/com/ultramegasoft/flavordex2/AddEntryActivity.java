@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -62,7 +63,8 @@ public class AddEntryActivity extends AppCompatActivity {
      * @param catName The category name
      * @return An Intent to start the Activity
      */
-    public static Intent getIntent(Context context, long catId, String catName) {
+    @NonNull
+    public static Intent getIntent(@NonNull Context context, long catId, @Nullable String catName) {
         final Intent intent = new Intent(context, AddEntryActivity.class);
         intent.putExtra(EXTRA_CAT_ID, catId);
         intent.putExtra(EXTRA_CAT_NAME, catName);
@@ -70,7 +72,7 @@ public class AddEntryActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         final ActionBar actionBar = getSupportActionBar();
@@ -116,7 +118,7 @@ public class AddEntryActivity extends AppCompatActivity {
      * @param entryCat   The name of the entry category
      * @param entryCatId The ID for the entry category
      */
-    public void publishResult(long entryId, String entryCat, long entryCatId) {
+    public void publishResult(long entryId, @Nullable String entryCat, long entryCatId) {
         if(entryId == 0) {
             Toast.makeText(this, R.string.error_insert_entry, Toast.LENGTH_LONG).show();
         } else {

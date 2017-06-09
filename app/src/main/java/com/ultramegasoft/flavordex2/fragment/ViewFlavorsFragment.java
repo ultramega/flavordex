@@ -31,6 +31,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -46,9 +48,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.radarchart.RadarEditWidget;
 import com.ultramegasoft.radarchart.RadarHolder;
@@ -89,12 +91,15 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     /**
      * Animations for the editing layout
      */
+    @Nullable
     private Animation mInAnimation;
+    @Nullable
     private Animation mOutAnimation;
 
     /**
      * The entry's flavor data
      */
+    @Nullable
     private ArrayList<RadarHolder> mData;
 
     /**
@@ -108,14 +113,14 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     private long mEntryId;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ENTRY_ID);
         setHasOptionsMenu(true);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         if(savedInstanceState != null) {
@@ -129,9 +134,10 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
         }
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_view_flavors, container, false);
 
         mRadarView = (RadarView)root.findViewById(R.id.radar);
@@ -367,6 +373,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
         /**
          * The Context
          */
+        @NonNull
         private final Context mContext;
 
         /**
@@ -377,6 +384,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
         /**
          * The radar chart data to insert
          */
+        @NonNull
         private final ArrayList<RadarHolder> mData;
 
         /**
@@ -384,7 +392,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
          * @param entryId The entry to save flavors to
          * @param data    The radar chart data to insert
          */
-        DataSaver(Context context, long entryId, ArrayList<RadarHolder> data) {
+        DataSaver(@NonNull Context context, long entryId, @NonNull ArrayList<RadarHolder> data) {
             mContext = context.getApplicationContext();
             mEntryId = entryId;
             mData = data;

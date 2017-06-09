@@ -33,6 +33,7 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
@@ -111,7 +112,8 @@ public class AppImportUtils {
      * @param pm The PackageManager
      * @return List of AppHolder objects for each app
      */
-    public static ArrayList<AppHolder> getInstalledApps(PackageManager pm) {
+    @NonNull
+    public static ArrayList<AppHolder> getInstalledApps(@NonNull PackageManager pm) {
         final ArrayList<AppHolder> apps = new ArrayList<>();
 
         ApplicationInfo appInfo;
@@ -139,7 +141,7 @@ public class AppImportUtils {
      * @param context The Context
      * @return Whether any app is installed
      */
-    public static boolean isAnyAppInstalled(Context context) {
+    public static boolean isAnyAppInstalled(@NonNull Context context) {
         for(int i = 0; i < sPackageNames.length; i++) {
             if(isAppInstalled(context, i)) {
                 return true;
@@ -155,7 +157,7 @@ public class AppImportUtils {
      * @param app     The app
      * @return Whether the app is installed
      */
-    private static boolean isAppInstalled(Context context, int app) {
+    private static boolean isAppInstalled(@NonNull Context context, int app) {
         return isAppInstalled(context, app, false);
     }
 
@@ -167,7 +169,7 @@ public class AppImportUtils {
      * @param checkSupport Check whether the app supports importing
      * @return Whether the app is installed
      */
-    public static boolean isAppInstalled(Context context, int app, boolean checkSupport) {
+    public static boolean isAppInstalled(@NonNull Context context, int app, boolean checkSupport) {
         final ProviderInfo pi = getProviderInfo(context.getPackageManager(), app);
         return pi != null && (!checkSupport || pi.exported);
     }
@@ -179,7 +181,8 @@ public class AppImportUtils {
      * @param app The app
      * @return The ProviderInfo for the app's ContentProvider
      */
-    private static ProviderInfo getProviderInfo(PackageManager pm, int app) {
+    @NonNull
+    private static ProviderInfo getProviderInfo(@NonNull PackageManager pm, int app) {
         return pm.resolveContentProvider(sPackageNames[app] + ".provider", 0);
     }
 
@@ -189,6 +192,7 @@ public class AppImportUtils {
      * @param app The app
      * @return The content Uri
      */
+    @NonNull
     public static Uri getEntriesUri(int app) {
         return Uri.parse("content://" + sPackageNames[app] + ".provider/entries");
     }
@@ -200,7 +204,8 @@ public class AppImportUtils {
      * @param app     The app
      * @return The list of flavor names
      */
-    private static String[] getFlavorNames(Context context, int app) {
+    @NonNull
+    private static String[] getFlavorNames(@NonNull Context context, int app) {
         final Resources res = context.getResources();
         switch(app) {
             case APP_BEER:
@@ -223,7 +228,8 @@ public class AppImportUtils {
      * @param sourceId The ID of the source entry
      * @return The imported entry
      */
-    public static EntryHolder importEntry(Context context, int app, long sourceId) {
+    @NonNull
+    public static EntryHolder importEntry(@NonNull Context context, int app, long sourceId) {
         if(app == APP_FD2_LITE) {
             return importFd2LiteEntry(context, sourceId);
         } else {
@@ -239,7 +245,8 @@ public class AppImportUtils {
      * @param sourceId The ID of the source entry
      * @return The imported entry
      */
-    private static EntryHolder importLegacyEntry(Context context, int app, long sourceId) {
+    @NonNull
+    private static EntryHolder importLegacyEntry(@NonNull Context context, int app, long sourceId) {
         final EntryHolder entry = new EntryHolder();
         final ContentResolver cr = context.getContentResolver();
         final Uri uri = ContentUris.withAppendedId(getEntriesUri(app), sourceId);
@@ -292,7 +299,8 @@ public class AppImportUtils {
      * @param cursor       The Cursor for the source entry row
      * @param entry        The new local entry
      */
-    private static void getExtras(String[] extraColumns, Cursor cursor, EntryHolder entry) {
+    private static void getExtras(@NonNull String[] extraColumns, @NonNull Cursor cursor,
+                                  @NonNull EntryHolder entry) {
         String name;
         String value;
         for(String column : extraColumns) {
@@ -310,7 +318,8 @@ public class AppImportUtils {
      * @param sourceUri The entry Uri from the source app
      * @param entry     The new local entry
      */
-    private static void getFlavors(Context context, int app, Uri sourceUri, EntryHolder entry) {
+    private static void getFlavors(@NonNull Context context, int app, @NonNull Uri sourceUri,
+                                   @NonNull EntryHolder entry) {
         final ContentResolver cr = context.getContentResolver();
         final String[] names = getFlavorNames(context, app);
         final Cursor cursor = cr.query(Uri.withAppendedPath(sourceUri, "flavor"), null, null, null,
@@ -341,7 +350,8 @@ public class AppImportUtils {
      * @param sourceUri The entry Uri from the source app
      * @param entry     The new local entry
      */
-    private static void getPhotos(Context context, Uri sourceUri, EntryHolder entry) {
+    private static void getPhotos(@NonNull Context context, @NonNull Uri sourceUri,
+                                  @NonNull EntryHolder entry) {
         final ContentResolver cr = context.getContentResolver();
         final Cursor cursor = cr.query(Uri.withAppendedPath(sourceUri, "photos"), null, null, null,
                 PhotosColumns._ID + " ASC");
@@ -367,7 +377,8 @@ public class AppImportUtils {
      * @param sourceId The ID of the source entry
      * @return The imported entry
      */
-    private static EntryHolder importFd2LiteEntry(Context context, long sourceId) {
+    @NonNull
+    private static EntryHolder importFd2LiteEntry(@NonNull Context context, long sourceId) {
         final EntryHolder entry = new EntryHolder();
         final ContentResolver cr = context.getContentResolver();
         final Uri uri = ContentUris.withAppendedId(getEntriesUri(APP_FD2_LITE), sourceId);
@@ -408,7 +419,8 @@ public class AppImportUtils {
      * @param sourceUri The entry Uri from the source app
      * @param entry     The new local entry
      */
-    private static void getFd2LiteExtras(Context context, Uri sourceUri, EntryHolder entry) {
+    private static void getFd2LiteExtras(@NonNull Context context, @NonNull Uri sourceUri,
+                                         @NonNull EntryHolder entry) {
         final ContentResolver cr = context.getContentResolver();
         final Cursor cursor =
                 cr.query(Uri.withAppendedPath(sourceUri, "extras"), null, null, null, null);
@@ -434,7 +446,8 @@ public class AppImportUtils {
      * @param sourceUri The entry Uri from the source app
      * @param entry     The new local entry
      */
-    private static void getFd2LiteFlavors(Context context, Uri sourceUri, EntryHolder entry) {
+    private static void getFd2LiteFlavors(@NonNull Context context, @NonNull Uri sourceUri,
+                                          @NonNull EntryHolder entry) {
         final ContentResolver cr = context.getContentResolver();
         final Cursor cursor =
                 cr.query(Uri.withAppendedPath(sourceUri, "flavor"), null, null, null, null);
@@ -460,7 +473,8 @@ public class AppImportUtils {
      * @param sourceUri The entry Uri from the source app
      * @param entry     The new local entry
      */
-    private static void getFd2LitePhotos(Context context, Uri sourceUri, EntryHolder entry) {
+    private static void getFd2LitePhotos(@NonNull Context context, @NonNull Uri sourceUri,
+                                         @NonNull EntryHolder entry) {
         final ContentResolver cr = context.getContentResolver();
         final Cursor cursor =
                 cr.query(Uri.withAppendedPath(sourceUri, "photos"), null, null, null, null);

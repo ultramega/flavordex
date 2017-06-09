@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.beer;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
@@ -52,12 +53,12 @@ class BeerEntryFormHelper extends EntryFormHelper {
     EditText mTxtOG;
     EditText mTxtFG;
 
-    BeerEntryFormHelper(Fragment fragment, View layoutRoot) {
+    BeerEntryFormHelper(@NonNull Fragment fragment, @NonNull View layoutRoot) {
         super(fragment, layoutRoot);
     }
 
     @Override
-    protected void loadLayout(View root) {
+    protected void loadLayout(@NonNull View root) {
         super.loadLayout(root);
         mTxtStyle = (AutoCompleteTextView)root.findViewById(R.id.entry_style);
         mTxtStyle.setAdapter(SpecialArrayAdapter.createFromResource(mFragment.getContext(),
@@ -72,7 +73,7 @@ class BeerEntryFormHelper extends EntryFormHelper {
     }
 
     @Override
-    public void setExtras(LinkedHashMap<String, ExtraFieldHolder> extras) {
+    public void setExtras(@NonNull LinkedHashMap<String, ExtraFieldHolder> extras) {
         super.setExtras(extras);
         initEditText(mTxtStyle, extras.get(Tables.Extras.Beer.STYLE));
         initSpinner(mSpnServing, extras.get(Tables.Extras.Beer.SERVING));

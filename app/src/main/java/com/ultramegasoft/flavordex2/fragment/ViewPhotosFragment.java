@@ -32,6 +32,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.LoaderManager;
@@ -51,9 +53,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
@@ -95,7 +97,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     private LinearLayout mNoDataLayout;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ENTRY_ID);
         if(savedInstanceState != null) {
@@ -103,9 +105,10 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         }
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         if(!isMediaReadable()) {
             return super.onCreateView(inflater, container, savedInstanceState);
         }
@@ -119,7 +122,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if(!isMediaReadable()) {
             return;
@@ -189,7 +192,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     }
 
     @Override
-    protected void onPhotoAdded(PhotoHolder photo) {
+    protected void onPhotoAdded(@NonNull PhotoHolder photo) {
         notifyDataChanged();
         mPager.setCurrentItem(getPhotos().size() - 1, true);
 
@@ -197,7 +200,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     }
 
     @Override
-    protected void onPhotoRemoved(PhotoHolder photo) {
+    protected void onPhotoRemoved(@NonNull PhotoHolder photo) {
         notifyDataChanged();
         new PhotoDeleter(getContext(), mEntryId, photo).execute();
     }
@@ -278,7 +281,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
      *
      * @param uri The Uri for the new image
      */
-    private void replacePhoto(Uri uri) {
+    private void replacePhoto(@Nullable Uri uri) {
         if(uri == null || getPhotos().isEmpty()) {
             return;
         }
@@ -365,6 +368,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         /**
          * The data backing the Adapter
          */
+        @NonNull
         private final ArrayList<PhotoHolder> mData;
 
         PagerAdapter() {
@@ -397,6 +401,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         /**
          * The Context
          */
+        @NonNull
         private final Context mContext;
 
         /**
@@ -407,6 +412,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         /**
          * The photo to save
          */
+        @NonNull
         private final PhotoHolder mPhoto;
 
         /**
@@ -414,7 +420,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
          * @param entryId The entry ID
          * @param photo   The photo to save
          */
-        PhotoSaver(Context context, long entryId, PhotoHolder photo) {
+        PhotoSaver(@NonNull Context context, long entryId, @NonNull PhotoHolder photo) {
             mContext = context.getApplicationContext();
             mEntryId = entryId;
             mPhoto = photo;
@@ -475,6 +481,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         /**
          * The Context
          */
+        @NonNull
         private final Context mContext;
 
         /**
@@ -485,6 +492,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         /**
          * The photo to delete
          */
+        @NonNull
         private final PhotoHolder mPhoto;
 
         /**
@@ -492,7 +500,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
          * @param entryId The entry ID
          * @param photo   The photo to delete
          */
-        PhotoDeleter(Context context, long entryId, PhotoHolder photo) {
+        PhotoDeleter(@NonNull Context context, long entryId, @NonNull PhotoHolder photo) {
             mContext = context.getApplicationContext();
             mEntryId = entryId;
             mPhoto = photo;

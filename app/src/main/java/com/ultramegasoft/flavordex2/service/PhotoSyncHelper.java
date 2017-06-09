@@ -31,6 +31,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -79,11 +81,13 @@ class PhotoSyncHelper {
     /**
      * The Google API Client
      */
+    @Nullable
     private GoogleApiClient mClient;
 
     /**
      * The Drive folder for the application
      */
+    @Nullable
     private DriveFolder mDriveFolder;
 
     /**
@@ -99,12 +103,13 @@ class PhotoSyncHelper {
     /**
      * The Context
      */
+    @NonNull
     private final Context mContext;
 
     /**
      * @param context The Context
      */
-    PhotoSyncHelper(Context context) {
+    PhotoSyncHelper(@NonNull Context context) {
         mContext = context;
     }
 
@@ -405,7 +410,8 @@ class PhotoSyncHelper {
      * @param hash The file hash
      * @return The DriveFile
      */
-    private DriveFile uploadFile(Uri uri, String hash) {
+    @Nullable
+    private DriveFile uploadFile(@NonNull Uri uri, @NonNull String hash) {
         DriveFile driveFile = getDriveFile(hash);
         if(driveFile != null) {
             return driveFile;
@@ -462,7 +468,8 @@ class PhotoSyncHelper {
      * @param resourceId The Drive resource ID
      * @return The downloaded file
      */
-    private File downloadPhoto(String resourceId) {
+    @Nullable
+    private File downloadPhoto(@NonNull String resourceId) {
         if(!mMediaMounted) {
             return null;
         }
@@ -531,7 +538,8 @@ class PhotoSyncHelper {
      * @param hash The file hash
      * @return The DriveFile or null if it doesn't exist.
      */
-    private DriveFile getDriveFile(String hash) {
+    @Nullable
+    private DriveFile getDriveFile(@NonNull String hash) {
         final Query query = new Query.Builder().addFilter(Filters.eq(sHashKey, hash)).build();
         final DriveApi.MetadataBufferResult result =
                 mDriveFolder.queryChildren(mClient, query).await();
@@ -553,7 +561,8 @@ class PhotoSyncHelper {
      * @param hash     The file hash
      * @param contents The file content
      */
-    private void createNewFile(String title, String hash, DriveContents contents) {
+    private void createNewFile(@NonNull String title, @NonNull String hash,
+                               @NonNull DriveContents contents) {
         final MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
                 .setTitle(title)
                 .setCustomProperty(sHashKey, hash).build();
@@ -568,7 +577,8 @@ class PhotoSyncHelper {
      * @param original The original file
      * @return The uniquely named file
      */
-    private static File getUniqueFile(File original) {
+    @NonNull
+    private static File getUniqueFile(@NonNull File original) {
         final String origName = original.getName();
         final int extPos = origName.lastIndexOf('.');
         final String name, ext;

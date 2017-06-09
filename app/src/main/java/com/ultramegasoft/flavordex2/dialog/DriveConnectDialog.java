@@ -66,7 +66,7 @@ public class DriveConnectDialog extends DialogFragment
      *
      * @param fm The FragmentManager to use
      */
-    public static void showDialog(FragmentManager fm) {
+    public static void showDialog(@NonNull FragmentManager fm) {
         final DialogFragment fragment = new DriveConnectDialog();
         fragment.show(fm, TAG);
     }

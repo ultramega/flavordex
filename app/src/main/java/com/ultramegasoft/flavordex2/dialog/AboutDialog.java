@@ -58,7 +58,7 @@ public class AboutDialog extends DialogFragment {
      *
      * @param fm The FragmentManager to use
      */
-    public static void showDialog(FragmentManager fm) {
+    public static void showDialog(@NonNull FragmentManager fm) {
         final DialogFragment fragment = new AboutDialog();
         fragment.show(fm, TAG);
     }
@@ -79,6 +79,7 @@ public class AboutDialog extends DialogFragment {
      *
      * @return The View to place inside the Dialog
      */
+    @NonNull
     @SuppressLint("InflateParams")
     private View getLayout() {
         final View root = LayoutInflater.from(getContext()).inflate(R.layout.dialog_about, null);
@@ -150,7 +151,7 @@ public class AboutDialog extends DialogFragment {
          *
          * @param fm The FragmentManager to use
          */
-        public static void showDialog(FragmentManager fm) {
+        public static void showDialog(@NonNull FragmentManager fm) {
             final DialogFragment fragment = new GmsNoticeDialog();
             fragment.show(fm, TAG);
         }

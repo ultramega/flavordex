@@ -26,6 +26,8 @@ import android.content.ContentUris;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -60,7 +62,7 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
     private long mCatId;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCatId = getArguments().getLong(AddEntryFragment.ARG_CAT_ID);
     }
@@ -75,9 +77,10 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
         }
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_add_flavors, container, false);
         mRadarView = (RadarView)root.findViewById(R.id.radar);
         ((RadarEditWidget)root.findViewById(R.id.edit_widget)).setTarget(mRadarView);
@@ -89,7 +92,7 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
      *
      * @param entry The entry
      */
-    public void getData(EntryHolder entry) {
+    public void getData(@NonNull EntryHolder entry) {
         if(mRadarView == null || !mRadarView.hasData()) {
             return;
         }

@@ -29,6 +29,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
@@ -60,6 +62,7 @@ class DataSyncHelper {
     /**
      * The Context
      */
+    @NonNull
     private final Context mContext;
 
     /**
@@ -70,12 +73,13 @@ class DataSyncHelper {
     /**
      * The Sync endpoint client
      */
+    @Nullable
     private Sync mSync;
 
     /**
      * @param context The Context
      */
-    DataSyncHelper(Context context) {
+    DataSyncHelper(@NonNull Context context) {
         mContext = context;
     }
 
@@ -156,6 +160,7 @@ class DataSyncHelper {
      *
      * @return The list of updated categories
      */
+    @NonNull
     private ArrayList<CatRecord> getUpdatedCats() {
         final ContentResolver cr = mContext.getContentResolver();
         final ArrayList<CatRecord> records = new ArrayList<>();
@@ -210,6 +215,7 @@ class DataSyncHelper {
      * @param catId The local database ID of the category
      * @return A list of extra records
      */
+    @Nullable
     private ArrayList<ExtraRecord> getCatExtras(long catId) {
         final ContentResolver cr = mContext.getContentResolver();
         final Uri uri = Uri.withAppendedPath(Tables.Cats.CONTENT_ID_URI_BASE, catId + "/extras");
@@ -243,6 +249,7 @@ class DataSyncHelper {
      * @param catId The local database ID of the category
      * @return A list of flavor records
      */
+    @Nullable
     private ArrayList<FlavorRecord> getCatFlavors(long catId) {
         final ContentResolver cr = mContext.getContentResolver();
         final Uri uri = Uri.withAppendedPath(Tables.Cats.CONTENT_ID_URI_BASE, catId + "/flavor");
@@ -272,6 +279,7 @@ class DataSyncHelper {
      *
      * @return The list of updated entries
      */
+    @NonNull
     private ArrayList<EntryRecord> getUpdatedEntries() {
         final ContentResolver cr = mContext.getContentResolver();
         final ArrayList<EntryRecord> records = new ArrayList<>();
@@ -337,6 +345,7 @@ class DataSyncHelper {
      * @param entryId The local database ID of the entry
      * @return A list of extra records
      */
+    @Nullable
     private ArrayList<ExtraRecord> getEntryExtras(long entryId) {
         final ContentResolver cr = mContext.getContentResolver();
         final Uri uri =
@@ -370,6 +379,7 @@ class DataSyncHelper {
      * @param entryId The local database ID of the entry
      * @return A list of flavor records
      */
+    @Nullable
     private ArrayList<FlavorRecord> getEntryFlavors(long entryId) {
         final ContentResolver cr = mContext.getContentResolver();
         final Uri uri =
@@ -404,6 +414,7 @@ class DataSyncHelper {
      * @param entryId The local database ID of the entry
      * @return A list of photo records
      */
+    @Nullable
     private ArrayList<PhotoRecord> getEntryPhotos(long entryId) {
         final ContentResolver cr = mContext.getContentResolver();
         final Uri uri =
@@ -453,7 +464,8 @@ class DataSyncHelper {
      * @param filePath The path to the photo file
      * @return The generated MD5 hash
      */
-    private String generatePhotoHash(long photoId, String filePath) {
+    @Nullable
+    private String generatePhotoHash(long photoId, @Nullable String filePath) {
         if(filePath == null) {
             return null;
         }
@@ -546,7 +558,7 @@ class DataSyncHelper {
      *
      * @param record The category record
      */
-    private void parseCat(CatRecord record) {
+    private void parseCat(@NonNull CatRecord record) {
         final ContentResolver cr = mContext.getContentResolver();
         final long catId = getCatId(record.uuid);
         Uri uri;
@@ -577,7 +589,7 @@ class DataSyncHelper {
      * @param catUri The category Uri
      * @param record The category record
      */
-    private void parseCatExtras(Uri catUri, CatRecord record) {
+    private void parseCatExtras(@NonNull Uri catUri, @NonNull CatRecord record) {
         if(record.extras == null) {
             return;
         }
@@ -612,7 +624,7 @@ class DataSyncHelper {
      * @param catUri The category Uri
      * @param record The category record
      */
-    private void parseCatFlavors(Uri catUri, CatRecord record) {
+    private void parseCatFlavors(@NonNull Uri catUri, @NonNull CatRecord record) {
         if(record.flavors == null) {
             return;
         }
@@ -635,7 +647,7 @@ class DataSyncHelper {
      *
      * @param record The entry record
      */
-    private void parseEntry(EntryRecord record) {
+    private void parseEntry(@NonNull EntryRecord record) {
         final ContentResolver cr = mContext.getContentResolver();
         final long entryId = getEntryId(record.uuid);
         PhotoUtils.deleteThumb(mContext, entryId);
@@ -681,7 +693,7 @@ class DataSyncHelper {
      * @param entryUri The entry Uri
      * @param record   The entry record
      */
-    private void parseEntryExtras(Uri entryUri, EntryRecord record) {
+    private void parseEntryExtras(@NonNull Uri entryUri, @NonNull EntryRecord record) {
         if(record.extras == null) {
             return;
         }
@@ -709,7 +721,7 @@ class DataSyncHelper {
      * @param entryUri The entry Uri
      * @param record   The entry record
      */
-    private void parseEntryFlavors(Uri entryUri, EntryRecord record) {
+    private void parseEntryFlavors(@NonNull Uri entryUri, @NonNull EntryRecord record) {
         if(record.flavors == null) {
             return;
         }
@@ -737,7 +749,7 @@ class DataSyncHelper {
      * @param entryUri The entry Uri
      * @param record   The entry record
      */
-    private void parseEntryPhotos(Uri entryUri, EntryRecord record) {
+    private void parseEntryPhotos(@NonNull Uri entryUri, @NonNull EntryRecord record) {
         if(record.photos == null) {
             return;
         }
@@ -802,7 +814,7 @@ class DataSyncHelper {
      * @param uuid The UUID of the category
      * @return The local database ID of the category or 0 if not found
      */
-    private long getCatId(String uuid) {
+    private long getCatId(@Nullable String uuid) {
         if(uuid == null) {
             return 0;
         }
@@ -832,7 +844,7 @@ class DataSyncHelper {
      * @param uuid The UUID of the entry
      * @return The local database ID of the entry or 0 if not found
      */
-    private long getEntryId(String uuid) {
+    private long getEntryId(@Nullable String uuid) {
         if(uuid == null) {
             return 0;
         }
@@ -863,7 +875,7 @@ class DataSyncHelper {
      * @param uuid The UUID of the extra field
      * @return The local database ID of the extra field or 0 if not found
      */
-    private long getExtraId(String uuid) {
+    private long getExtraId(@Nullable String uuid) {
         if(uuid == null) {
             return 0;
         }

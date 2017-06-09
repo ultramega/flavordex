@@ -36,6 +36,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -56,9 +57,9 @@ import android.widget.TableLayout;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.dialog.CatDeleteDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.radarchart.RadarHolder;
 import com.ultramegasoft.radarchart.RadarView;
@@ -100,11 +101,13 @@ public class EditCatFragment extends LoadingProgressFragment
     /**
      * The status of the extra fields
      */
+    @NonNull
     private ArrayList<Field> mExtraFields = new ArrayList<>();
 
     /**
      * The status of the flavors
      */
+    @NonNull
     private ArrayList<Field> mFlavorFields = new ArrayList<>();
 
     /**
@@ -148,7 +151,7 @@ public class EditCatFragment extends LoadingProgressFragment
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCatId = getArguments().getLong(ARG_CAT_ID);
         setHasOptionsMenu(true);
@@ -158,7 +161,7 @@ public class EditCatFragment extends LoadingProgressFragment
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState == null) {
             if(mCatId > 0) {
@@ -303,7 +306,7 @@ public class EditCatFragment extends LoadingProgressFragment
      *
      * @param field The field
      */
-    private void addExtraField(final Field field) {
+    private void addExtraField(@NonNull final Field field) {
         if(field == null) {
             return;
         }
@@ -357,7 +360,7 @@ public class EditCatFragment extends LoadingProgressFragment
      *
      * @param field The field
      */
-    private void addFlavorField(final Field field) {
+    private void addFlavorField(@NonNull final Field field) {
         if(field == null) {
             return;
         }
@@ -408,9 +411,9 @@ public class EditCatFragment extends LoadingProgressFragment
      * @param deleted     The initial deleted status of the field
      * @param listener    The event listener for the field
      */
-    private void addTableRow(final TableLayout tableLayout, String text, int maxLength, int hint,
-                             final int deleteHint, final boolean deleted,
-                             final CatFieldListener listener) {
+    private void addTableRow(@NonNull final TableLayout tableLayout, @Nullable String text,
+                             int maxLength, int hint, final int deleteHint, final boolean deleted,
+                             @NonNull final CatFieldListener listener) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
         final View root = inflater.inflate(R.layout.edit_cat_field, tableLayout, false);
 
@@ -487,6 +490,7 @@ public class EditCatFragment extends LoadingProgressFragment
      *
      * @return List of RadarHolders for the RadarView
      */
+    @NonNull
     private ArrayList<RadarHolder> getRadarData() {
         final ArrayList<RadarHolder> data = new ArrayList<>();
         for(Field field : mFlavorFields) {
@@ -576,6 +580,7 @@ public class EditCatFragment extends LoadingProgressFragment
         /**
          * The ContentResolver to use
          */
+        @NonNull
         private final ContentResolver mResolver;
 
         /**
@@ -587,7 +592,7 @@ public class EditCatFragment extends LoadingProgressFragment
          * @param context The Context
          * @param catId   The category ID
          */
-        DataLoader(Context context, long catId) {
+        DataLoader(@NonNull Context context, long catId) {
             super(context);
             mResolver = context.getContentResolver();
             mCatId = catId;
@@ -609,7 +614,7 @@ public class EditCatFragment extends LoadingProgressFragment
          * @param holder The Holder
          * @param catUri The Uri for the category
          */
-        private void loadCat(Holder holder, Uri catUri) {
+        private void loadCat(@NonNull Holder holder, @NonNull Uri catUri) {
             final Cursor cursor = mResolver.query(catUri, null, null, null, null);
             if(cursor != null) {
                 try {
@@ -628,7 +633,7 @@ public class EditCatFragment extends LoadingProgressFragment
          * @param holder The Holder
          * @param catUri The Uri for the category
          */
-        private void loadExtras(Holder holder, Uri catUri) {
+        private void loadExtras(@NonNull Holder holder, @NonNull Uri catUri) {
             final Uri uri = Uri.withAppendedPath(catUri, "extras");
             final String where = Tables.Extras.PRESET + " = 0";
             final String sort = Tables.Extras.POS + " ASC";
@@ -656,7 +661,7 @@ public class EditCatFragment extends LoadingProgressFragment
          * @param holder The Holder
          * @param catUri The Uri for the category
          */
-        private void loadFlavors(Holder holder, Uri catUri) {
+        private void loadFlavors(@NonNull Holder holder, @NonNull Uri catUri) {
             final Uri uri = Uri.withAppendedPath(catUri, "flavor");
             final String sort = Tables.Flavors.POS + " ASC";
             final Cursor cursor = mResolver.query(uri, null, null, null, sort);
@@ -682,6 +687,7 @@ public class EditCatFragment extends LoadingProgressFragment
             /**
              * The name of the category
              */
+            @Nullable
             public String catName;
 
             /**
@@ -703,26 +709,31 @@ public class EditCatFragment extends LoadingProgressFragment
         /**
          * The Context
          */
+        @NonNull
         private final Context mContext;
 
         /**
          * The ContentResolver to use
          */
+        @NonNull
         private final ContentResolver mResolver;
 
         /**
          * The basic information for the cats table
          */
+        @NonNull
         private final ContentValues mCatInfo;
 
         /**
          * The extra fields for the category
          */
+        @Nullable
         private final ArrayList<Field> mExtras;
 
         /**
          * The flavors for the category
          */
+        @Nullable
         private final ArrayList<Field> mFlavors;
 
         /**
@@ -737,8 +748,9 @@ public class EditCatFragment extends LoadingProgressFragment
          * @param flavors The flavors for the category
          * @param catId   The category database ID, if updating
          */
-        DataSaver(Context context, ContentValues catInfo, ArrayList<Field> extras,
-                  ArrayList<Field> flavors, long catId) {
+        DataSaver(@NonNull Context context, @NonNull ContentValues catInfo,
+                  @Nullable ArrayList<Field> extras, @Nullable ArrayList<Field> flavors,
+                  long catId) {
             mContext = context.getApplicationContext();
             mResolver = context.getContentResolver();
             mCatInfo = catInfo;
@@ -767,6 +779,7 @@ public class EditCatFragment extends LoadingProgressFragment
          *
          * @return The base Uri for the category record
          */
+        @Nullable
         private Uri updateCat() {
             mCatInfo.put(Tables.Cats.UPDATED, System.currentTimeMillis());
             mCatInfo.put(Tables.Cats.SYNCED, false);
@@ -787,7 +800,7 @@ public class EditCatFragment extends LoadingProgressFragment
          *
          * @param catUri The base Uri for the category
          */
-        private void updateExtras(Uri catUri) {
+        private void updateExtras(@NonNull Uri catUri) {
             final Uri insertUri = Uri.withAppendedPath(catUri, "extras");
             Uri uri;
             final ContentValues values = new ContentValues();
@@ -816,7 +829,7 @@ public class EditCatFragment extends LoadingProgressFragment
          *
          * @param catUri The base Uri for the category
          */
-        private void updateFlavors(Uri catUri) {
+        private void updateFlavors(@NonNull Uri catUri) {
             final Uri insertUri = Uri.withAppendedPath(catUri, "flavor");
             Uri uri;
             final ContentValues values = new ContentValues();
@@ -864,6 +877,7 @@ public class EditCatFragment extends LoadingProgressFragment
         /**
          * The name of this field
          */
+        @Nullable
         public String name;
 
         /**
@@ -875,7 +889,7 @@ public class EditCatFragment extends LoadingProgressFragment
          * @param id   The database ID for this field, or 0 if new
          * @param name The name of this field
          */
-        Field(long id, String name) {
+        Field(long id, @Nullable String name) {
             this(id, name, false);
         }
 
@@ -884,7 +898,7 @@ public class EditCatFragment extends LoadingProgressFragment
          * @param name   The name of this field
          * @param delete The initial deleted status of the field
          */
-        Field(long id, String name, boolean delete) {
+        Field(long id, @Nullable String name, boolean delete) {
             this.id = id;
             this.name = name;
             this.delete = delete;

@@ -25,6 +25,8 @@ package com.ultramegasoft.flavordex2.widget;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.util.LongSparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,8 +57,9 @@ public class EntryListAdapter extends CursorAdapter {
      */
     private static final BackgroundThumbLoader<Long> sThumbLoader =
             new BackgroundThumbLoader<Long>() {
+                @Nullable
                 @Override
-                protected Bitmap getBitmap(Thumb thumb) {
+                protected Bitmap getBitmap(@NonNull Thumb thumb) {
                     return PhotoUtils.getThumb(thumb.get().getContext(), (Long)thumb.key);
                 }
             };
@@ -64,6 +67,7 @@ public class EntryListAdapter extends CursorAdapter {
     /**
      * Formatter for the date field
      */
+    @NonNull
     private final SimpleDateFormat mDateFormat;
 
     /**
@@ -79,7 +83,7 @@ public class EntryListAdapter extends CursorAdapter {
     /**
      * @param context The Context
      */
-    public EntryListAdapter(Context context) {
+    public EntryListAdapter(@NonNull Context context) {
         super(context, null, true);
         mDateFormat = new SimpleDateFormat(context.getString(R.string.date_format), Locale.US);
     }

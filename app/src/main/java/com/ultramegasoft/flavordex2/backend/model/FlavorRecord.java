@@ -22,6 +22,8 @@
  */
 package com.ultramegasoft.flavordex2.backend.model;
 
+import android.support.annotation.Nullable;
+
 /**
  * Model for a flavor record.
  *
@@ -31,6 +33,7 @@ package com.ultramegasoft.flavordex2.backend.model;
 public class FlavorRecord extends Model {
     public long id;
     public long cat;
+    @Nullable
     public String name;
     public int value;
     public int pos;

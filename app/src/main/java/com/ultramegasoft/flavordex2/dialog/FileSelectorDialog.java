@@ -31,6 +31,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -98,6 +99,7 @@ public class FileSelectorDialog extends DialogFragment {
     /**
      * Filter out files that do not contain this string
      */
+    @Nullable
     private String mNameFilter;
 
     /**
@@ -140,8 +142,9 @@ public class FileSelectorDialog extends DialogFragment {
      * @param allowDirectories Whether to allow directories to be selected
      * @param nameFilter       Filter out files that do not contain this string
      */
-    public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
-                                  String rootPath, boolean allowDirectories, String nameFilter) {
+    public static void showDialog(@NonNull FragmentManager fm, @Nullable Fragment target,
+                                  int requestCode, @Nullable String rootPath,
+                                  boolean allowDirectories, @Nullable String nameFilter) {
         showDialog(fm, target, requestCode, rootPath, allowDirectories, nameFilter, rootPath);
     }
 
@@ -154,9 +157,10 @@ public class FileSelectorDialog extends DialogFragment {
      * @param nameFilter       Filter out files that do not contain this string
      * @param path             The current path
      */
-    private static void showDialog(FragmentManager fm, Fragment target, int requestCode,
-                                   String rootPath, boolean allowDirectories, String nameFilter,
-                                   String path) {
+    private static void showDialog(@NonNull FragmentManager fm, @Nullable Fragment target,
+                                   int requestCode, @Nullable String rootPath,
+                                   boolean allowDirectories, @Nullable String nameFilter,
+                                   @Nullable String path) {
         final DialogFragment fragment = new FileSelectorDialog();
         fragment.setTargetFragment(target, requestCode);
 
@@ -316,7 +320,7 @@ public class FileSelectorDialog extends DialogFragment {
      *
      * @param header The header text or null to remove the header
      */
-    private void setHeader(String header) {
+    private void setHeader(@Nullable String header) {
         if(mHeader == null) {
             mHeader = (TextView)LayoutInflater.from(getContext())
                     .inflate(R.layout.file_list_item_dir_open, mListView, false);
@@ -346,7 +350,8 @@ public class FileSelectorDialog extends DialogFragment {
      * @param path The path to a directory to list files from
      * @return An array of file names
      */
-    private String[] getFileList(File path) {
+    @NonNull
+    private String[] getFileList(@NonNull File path) {
         final FilenameFilter filenameFilter = new FilenameFilter() {
             public boolean accept(File dir, String filename) {
                 final File file = new File(dir, filename);
@@ -368,7 +373,8 @@ public class FileSelectorDialog extends DialogFragment {
      * @param path The path to a directory to list files from
      * @return An array of directory names
      */
-    private String[] getDirList(File path) {
+    @NonNull
+    private String[] getDirList(@NonNull File path) {
         final FilenameFilter dirFilter = new FilenameFilter() {
             public boolean accept(File dir, String filename) {
                 final File file = new File(dir, filename);
@@ -395,6 +401,7 @@ public class FileSelectorDialog extends DialogFragment {
         /**
          * The Context
          */
+        @NonNull
         private final Context mContext;
 
         /**
@@ -410,7 +417,7 @@ public class FileSelectorDialog extends DialogFragment {
         /**
          * @param context The Context
          */
-        FileListAdapter(Context context) {
+        FileListAdapter(@NonNull Context context) {
             mContext = context;
         }
 
@@ -429,7 +436,7 @@ public class FileSelectorDialog extends DialogFragment {
          * @param files The list of file names
          * @param dirs  The list of directory names
          */
-        void setData(String[] files, String[] dirs) {
+        void setData(@NonNull String[] files, @NonNull String[] dirs) {
             reset();
             addItems(dirs, DIR_TYPE);
             addItems(files, FILE_TYPE);
@@ -441,7 +448,7 @@ public class FileSelectorDialog extends DialogFragment {
          * @param items The item names
          * @param type  The item type
          */
-        void addItems(String[] items, int type) {
+        void addItems(@NonNull String[] items, int type) {
             if(items == null) {
                 return;
             }

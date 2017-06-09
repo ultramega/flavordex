@@ -28,6 +28,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -62,8 +63,8 @@ public class ConfirmationDialog extends DialogFragment {
      * @param title       The dialog title
      * @param message     The dialog message
      */
-    public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
-                                  String title, String message) {
+    public static void showDialog(@NonNull FragmentManager fm, @Nullable Fragment target,
+                                  int requestCode, @NonNull String title, @NonNull String message) {
         showDialog(fm, target, requestCode, title, message, R.drawable.ic_warning, null);
     }
 
@@ -77,8 +78,9 @@ public class ConfirmationDialog extends DialogFragment {
      * @param message     The dialog message
      * @param icon        Resource ID for the dialog icon
      */
-    public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
-                                  String title, String message, int icon) {
+    public static void showDialog(@NonNull FragmentManager fm, @Nullable Fragment target,
+                                  int requestCode, @NonNull String title, @NonNull String message,
+                                  int icon) {
         showDialog(fm, target, requestCode, title, message, icon, null);
     }
 
@@ -93,8 +95,9 @@ public class ConfirmationDialog extends DialogFragment {
      * @param icon        Resource ID for the dialog icon
      * @param data        An Intent to store additional data
      */
-    public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
-                                  String title, String message, int icon, Intent data) {
+    public static void showDialog(@NonNull FragmentManager fm, @Nullable Fragment target,
+                                  int requestCode, @Nullable String title, @Nullable String message,
+                                  int icon, @Nullable Intent data) {
         final DialogFragment fragment = new ConfirmationDialog();
         fragment.setTargetFragment(target, requestCode);
 

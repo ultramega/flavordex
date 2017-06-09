@@ -30,6 +30,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -85,6 +87,7 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
     /**
      * The title of this entry
      */
+    @Nullable
     private String mEntryTitle;
 
     /**
@@ -93,21 +96,22 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
     private FragmentTabHost mTabHost;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mEntryId = getArguments().getLong(ARG_ENTRY_ID);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(0, null, this);
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         mTabHost = (FragmentTabHost)inflater.inflate(R.layout.tab_layout, container, false);
         mTabHost.setup(getContext(), getChildFragmentManager(), R.id.content);
 
@@ -213,6 +217,7 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
      *
      * @return The Fragment class
      */
+    @NonNull
     private Class<? extends ViewInfoFragment> getEntryInfoClass() {
         final String cat = getArguments().getString(ARG_ENTRY_CAT);
 
@@ -237,7 +242,7 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
      *
      * @param title The title of the entry
      */
-    private void setEntryTitle(String title) {
+    private void setEntryTitle(@Nullable String title) {
         mEntryTitle = title;
         final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if(actionBar != null) {

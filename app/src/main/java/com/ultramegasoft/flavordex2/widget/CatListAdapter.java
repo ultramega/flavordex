@@ -50,6 +50,7 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
     /**
      * The Context
      */
+    @NonNull
     private final Context mContext;
 
     /**
@@ -65,6 +66,7 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
     /**
      * Helper for the ThemedSpinnerAdapter
      */
+    @NonNull
     private final ThemedSpinnerAdapter.Helper mHelper;
 
     /**
@@ -83,7 +85,8 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
      * @param resource         The layout resource ID to use for each list item
      * @param dropDownResource The layout resource ID to use for dropdown items
      */
-    public CatListAdapter(Context context, Cursor cursor, int resource, int dropDownResource) {
+    public CatListAdapter(@NonNull Context context, @Nullable Cursor cursor, int resource,
+                          int dropDownResource) {
         mContext = context;
         mResource = resource;
         mDropDownResource = dropDownResource;
@@ -97,7 +100,7 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
      * @param cursor   The Cursor from the database query
      * @param resource The layout resource ID to use for each list item
      */
-    public CatListAdapter(Context context, Cursor cursor, int resource) {
+    public CatListAdapter(@NonNull Context context, @Nullable Cursor cursor, int resource) {
         this(context, cursor, resource, resource);
     }
 
@@ -106,7 +109,7 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
      *
      * @param newCursor The new Cursor
      */
-    public final void swapCursor(Cursor newCursor) {
+    public final void swapCursor(@Nullable Cursor newCursor) {
         mCats.clear();
 
         if(newCursor != null) {
@@ -158,7 +161,7 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
      * @param cursor The Cursor
      * @param cats   The ArrayList to add data to
      */
-    private void readCursor(Cursor cursor, ArrayList<Category> cats) {
+    private void readCursor(@NonNull Cursor cursor, @NonNull ArrayList<Category> cats) {
         cursor.moveToPosition(-1);
         while(cursor.moveToNext()) {
             cats.add(readCursorRow(cursor));
@@ -172,7 +175,8 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
      * @param cursor The Cursor
      * @return A Category read from the database row
      */
-    private Category readCursorRow(Cursor cursor) {
+    @NonNull
+    private Category readCursorRow(@NonNull Cursor cursor) {
         final long id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
         final String name = cursor.getString(cursor.getColumnIndex(Tables.Cats.NAME));
         final boolean preset = cursor.getInt(cursor.getColumnIndex(Tables.Cats.PRESET)) == 1;
@@ -206,8 +210,9 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
                 convertView, parent);
     }
 
-    private View createView(LayoutInflater inflater, int layoutId, int position, View convertView,
-                            ViewGroup parent) {
+    @NonNull
+    private View createView(@NonNull LayoutInflater inflater, int layoutId, int position,
+                            @Nullable View convertView, @NonNull ViewGroup parent) {
         if(convertView == null) {
             convertView = inflater.inflate(layoutId, parent, false);
 
@@ -233,7 +238,7 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
     }
 
     @Override
-    public void setDropDownViewTheme(Resources.Theme theme) {
+    public void setDropDownViewTheme(@Nullable Resources.Theme theme) {
         mHelper.setDropDownViewTheme(theme);
     }
 
@@ -255,11 +260,13 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
         /**
          * The name of the category
          */
+        @NonNull
         public final String name;
 
         /**
          * The display name of the category
          */
+        @NonNull
         final String realName;
 
         /**
@@ -279,7 +286,8 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
          * @param preset     Whether this is a preset category
          * @param numEntries The number of entries in this category
          */
-        Category(Context context, long id, String name, boolean preset, int numEntries) {
+        Category(@NonNull Context context, long id, @NonNull String name, boolean preset,
+                 int numEntries) {
             this.id = id;
             this.name = name;
             this.realName = FlavordexApp.getRealCatName(context, name);

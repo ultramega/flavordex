@@ -27,6 +27,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
 
 import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.FlavordexApp;
@@ -56,12 +57,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * The Context
      */
+    @NonNull
     private final Context mContext;
 
     /**
      * @param context The Context
      */
-    DatabaseHelper(Context context) {
+    DatabaseHelper(@NonNull Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         mContext = context;
     }
@@ -105,7 +107,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param db       The database
      * @param resource The raw resource ID
      */
-    private void execRawFile(SQLiteDatabase db, int resource) {
+    private void execRawFile(@NonNull SQLiteDatabase db, int resource) {
         final InputStream inputStream = mContext.getResources().openRawResource(resource);
         final Scanner scanner = new Scanner(inputStream).useDelimiter("\\n--");
         while(scanner.hasNext()) {
@@ -118,7 +120,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      *
      * @param db The database
      */
-    private static void generateUuids(SQLiteDatabase db) {
+    private static void generateUuids(@NonNull SQLiteDatabase db) {
         String[] columns = new String[] {
                 Tables.Cats._ID,
                 Tables.Cats.NAME,
@@ -171,7 +173,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param catId   The database ID of the category
      * @param catName The name of the category
      */
-    private static void generateExtraUuids(SQLiteDatabase db, long catId, String catName) {
+    private static void generateExtraUuids(@NonNull SQLiteDatabase db, long catId,
+                                           @NonNull String catName) {
         final String[] columns = new String[] {
                 Tables.Extras._ID,
                 Tables.Extras.NAME,
@@ -210,7 +213,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param extras    List of internal names of the extra fields
      * @param flavorRes String-array resource ID for the list of flavors
      */
-    private void insertPreset(SQLiteDatabase db, String name, String[] extras, int flavorRes) {
+    private void insertPreset(@NonNull SQLiteDatabase db, @NonNull String name,
+                              @NonNull String[] extras, int flavorRes) {
         final ContentValues values = new ContentValues();
 
         values.put(Tables.Cats.UUID, name);
@@ -243,7 +247,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      *
      * @param db The database
      */
-    private void insertBeerPreset(SQLiteDatabase db) {
+    private void insertBeerPreset(@NonNull SQLiteDatabase db) {
         final String[] extras = new String[] {
                 Tables.Extras.Beer.STYLE,
                 Tables.Extras.Beer.SERVING,
@@ -260,7 +264,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      *
      * @param db The database
      */
-    private void insertWinePreset(SQLiteDatabase db) {
+    private void insertWinePreset(@NonNull SQLiteDatabase db) {
         final String[] extras = new String[] {
                 Tables.Extras.Wine.VARIETAL,
                 Tables.Extras.Wine.STATS_VINTAGE,
@@ -274,7 +278,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      *
      * @param db The database
      */
-    private void insertWhiskeyPreset(SQLiteDatabase db) {
+    private void insertWhiskeyPreset(@NonNull SQLiteDatabase db) {
         final String[] extras = new String[] {
                 Tables.Extras.Whiskey.STYLE,
                 Tables.Extras.Whiskey.STATS_AGE,
@@ -288,7 +292,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      *
      * @param db The database
      */
-    private void insertCoffeePreset(SQLiteDatabase db) {
+    private void insertCoffeePreset(@NonNull SQLiteDatabase db) {
         final String[] extras = new String[] {
                 Tables.Extras.Coffee.ROASTER,
                 Tables.Extras.Coffee.ROAST_DATE,

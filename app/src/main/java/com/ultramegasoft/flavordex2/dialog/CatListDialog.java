@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -72,7 +73,8 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
      * @param target      The Fragment to notify of the result
      * @param requestCode A number to identify this request
      */
-    public static void showDialog(FragmentManager fm, Fragment target, int requestCode) {
+    public static void showDialog(@NonNull FragmentManager fm, @Nullable Fragment target,
+                                  int requestCode) {
         final DialogFragment fragment = new CatListDialog();
         fragment.setTargetFragment(target, requestCode);
 
@@ -84,7 +86,7 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
      *
      * @param fm The FragmentManager to use
      */
-    public static void closeDialog(FragmentManager fm) {
+    public static void closeDialog(@NonNull FragmentManager fm) {
         final DialogFragment fragment = (DialogFragment)fm.findFragmentByTag(TAG);
         if(fragment != null) {
             fragment.dismiss();
@@ -121,6 +123,7 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
      *
      * @return The View to place inside the Dialog
      */
+    @NonNull
     private ListView getLayout() {
         final ListView listView = new ListView(getContext());
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

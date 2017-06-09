@@ -22,6 +22,9 @@
  */
 package com.ultramegasoft.flavordex2.util.csv;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PushbackReader;
@@ -38,12 +41,13 @@ public class CSVReader implements Closeable {
     /**
      * The Reader representing the CSV file
      */
+    @NonNull
     private final PushbackReader mReader;
 
     /**
      * @param reader The Reader representing the CSV file
      */
-    public CSVReader(Reader reader) {
+    public CSVReader(@NonNull Reader reader) {
         mReader = new PushbackReader(reader);
     }
 
@@ -52,6 +56,7 @@ public class CSVReader implements Closeable {
      *
      * @return The row, or null if no data was read
      */
+    @Nullable
     public String[] readNext() {
         final List<String> fields = new ArrayList<>();
 

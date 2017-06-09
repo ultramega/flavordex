@@ -26,6 +26,8 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
@@ -61,7 +63,7 @@ abstract class BackgroundThumbLoader<K> {
      * @param imageView The ImageView to hold the image
      * @param key       The key to reference the image in the cache
      */
-    public void load(ImageView imageView, K key) {
+    public void load(@NonNull ImageView imageView, @NonNull K key) {
         final Bitmap bitmap = PhotoUtils.getThumbCache().get(key);
         if(bitmap != null) {
             imageView.setImageBitmap(bitmap);
@@ -77,7 +79,8 @@ abstract class BackgroundThumbLoader<K> {
      * @param thumb The Thumb object referencing the thumbnail
      * @return A Bitmap
      */
-    protected abstract Bitmap getBitmap(Thumb thumb);
+    @Nullable
+    protected abstract Bitmap getBitmap(@NonNull Thumb thumb);
 
     /**
      * Set the Bitmap of an ImageView on the UI thread.
@@ -85,7 +88,7 @@ abstract class BackgroundThumbLoader<K> {
      * @param imageView The ImageView
      * @param bitmap    The Bitmap
      */
-    private void setBitmap(final ImageView imageView, final Bitmap bitmap) {
+    private void setBitmap(@NonNull final ImageView imageView, @Nullable final Bitmap bitmap) {
         mHandler.post(new Runnable() {
             public void run() {
                 imageView.setImageBitmap(bitmap);
@@ -100,12 +103,13 @@ abstract class BackgroundThumbLoader<K> {
         /**
          * The Thumb object to load
          */
+        @NonNull
         private final Thumb mThumb;
 
         /**
          * @param thumb The thumbnail
          */
-        LoadTask(Thumb thumb) {
+        LoadTask(@NonNull Thumb thumb) {
             mThumb = thumb;
         }
 
@@ -130,18 +134,20 @@ abstract class BackgroundThumbLoader<K> {
         /**
          * The key to reference this thumbnail
          */
+        @NonNull
         public final Object key;
 
         /**
          * A reference to the ImageView
          */
+        @NonNull
         private final WeakReference<ImageView> mReference;
 
         /**
          * @param key       The key to reference this thumbnail
          * @param imageView The ImageView
          */
-        Thumb(Object key, ImageView imageView) {
+        Thumb(@NonNull Object key, @NonNull ImageView imageView) {
             this.key = key;
             imageView.setImageDrawable(new ThumbDrawable(key));
             mReference = new WeakReference<>(imageView);
@@ -152,6 +158,7 @@ abstract class BackgroundThumbLoader<K> {
          *
          * @return The ImageView
          */
+        @Nullable
         public ImageView get() {
             return mReference.get();
         }
@@ -164,13 +171,14 @@ abstract class BackgroundThumbLoader<K> {
         /**
          * The key to reference this thumbnail
          */
+        @NonNull
         public final Object key;
 
         /**
          * @param key The key to reference this thumbnail
          */
         @SuppressWarnings("deprecation")
-        ThumbDrawable(Object key) {
+        ThumbDrawable(@NonNull Object key) {
             this.key = key;
         }
     }

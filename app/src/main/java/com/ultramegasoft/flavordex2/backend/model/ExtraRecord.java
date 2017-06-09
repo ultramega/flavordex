@@ -22,6 +22,8 @@
  */
 package com.ultramegasoft.flavordex2.backend.model;
 
+import android.support.annotation.Nullable;
+
 /**
  * Model for an extra record.
  *
@@ -30,9 +32,12 @@ package com.ultramegasoft.flavordex2.backend.model;
 @SuppressWarnings("unused")
 public class ExtraRecord extends Model {
     public long id;
+    @Nullable
     public String uuid;
     public long cat;
+    @Nullable
     public String name;
+    @Nullable
     public String value;
     public int pos;
     public boolean deleted;

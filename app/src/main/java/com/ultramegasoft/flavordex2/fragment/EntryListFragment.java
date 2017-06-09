@@ -32,6 +32,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -128,17 +130,21 @@ public class EntryListFragment extends ListFragment
     /**
      * The main list Toolbar
      */
+    @Nullable
     private Toolbar mToolbar;
 
     /**
      * The Toolbar for export selection mode
      */
+    @Nullable
     private Toolbar mExportToolbar;
 
     /**
      * Toolbar Animations
      */
+    @Nullable
     private Animation mExportInAnimation;
+    @Nullable
     private Animation mExportOutAnimation;
 
     /**
@@ -149,16 +155,19 @@ public class EntryListFragment extends ListFragment
     /**
      * The where string to use in the database query
      */
+    @Nullable
     private String mWhere;
 
     /**
      * The arguments for the where clause
      */
+    @Nullable
     private String[] mWhereArgs;
 
     /**
      * The database column to sort by
      */
+    @NonNull
     private String mSortField = Tables.Entries.TITLE;
 
     /**
@@ -174,6 +183,7 @@ public class EntryListFragment extends ListFragment
     /**
      * The category name
      */
+    @Nullable
     private String mCatName;
 
     /**
@@ -197,9 +207,10 @@ public class EntryListFragment extends ListFragment
      * @param whereArgs    The values for the parameters of the where clause
      * @return An instance of this Fragment
      */
+    @NonNull
     public static EntryListFragment getInstance(long catId, boolean twoPane, long selectedItem,
-                                                boolean exportMode, String where,
-                                                String[] whereArgs) {
+                                                boolean exportMode, @Nullable String where,
+                                                @Nullable String[] whereArgs) {
         final EntryListFragment fragment = new EntryListFragment();
         final Bundle args = new Bundle();
         args.putLong(ARG_CAT, catId);
@@ -213,7 +224,7 @@ public class EntryListFragment extends ListFragment
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         final Bundle args = getArguments();
@@ -236,7 +247,7 @@ public class EntryListFragment extends ListFragment
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setActivateOnItemClick(mTwoPane);
 
@@ -414,7 +425,7 @@ public class EntryListFragment extends ListFragment
      * @param catId   The category ID
      * @param catName The category name
      */
-    private void addEntry(long catId, String catName) {
+    private void addEntry(long catId, @Nullable String catName) {
         final Intent addIntent = AddEntryActivity.getIntent(getContext(), catId, catName);
         startActivityForResult(addIntent, REQUEST_ADD_ENTRY);
     }
@@ -458,7 +469,7 @@ public class EntryListFragment extends ListFragment
      *
      * @param menu A Menu from the ActionBar or Toolbar
      */
-    private void setupMenu(Menu menu) {
+    private void setupMenu(@Nullable Menu menu) {
         if(menu == null) {
             return;
         }
@@ -481,7 +492,7 @@ public class EntryListFragment extends ListFragment
      *
      * @param field The name of the database column to sort by
      */
-    private void setSort(String field) {
+    private void setSort(@NonNull String field) {
         if(mSortField.equals(field)) {
             mSortReversed = !mSortReversed;
         }
@@ -514,7 +525,7 @@ public class EntryListFragment extends ListFragment
      *
      * @param catName The category name
      */
-    private void setCatName(String catName) {
+    private void setCatName(@Nullable String catName) {
         final String subtitle;
         if(mWhere != null) {
             subtitle = getString(R.string.title_search_results);

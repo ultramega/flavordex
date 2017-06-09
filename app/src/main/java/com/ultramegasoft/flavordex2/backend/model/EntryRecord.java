@@ -22,6 +22,8 @@
  */
 package com.ultramegasoft.flavordex2.backend.model;
 
+import android.support.annotation.Nullable;
+
 import java.util.ArrayList;
 
 /**
@@ -32,21 +34,32 @@ import java.util.ArrayList;
 @SuppressWarnings("unused")
 public class EntryRecord extends Model {
     public long id;
+    @Nullable
     public String uuid;
     public long cat;
+    @Nullable
     public String catUuid;
+    @Nullable
     public String title;
+    @Nullable
     public String maker;
+    @Nullable
     public String origin;
+    @Nullable
     public String price;
+    @Nullable
     public String location;
     public long date;
     public float rating;
+    @Nullable
     public String notes;
     public long age;
     public boolean deleted;
 
+    @Nullable
     public ArrayList<ExtraRecord> extras;
+    @Nullable
     public ArrayList<FlavorRecord> flavors;
+    @Nullable
     public ArrayList<PhotoRecord> photos;
 }

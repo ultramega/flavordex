@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -114,11 +115,13 @@ public class FlavordexApp extends Application
     /**
      * The current Location
      */
+    @Nullable
     private Location mLocation;
 
     /**
      * The name of the nearest previous location
      */
+    @Nullable
     private String mLocationName;
 
     @Override
@@ -199,7 +202,8 @@ public class FlavordexApp extends Application
      * @param name    The name from the database
      * @return The real display name
      */
-    public static String getRealCatName(Context context, String name) {
+    @NonNull
+    public static String getRealCatName(@NonNull Context context, @NonNull String name) {
         if(sCatNameMap.containsKey(name)) {
             return context.getString(sCatNameMap.get(name));
         }
@@ -211,6 +215,7 @@ public class FlavordexApp extends Application
      *
      * @return The current Location
      */
+    @Nullable
     public Location getLocation() {
         return mLocation;
     }
@@ -220,6 +225,7 @@ public class FlavordexApp extends Application
      *
      * @return The nearest location name
      */
+    @Nullable
     public String getLocationName() {
         return mLocationName;
     }
@@ -229,7 +235,7 @@ public class FlavordexApp extends Application
      *
      * @param location The Location
      */
-    private void setLocation(Location location) {
+    private void setLocation(@Nullable Location location) {
         mLocation = location;
         if(location != null) {
             new LocatorTask().execute();

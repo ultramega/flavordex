@@ -25,6 +25,8 @@ package com.ultramegasoft.flavordex2.widget;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.ultramegasoft.radarchart.RadarHolder;
 
@@ -69,16 +71,19 @@ public class EntryHolder implements Parcelable {
     /**
      * List of extra fields for this entry
      */
+    @NonNull
     private final ArrayList<ExtraFieldHolder> mExtras;
 
     /**
      * List of flavors for this entry
      */
+    @NonNull
     private final ArrayList<RadarHolder> mFlavors;
 
     /**
      * List of photos for this entry
      */
+    @NonNull
     private final ArrayList<PhotoHolder> mPhotos;
 
     public EntryHolder() {
@@ -116,7 +121,7 @@ public class EntryHolder implements Parcelable {
      * @param value  The value of the field
      */
     @SuppressWarnings("SameParameterValue")
-    public void addExtra(long id, String name, boolean preset, String value) {
+    public void addExtra(long id, @NonNull String name, boolean preset, @Nullable String value) {
         mExtras.add(new ExtraFieldHolder(id, name, preset, value));
     }
 
@@ -125,6 +130,7 @@ public class EntryHolder implements Parcelable {
      *
      * @return The list of extra fields
      */
+    @NonNull
     public ArrayList<ExtraFieldHolder> getExtras() {
         return mExtras;
     }
@@ -135,7 +141,7 @@ public class EntryHolder implements Parcelable {
      * @param name  The name of this flavor
      * @param value The value of this flavor
      */
-    public void addFlavor(String name, int value) {
+    public void addFlavor(@NonNull String name, int value) {
         mFlavors.add(new RadarHolder(name, value));
     }
 
@@ -144,6 +150,7 @@ public class EntryHolder implements Parcelable {
      *
      * @return The list of flavors
      */
+    @NonNull
     public ArrayList<RadarHolder> getFlavors() {
         return mFlavors;
     }
@@ -154,7 +161,7 @@ public class EntryHolder implements Parcelable {
      * @param id  The database ID for this photo
      * @param uri The Uri to the photo file
      */
-    public void addPhoto(long id, String hash, Uri uri) {
+    public void addPhoto(long id, @Nullable String hash, @NonNull Uri uri) {
         mPhotos.add(new PhotoHolder(id, hash, uri, 0));
     }
 
@@ -163,6 +170,7 @@ public class EntryHolder implements Parcelable {
      *
      * @return The list of photos
      */
+    @NonNull
     public ArrayList<PhotoHolder> getPhotos() {
         return mPhotos;
     }

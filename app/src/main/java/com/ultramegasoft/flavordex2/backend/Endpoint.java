@@ -25,6 +25,8 @@ package com.ultramegasoft.flavordex2.backend;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -71,21 +73,25 @@ abstract class Endpoint {
     /**
      * The Context
      */
+    @NonNull
     private final Context mContext;
 
     /**
      * The base for all API URLs
      */
+    @NonNull
     private final Uri mBaseUrl;
 
     /**
      * The user agent string
      */
+    @NonNull
     private final String mUserAgent;
 
     /**
      * The user's authorization token
      */
+    @Nullable
     private String mAuthToken;
 
     /**
@@ -93,7 +99,7 @@ abstract class Endpoint {
      *
      * @param context The Context to use
      */
-    Endpoint(Context context) {
+    Endpoint(@NonNull Context context) {
         mContext = context;
         //noinspection ConstantConditions
         final Uri apiUri = Uri.parse(context.getString(
@@ -164,6 +170,7 @@ abstract class Endpoint {
      *
      * @return The name of the endpoint
      */
+    @NonNull
     protected abstract String getName();
 
     /**
@@ -171,6 +178,7 @@ abstract class Endpoint {
      *
      * @return The Context
      */
+    @NonNull
     Context getContext() {
         return mContext;
     }
@@ -182,7 +190,8 @@ abstract class Endpoint {
      * @param params The parameters for the method
      * @return The response from the API.
      */
-    String get(String method, Object... params) throws ApiException {
+    @NonNull
+    String get(@NonNull String method, @NonNull Object... params) throws ApiException {
         try {
             final HttpURLConnection conn = openConnection(method, params);
             conn.setRequestMethod("GET");
@@ -199,7 +208,8 @@ abstract class Endpoint {
      * @param data   The data to send
      * @return The response from the API.
      */
-    String post(String method, Object data) throws ApiException {
+    @NonNull
+    String post(@NonNull String method, @Nullable Object data) throws ApiException {
         return post(method, data, new Object[0]);
     }
 
@@ -211,7 +221,8 @@ abstract class Endpoint {
      * @param params The parameters for the method
      * @return The response from the API.
      */
-    String post(String method, Object data, Object... params) throws ApiException {
+    @NonNull
+    String post(@NonNull String method, @Nullable Object data, @NonNull Object... params) throws ApiException {
         try {
             final HttpURLConnection conn = openConnection(method, params);
             conn.setRequestMethod("POST");
@@ -243,7 +254,8 @@ abstract class Endpoint {
      * @param conn The HTTP connection
      * @return The response body as a string
      */
-    private String readResponse(HttpURLConnection conn) throws IOException, ApiException {
+    @NonNull
+    private String readResponse(@NonNull HttpURLConnection conn) throws IOException, ApiException {
         try {
             final int code = conn.getResponseCode();
             if(code != HttpURLConnection.HTTP_OK) {
@@ -283,7 +295,8 @@ abstract class Endpoint {
      * @param params The parameters for the method
      * @return The HTTP connection
      */
-    private HttpURLConnection openConnection(String method, Object... params) throws IOException {
+    @NonNull
+    private HttpURLConnection openConnection(@NonNull String method, @NonNull Object... params) throws IOException {
         final Uri uri = mBaseUrl.buildUpon()
                 .appendEncodedPath(method)
                 .appendEncodedPath(TextUtils.join("/", params))
@@ -297,7 +310,8 @@ abstract class Endpoint {
      * @param url The URL to connect to
      * @return The HTTP connection
      */
-    private HttpURLConnection openConnection(URL url) throws IOException {
+    @NonNull
+    private HttpURLConnection openConnection(@NonNull URL url) throws IOException {
         final HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         conn.setDoInput(true);
         conn.setUseCaches(false);

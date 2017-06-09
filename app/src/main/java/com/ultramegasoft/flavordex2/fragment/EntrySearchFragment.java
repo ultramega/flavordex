@@ -93,10 +93,11 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
      */
     private Spinner mSpnCat;
 
+    @Nullable
     @SuppressLint("InflateParams")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_search, null);
 
         mSpnCat = (Spinner)root.findViewById(R.id.entry_cat);
@@ -292,22 +293,25 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         /**
          * The list of filter values
          */
+        @Nullable
         private ContentValues mFilters;
 
         /**
          * The where clause
          */
+        @Nullable
         private StringBuilder mWhere;
 
         /**
          * The values for the parameters of the where clause
          */
+        @Nullable
         private ArrayList<String> mWhereArgs;
 
         @NonNull
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                                 @Nullable Bundle savedInstanceState) {
             final View root = inflater.inflate(getLayoutId(), container, false);
 
             mFormHelper = createHelper(root);
@@ -384,6 +388,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
          * @param root The root of the layout
          * @return The EntryFormHelper
          */
+        @NonNull
         protected EntryFormHelper createHelper(View root) {
             return new EntryFormHelper(this, root);
         }
@@ -468,6 +473,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
          *
          * @return An Intent holding the data
          */
+        @NonNull
         public Intent getData() {
             mFilters = new ContentValues();
             mWhere = new StringBuilder();
@@ -548,7 +554,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
          * @return Whether the field was parsed
          */
         @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-        protected boolean parsePresetField(ExtraFieldHolder extra) {
+        protected boolean parsePresetField(@NonNull ExtraFieldHolder extra) {
             return false;
         }
 
@@ -558,7 +564,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
          * @param field     The text field containing the value
          * @param fieldName The name of the database column
          */
-        private void parseTextField(EditText field, String fieldName) {
+        private void parseTextField(@NonNull EditText field, @NonNull String fieldName) {
             if(!TextUtils.isEmpty(field.getText())) {
                 mFilters.put(fieldName, field.getText().toString());
                 final String[] words = field.getText().toString().split(" ");
@@ -578,7 +584,8 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
          * @param extra      The extra field
          * @param comparison The type of comparison to perform
          */
-        protected void parseExtraField(ExtraFieldHolder extra, String comparison) {
+        protected void parseExtraField(@NonNull ExtraFieldHolder extra,
+                                       @NonNull String comparison) {
             if(!TextUtils.isEmpty(extra.value)) {
                 mFilters.put(EXTRA_PREFIX + extra.id, extra.value);
                 final String[] words = extra.value.split(" ");

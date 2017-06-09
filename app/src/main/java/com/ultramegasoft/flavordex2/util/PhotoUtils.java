@@ -38,6 +38,8 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.ultramegasoft.flavordex2.provider.Tables;
@@ -99,6 +101,7 @@ public class PhotoUtils {
      *
      * @return Image capture Intent
      */
+    @Nullable
     public static Intent getTakePhotoIntent() {
         try {
             final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -115,6 +118,7 @@ public class PhotoUtils {
      *
      * @return Get content Intent
      */
+    @NonNull
     public static Intent getSelectPhotoIntent() {
         final Intent intent;
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -132,6 +136,7 @@ public class PhotoUtils {
      *
      * @return The thumbnail cache
      */
+    @NonNull
     public static BitmapCache getThumbCache() {
         return sThumbCache;
     }
@@ -144,7 +149,8 @@ public class PhotoUtils {
      * @param reqHeight The requested height of the decoded Bitmap
      * @return The sample size
      */
-    private static int calculateInSampleSize(Options options, int reqWidth, int reqHeight) {
+    private static int calculateInSampleSize(@NonNull Options options, int reqWidth,
+                                             int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
@@ -169,7 +175,9 @@ public class PhotoUtils {
      * @param bitmap  The Bitmap to rotate
      * @return The rotated Bitmap
      */
-    private static Bitmap rotatePhoto(Context context, Uri uri, Bitmap bitmap) {
+    @NonNull
+    private static Bitmap rotatePhoto(@NonNull Context context, @NonNull Uri uri,
+                                      @NonNull Bitmap bitmap) {
         uri = getImageUri(context, uri);
         int rotation = 0;
 
@@ -221,7 +229,8 @@ public class PhotoUtils {
      * @param uri     The Uri to convert
      * @return The image or file Uri or the original Uri if it could not be converted
      */
-    private static Uri getImageUri(Context context, Uri uri) {
+    @NonNull
+    private static Uri getImageUri(@NonNull Context context, @NonNull Uri uri) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
                 && DocumentsContract.isDocumentUri(context, uri)) {
             final String docId = DocumentsContract.getDocumentId(uri);
@@ -244,7 +253,9 @@ public class PhotoUtils {
      * @param reqHeight The requested height of the decoded Bitmap
      * @return A Bitmap
      */
-    public static Bitmap loadBitmap(Context context, Uri uri, int reqWidth, int reqHeight) {
+    @Nullable
+    public static Bitmap loadBitmap(@NonNull Context context, @NonNull Uri uri, int reqWidth,
+                                    int reqHeight) {
         final ContentResolver cr = context.getContentResolver();
         try {
             final ParcelFileDescriptor parcelFileDescriptor = cr.openFileDescriptor(uri, "r");
@@ -289,7 +300,7 @@ public class PhotoUtils {
      * @param context The Context
      * @param id      Te ID for the entry
      */
-    private static void generateThumb(Context context, long id) {
+    private static void generateThumb(@NonNull Context context, long id) {
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             return;
         }
@@ -319,7 +330,7 @@ public class PhotoUtils {
      * @param uri     The Uri to the original image
      * @param id      The ID of the entry the image belongs to
      */
-    private static void generateThumb(Context context, Uri uri, long id) {
+    private static void generateThumb(@NonNull Context context, @Nullable Uri uri, long id) {
         try {
             if(uri != null) {
                 final Bitmap inputBitmap = loadBitmap(context, uri, THUMB_SIZE, THUMB_SIZE);
@@ -348,7 +359,8 @@ public class PhotoUtils {
      * @param id      The entry ID
      * @return A Bitmap
      */
-    public static Bitmap getThumb(Context context, long id) {
+    @Nullable
+    public static Bitmap getThumb(@NonNull Context context, long id) {
         final File file = getThumbFile(context, id);
 
         if(!file.exists()) {
@@ -378,7 +390,7 @@ public class PhotoUtils {
      * @param context The Context
      * @param id      The entry ID
      */
-    public static void deleteThumb(Context context, long id) {
+    public static void deleteThumb(@NonNull Context context, long id) {
         final File file = getThumbFile(context, id);
         if(file.exists()) {
             sThumbCache.remove(id);
@@ -397,7 +409,8 @@ public class PhotoUtils {
      * @param id      The entry ID
      * @return A reference to the image file
      */
-    private static File getThumbFile(Context context, long id) {
+    @NonNull
+    private static File getThumbFile(@NonNull Context context, long id) {
         final String fileName = THUMB_FILE_PREFIX + id + JPEG_FILE_SUFFIX;
         return new File(context.getCacheDir(), fileName);
     }
@@ -407,6 +420,7 @@ public class PhotoUtils {
      *
      * @return A File object pointing to the file
      */
+    @NonNull
     private static File getOutputMediaFile() throws IOException {
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             throw new IOException("Media storage not mounted");
@@ -422,6 +436,7 @@ public class PhotoUtils {
      *
      * @return The media storage directory
      */
+    @NonNull
     public static File getMediaStorageDir() throws IOException {
         final File mediaStorageDir =
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
@@ -443,7 +458,8 @@ public class PhotoUtils {
      * @param uri The original Uri
      * @return The file Uri
      */
-    public static Uri getFileUri(ContentResolver cr, Uri uri) {
+    @Nullable
+    public static Uri getFileUri(@NonNull ContentResolver cr, @NonNull Uri uri) {
         final String name = getName(cr, uri);
         if(name != null) {
             final File file;
@@ -468,7 +484,9 @@ public class PhotoUtils {
      * @param file The File to write to or null to create one
      * @return The file Uri for the new file
      */
-    private static Uri savePhotoFromUri(ContentResolver cr, Uri uri, File file) {
+    @Nullable
+    private static Uri savePhotoFromUri(@NonNull ContentResolver cr, @NonNull Uri uri,
+                                        @Nullable File file) {
         try {
             if(file == null) {
                 file = getOutputMediaFile();
@@ -503,7 +521,8 @@ public class PhotoUtils {
      * @param uri The Uri
      * @return The file name
      */
-    public static String getName(ContentResolver cr, Uri uri) {
+    @Nullable
+    public static String getName(@NonNull ContentResolver cr, @NonNull Uri uri) {
         if("file".equals(uri.getScheme())) {
             return uri.getLastPathSegment();
         } else {
@@ -529,7 +548,8 @@ public class PhotoUtils {
      * @param uri The Uri representing the file
      * @return The MD5 hash of the file or null on failure
      */
-    public static String getMD5Hash(ContentResolver cr, Uri uri) {
+    @Nullable
+    public static String getMD5Hash(@NonNull ContentResolver cr, @NonNull Uri uri) {
         if(uri == null) {
             return null;
         }
@@ -566,7 +586,8 @@ public class PhotoUtils {
      * @param path The string to parse
      * @return The Uri
      */
-    public static Uri parsePath(String path) {
+    @Nullable
+    public static Uri parsePath(@NonNull String path) {
         if(path.charAt(0) == '/') {
             return Uri.fromFile(new File(path));
         } else if(path.startsWith("file://") || path.startsWith("content://")) {
@@ -586,7 +607,8 @@ public class PhotoUtils {
      * @param uri The photo Uri
      * @return The file name or full Uri string
      */
-    static String getPathString(Uri uri) {
+    @NonNull
+    static String getPathString(@NonNull Uri uri) {
         if("file".equals(uri.getScheme())) {
             final File file = new File(uri.getPath());
             try {

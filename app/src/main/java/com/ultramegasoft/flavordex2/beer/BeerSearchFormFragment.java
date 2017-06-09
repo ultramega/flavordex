@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.beer;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.ultramegasoft.flavordex2.R;
@@ -41,8 +42,9 @@ public class BeerSearchFormFragment extends EntrySearchFragment.SearchFormFragme
         return R.layout.fragment_search_form_beer;
     }
 
+    @NonNull
     @Override
-    protected EntryFormHelper createHelper(View root) {
+    protected EntryFormHelper createHelper(@NonNull View root) {
         return new BeerEntryFormHelper(this, root);
     }
 

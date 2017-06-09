@@ -26,6 +26,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
 import com.ultramegasoft.flavordex2.util.BitmapCache;
@@ -42,6 +44,7 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
     /**
      * Reference to the ImageView
      */
+    @NonNull
     private final WeakReference<ImageView> mImageViewReference;
 
     /**
@@ -57,16 +60,19 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
     /**
      * The Uri to the photo file to load from disk
      */
+    @NonNull
     private final Uri mUri;
 
     /**
      * The cache to store loaded Bitmaps
      */
+    @Nullable
     private final BitmapCache mCache;
 
     /**
      * The Context
      */
+    @NonNull
     private final Context mContext;
 
     /**
@@ -76,7 +82,8 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
      * @param uri       The Uri to the photo file to load from disk
      * @param cache     The cache to store loaded Bitmaps
      */
-    public ImageLoader(ImageView imageView, int width, int height, Uri uri, BitmapCache cache) {
+    public ImageLoader(@NonNull ImageView imageView, int width, int height, @NonNull Uri uri,
+                       @Nullable BitmapCache cache) {
         mImageViewReference = new WeakReference<>(imageView);
         mWidth = width;
         mHeight = height;

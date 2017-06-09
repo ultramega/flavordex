@@ -23,6 +23,8 @@
 package com.ultramegasoft.flavordex2.backend;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
@@ -35,10 +37,11 @@ import com.ultramegasoft.flavordex2.backend.model.RegistrationRecord;
  * @author Steve Guidetti
  */
 public class Registration extends Endpoint {
-    Registration(Context context) {
+    Registration(@NonNull Context context) {
         super(context);
     }
 
+    @NonNull
     @Override
     protected String getName() {
         return "registration";
@@ -49,6 +52,7 @@ public class Registration extends Endpoint {
      *
      * @return The RegistrationRecord or null if the client is not registered with FCM
      */
+    @Nullable
     RegistrationRecord register() throws ApiException {
         final String fcmId = FirebaseInstanceId.getInstance().getToken();
         if(fcmId != null) {

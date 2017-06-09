@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.wine;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.ultramegasoft.flavordex2.R;
@@ -39,8 +40,9 @@ public class EditWineInfoFragment extends EditInfoFragment {
         return R.layout.fragment_edit_info_wine;
     }
 
+    @NonNull
     @Override
-    protected EntryFormHelper createHelper(View root) {
+    protected EntryFormHelper createHelper(@NonNull View root) {
         return new WineEntryFormHelper(this, root);
     }
 }

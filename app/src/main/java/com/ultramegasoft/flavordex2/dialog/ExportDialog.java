@@ -36,6 +36,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -99,7 +100,7 @@ public class ExportDialog extends DialogFragment {
      * @param fm       The FragmentManager to use
      * @param entryIds The list of entry IDs to export
      */
-    public static void showDialog(FragmentManager fm, long[] entryIds) {
+    public static void showDialog(@NonNull FragmentManager fm, @NonNull long[] entryIds) {
         final DialogFragment fragment = new ExportDialog();
 
         final Bundle args = new Bundle();
@@ -139,6 +140,7 @@ public class ExportDialog extends DialogFragment {
      *
      * @return The path to the directory where we will save the file
      */
+    @NonNull
     private static String getBasePath() {
         final File file;
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -156,7 +158,7 @@ public class ExportDialog extends DialogFragment {
      *
      * @param editText The EditText
      */
-    private void setupFileField(EditText editText) {
+    private void setupFileField(@NonNull EditText editText) {
         editText.setText(getDefaultFileString());
 
         final InputFilter[] filters = new InputFilter[] {
@@ -208,6 +210,7 @@ public class ExportDialog extends DialogFragment {
      *
      * @return The file name without the extension
      */
+    @NonNull
     private String getDefaultFileString() {
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd", Locale.US);
         final String dateString = dateFormat.format(new Date());
@@ -273,7 +276,8 @@ public class ExportDialog extends DialogFragment {
          * @param entryIds The list of entry IDs to export
          * @param filePath The path to the CSV file to save to
          */
-        public static void init(FragmentManager fm, long[] entryIds, String filePath) {
+        public static void init(@NonNull FragmentManager fm, @NonNull long[] entryIds,
+                                @NonNull String filePath) {
             final DialogFragment fragment = new ExporterFragment();
 
             final Bundle args = new Bundle();
@@ -332,27 +336,31 @@ public class ExportDialog extends DialogFragment {
             /**
              * The Context
              */
+            @NonNull
             private final Context mContext;
 
             /**
              * The ContentResolver to load entries from the database
              */
+            @NonNull
             private final ContentResolver mResolver;
 
             /**
              * The CSVWriter to use for writing
              */
+            @NonNull
             private final CSVWriter mWriter;
 
             /**
              * The Uri for the current entry
              */
+            @Nullable
             private Uri mEntryUri;
 
             /**
              * @param writer The CSVWriter to use for writing
              */
-            DataExporter(CSVWriter writer) {
+            DataExporter(@NonNull CSVWriter writer) {
                 mContext = getContext().getApplicationContext();
                 mResolver = mContext.getContentResolver();
                 mWriter = writer;
@@ -395,7 +403,7 @@ public class ExportDialog extends DialogFragment {
              * @param cursor The Cursor for the entry row
              * @return The entry
              */
-            private EntryHolder readEntry(Cursor cursor) {
+            private EntryHolder readEntry(@NonNull Cursor cursor) {
                 final EntryHolder entry = new EntryHolder();
                 entry.uuid = cursor.getString(cursor.getColumnIndex(Tables.Entries.UUID));
                 entry.title = cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
@@ -420,7 +428,7 @@ public class ExportDialog extends DialogFragment {
              *
              * @param entry The entry
              */
-            private void loadExtras(EntryHolder entry) {
+            private void loadExtras(@NonNull EntryHolder entry) {
                 final Uri uri = Uri.withAppendedPath(mEntryUri, "extras");
                 final Cursor cursor = mResolver.query(uri, null, null, null, null);
                 if(cursor != null) {
@@ -447,7 +455,7 @@ public class ExportDialog extends DialogFragment {
              *
              * @param entry The entry
              */
-            private void loadFlavors(EntryHolder entry) {
+            private void loadFlavors(@NonNull EntryHolder entry) {
                 final Uri uri = Uri.withAppendedPath(mEntryUri, "flavor");
                 final Cursor cursor = mResolver.query(uri, null, null, null, null);
                 if(cursor != null) {
@@ -472,7 +480,7 @@ public class ExportDialog extends DialogFragment {
              *
              * @param entry The entry
              */
-            private void loadPhotos(EntryHolder entry) {
+            private void loadPhotos(@NonNull EntryHolder entry) {
                 final Uri uri = Uri.withAppendedPath(mEntryUri, "photos");
                 final Cursor cursor = mResolver.query(uri, null, null, null, null);
                 if(cursor != null) {

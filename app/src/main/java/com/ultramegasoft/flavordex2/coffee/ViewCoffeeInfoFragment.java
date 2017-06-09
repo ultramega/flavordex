@@ -25,6 +25,7 @@ package com.ultramegasoft.flavordex2.coffee;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,8 +67,8 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
         mTxtRoaster = (TextView)root.findViewById(R.id.entry_roaster);
@@ -95,7 +96,7 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
     }
 
     @Override
-    protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> data) {
+    protected void populateExtras(@NonNull LinkedHashMap<String, ExtraFieldHolder> data) {
         super.populateExtras(data);
         setViewText(mTxtRoaster, getExtraValue(data.get(Tables.Extras.Coffee.ROASTER)));
         setViewText(mTxtRoastDate, getExtraValue(data.get(Tables.Extras.Coffee.ROAST_DATE)));
@@ -170,7 +171,8 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
      * @param text The main text
      * @param unit The unit text
      */
-    private void setTextWithUnit(TextView view, String text, String unit) {
+    private void setTextWithUnit(@NonNull TextView view, @Nullable String text,
+                                 @Nullable String unit) {
         if(!TextUtils.isEmpty(text)) {
             view.setText(getString(R.string.coffee_stat, text, unit));
         } else {

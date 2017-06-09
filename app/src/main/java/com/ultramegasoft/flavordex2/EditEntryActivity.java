@@ -30,6 +30,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -37,11 +39,11 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.beer.EditBeerInfoFragment;
 import com.ultramegasoft.flavordex2.coffee.EditCoffeeInfoFragment;
 import com.ultramegasoft.flavordex2.fragment.EditInfoFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.whiskey.EditWhiskeyInfoFragment;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
@@ -71,7 +73,8 @@ public class EditEntryActivity extends AppCompatActivity {
      * @param entryId  The ID for the entry to edit
      * @param entryCat The name of the entry category
      */
-    public static void startActivity(Context context, long entryId, String entryCat) {
+    public static void startActivity(@NonNull Context context, long entryId,
+                                     @Nullable String entryCat) {
         final Intent intent = new Intent(context, EditEntryActivity.class);
         intent.putExtra(EXTRA_ENTRY_ID, entryId);
         intent.putExtra(EXTRA_ENTRY_CAT, entryCat);
@@ -79,7 +82,7 @@ public class EditEntryActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         final ActionBar actionBar = getSupportActionBar();
@@ -134,6 +137,7 @@ public class EditEntryActivity extends AppCompatActivity {
      *
      * @return The Fragment object
      */
+    @NonNull
     private EditInfoFragment getFragment() {
         final String cat = getIntent().getStringExtra(EXTRA_ENTRY_CAT);
 
@@ -176,18 +180,20 @@ public class EditEntryActivity extends AppCompatActivity {
         /**
          * The Context
          */
+        @NonNull
         private final Context mContext;
 
         /**
          * The entry to save
          */
+        @NonNull
         private final EntryHolder mEntry;
 
         /**
          * @param context The Context
          * @param entry   The entry to save
          */
-        DataSaver(Context context, EntryHolder entry) {
+        DataSaver(@NonNull Context context, @NonNull EntryHolder entry) {
             mContext = context.getApplicationContext();
             mEntry = entry;
         }
@@ -221,7 +227,7 @@ public class EditEntryActivity extends AppCompatActivity {
          *
          * @param entryUri The Uri for the entry
          */
-        private void updateExtras(Uri entryUri) {
+        private void updateExtras(@NonNull Uri entryUri) {
             final ContentResolver cr = mContext.getContentResolver();
             final Uri uri = Uri.withAppendedPath(entryUri, "extras");
             final ContentValues values = new ContentValues();

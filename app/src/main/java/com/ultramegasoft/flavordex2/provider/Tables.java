@@ -26,6 +26,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
 
@@ -102,6 +103,7 @@ public class Tables {
          * @param entryId The entry ID
          * @return The Uri for the entry's extra fields
          */
+        @NonNull
         public static Uri getExtrasUri(long entryId) {
             final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, entryId);
             return Uri.withAppendedPath(baseUri, "extras");
@@ -113,6 +115,7 @@ public class Tables {
          * @param entryId The entry ID
          * @return The Uri for the entry's flavors
          */
+        @NonNull
         public static Uri getFlavorUri(long entryId) {
             final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, entryId);
             return Uri.withAppendedPath(baseUri, "flavor");
@@ -124,6 +127,7 @@ public class Tables {
          * @param entryId The entry ID
          * @return The Uri for the entry's photos
          */
+        @NonNull
         public static Uri getPhotoUri(long entryId) {
             final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, entryId);
             return Uri.withAppendedPath(baseUri, "photos");
@@ -136,7 +140,8 @@ public class Tables {
          * @param filterText The filter text
          * @return The category filter Uri
          */
-        public static Uri getCatFilterUri(long catId, String filterText) {
+        @NonNull
+        public static Uri getCatFilterUri(long catId, @NonNull String filterText) {
             final Uri baseUri = ContentUris.withAppendedId(CONTENT_CAT_URI_BASE, catId);
             return Uri.withAppendedPath(baseUri, "filter/" + Uri.encode(filterText));
         }
@@ -466,6 +471,7 @@ public class Tables {
          * @param catId The category ID
          * @return The Uri for the category's extra fields
          */
+        @NonNull
         public static Uri getExtrasUri(long catId) {
             final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, catId);
             return Uri.withAppendedPath(baseUri, "extras");
@@ -477,6 +483,7 @@ public class Tables {
          * @param catId The category ID
          * @return The Uri for the category's flavors
          */
+        @NonNull
         public static Uri getFlavorUri(long catId) {
             final Uri baseUri = ContentUris.withAppendedId(CONTENT_ID_URI_BASE, catId);
             return Uri.withAppendedPath(baseUri, "flavor");

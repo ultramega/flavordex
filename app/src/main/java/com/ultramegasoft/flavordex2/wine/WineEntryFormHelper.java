@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.wine;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
@@ -48,12 +49,12 @@ class WineEntryFormHelper extends EntryFormHelper {
     EditText mTxtVintage;
     EditText mTxtABV;
 
-    WineEntryFormHelper(Fragment fragment, View layoutRoot) {
+    WineEntryFormHelper(@NonNull Fragment fragment, @NonNull View layoutRoot) {
         super(fragment, layoutRoot);
     }
 
     @Override
-    protected void loadLayout(View root) {
+    protected void loadLayout(@NonNull View root) {
         super.loadLayout(root);
         mTxtVarietal = (AutoCompleteTextView)root.findViewById(R.id.entry_varietal);
         mTxtVarietal.setAdapter(SpecialArrayAdapter.createFromResource(mFragment.getContext(),
@@ -64,7 +65,7 @@ class WineEntryFormHelper extends EntryFormHelper {
     }
 
     @Override
-    public void setExtras(LinkedHashMap<String, ExtraFieldHolder> extras) {
+    public void setExtras(@NonNull LinkedHashMap<String, ExtraFieldHolder> extras) {
         super.setExtras(extras);
         initEditText(mTxtVarietal, extras.get(Tables.Extras.Wine.VARIETAL));
         initEditText(mTxtVintage, extras.get(Tables.Extras.Wine.STATS_VINTAGE));

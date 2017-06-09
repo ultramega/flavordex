@@ -34,6 +34,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -49,8 +50,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.R;
-import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
+import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.HtmlCompat;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
@@ -100,8 +101,8 @@ public class CatDeleteDialog extends DialogFragment
      * @param requestCode The code to identify the request
      * @param catId       The database ID for the category
      */
-    public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
-                                  long catId) {
+    public static void showDialog(@NonNull FragmentManager fm, @Nullable Fragment target,
+                                  int requestCode, long catId) {
         if(catId > 0) {
             final DialogFragment fragment = new CatDeleteDialog();
             fragment.setTargetFragment(target, requestCode);
@@ -178,6 +179,7 @@ public class CatDeleteDialog extends DialogFragment
      * @param savedInstanceState The saved state
      * @return The View to place in the dialog
      */
+    @NonNull
     @SuppressLint("InflateParams")
     private View getLayout(Bundle savedInstanceState) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -250,6 +252,7 @@ public class CatDeleteDialog extends DialogFragment
         /**
          * The Context
          */
+        @NonNull
         private final Context mContext;
 
         /**
@@ -261,7 +264,7 @@ public class CatDeleteDialog extends DialogFragment
          * @param context The Context
          * @param catId   The category database ID
          */
-        CatDeleteTask(Context context, long catId) {
+        CatDeleteTask(@NonNull Context context, long catId) {
             mContext = context.getApplicationContext();
             mCatId = catId;
         }

@@ -47,7 +47,7 @@ public class BackendRegistrationDialog extends BackgroundProgressDialog {
      *
      * @param fm The FragmentManager to use
      */
-    public static void showDialog(FragmentManager fm) {
+    public static void showDialog(@NonNull FragmentManager fm) {
         final DialogFragment fragment = new BackendRegistrationDialog();
         fragment.show(fm, TAG);
     }

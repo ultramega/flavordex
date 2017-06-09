@@ -30,6 +30,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -60,7 +61,9 @@ public class EntryUtils {
      * @param entry   The entry
      * @return The Uri for the new entry
      */
-    public static Uri insertEntry(Context context, EntryHolder entry) throws SQLiteException {
+    @NonNull
+    public static Uri insertEntry(@NonNull Context context, @NonNull EntryHolder entry)
+            throws SQLiteException {
         final ContentResolver cr = context.getContentResolver();
         final ContentValues values = new ContentValues();
 
@@ -112,7 +115,8 @@ public class EntryUtils {
      * @param origTitle The original title
      * @return The title with a number appended if the original title already exists
      */
-    private static String getUniqueTitle(ContentResolver cr, String origTitle) {
+    @NonNull
+    private static String getUniqueTitle(@NonNull ContentResolver cr, @NonNull String origTitle) {
         final String[] projection = new String[] {Tables.Entries.TITLE};
         final String where = Tables.Entries.TITLE + " LIKE ?";
         final String[] whereArgs = new String[] {origTitle + "%"};
@@ -149,7 +153,9 @@ public class EntryUtils {
      * @param entry The entry
      * @return The Uri for the category
      */
-    private static Uri getCatUri(ContentResolver cr, EntryHolder entry) throws SQLiteException {
+    @NonNull
+    private static Uri getCatUri(@NonNull ContentResolver cr, @NonNull EntryHolder entry)
+            throws SQLiteException {
         if(entry.catId > 0) {
             return ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, entry.catId);
         } else if(TextUtils.isEmpty(entry.catName)) {
@@ -194,7 +200,8 @@ public class EntryUtils {
      * @param catUri The Uri for the category
      * @param entry  The entry
      */
-    private static void insertCatFlavors(ContentResolver cr, Uri catUri, EntryHolder entry) {
+    private static void insertCatFlavors(@NonNull ContentResolver cr, @NonNull Uri catUri,
+                                         @NonNull EntryHolder entry) {
         final ArrayList<RadarHolder> flavors = entry.getFlavors();
         final Uri uri = Uri.withAppendedPath(catUri, "flavor");
         final ContentValues values = new ContentValues();
@@ -214,8 +221,8 @@ public class EntryUtils {
      * @param entryUri The Uri for the new entry
      * @param entry    The entry
      */
-    private static void insertExtras(ContentResolver cr, Uri catUri, Uri entryUri,
-                                     EntryHolder entry) {
+    private static void insertExtras(@NonNull ContentResolver cr, @NonNull Uri catUri,
+                                     @NonNull Uri entryUri, @NonNull EntryHolder entry) {
         final Uri uri = Uri.withAppendedPath(entryUri, "extras");
         final ContentValues values = new ContentValues();
         for(ExtraFieldHolder extra : entry.getExtras()) {
@@ -237,7 +244,8 @@ public class EntryUtils {
      * @param name   The name of the field
      * @return The ID for the extra field
      */
-    private static long getExtraId(ContentResolver cr, Uri catUri, String name) {
+    private static long getExtraId(@NonNull ContentResolver cr, @NonNull Uri catUri,
+                                   @NonNull String name) {
         final Uri uri = Uri.withAppendedPath(catUri, "extras");
         final String[] projection = new String[] {Tables.Extras._ID};
         final String where = Tables.Extras.NAME + " = ?";
@@ -271,7 +279,7 @@ public class EntryUtils {
      * @param uri The Uri for a category's extras
      * @return The next sort position for a new extra field
      */
-    private static int getNextExtraPos(ContentResolver cr, Uri uri) {
+    private static int getNextExtraPos(@NonNull ContentResolver cr, @NonNull Uri uri) {
         final String[] projection = new String[] {Tables.Extras.POS};
         final Cursor cursor = cr.query(uri, projection, null, null, Tables.Extras.POS + " DESC");
         if(cursor != null) {
@@ -294,7 +302,8 @@ public class EntryUtils {
      * @param entryUri The Uri for the new entry
      * @param entry    The entry
      */
-    private static void insertFlavors(ContentResolver cr, Uri entryUri, EntryHolder entry) {
+    private static void insertFlavors(@NonNull ContentResolver cr, @NonNull Uri entryUri,
+                                      @NonNull EntryHolder entry) {
         final ArrayList<RadarHolder> flavors = entry.getFlavors();
         final Uri uri = Uri.withAppendedPath(entryUri, "flavor");
         final ContentValues values = new ContentValues();
@@ -315,7 +324,8 @@ public class EntryUtils {
      * @param entryUri The Uri for the new entry
      * @param entry    The entry
      */
-    private static void insertPhotos(ContentResolver cr, Uri entryUri, EntryHolder entry) {
+    private static void insertPhotos(@NonNull ContentResolver cr, @NonNull Uri entryUri,
+                                     @NonNull EntryHolder entry) {
         final ArrayList<PhotoHolder> photos = entry.getPhotos();
         final Uri uri = Uri.withAppendedPath(entryUri, "photos");
         final ContentValues values = new ContentValues();
@@ -341,7 +351,8 @@ public class EntryUtils {
      * @param name The original text
      * @return The filtered text
      */
-    public static String filterName(String name) {
+    @NonNull
+    public static String filterName(@NonNull String name) {
         for(int i = 0; i < name.length(); i++) {
             if(name.charAt(i) != '_') {
                 return name.substring(i);
@@ -356,7 +367,7 @@ public class EntryUtils {
      * @param context The Context
      * @param id      The entry's database ID
      */
-    public static void delete(Context context, long id) {
+    public static void delete(@NonNull Context context, long id) {
         final ContentResolver cr = context.getContentResolver();
         final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, id);
         cr.delete(uri, null, null);
@@ -370,7 +381,7 @@ public class EntryUtils {
      * @param context The Context
      * @param photoId The photo's database ID
      */
-    public static void deletePhoto(Context context, long photoId) {
+    public static void deletePhoto(@NonNull Context context, long photoId) {
         final ContentResolver cr = context.getContentResolver();
         final Uri uri = ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, photoId);
         final String[] projection = new String[] {
@@ -399,7 +410,7 @@ public class EntryUtils {
      * @param cr      The ContentResolver
      * @param entryId The entry's database ID
      */
-    public static void markChanged(ContentResolver cr, long entryId) {
+    public static void markChanged(@NonNull ContentResolver cr, long entryId) {
         final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId);
         final ContentValues values = new ContentValues();
         values.put(Tables.Entries.UPDATED, System.currentTimeMillis());
@@ -414,7 +425,7 @@ public class EntryUtils {
      * @param title   The message title
      * @param rating  The rating to show
      */
-    public static void share(Context context, String title, float rating) {
+    public static void share(@NonNull Context context, @NonNull String title, float rating) {
         final Intent intent = getShareIntent(context, title, rating);
         if(intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(Intent.createChooser(intent,
@@ -432,7 +443,9 @@ public class EntryUtils {
      * @param rating  The rating to show
      * @return A send action Intent
      */
-    public static Intent getShareIntent(Context context, String title, float rating) {
+    @NonNull
+    public static Intent getShareIntent(@NonNull Context context, @NonNull String title,
+                                        float rating) {
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, getShareSubject(context, title));
@@ -449,7 +462,9 @@ public class EntryUtils {
      * @param rating  The rating to show
      * @return The message body
      */
-    private static String getShareBody(Context context, String title, float rating) {
+    @NonNull
+    private static String getShareBody(@NonNull Context context, @NonNull String title,
+                                       float rating) {
         final String app = context.getString(R.string.app_name);
         return context.getString(R.string.share_body, title, app, rating);
     }
@@ -461,7 +476,8 @@ public class EntryUtils {
      * @param title   The message title
      * @return The message subject
      */
-    private static String getShareSubject(Context context, String title) {
+    @NonNull
+    private static String getShareSubject(@NonNull Context context, @NonNull String title) {
         return context.getString(R.string.share_subject, title);
     }
 }

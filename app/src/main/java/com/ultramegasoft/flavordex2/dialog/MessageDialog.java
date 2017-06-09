@@ -54,7 +54,8 @@ public class MessageDialog extends DialogFragment {
      * @param title   The dialog title
      * @param message The dialog message
      */
-    public static void showDialog(FragmentManager fm, String title, String message) {
+    public static void showDialog(@NonNull FragmentManager fm, @NonNull String title,
+                                  @NonNull String message) {
         showDialog(fm, title, message, R.drawable.ic_info);
     }
 
@@ -66,7 +67,8 @@ public class MessageDialog extends DialogFragment {
      * @param message The dialog message
      * @param icon    Resource ID for the dialog icon
      */
-    public static void showDialog(FragmentManager fm, String title, String message, int icon) {
+    public static void showDialog(@NonNull FragmentManager fm, @NonNull String title,
+                                  @NonNull String message, int icon) {
         final DialogFragment fragment = new MessageDialog();
 
         final Bundle args = new Bundle();

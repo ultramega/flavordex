@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.coffee;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -67,12 +68,12 @@ class CoffeeEntryFormHelper extends EntryFormHelper {
     private TableRow mRowEspMass;
     private TableRow mRowWaterMass;
 
-    CoffeeEntryFormHelper(Fragment fragment, View layoutRoot) {
+    CoffeeEntryFormHelper(@NonNull Fragment fragment, @NonNull View layoutRoot) {
         super(fragment, layoutRoot);
     }
 
     @Override
-    protected void loadLayout(View root) {
+    protected void loadLayout(@NonNull View root) {
         super.loadLayout(root);
         mTxtRoaster = (EditText)root.findViewById(R.id.entry_roaster);
         mTxtRoastDate = (EditText)root.findViewById(R.id.entry_roast_date);
@@ -92,7 +93,7 @@ class CoffeeEntryFormHelper extends EntryFormHelper {
     }
 
     @Override
-    public void setExtras(LinkedHashMap<String, ExtraFieldHolder> extras) {
+    public void setExtras(@NonNull LinkedHashMap<String, ExtraFieldHolder> extras) {
         super.setExtras(extras);
         initSpinner(mSpnBrewMethod, extras.get(Tables.Extras.Coffee.BREW_METHOD));
 
@@ -117,8 +118,8 @@ class CoffeeEntryFormHelper extends EntryFormHelper {
      * @param sec   The EditText for seconds
      * @param extra The extraction time extra field
      */
-    private static void initExtractionTime(final EditText min, final EditText sec,
-                                           final ExtraFieldHolder extra) {
+    private static void initExtractionTime(@NonNull final EditText min, @NonNull final EditText sec,
+                                           @NonNull final ExtraFieldHolder extra) {
         if(extra == null) {
             return;
         }

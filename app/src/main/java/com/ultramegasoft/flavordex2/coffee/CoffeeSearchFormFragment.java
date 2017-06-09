@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.coffee;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -42,8 +43,9 @@ public class CoffeeSearchFormFragment extends EntrySearchFragment.SearchFormFrag
         return R.layout.fragment_search_form_coffee;
     }
 
+    @NonNull
     @Override
-    protected EntryFormHelper createHelper(View root) {
+    protected EntryFormHelper createHelper(@NonNull View root) {
         final CoffeeEntryFormHelper helper = new CoffeeEntryFormHelper(this, root);
         helper.mSpnBrewMethod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -75,7 +77,7 @@ public class CoffeeSearchFormFragment extends EntrySearchFragment.SearchFormFrag
     }
 
     @Override
-    protected boolean parsePresetField(ExtraFieldHolder extra) {
+    protected boolean parsePresetField(@NonNull ExtraFieldHolder extra) {
         switch(extra.name) {
             case Tables.Extras.Coffee.BREW_METHOD:
                 if(!extra.value.equals("0")) {

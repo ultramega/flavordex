@@ -29,6 +29,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -99,7 +100,7 @@ public class EditInfoFragment extends LoadingProgressFragment
     private EntryFormHelper mFormHelper;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
@@ -109,7 +110,7 @@ public class EditInfoFragment extends LoadingProgressFragment
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState == null) {
             getLoaderManager().initLoader(LOADER_MAIN, null, this).forceLoad();
@@ -153,7 +154,8 @@ public class EditInfoFragment extends LoadingProgressFragment
      * @param root The root of the layout
      * @return The EntryFormHelper
      */
-    protected EntryFormHelper createHelper(View root) {
+    @NonNull
+    protected EntryFormHelper createHelper(@NonNull View root) {
         return new EntryFormHelper(this, root);
     }
 
@@ -168,7 +170,7 @@ public class EditInfoFragment extends LoadingProgressFragment
      *
      * @param entry The entry
      */
-    private void populateFields(EntryHolder entry) {
+    private void populateFields(@NonNull EntryHolder entry) {
         if(entry != null) {
             mFormHelper.mTxtTitle.setText(entry.title);
             mFormHelper.mTxtMaker.setText(entry.maker);
@@ -209,7 +211,7 @@ public class EditInfoFragment extends LoadingProgressFragment
      *
      * @param entry An EntryHolder
      */
-    public final void getData(EntryHolder entry) {
+    public final void getData(@NonNull EntryHolder entry) {
         entry.id = mEntryId;
 
         if(entry.id == 0) {
@@ -268,6 +270,7 @@ public class EditInfoFragment extends LoadingProgressFragment
         /**
          * The ContentResolver to use
          */
+        @NonNull
         private final ContentResolver mResolver;
 
         /**
@@ -285,7 +288,7 @@ public class EditInfoFragment extends LoadingProgressFragment
          * @param catId   The category ID
          * @param entryId The entry ID, if editing
          */
-        DataLoader(Context context, long catId, long entryId) {
+        DataLoader(@NonNull Context context, long catId, long entryId) {
             super(context);
             mResolver = context.getContentResolver();
             mCatId = catId;
@@ -313,7 +316,8 @@ public class EditInfoFragment extends LoadingProgressFragment
          * @param entryUri The Uri for the entry
          * @return The entry
          */
-        private EntryHolder loadEntry(Uri entryUri) {
+        @NonNull
+        private EntryHolder loadEntry(@NonNull Uri entryUri) {
             final EntryHolder entry = new EntryHolder();
             final Cursor cursor =
                     getContext().getContentResolver().query(entryUri, null, null, null, null);
@@ -346,7 +350,7 @@ public class EditInfoFragment extends LoadingProgressFragment
          *
          * @param holder The Holder
          */
-        private void loadExtras(Holder holder) {
+        private void loadExtras(@NonNull Holder holder) {
             final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
             final Cursor cursor = mResolver.query(Uri.withAppendedPath(uri, "extras"), null, null,
                     null, Tables.Extras.POS + " ASC");
@@ -373,7 +377,7 @@ public class EditInfoFragment extends LoadingProgressFragment
          * @param holder   The Holder
          * @param entryUri The Uri for the entry
          */
-        private void loadExtrasValues(Holder holder, Uri entryUri) {
+        private void loadExtrasValues(@NonNull Holder holder, @NonNull Uri entryUri) {
             final Cursor cursor = mResolver.query(Uri.withAppendedPath(entryUri, "extras"), null,
                     null, null, null);
             if(cursor != null) {
@@ -398,6 +402,7 @@ public class EditInfoFragment extends LoadingProgressFragment
             /**
              * The entry
              */
+            @Nullable
             public EntryHolder entry;
 
             /**

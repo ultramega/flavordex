@@ -24,6 +24,7 @@ package com.ultramegasoft.flavordex2.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,8 +51,8 @@ public abstract class LoadingProgressFragment extends Fragment {
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_loading, container, false);
         mLayout = (ViewGroup)root.findViewById(R.id.layout);
         mLoadingOverlay = root.findViewById(R.id.progress);

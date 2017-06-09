@@ -23,6 +23,7 @@
 package com.ultramegasoft.flavordex2.widget;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,23 +47,26 @@ public class CSVListAdapter extends BaseAdapter {
     /**
      * The Context
      */
+    @NonNull
     private final Context mContext;
 
     /**
      * The data backing this Adapter
      */
+    @NonNull
     private final CSVUtils.CSVHolder mData;
 
     /**
      * Formatter for dates
      */
+    @NonNull
     private final SimpleDateFormat mDateFormat;
 
     /**
      * @param context The Context
      * @param data    The data backing this Adapter
      */
-    public CSVListAdapter(Context context, CSVUtils.CSVHolder data) {
+    public CSVListAdapter(@NonNull Context context, @NonNull CSVUtils.CSVHolder data) {
         mContext = context;
         mData = data;
         mDateFormat = new SimpleDateFormat(context.getString(R.string.date_format), Locale.US);

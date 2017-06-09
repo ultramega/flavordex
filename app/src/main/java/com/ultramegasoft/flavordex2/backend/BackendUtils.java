@@ -27,6 +27,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.firebase.jobdispatcher.Constraint;
@@ -64,6 +66,7 @@ public class BackendUtils {
     /**
      * The job dispatcher
      */
+    @Nullable
     private static FirebaseJobDispatcher sJobDispatcher;
 
     /**
@@ -71,7 +74,7 @@ public class BackendUtils {
      *
      * @param context The Context
      */
-    public static void requestDataSync(Context context) {
+    public static void requestDataSync(@NonNull Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if(!prefs.getBoolean(FlavordexApp.PREF_ACCOUNT, false) ||
                 !prefs.getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
@@ -104,7 +107,7 @@ public class BackendUtils {
      *
      * @param context The Context
      */
-    public static void requestPhotoSync(Context context) {
+    public static void requestPhotoSync(@NonNull Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if(!prefs.getBoolean(FlavordexApp.PREF_ACCOUNT, false) ||
                 !prefs.getBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false) ||
@@ -144,7 +147,7 @@ public class BackendUtils {
      * @param context The Context
      * @return The client identifier
      */
-    static long getClientId(Context context) {
+    static long getClientId(@NonNull Context context) {
         return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
                 .getLong(PREF_CLIENT_ID, 0);
     }
@@ -155,7 +158,7 @@ public class BackendUtils {
      * @param context  The Context
      * @param clientId The client identifier
      */
-    public static void setClientId(Context context, long clientId) {
+    public static void setClientId(@NonNull Context context, long clientId) {
         context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit()
                 .putLong(PREF_CLIENT_ID, clientId).apply();
     }
@@ -166,7 +169,7 @@ public class BackendUtils {
      * @param context The Context
      * @param uid     The user ID
      */
-    public static void setUid(Context context, String uid) {
+    public static void setUid(@NonNull Context context, @NonNull String uid) {
         final SharedPreferences prefs =
                 context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
         if(!uid.equals(prefs.getString(PREF_UID, null))) {
@@ -190,7 +193,7 @@ public class BackendUtils {
      * @param context The Context
      * @return Whether the registration was successful
      */
-    public static boolean registerClient(Context context) {
+    public static boolean registerClient(@NonNull Context context) {
         final Registration registration = new Registration(context);
         final RegistrationRecord record;
         try {
@@ -214,7 +217,7 @@ public class BackendUtils {
      *
      * @param context The Context
      */
-    public static void unregisterClient(Context context) {
+    public static void unregisterClient(@NonNull Context context) {
         try {
             new Registration(context).unregister();
             setClientId(context, 0);
@@ -229,7 +232,8 @@ public class BackendUtils {
      * @param context The Context
      * @return The saved email address, or null if it does not exist
      */
-    public static String getEmail(Context context) {
+    @Nullable
+    public static String getEmail(@NonNull Context context) {
         return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE)
                 .getString(PREF_EMAIL, null);
     }
@@ -240,7 +244,7 @@ public class BackendUtils {
      * @param context The Context
      * @param email   The email address
      */
-    public static void setEmail(Context context, String email) {
+    public static void setEmail(@NonNull Context context, @Nullable String email) {
         context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE).edit()
                 .putString(PREF_EMAIL, email).apply();
     }

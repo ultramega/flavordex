@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.util.csv;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -42,12 +43,13 @@ public class CSVWriter implements Closeable {
     /**
      * The Writer representing the CSV file
      */
+    @NonNull
     private final Writer mWriter;
 
     /**
      * @param writer The Writer representing the CSV file
      */
-    public CSVWriter(Writer writer) {
+    public CSVWriter(@NonNull Writer writer) {
         mWriter = writer;
     }
 
@@ -56,7 +58,7 @@ public class CSVWriter implements Closeable {
      *
      * @param values The data to write
      */
-    public void writeNext(String[] values) {
+    public void writeNext(@NonNull String[] values) {
         final List<String> fields = new ArrayList<>();
         for(Object field : values) {
             fields.add(prepareValue(field));
@@ -74,7 +76,8 @@ public class CSVWriter implements Closeable {
      * @param value The value to quote and escape
      * @return The value as a quoted and escaped string
      */
-    private static String prepareValue(Object value) {
+    @NonNull
+    private static String prepareValue(@NonNull Object value) {
         return '"' + value.toString().replace("\"", "\"\"") + '"';
     }
 

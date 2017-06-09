@@ -26,6 +26,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -68,9 +70,10 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
     private ProgressBar mProgressBar;
     private ImageView mImageView;
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         mUri = getArguments().getParcelable(ARG_URI);
         if(mUri == null) {
             return null;
@@ -108,7 +111,7 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
      *
      * @param bitmap The Bitmap to show
      */
-    private void showPhoto(Bitmap bitmap) {
+    private void showPhoto(@NonNull Bitmap bitmap) {
         mImageView.setImageBitmap(bitmap);
 
         mImageView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -151,7 +154,7 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
      *
      * @param v The View to attach the menu to
      */
-    private void showMenu(View v) {
+    private void showMenu(@NonNull View v) {
         final PopupMenu popupMenu = new PopupMenu(getContext(), v);
         popupMenu.setOnMenuItemClickListener(this);
         popupMenu.inflate(R.menu.photo_menu);
@@ -197,6 +200,7 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
         /**
          * The Uri to the image to load
          */
+        @NonNull
         private final Uri mUri;
 
         /**
@@ -215,7 +219,7 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
          * @param width   The container width
          * @param height  The container height
          */
-        PhotoLoader(Context context, Uri uri, int width, int height) {
+        PhotoLoader(@NonNull Context context, @NonNull Uri uri, int width, int height) {
             super(context);
             mUri = uri;
             mWidth = width;

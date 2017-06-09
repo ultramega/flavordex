@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.coffee;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -40,8 +41,9 @@ public class EditCoffeeInfoFragment extends EditInfoFragment {
         return R.layout.fragment_edit_info_coffee;
     }
 
+    @NonNull
     @Override
-    protected EntryFormHelper createHelper(View root) {
+    protected EntryFormHelper createHelper(@NonNull View root) {
         final CoffeeEntryFormHelper helper = new CoffeeEntryFormHelper(this, root);
         helper.mSpnBrewMethod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

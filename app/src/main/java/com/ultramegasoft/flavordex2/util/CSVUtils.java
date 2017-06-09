@@ -28,6 +28,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -130,7 +132,7 @@ public class CSVUtils {
      *
      * @param writer An open CSVWriter
      */
-    public static void writeCSVHeader(CSVWriter writer) {
+    public static void writeCSVHeader(@NonNull CSVWriter writer) {
         final String[] fields = new String[] {
                 Tables.Entries.UUID,
                 Tables.Entries.TITLE,
@@ -155,7 +157,7 @@ public class CSVUtils {
      * @param writer An open CSVWriter
      * @param entry  The entry
      */
-    public static void writeEntry(CSVWriter writer, EntryHolder entry) {
+    public static void writeEntry(@NonNull CSVWriter writer, @NonNull EntryHolder entry) {
         final ArrayList<String> fields = new ArrayList<>();
 
         fields.add(entry.uuid);
@@ -182,7 +184,7 @@ public class CSVUtils {
      * @param fields The list of fields for the row
      * @param entry  The entry
      */
-    private static void addExtras(ArrayList<String> fields, EntryHolder entry) {
+    private static void addExtras(@NonNull ArrayList<String> fields, @NonNull EntryHolder entry) {
         final JSONObject object = new JSONObject();
         for(ExtraFieldHolder extra : entry.getExtras()) {
             if(extra.preset || !TextUtils.isEmpty(extra.value)) {
@@ -201,7 +203,7 @@ public class CSVUtils {
      * @param fields The list of fields for the row
      * @param entry  The entry
      */
-    private static void addFlavors(ArrayList<String> fields, EntryHolder entry) {
+    private static void addFlavors(@NonNull ArrayList<String> fields, @NonNull EntryHolder entry) {
         final JSONObject object = new JSONObject();
         for(RadarHolder flavor : entry.getFlavors()) {
             try {
@@ -218,7 +220,7 @@ public class CSVUtils {
      * @param fields The list of fields for the row
      * @param entry  The entry
      */
-    private static void addPhotos(ArrayList<String> fields, EntryHolder entry) {
+    private static void addPhotos(@NonNull ArrayList<String> fields, @NonNull EntryHolder entry) {
         final JSONArray array = new JSONArray();
         for(PhotoHolder photo : entry.getPhotos()) {
             array.put(PhotoUtils.getPathString(photo.uri));
@@ -233,7 +235,8 @@ public class CSVUtils {
      * @param file    The CSV File
      * @return The data from the CSV file
      */
-    public static CSVHolder importCSV(Context context, File file) {
+    @Nullable
+    public static CSVHolder importCSV(@NonNull Context context, @NonNull File file) {
         CSVHolder data = null;
         try {
             final CSVReader reader = new CSVReader(new FileReader(file));
@@ -270,7 +273,7 @@ public class CSVUtils {
      * @param holder The CSVHolder
      * @param fields The list of field names
      */
-    private static void detectFormat(CSVHolder holder, List<String> fields) {
+    private static void detectFormat(@NonNull CSVHolder holder, @NonNull List<String> fields) {
         if(fields.containsAll(LEGACY_FIELDS_COMMON)) {
             if(fields.containsAll(LEGACY_FIELDS_BEER)) {
                 holder.legacyFormat = FlavordexApp.CAT_BEER;
@@ -294,8 +297,8 @@ public class CSVUtils {
      * @param holder  The CSVHolder
      * @param rowMap  A map of column names to values
      */
-    private static void readCSVRow(Context context, CSVHolder holder,
-                                   HashMap<String, String> rowMap) {
+    private static void readCSVRow(@NonNull Context context, @NonNull CSVHolder holder,
+                                   @NonNull HashMap<String, String> rowMap) {
         final EntryHolder entry = new EntryHolder();
 
         entry.title = rowMap.get(Tables.Entries.TITLE);
@@ -354,7 +357,8 @@ public class CSVUtils {
      * @param entry  The entry
      * @param rowMap The map of fields from the row
      */
-    private static void readExtras(EntryHolder entry, HashMap<String, String> rowMap) {
+    private static void readExtras(@NonNull EntryHolder entry,
+                                   @NonNull HashMap<String, String> rowMap) {
         final String extraField = rowMap.get(Tables.Extras.TABLE_NAME);
         if(TextUtils.isEmpty(extraField)) {
             return;
@@ -380,8 +384,9 @@ public class CSVUtils {
      * @param rowMap       The map of fields from the row
      * @param legacyFormat The legacy format
      */
-    private static void readLegacyExtras(EntryHolder entry, HashMap<String, String> rowMap,
-                                         String legacyFormat) {
+    private static void readLegacyExtras(@NonNull EntryHolder entry,
+                                         @NonNull HashMap<String, String> rowMap,
+                                         @NonNull String legacyFormat) {
         for(Map.Entry<String, String> field : rowMap.entrySet()) {
             if(LEGACY_FIELDS_COMMON.contains(field.getKey())) {
                 continue;
@@ -420,7 +425,8 @@ public class CSVUtils {
      * @param entry  The entry
      * @param rowMap The map of fields from the row
      */
-    private static void readFlavors(EntryHolder entry, HashMap<String, String> rowMap) {
+    private static void readFlavors(@NonNull EntryHolder entry,
+                                    @NonNull HashMap<String, String> rowMap) {
         final String flavorsField = rowMap.get(Tables.Flavors.TABLE_NAME);
         if(TextUtils.isEmpty(flavorsField)) {
             return;
@@ -451,8 +457,9 @@ public class CSVUtils {
      * @param rowMap       The map of fields from the row
      * @param legacyFormat The legacy format
      */
-    private static void readLegacyFlavors(Context context, EntryHolder entry,
-                                          HashMap<String, String> rowMap, String legacyFormat) {
+    private static void readLegacyFlavors(@NonNull Context context, @NonNull EntryHolder entry,
+                                          @NonNull HashMap<String, String> rowMap,
+                                          @NonNull String legacyFormat) {
         final String flavorsField = rowMap.get(Tables.Flavors.TABLE_NAME);
         if(TextUtils.isEmpty(flavorsField)) {
             return;
@@ -495,7 +502,8 @@ public class CSVUtils {
      * @param entry  The entry
      * @param rowMap The map of fields from the row
      */
-    private static void readPhotos(EntryHolder entry, HashMap<String, String> rowMap) {
+    private static void readPhotos(@NonNull EntryHolder entry,
+                                   @NonNull HashMap<String, String> rowMap) {
         final String photosField = rowMap.get(Tables.Photos.TABLE_NAME);
         if(TextUtils.isEmpty(photosField)) {
             return;
@@ -520,8 +528,8 @@ public class CSVUtils {
      * @param entry   The entry
      * @param rowMap  The map of fields from the row
      */
-    private static void readLegacyPhotos(Context context, EntryHolder entry,
-                                         HashMap<String, String> rowMap) {
+    private static void readLegacyPhotos(@NonNull Context context, @NonNull EntryHolder entry,
+                                         @NonNull HashMap<String, String> rowMap) {
         final String photosField = rowMap.get(Tables.Photos.TABLE_NAME);
         if(TextUtils.isEmpty(photosField)) {
             return;
@@ -548,7 +556,7 @@ public class CSVUtils {
      * @param entry   The entry
      * @return Whether the entry is a duplicate
      */
-    private static boolean isDuplicate(Context context, EntryHolder entry) {
+    private static boolean isDuplicate(@NonNull Context context, @NonNull EntryHolder entry) {
         if(entry.uuid == null) {
             return false;
         }
@@ -591,11 +599,13 @@ public class CSVUtils {
         /**
          * The list of entries
          */
+        @NonNull
         public final ArrayList<EntryHolder> entries;
 
         /**
          * List of entries that are possible duplicate
          */
+        @NonNull
         public final ArrayList<EntryHolder> duplicates;
 
         /**
@@ -606,6 +616,7 @@ public class CSVUtils {
         /**
          * The legacy format if detected
          */
+        @Nullable
         String legacyFormat;
 
         CSVHolder() {
@@ -626,7 +637,7 @@ public class CSVUtils {
          * @param entry     The entry
          * @param duplicate Whether this is a possible duplicate
          */
-        void addEntry(EntryHolder entry, boolean duplicate) {
+        void addEntry(@NonNull EntryHolder entry, boolean duplicate) {
             entries.add(entry);
             if(duplicate) {
                 duplicates.add(entry);

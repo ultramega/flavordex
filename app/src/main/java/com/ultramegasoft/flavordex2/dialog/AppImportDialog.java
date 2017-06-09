@@ -82,7 +82,7 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
      * @param fm  The FragmentManager to use
      * @param app The source app
      */
-    public static void showDialog(FragmentManager fm, int app) {
+    public static void showDialog(@NonNull FragmentManager fm, int app) {
         final DialogFragment fragment = new AppImportDialog();
 
         final Bundle args = new Bundle();
@@ -171,7 +171,7 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
          * @param app      The source app
          * @param entryIds The list of source entry IDs to import
          */
-        public static void init(FragmentManager fm, int app, long[] entryIds) {
+        public static void init(@NonNull FragmentManager fm, int app, @NonNull long[] entryIds) {
             final DialogFragment fragment = new ImporterFragment();
 
             final Bundle args = new Bundle();
@@ -216,6 +216,7 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
             /**
              * The Context
              */
+            @NonNull
             private final Context mContext;
 
             ImportTask() {

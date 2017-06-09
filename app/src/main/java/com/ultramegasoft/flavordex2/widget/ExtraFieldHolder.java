@@ -24,6 +24,8 @@ package com.ultramegasoft.flavordex2.widget;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Holder for data associated with an extra field.
@@ -51,6 +53,7 @@ public class ExtraFieldHolder implements Parcelable {
     /**
      * The name of the field
      */
+    @NonNull
     public final String name;
 
     /**
@@ -61,6 +64,7 @@ public class ExtraFieldHolder implements Parcelable {
     /**
      * The value of the field
      */
+    @Nullable
     public String value;
 
     /**
@@ -68,7 +72,7 @@ public class ExtraFieldHolder implements Parcelable {
      * @param name   The name of the field
      * @param preset Whether this is a preset extra
      */
-    public ExtraFieldHolder(long id, String name, boolean preset) {
+    public ExtraFieldHolder(long id, @NonNull String name, boolean preset) {
         this(id, name, preset, null);
     }
 
@@ -78,7 +82,7 @@ public class ExtraFieldHolder implements Parcelable {
      * @param preset Whether this is a preset extra
      * @param value  The initial value of the field
      */
-    public ExtraFieldHolder(long id, String name, boolean preset, String value) {
+    public ExtraFieldHolder(long id, @NonNull String name, boolean preset, @Nullable String value) {
         this.id = id;
         this.name = name;
         this.preset = preset;

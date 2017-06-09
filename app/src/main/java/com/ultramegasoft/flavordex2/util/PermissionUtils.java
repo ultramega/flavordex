@@ -31,6 +31,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -67,7 +68,7 @@ public class PermissionUtils {
      * @param context The Context
      * @return Whether we have permission to read and write external storage
      */
-    public static boolean hasExternalStoragePerm(Context context) {
+    public static boolean hasExternalStoragePerm(@NonNull Context context) {
         return PermissionChecker.checkSelfPermission(context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PermissionChecker.PERMISSION_GRANTED;
     }
@@ -80,7 +81,8 @@ public class PermissionUtils {
      * @param rationale Rationale for requesting external storage permissions
      * @return Whether we already have external storage permissions
      */
-    public static boolean checkExternalStoragePerm(FragmentActivity activity, int rationale) {
+    public static boolean checkExternalStoragePerm(@NonNull FragmentActivity activity,
+                                                   int rationale) {
         if(hasExternalStoragePerm(activity)) {
             return true;
         }
@@ -103,7 +105,7 @@ public class PermissionUtils {
      *
      * @param activity The Activity making the request
      */
-    public static void requestExternalStoragePerm(Activity activity) {
+    public static void requestExternalStoragePerm(@NonNull Activity activity) {
         ActivityCompat.requestPermissions(activity,
                 new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_STORAGE);
         getPreferences(activity).edit().putBoolean(PREF_ASKED_STORAGE, true).apply();
@@ -116,7 +118,7 @@ public class PermissionUtils {
      * @param activity The Activity making the request
      * @return Whether we should ask for external storage permissions
      */
-    public static boolean shouldAskExternalStoragePerm(Activity activity) {
+    public static boolean shouldAskExternalStoragePerm(@NonNull Activity activity) {
         return !getPreferences(activity).getBoolean(PREF_ASKED_STORAGE, false)
                 || ActivityCompat.shouldShowRequestPermissionRationale(activity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -128,7 +130,7 @@ public class PermissionUtils {
      * @param context The Context
      * @return Whether we have permission to access the device's location
      */
-    public static boolean hasLocationPerm(Context context) {
+    public static boolean hasLocationPerm(@NonNull Context context) {
         return PermissionChecker.checkSelfPermission(context,
                 Manifest.permission.ACCESS_COARSE_LOCATION) == PermissionChecker.PERMISSION_GRANTED;
     }
@@ -139,7 +141,7 @@ public class PermissionUtils {
      * @param fragment The Fragment making the request
      * @return Whether we already have location permissions
      */
-    public static boolean checkLocationPerm(Fragment fragment) {
+    public static boolean checkLocationPerm(@NonNull Fragment fragment) {
         if(hasLocationPerm(fragment.getContext())) {
             return true;
         }
@@ -154,7 +156,7 @@ public class PermissionUtils {
      *
      * @param fragment The Fragment making the request
      */
-    private static void requestLocationPerm(Fragment fragment) {
+    private static void requestLocationPerm(@NonNull Fragment fragment) {
         fragment.requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION},
                 REQUEST_LOCATION);
         getPreferences(fragment.getContext()).edit().putBoolean(PREF_ASKED_LOCATION, true).apply();
@@ -167,7 +169,7 @@ public class PermissionUtils {
      * @param activity The Activity making the request
      * @return Whether we should ask for location permissions
      */
-    public static boolean shouldAskLocationPerm(Activity activity) {
+    public static boolean shouldAskLocationPerm(@NonNull Activity activity) {
         return !getPreferences(activity).getBoolean(PREF_ASKED_LOCATION, false)
                 || ActivityCompat.shouldShowRequestPermissionRationale(activity,
                 Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -182,7 +184,7 @@ public class PermissionUtils {
      * @param permissions  Array of permissions requested
      * @param grantResults Array of results of the permission requests
      */
-    public static void onRequestPermissionsResult(Context context, int requestCode,
+    public static void onRequestPermissionsResult(@NonNull Context context, int requestCode,
                                                   @NonNull String[] permissions,
                                                   @NonNull int[] grantResults) {
         switch(requestCode) {
@@ -216,7 +218,8 @@ public class PermissionUtils {
      * @param context The Context
      * @return The SharedPreferences
      */
-    private static SharedPreferences getPreferences(Context context) {
+    @NonNull
+    private static SharedPreferences getPreferences(@NonNull Context context) {
         return context.getSharedPreferences(PREFS_KEY, Context.MODE_PRIVATE);
     }
 
@@ -242,8 +245,9 @@ public class PermissionUtils {
          * @param message     The rationale message
          */
         @SuppressWarnings("SameParameterValue")
-        public static void showDialog(FragmentManager fm, String permission, int requestCode,
-                                      CharSequence message, Fragment target) {
+        public static void showDialog(@NonNull FragmentManager fm, @NonNull String permission,
+                                      int requestCode, @NonNull CharSequence message,
+                                      @Nullable Fragment target) {
             final DialogFragment fragment = new PermissionDialog();
             fragment.setTargetFragment(target, requestCode);
 

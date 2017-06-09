@@ -30,6 +30,7 @@ import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.DatePicker;
@@ -88,37 +89,45 @@ public class DateInputWidget extends LinearLayout
     /**
      * The currently set date
      */
+    @Nullable
     private Date mDate;
 
     /**
      * The DatePickerDialog
      */
+    @Nullable
     private DatePickerDialog mDatePickerDialog;
 
     /**
      * Date constraints
      */
+    @Nullable
     private Date mMinDate;
+    @Nullable
     private Date mMaxDate;
 
     /**
      * The TimePickerDialog
      */
+    @Nullable
     private TimePickerDialog mTimePickerDialog;
 
     /**
      * The Date from the DatePickerDialog restored from saved state
      */
+    @Nullable
     private Date mDatePickerDialogDate;
 
     /**
      * The Date from the TimePickerDialog restored from saved state
      */
+    @Nullable
     private Date mTimePickerDialogDate;
 
     /**
      * The current listener for date changes
      */
+    @Nullable
     private OnDateChangeListener mListener;
 
     /**
@@ -148,11 +157,11 @@ public class DateInputWidget extends LinearLayout
         this(context, null, 0);
     }
 
-    public DateInputWidget(Context context, AttributeSet attrs) {
+    public DateInputWidget(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public DateInputWidget(Context context, AttributeSet attrs, int defStyleAttr) {
+    public DateInputWidget(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         inflate(getContext(), R.layout.widget_date_input, this);
@@ -192,7 +201,7 @@ public class DateInputWidget extends LinearLayout
      *
      * @param attrs The AttributeSet from the constructor
      */
-    private void applyAttrs(AttributeSet attrs) {
+    private void applyAttrs(@Nullable AttributeSet attrs) {
         final Resources res = getResources();
         final TypedArray a =
                 getContext().obtainStyledAttributes(attrs, R.styleable.DateInputWidget);
@@ -215,7 +224,7 @@ public class DateInputWidget extends LinearLayout
      *
      * @param listener An OnDateChangeListener
      */
-    public void setListener(OnDateChangeListener listener) {
+    public void setListener(@Nullable OnDateChangeListener listener) {
         mListener = listener;
     }
 
@@ -224,7 +233,7 @@ public class DateInputWidget extends LinearLayout
      *
      * @param date A Date
      */
-    public void setDate(Date date) {
+    public void setDate(@Nullable Date date) {
         if(date != null) {
             mDate = (Date)date.clone();
             mTxtDate.setText(mDateFormat.format(date));
@@ -251,6 +260,7 @@ public class DateInputWidget extends LinearLayout
      *
      * @return A Date or null if not set
      */
+    @Nullable
     public Date getDate() {
         if(mDate != null) {
             return (Date)mDate.clone();
@@ -303,7 +313,7 @@ public class DateInputWidget extends LinearLayout
      *
      * @param minDate The minimum date the dialog should allow
      */
-    public void setMinDate(Date minDate) {
+    public void setMinDate(@Nullable Date minDate) {
         if(minDate != null) {
             mMinDate = (Date)minDate.clone();
         } else {
@@ -317,6 +327,7 @@ public class DateInputWidget extends LinearLayout
      *
      * @return The minimum date allowed in the date picker dialog
      */
+    @Nullable
     public Date getMinDate() {
         if(mMinDate != null) {
             return (Date)mMinDate.clone();
@@ -329,7 +340,7 @@ public class DateInputWidget extends LinearLayout
      *
      * @param maxDate The maximum date the dialog should allow
      */
-    public void setMaxDate(Date maxDate) {
+    public void setMaxDate(@Nullable Date maxDate) {
         if(maxDate != null) {
             mMaxDate = (Date)maxDate.clone();
         } else {
@@ -343,6 +354,7 @@ public class DateInputWidget extends LinearLayout
      *
      * @return The maximum date allowed in the date picker dialog
      */
+    @Nullable
     public Date getMaxDate() {
         if(mMaxDate != null) {
             return (Date)mMaxDate.clone();
@@ -355,7 +367,7 @@ public class DateInputWidget extends LinearLayout
      *
      * @param initDate The initial date to select in the dialog
      */
-    private void openDatePicker(Date initDate) {
+    private void openDatePicker(@Nullable Date initDate) {
         if(initDate != null) {
             mCalendar.setTime(initDate);
         } else {
@@ -397,7 +409,7 @@ public class DateInputWidget extends LinearLayout
      *
      * @param initDate The initial date to select in the dialog
      */
-    private void openTimePicker(Date initDate) {
+    private void openTimePicker(@Nullable Date initDate) {
         if(initDate != null) {
             mCalendar.setTime(initDate);
         } else {

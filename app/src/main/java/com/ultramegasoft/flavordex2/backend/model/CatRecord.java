@@ -22,6 +22,8 @@
  */
 package com.ultramegasoft.flavordex2.backend.model;
 
+import android.support.annotation.Nullable;
+
 import java.util.ArrayList;
 
 /**
@@ -32,11 +34,15 @@ import java.util.ArrayList;
 @SuppressWarnings("unused")
 public class CatRecord extends Model {
     public long id;
+    @Nullable
     public String uuid;
+    @Nullable
     public String name;
     public long age;
     public boolean deleted;
 
+    @Nullable
     public ArrayList<ExtraRecord> extras;
+    @Nullable
     public ArrayList<FlavorRecord> flavors;
 }

@@ -75,11 +75,13 @@ public class AccountDialog extends DialogFragment {
     /**
      * The current user
      */
+    @Nullable
     private FirebaseUser mUser;
 
     /**
      * The current email address
      */
+    @Nullable
     private String mCurrentEmail;
 
     /**
@@ -127,7 +129,7 @@ public class AccountDialog extends DialogFragment {
      *
      * @param fm The FragmentManager to use
      */
-    public static void showDialog(FragmentManager fm) {
+    public static void showDialog(@NonNull FragmentManager fm) {
         new AccountDialog().show(fm, TAG);
     }
 

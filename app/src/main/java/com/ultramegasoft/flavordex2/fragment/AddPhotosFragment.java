@@ -25,6 +25,8 @@ package com.ultramegasoft.flavordex2.fragment;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -64,10 +66,11 @@ public class AddPhotosFragment extends AbsPhotosFragment {
     /**
      * Memory cache for Bitmaps
      */
+    @NonNull
     private BitmapCache mCache = new BitmapCache();
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(!isMediaReadable()) {
             return;
@@ -78,9 +81,10 @@ public class AddPhotosFragment extends AbsPhotosFragment {
         mAdapter = new ImageAdapter();
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         if(!isMediaReadable()) {
             return super.onCreateView(inflater, container, savedInstanceState);
         }

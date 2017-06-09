@@ -26,6 +26,8 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.LruCache;
 
 import java.util.Map;
@@ -51,6 +53,7 @@ public class BitmapCache implements Parcelable {
     /**
      * The memory cache for storing data
      */
+    @NonNull
     private final LruCache<String, Bitmap> mCache;
 
     public BitmapCache() {
@@ -78,7 +81,7 @@ public class BitmapCache implements Parcelable {
      * @param key    The key to reference the item
      * @param bitmap The Bitmap to store
      */
-    public void put(Object key, Bitmap bitmap) {
+    public void put(@NonNull Object key, @NonNull Bitmap bitmap) {
         if(key == null || bitmap == null) {
             return;
         }
@@ -91,7 +94,8 @@ public class BitmapCache implements Parcelable {
      * @param key The key referencing the item
      * @return The Bitmap
      */
-    public Bitmap get(Object key) {
+    @Nullable
+    public Bitmap get(@NonNull Object key) {
         return mCache.get(key.toString());
     }
 
@@ -100,7 +104,7 @@ public class BitmapCache implements Parcelable {
      *
      * @param key The key referencing the item
      */
-    public void remove(Object key) {
+    public void remove(@NonNull Object key) {
         mCache.remove(key.toString());
     }
 

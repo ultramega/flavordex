@@ -22,6 +22,8 @@
  */
 package com.ultramegasoft.flavordex2.backend.model;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.Gson;
 
 /**
@@ -35,6 +37,7 @@ public class Model {
      *
      * @return The model data as a JSON string
      */
+    @NonNull
     public String toJson() {
         return new Gson().toJson(this);
     }

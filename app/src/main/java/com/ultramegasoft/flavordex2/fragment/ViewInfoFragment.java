@@ -28,6 +28,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -77,6 +78,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     /**
      * The name of the entry category
      */
+    @Nullable
     private String mEntryCat;
 
     /**
@@ -94,6 +96,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     /**
      * The entry title
      */
+    @Nullable
     private String mTitle;
 
     /**
@@ -104,17 +107,18 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     /**
      * List of extra field TableRows
      */
+    @NonNull
     private final ArrayList<View> mExtraRows = new ArrayList<>();
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ENTRY_ID);
         setHasOptionsMenu(true);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(LOADER_MAIN, null, this);
         getLoaderManager().initLoader(LOADER_EXTRAS, null, this);
@@ -122,8 +126,8 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(getLayoutId(), container, false);
 
         mTxtTitle = (TextView)rootView.findViewById(R.id.entry_title);
@@ -189,7 +193,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      *
      * @param data The Cursor set to the correct row
      */
-    private void populateViews(Cursor data) {
+    private void populateViews(@NonNull Cursor data) {
         mTxtTitle.setText(mTitle);
 
         final String maker = data.getString(data.getColumnIndex(Tables.Entries.MAKER));
@@ -236,7 +240,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      *
      * @param data A LinkedHashMap containing the extra values
      */
-    protected void populateExtras(LinkedHashMap<String, ExtraFieldHolder> data) {
+    protected void populateExtras(@NonNull LinkedHashMap<String, ExtraFieldHolder> data) {
         final TableLayout table = (TableLayout)getActivity().findViewById(R.id.entry_info);
         if(!mExtraRows.isEmpty()) {
             for(View tableRow : mExtraRows) {
@@ -266,7 +270,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param view  The TextView
      * @param value The text
      */
-    protected static void setViewText(TextView view, CharSequence value) {
+    protected static void setViewText(@NonNull TextView view, @Nullable CharSequence value) {
         if(view == null) {
             return;
         }
@@ -283,7 +287,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param string A numeric string
      * @return The integer value or 0 if the string is not numeric
      */
-    protected static int stringToInt(String string) {
+    protected static int stringToInt(@Nullable String string) {
         try {
             return Integer.valueOf(string);
         } catch(NumberFormatException e) {
@@ -297,7 +301,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param string A numeric string
      * @return The float value or 0 if the string is not numeric
      */
-    protected static float stringToFloat(String string) {
+    protected static float stringToFloat(@Nullable String string) {
         if(string == null) {
             return 0;
         }
@@ -314,7 +318,8 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param extra The extra field
      * @return The value or null if extra is null
      */
-    protected static String getExtraValue(ExtraFieldHolder extra) {
+    @Nullable
+    protected static String getExtraValue(@Nullable ExtraFieldHolder extra) {
         if(extra == null) {
             return null;
         }

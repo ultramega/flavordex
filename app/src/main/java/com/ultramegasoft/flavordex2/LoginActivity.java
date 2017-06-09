@@ -344,7 +344,7 @@ public class LoginActivity extends AppCompatActivity
      *
      * @param button The SignInButton
      */
-    private void setupGoogle(SignInButton button) {
+    private void setupGoogle(@NonNull SignInButton button) {
         final GoogleSignInOptions gso =
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestIdToken(getString(R.string.default_web_client_id))
@@ -377,7 +377,7 @@ public class LoginActivity extends AppCompatActivity
      *
      * @param account The GoogleSignInAccount
      */
-    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+    private void firebaseAuthWithGoogle(@NonNull GoogleSignInAccount account) {
         final AuthCredential credential =
                 GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential);
@@ -388,7 +388,7 @@ public class LoginActivity extends AppCompatActivity
      *
      * @param button The LoginButton
      */
-    private void setupFacebook(LoginButton button) {
+    private void setupFacebook(@NonNull LoginButton button) {
         mFacebookCallbackManager = CallbackManager.Factory.create();
 
         button.registerCallback(mFacebookCallbackManager, new FacebookCallback<LoginResult>() {
@@ -420,7 +420,7 @@ public class LoginActivity extends AppCompatActivity
      *
      * @param token The AccessToken
      */
-    private void firebaseAuthWithFacebook(AccessToken token) {
+    private void firebaseAuthWithFacebook(@NonNull AccessToken token) {
         final AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential);
     }
@@ -430,7 +430,7 @@ public class LoginActivity extends AppCompatActivity
      *
      * @param button The TwitterLoginButton
      */
-    private void setupTwitter(TwitterLoginButton button) {
+    private void setupTwitter(@NonNull TwitterLoginButton button) {
         mTwitterLoginButton = button;
         mTwitterLoginButton.setCallback(new Callback<TwitterSession>() {
             @Override
@@ -461,7 +461,7 @@ public class LoginActivity extends AppCompatActivity
      *
      * @param session The TwitterSession
      */
-    private void firebaseAuthWithTwitter(TwitterSession session) {
+    private void firebaseAuthWithTwitter(@NonNull TwitterSession session) {
         final AuthCredential credential = TwitterAuthProvider.getCredential(
                 session.getAuthToken().token,
                 session.getAuthToken().secret);

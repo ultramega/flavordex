@@ -27,6 +27,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -133,6 +134,7 @@ public abstract class ImportDialog extends DialogFragment {
      *
      * @return The ListView
      */
+    @NonNull
     ListView getListView() {
         return mListView;
     }
@@ -142,7 +144,7 @@ public abstract class ImportDialog extends DialogFragment {
      *
      * @param adapter A ListAdapter
      */
-    void setListAdapter(ListAdapter adapter) {
+    void setListAdapter(@Nullable ListAdapter adapter) {
         mListView.setAdapter(adapter);
     }
 
@@ -151,6 +153,7 @@ public abstract class ImportDialog extends DialogFragment {
      *
      * @return The ListAdapter
      */
+    @Nullable
     ListAdapter getListAdapter() {
         return mListView.getAdapter();
     }

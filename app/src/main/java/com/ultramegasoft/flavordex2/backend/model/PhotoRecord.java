@@ -22,6 +22,8 @@
  */
 package com.ultramegasoft.flavordex2.backend.model;
 
+import android.support.annotation.Nullable;
+
 /**
  * Model for a photo record.
  *
@@ -31,7 +33,9 @@ package com.ultramegasoft.flavordex2.backend.model;
 public class PhotoRecord extends Model {
     public long id;
     public long entry;
+    @Nullable
     public String hash;
+    @Nullable
     public String driveId;
     public int pos;
 }

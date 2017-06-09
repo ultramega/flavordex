@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -83,6 +84,7 @@ public class EntryListActivity extends AppCompatActivity
     /**
      * Fragment to show in two-pane mode when no item is selected
      */
+    @Nullable
     private Fragment mWelcomeFragment;
 
     /**
@@ -103,15 +105,17 @@ public class EntryListActivity extends AppCompatActivity
     /**
      * Map of filters to populate the filter fragment
      */
+    @Nullable
     private ContentValues mFilters;
 
     /**
      * The result returned by the search Activity
      */
+    @Nullable
     private Intent mSearchResult;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry_list);
 
@@ -155,7 +159,7 @@ public class EntryListActivity extends AppCompatActivity
      *
      * @param prefs The default SharedPreferences
      */
-    private void loadPreferences(SharedPreferences prefs) {
+    private void loadPreferences(@NonNull SharedPreferences prefs) {
         if(prefs.getBoolean(FlavordexApp.PREF_FIRST_RUN, true)) {
             if(AppImportUtils.isAnyAppInstalled(this)) {
                 AppChooserDialog.showDialog(getSupportFragmentManager(), true);
@@ -287,7 +291,7 @@ public class EntryListActivity extends AppCompatActivity
      * @param catName The name of the entry category
      * @param catId   The ID of the entry category
      */
-    public void onItemSelected(long id, String catName, long catId) {
+    public void onItemSelected(long id, @Nullable String catName, long catId) {
         if(mTwoPane) {
             mSelectedItem = id;
             final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -346,7 +350,8 @@ public class EntryListActivity extends AppCompatActivity
      * @param where     The where clause
      * @param whereArgs The values for the parameters of the where clause
      */
-    public void onSearchSubmitted(ContentValues filters, String where, String[] whereArgs) {
+    public void onSearchSubmitted(@NonNull ContentValues filters, @NonNull String where,
+                                  @NonNull String[] whereArgs) {
         mFilters = filters;
         final long catId = filters.getAsLong(Tables.Entries.CAT_ID);
         final Fragment fragment = EntryListFragment.getInstance(catId, mTwoPane, mSelectedItem,
@@ -355,7 +360,7 @@ public class EntryListActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFileSelected(String filePath) {
+    public void onFileSelected(@NonNull String filePath) {
         FileImportDialog.showDialog(getSupportFragmentManager(), filePath);
     }
 

@@ -34,6 +34,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -138,6 +139,7 @@ public class FlavordexProvider extends ContentProvider {
         return true;
     }
 
+    @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
         switch(sUriMatcher.match(uri)) {
@@ -185,9 +187,10 @@ public class FlavordexProvider extends ContentProvider {
         return null;
     }
 
+    @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, String[] projection, String selection,
-                        String[] selectionArgs, String sortOrder) {
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection,
+                        @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         Uri notifyUri = uri;
         final SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         switch(sUriMatcher.match(uri)) {
@@ -302,8 +305,9 @@ public class FlavordexProvider extends ContentProvider {
         return cursor;
     }
 
+    @Nullable
     @Override
-    public Uri insert(@NonNull Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
         String table;
         values = new ContentValues(values);
 
@@ -429,8 +433,8 @@ public class FlavordexProvider extends ContentProvider {
     }
 
     @Override
-    public int update(@NonNull Uri uri, ContentValues values, String selection,
-                      String[] selectionArgs) {
+    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection,
+                      @Nullable String[] selectionArgs) {
         String table;
         values = new ContentValues(values);
 
@@ -542,7 +546,8 @@ public class FlavordexProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, @Nullable String selection,
+                      @Nullable String[] selectionArgs) {
         String table;
 
         switch(sUriMatcher.match(uri)) {
@@ -657,7 +662,7 @@ public class FlavordexProvider extends ContentProvider {
      *
      * @param values ContentValues containing the name and/or origin of the maker
      */
-    private void processMaker(ContentValues values) {
+    private void processMaker(@NonNull ContentValues values) {
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         String maker = values.getAsString(Tables.Entries.MAKER);
@@ -702,7 +707,8 @@ public class FlavordexProvider extends ContentProvider {
      * @param fragment  The fragment to add
      * @return The original where clause ANDed to the new fragment
      */
-    private static String appendWhere(String selection, String fragment) {
+    @NonNull
+    private static String appendWhere(@Nullable String selection, @NonNull String fragment) {
         if(TextUtils.isEmpty(selection)) {
             return fragment;
         } else {

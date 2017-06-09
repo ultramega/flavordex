@@ -33,6 +33,8 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -80,6 +82,7 @@ public class AddEntryFragment extends Fragment {
     /**
      * The name of the category
      */
+    @Nullable
     private String mCatName;
 
     /**
@@ -93,7 +96,7 @@ public class AddEntryFragment extends Fragment {
     private boolean mIsSaving;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
@@ -109,9 +112,10 @@ public class AddEntryFragment extends Fragment {
         }
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_add_entry, container, false);
 
         mPager = (ViewPager)root.findViewById(R.id.pager);
@@ -158,6 +162,7 @@ public class AddEntryFragment extends Fragment {
      *
      * @return The Fragment class
      */
+    @NonNull
     private Class<? extends EditInfoFragment> getEntryInfoClass() {
         if(FlavordexApp.CAT_BEER.equals(mCatName)) {
             return EditBeerInfoFragment.class;
@@ -290,7 +295,7 @@ public class AddEntryFragment extends Fragment {
          * @param fm    The FragmentManager to use
          * @param entry The entry to insert
          */
-        public static void init(FragmentManager fm, EntryHolder entry) {
+        public static void init(@NonNull FragmentManager fm, @NonNull EntryHolder entry) {
             final Bundle args = new Bundle();
             args.putParcelable(ARG_ENTRY, entry);
 
@@ -301,7 +306,7 @@ public class AddEntryFragment extends Fragment {
         }
 
         @Override
-        public void onCreate(Bundle savedInstanceState) {
+        public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setRetainInstance(true);
 
@@ -312,7 +317,7 @@ public class AddEntryFragment extends Fragment {
         }
 
         @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
+        public void onActivityCreated(@Nullable Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
             if(mEntryId > 0) {
                 onComplete(mEntryId);
@@ -340,12 +345,13 @@ public class AddEntryFragment extends Fragment {
             /**
              * The Context
              */
+            @NonNull
             private final Context mContext;
 
             /**
              * @param context The Context
              */
-            DataSaver(Context context) {
+            DataSaver(@NonNull Context context) {
                 mContext = context.getApplicationContext();
             }
 
@@ -375,7 +381,7 @@ public class AddEntryFragment extends Fragment {
              *
              * @param newLocationName The name of the location supplied by the user
              */
-            private void checkLocation(String newLocationName) {
+            private void checkLocation(@Nullable String newLocationName) {
                 if(TextUtils.isEmpty(newLocationName)) {
                     return;
                 }

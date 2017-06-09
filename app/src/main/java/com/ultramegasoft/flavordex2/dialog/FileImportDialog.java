@@ -34,6 +34,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -81,6 +82,7 @@ public class FileImportDialog extends ImportDialog
     /**
      * The data loaded from the CSV file
      */
+    @Nullable
     private CSVUtils.CSVHolder mData;
 
     /**
@@ -94,7 +96,7 @@ public class FileImportDialog extends ImportDialog
      * @param fm       The FragmentManager to use
      * @param filePath The path to the selected file
      */
-    public static void showDialog(FragmentManager fm, String filePath) {
+    public static void showDialog(@NonNull FragmentManager fm, @NonNull String filePath) {
         final DialogFragment fragment = new FileImportDialog();
 
         final Bundle args = new Bundle();
@@ -259,8 +261,8 @@ public class FileImportDialog extends ImportDialog
          * @param requestCode A number to identify this request
          * @param num         The number of duplicates
          */
-        public static void showDialog(FragmentManager fm, Fragment target, int requestCode,
-                                      int num) {
+        public static void showDialog(@NonNull FragmentManager fm, @Nullable Fragment target,
+                                      int requestCode, int num) {
             final DialogFragment fragment = new DuplicatesDialog();
             fragment.setTargetFragment(target, requestCode);
 
@@ -327,7 +329,8 @@ public class FileImportDialog extends ImportDialog
          * @param fm      The FragmentManager to use
          * @param entries The list of entries
          */
-        public static void init(FragmentManager fm, ArrayList<EntryHolder> entries) {
+        public static void init(@NonNull FragmentManager fm,
+                                @NonNull ArrayList<EntryHolder> entries) {
             final DialogFragment fragment = new DataSaverFragment();
 
             final Bundle args = new Bundle();
@@ -370,6 +373,7 @@ public class FileImportDialog extends ImportDialog
             /**
              * The Context
              */
+            @NonNull
             private final Context mContext;
 
             SaveTask() {

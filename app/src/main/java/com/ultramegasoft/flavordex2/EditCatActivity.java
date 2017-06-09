@@ -25,6 +25,8 @@ package com.ultramegasoft.flavordex2;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -50,7 +52,8 @@ public class EditCatActivity extends AppCompatActivity {
      * @param catId   The category ID
      * @param catName The category name
      */
-    public static void startActivity(Context context, long catId, String catName) {
+    public static void startActivity(@NonNull Context context, long catId,
+                                     @Nullable String catName) {
         final Intent intent = new Intent(context, EditCatActivity.class);
         intent.putExtra(EXTRA_CAT_ID, catId);
         intent.putExtra(EXTRA_CAT_NAME, catName);
@@ -58,7 +61,7 @@ public class EditCatActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         final ActionBar actionBar = getSupportActionBar();

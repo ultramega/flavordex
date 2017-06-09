@@ -23,6 +23,7 @@
 package com.ultramegasoft.flavordex2.widget;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.CheckBox;
 import android.widget.Checkable;
@@ -50,11 +51,11 @@ public class CheckableEntryListItem extends LinearLayout implements Checkable {
         super(context);
     }
 
-    public CheckableEntryListItem(Context context, AttributeSet attrs) {
+    public CheckableEntryListItem(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CheckableEntryListItem(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CheckableEntryListItem(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

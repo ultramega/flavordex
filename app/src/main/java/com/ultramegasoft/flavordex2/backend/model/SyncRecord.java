@@ -22,6 +22,8 @@
  */
 package com.ultramegasoft.flavordex2.backend.model;
 
+import android.support.annotation.Nullable;
+
 import java.util.HashMap;
 
 /**
@@ -31,8 +33,12 @@ import java.util.HashMap;
  */
 @SuppressWarnings({"CanBeFinal", "unused"})
 public class SyncRecord extends Model {
+    @Nullable
     public HashMap<String, Long> deletedCats;
+    @Nullable
     public HashMap<String, Long> updatedCats;
+    @Nullable
     public HashMap<String, Long> deletedEntries;
+    @Nullable
     public HashMap<String, Long> updatedEntries;
 }

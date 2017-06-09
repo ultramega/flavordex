@@ -81,7 +81,7 @@ public class AppChooserDialog extends DialogFragment {
      * @param fm          The FragmentManager to use
      * @param multiChoice Whether to allow multiple selections
      */
-    public static void showDialog(FragmentManager fm, boolean multiChoice) {
+    public static void showDialog(@NonNull FragmentManager fm, boolean multiChoice) {
         final DialogFragment fragment = new AppChooserDialog();
 
         final Bundle args = new Bundle();
@@ -198,6 +198,7 @@ public class AppChooserDialog extends DialogFragment {
         /**
          * The Context
          */
+        @NonNull
         private final Context mContext;
 
         /**
@@ -208,13 +209,14 @@ public class AppChooserDialog extends DialogFragment {
         /**
          * The list of installed apps
          */
+        @NonNull
         private final ArrayList<AppImportUtils.AppHolder> mData;
 
         /**
          * @param context     The Context
          * @param multiChoice Whether to allow multiple selections
          */
-        AppListAdapter(Context context, boolean multiChoice) {
+        AppListAdapter(@NonNull Context context, boolean multiChoice) {
             mContext = context;
             mMultiChoice = multiChoice;
             mData = AppImportUtils.getInstalledApps(context.getPackageManager());
@@ -323,7 +325,8 @@ public class AppChooserDialog extends DialogFragment {
          * @param appIds   The source app IDs
          * @param appNames The names of the apps
          */
-        public static void init(FragmentManager fm, int[] appIds, CharSequence[] appNames) {
+        public static void init(@NonNull FragmentManager fm, @NonNull int[] appIds,
+                                @NonNull CharSequence[] appNames) {
             final DialogFragment fragment = new ImporterFragment();
 
             final Bundle args = new Bundle();
@@ -368,6 +371,7 @@ public class AppChooserDialog extends DialogFragment {
             /**
              * The Context
              */
+            @NonNull
             private final Context mContext;
 
             ImportTask() {

@@ -23,6 +23,8 @@
 package com.ultramegasoft.flavordex2.backend;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -37,10 +39,11 @@ import com.ultramegasoft.flavordex2.backend.model.UpdateResponse;
  * @author Steve Guidetti
  */
 public class Sync extends Endpoint {
-    public Sync(Context context) {
+    public Sync(@NonNull Context context) {
         super(context);
     }
 
+    @NonNull
     @Override
     protected String getName() {
         return "sync";
@@ -65,6 +68,7 @@ public class Sync extends Endpoint {
      *
      * @return The SyncRecord
      */
+    @Nullable
     public SyncRecord getUpdates() throws ApiException {
         final String response = get("getUpdates", BackendUtils.getClientId(getContext()));
         try {
@@ -80,7 +84,8 @@ public class Sync extends Endpoint {
      * @param catUuid The UUID of the category
      * @return The CatRecord
      */
-    public CatRecord getCat(String catUuid) throws ApiException {
+    @Nullable
+    public CatRecord getCat(@NonNull String catUuid) throws ApiException {
         final String response = get("getCat", BackendUtils.getClientId(getContext()), catUuid);
         try {
             return new Gson().fromJson(response, CatRecord.class);
@@ -95,7 +100,8 @@ public class Sync extends Endpoint {
      * @param catRecord The CatRecord
      * @return The UpdateResponse
      */
-    public UpdateResponse putCat(CatRecord catRecord) throws ApiException {
+    @Nullable
+    public UpdateResponse putCat(@NonNull CatRecord catRecord) throws ApiException {
         final String response = post("putCat", catRecord, BackendUtils.getClientId(getContext()));
         try {
             return new Gson().fromJson(response, UpdateResponse.class);
@@ -110,7 +116,8 @@ public class Sync extends Endpoint {
      * @param entryUuid The UUID of the entry
      * @return The EntryRecord
      */
-    public EntryRecord getEntry(String entryUuid) throws ApiException {
+    @Nullable
+    public EntryRecord getEntry(@NonNull String entryUuid) throws ApiException {
         final String response = get("getEntry", BackendUtils.getClientId(getContext()), entryUuid);
         try {
             return new Gson().fromJson(response, EntryRecord.class);
@@ -125,7 +132,8 @@ public class Sync extends Endpoint {
      * @param entryRecord The EntryRecord
      * @return The UpdateResponse
      */
-    public UpdateResponse putEntry(EntryRecord entryRecord) throws ApiException {
+    @Nullable
+    public UpdateResponse putEntry(@NonNull EntryRecord entryRecord) throws ApiException {
         final String response =
                 post("putEntry", entryRecord, BackendUtils.getClientId(getContext()));
         try {

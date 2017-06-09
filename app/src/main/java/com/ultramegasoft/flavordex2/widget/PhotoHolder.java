@@ -25,6 +25,8 @@ package com.ultramegasoft.flavordex2.widget;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Holder to contain information about a photo.
@@ -57,6 +59,7 @@ public class PhotoHolder implements Parcelable {
     /**
      * The Uri to the photo file
      */
+    @NonNull
     public Uri uri;
 
     /**
@@ -70,7 +73,7 @@ public class PhotoHolder implements Parcelable {
      * @param uri  The Uri to the photo file
      * @param pos  The sort position of the photo
      */
-    public PhotoHolder(long id, String hash, Uri uri, int pos) {
+    public PhotoHolder(long id, @Nullable String hash, @NonNull Uri uri, int pos) {
         this.id = id;
         this.hash = hash;
         this.uri = uri;

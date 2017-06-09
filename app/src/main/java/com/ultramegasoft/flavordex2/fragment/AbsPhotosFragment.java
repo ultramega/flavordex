@@ -31,6 +31,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -82,16 +84,19 @@ abstract class AbsPhotosFragment extends Fragment {
     /**
      * The image file currently being captured
      */
+    @Nullable
     private Uri mCapturedPhoto;
 
     /**
      * The currently running photo loader
      */
+    @Nullable
     private PhotoLoader mPhotoLoader;
 
     /**
      * The information about each photo
      */
+    @NonNull
     private ArrayList<PhotoHolder> mPhotos = new ArrayList<>();
 
     @Override
@@ -117,9 +122,10 @@ abstract class AbsPhotosFragment extends Fragment {
         }
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         if(!mMediaReadable) {
             final View root = inflater.inflate(R.layout.no_media, container, false);
 
@@ -210,6 +216,7 @@ abstract class AbsPhotosFragment extends Fragment {
      *
      * @return The list of photos
      */
+    @NonNull
     final ArrayList<PhotoHolder> getPhotos() {
         return mPhotos;
     }
@@ -260,7 +267,7 @@ abstract class AbsPhotosFragment extends Fragment {
      *
      * @param newPhoto The photo being added
      */
-    private void addPhoto(PhotoHolder newPhoto) {
+    private void addPhoto(@NonNull PhotoHolder newPhoto) {
         mPhotoLoader = null;
         if(newPhoto.hash == null) {
             Toast.makeText(getContext(), R.string.error_insert_photo, Toast.LENGTH_LONG).show();
@@ -287,7 +294,7 @@ abstract class AbsPhotosFragment extends Fragment {
      *
      * @param photo The new photo
      */
-    protected abstract void onPhotoAdded(PhotoHolder photo);
+    protected abstract void onPhotoAdded(@NonNull PhotoHolder photo);
 
     /**
      * Remove the photo at the specified position.
@@ -310,7 +317,7 @@ abstract class AbsPhotosFragment extends Fragment {
      *
      * @param photo The removed photo
      */
-    protected abstract void onPhotoRemoved(PhotoHolder photo);
+    protected abstract void onPhotoRemoved(@NonNull PhotoHolder photo);
 
     /**
      * Task for loading new photos in the background.
@@ -319,12 +326,13 @@ abstract class AbsPhotosFragment extends Fragment {
         /**
          * The Uri to load
          */
+        @NonNull
         private final Uri mUri;
 
         /**
          * @param uri The Uri to load
          */
-        PhotoLoader(Uri uri) {
+        PhotoLoader(@NonNull Uri uri) {
             mUri = uri;
         }
 
@@ -333,6 +341,7 @@ abstract class AbsPhotosFragment extends Fragment {
          *
          * @return The Uri being loaded
          */
+        @NonNull
         public Uri getUri() {
             return mUri;
         }
