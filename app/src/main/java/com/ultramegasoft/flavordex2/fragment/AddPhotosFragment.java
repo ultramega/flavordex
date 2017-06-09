@@ -124,12 +124,12 @@ public class AddPhotosFragment extends AbsPhotosFragment {
     }
 
     @Override
-    protected void onPhotoAdded(PhotoHolder photo) {
+    protected void onPhotoAdded(@NonNull PhotoHolder photo) {
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    protected void onPhotoRemoved(PhotoHolder photo) {
+    protected void onPhotoRemoved(@NonNull PhotoHolder photo) {
         mCache.remove(photo.uri);
         mAdapter.notifyDataSetChanged();
     }
