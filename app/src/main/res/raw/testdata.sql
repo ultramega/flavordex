@@ -224,4 +224,4 @@ INSERT INTO entries VALUES (3, 'f414553c-c749-458d-b82b-bc18fd9faedd', 2, '2009 
 --
 INSERT INTO entries VALUES (4, '2ced63c2-0569-449a-a3c6-608f5f39c5e4', 4, 'Ethiopia Gedeo', 4, '$2', 'Herkimer', 1337526009000, 4.0, 'Strong smell and taste of blueberry, balanced, medium body doesn''t overexpose the dark berry flavor - easy. I like turtles.', 0, 0, 0);
 --
-INSERT INTO entries VALUES (5, 'bd4a150d-bad0-4b7e-9869-5ae4716babcc', 5, 'Sample Entry', 5, '$6', 'Nowhere', 1440701993000, 3.0, 'This is just a sample...', 0, 0, 0, 0, NULL);
+INSERT INTO entries VALUES (5, 'bd4a150d-bad0-4b7e-9869-5ae4716babcc', 5, 'Sample Entry', 5, '$6', 'Nowhere', 1440701993000, 3.0, 'This is just a sample...', 0, 0, 0);
