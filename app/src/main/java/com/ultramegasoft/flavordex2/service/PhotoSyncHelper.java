@@ -230,6 +230,9 @@ class PhotoSyncHelper {
                     continue;
                 }
                 uri = PhotoUtils.parsePath(filePath);
+                if(uri == null) {
+                    continue;
+                }
 
                 values.clear();
 
@@ -363,6 +366,9 @@ class PhotoSyncHelper {
      * Ensure that the local Drive IDs exists in the Drive folder.
      */
     private void validateDriveIds() {
+        if(mDriveFolder == null) {
+            return;
+        }
         Log.d(TAG, "Validating Drive IDs.");
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
@@ -540,6 +546,9 @@ class PhotoSyncHelper {
      */
     @Nullable
     private DriveFile getDriveFile(@NonNull String hash) {
+        if(mDriveFolder == null) {
+            return null;
+        }
         final Query query = new Query.Builder().addFilter(Filters.eq(sHashKey, hash)).build();
         final DriveApi.MetadataBufferResult result =
                 mDriveFolder.queryChildren(mClient, query).await();
@@ -563,6 +572,9 @@ class PhotoSyncHelper {
      */
     private void createNewFile(@NonNull String title, @NonNull String hash,
                                @NonNull DriveContents contents) {
+        if(mDriveFolder == null) {
+            return;
+        }
         final MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
                 .setTitle(title)
                 .setCustomProperty(sHashKey, hash).build();

@@ -158,6 +158,9 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
+        if(mTitle == null) {
+            return;
+        }
         final MenuItem shareItem = menu.findItem(R.id.menu_share);
         if(shareItem != null) {
             final Intent shareIntent = EntryUtils.getShareIntent(getContext(), mTitle, mRating);
@@ -271,9 +274,6 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param value The text
      */
     protected static void setViewText(@NonNull TextView view, @Nullable CharSequence value) {
-        if(view == null) {
-            return;
-        }
         if(TextUtils.isEmpty(value)) {
             view.setText(R.string.hint_empty);
         } else {

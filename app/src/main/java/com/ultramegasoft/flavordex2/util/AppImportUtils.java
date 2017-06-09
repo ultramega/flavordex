@@ -171,7 +171,7 @@ public class AppImportUtils {
      */
     public static boolean isAppInstalled(@NonNull Context context, int app, boolean checkSupport) {
         final ProviderInfo pi = getProviderInfo(context.getPackageManager(), app);
-        return pi != null && (!checkSupport || pi.exported);
+        return !checkSupport || pi.exported;
     }
 
     /**
@@ -362,7 +362,9 @@ public class AppImportUtils {
                 while(cursor.moveToNext()) {
                     path = cursor.getString(cursor.getColumnIndex(PhotosColumns.PATH));
                     uri = PhotoUtils.parsePath(path);
-                    entry.addPhoto(0, PhotoUtils.getMD5Hash(cr, uri), uri);
+                    if(uri != null) {
+                        entry.addPhoto(0, PhotoUtils.getMD5Hash(cr, uri), uri);
+                    }
                 }
             } finally {
                 cursor.close();
@@ -480,15 +482,20 @@ public class AppImportUtils {
                 cr.query(Uri.withAppendedPath(sourceUri, "photos"), null, null, null, null);
         if(cursor != null) {
             try {
-                String hash;
                 String path;
+                Uri uri;
+                String hash;
                 int pos;
                 final ArrayList<PhotoHolder> photos = entry.getPhotos();
                 while(cursor.moveToNext()) {
-                    hash = cursor.getString(cursor.getColumnIndex(Tables.Photos.HASH));
                     path = cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH));
+                    uri = PhotoUtils.parsePath(path);
+                    if(uri == null) {
+                        continue;
+                    }
+                    hash = cursor.getString(cursor.getColumnIndex(Tables.Photos.HASH));
                     pos = cursor.getInt(cursor.getColumnIndex(Tables.Photos.POS));
-                    photos.add(new PhotoHolder(0, hash, PhotoUtils.parsePath(path), pos));
+                    photos.add(new PhotoHolder(0, hash, uri, pos));
                 }
             } finally {
                 cursor.close();

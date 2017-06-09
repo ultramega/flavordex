@@ -486,9 +486,13 @@ public class ExportDialog extends DialogFragment {
                 if(cursor != null) {
                     try {
                         String path;
+                        Uri photoUri;
                         while(cursor.moveToNext()) {
                             path = cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH));
-                            entry.addPhoto(0, null, PhotoUtils.parsePath(path));
+                            photoUri = PhotoUtils.parsePath(path);
+                            if(photoUri != null) {
+                                entry.addPhoto(0, null, photoUri);
+                            }
                         }
                     } finally {
                         cursor.close();

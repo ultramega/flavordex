@@ -120,8 +120,10 @@ abstract class BackgroundThumbLoader<K> {
                 if(drawable instanceof ThumbDrawable
                         && ((ThumbDrawable)drawable).key == mThumb.key) {
                     final Bitmap bitmap = getBitmap(mThumb);
-                    PhotoUtils.getThumbCache().put(mThumb.key, bitmap);
-                    setBitmap(imageView, bitmap);
+                    if(bitmap != null) {
+                        PhotoUtils.getThumbCache().put(mThumb.key, bitmap);
+                        setBitmap(imageView, bitmap);
+                    }
                 }
             }
         }

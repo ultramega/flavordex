@@ -26,6 +26,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -219,7 +220,7 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
      * @param extra    The extra field to associate with the View
      */
     protected static void initEditText(@NonNull EditText editText,
-                                       @NonNull final ExtraFieldHolder extra) {
+                                       @Nullable final ExtraFieldHolder extra) {
         if(extra == null) {
             return;
         }
@@ -251,7 +252,7 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
      * @param extra   The extra field to associate with the View
      */
     protected static void initSpinner(@NonNull Spinner spinner,
-                                      @NonNull final ExtraFieldHolder extra) {
+                                      @Nullable final ExtraFieldHolder extra) {
         if(extra == null) {
             return;
         }

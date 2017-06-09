@@ -550,9 +550,6 @@ public class PhotoUtils {
      */
     @Nullable
     public static String getMD5Hash(@NonNull ContentResolver cr, @NonNull Uri uri) {
-        if(uri == null) {
-            return null;
-        }
         try {
             final InputStream inputStream = cr.openInputStream(uri);
             if(inputStream == null) {

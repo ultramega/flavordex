@@ -92,6 +92,9 @@ public class AccountDialog extends DialogFragment {
          * Execute the update request.
          */
         public void execute() {
+            if(mUser == null || mCurrentEmail == null) {
+                return;
+            }
             final String password = mTxtPassword.getText().toString();
             mUser.reauthenticate(EmailAuthProvider.getCredential(mCurrentEmail, password))
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -234,6 +237,9 @@ public class AccountDialog extends DialogFragment {
     private void changeEmail() {
         new AccountUpdater() {
             protected void doTask() {
+                if(mUser == null) {
+                    return;
+                }
                 mUser.updateEmail(mTxtEmail.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -282,6 +288,9 @@ public class AccountDialog extends DialogFragment {
     private void changePassword() {
         new AccountUpdater() {
             protected void doTask() {
+                if(mUser == null) {
+                    return;
+                }
                 mUser.updatePassword(mTxtNewPassword.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override

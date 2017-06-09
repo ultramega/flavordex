@@ -80,7 +80,7 @@ public class CoffeeSearchFormFragment extends EntrySearchFragment.SearchFormFrag
     protected boolean parsePresetField(@NonNull ExtraFieldHolder extra) {
         switch(extra.name) {
             case Tables.Extras.Coffee.BREW_METHOD:
-                if(!extra.value.equals("0")) {
+                if(extra.value != null && !extra.value.equals("0")) {
                     final int offset = Integer.parseInt(extra.value) - 1;
                     final ExtraFieldHolder offsetExtra =
                             new ExtraFieldHolder(extra.id, extra.name, true, offset + "");

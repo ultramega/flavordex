@@ -95,7 +95,7 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
     @Override
     protected Bitmap doInBackground(Void... args) {
         final Bitmap bitmap = PhotoUtils.loadBitmap(mContext, mUri, mWidth, mHeight);
-        if(mCache != null) {
+        if(mCache != null && bitmap != null) {
             mCache.put(mUri, bitmap);
         }
         return bitmap;

@@ -478,7 +478,12 @@ public class LoginActivity extends AppCompatActivity
                     final GoogleSignInResult result =
                             Auth.GoogleSignInApi.getSignInResultFromIntent(data);
                     if(result.isSuccess()) {
-                        firebaseAuthWithGoogle(result.getSignInAccount());
+                        final GoogleSignInAccount account = result.getSignInAccount();
+                        if(account != null) {
+                            firebaseAuthWithGoogle(account);
+                        } else {
+                            showError();
+                        }
                     } else {
                         showError();
                     }

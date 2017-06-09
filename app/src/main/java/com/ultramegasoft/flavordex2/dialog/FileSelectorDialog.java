@@ -362,6 +362,9 @@ public class FileSelectorDialog extends DialogFragment {
         };
 
         final String[] fileList = path.list(filenameFilter);
+        if(fileList == null) {
+            return new String[0];
+        }
         Arrays.sort(fileList, String.CASE_INSENSITIVE_ORDER);
 
         return fileList;
@@ -383,6 +386,9 @@ public class FileSelectorDialog extends DialogFragment {
         };
 
         final String[] dirList = path.list(dirFilter);
+        if(dirList == null) {
+            return new String[0];
+        }
         Arrays.sort(dirList, String.CASE_INSENSITIVE_ORDER);
 
         return dirList;
@@ -449,9 +455,6 @@ public class FileSelectorDialog extends DialogFragment {
          * @param type  The item type
          */
         void addItems(@NonNull String[] items, int type) {
-            if(items == null) {
-                return;
-            }
             for(String item : items) {
                 mData.add(item);
                 mTypes.add(type);

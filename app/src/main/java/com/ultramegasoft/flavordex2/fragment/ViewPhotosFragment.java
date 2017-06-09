@@ -429,10 +429,11 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         @Override
         protected Boolean doInBackground(Void... params) {
             final ContentResolver cr = mContext.getContentResolver();
-            mPhoto.uri = PhotoUtils.getFileUri(cr, mPhoto.uri);
-            if(mPhoto.uri == null) {
+            Uri uri = PhotoUtils.getFileUri(cr, mPhoto.uri);
+            if(uri == null) {
                 return false;
             }
+            mPhoto.uri = uri;
 
             if(mPhoto.hash == null) {
                 mPhoto.hash = PhotoUtils.getMD5Hash(mContext.getContentResolver(), mPhoto.uri);
@@ -443,7 +444,6 @@ public class ViewPhotosFragment extends AbsPhotosFragment
             values.put(Tables.Photos.PATH, mPhoto.uri.getLastPathSegment());
             values.put(Tables.Photos.POS, mPhoto.pos);
 
-            Uri uri;
             if(mPhoto.id > 0) {
                 uri = ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, mPhoto.id);
                 if(cr.update(uri, values, null, null) < 1) {

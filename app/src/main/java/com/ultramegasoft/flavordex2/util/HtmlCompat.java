@@ -23,7 +23,7 @@
 package com.ultramegasoft.flavordex2.util;
 
 import android.os.Build;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.Spanned;
 
@@ -39,8 +39,11 @@ public class HtmlCompat {
      * @param source The HTML string
      * @return The formatted text
      */
-    @NonNull
-    public static Spanned fromHtml(@NonNull String source) {
+    @Nullable
+    public static Spanned fromHtml(@Nullable String source) {
+        if(source == null) {
+            return null;
+        }
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return Html.fromHtml(source, 0);
         }

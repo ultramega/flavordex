@@ -71,7 +71,10 @@ public class BitmapCache implements Parcelable {
         this();
         final Bundle bundle = in.readBundle(BitmapCache.class.getClassLoader());
         for(String key : bundle.keySet()) {
-            put(key, (Bitmap)bundle.getParcelable(key));
+            final Bitmap bitmap = bundle.getParcelable(key);
+            if(bitmap != null) {
+                put(key, bitmap);
+            }
         }
     }
 
@@ -82,9 +85,6 @@ public class BitmapCache implements Parcelable {
      * @param bitmap The Bitmap to store
      */
     public void put(@NonNull Object key, @NonNull Bitmap bitmap) {
-        if(key == null || bitmap == null) {
-            return;
-        }
         mCache.put(key.toString(), bitmap);
     }
 

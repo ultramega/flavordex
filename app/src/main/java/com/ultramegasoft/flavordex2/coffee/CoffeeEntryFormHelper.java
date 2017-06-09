@@ -23,6 +23,7 @@
 package com.ultramegasoft.flavordex2.coffee;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -119,7 +120,7 @@ class CoffeeEntryFormHelper extends EntryFormHelper {
      * @param extra The extraction time extra field
      */
     private static void initExtractionTime(@NonNull final EditText min, @NonNull final EditText sec,
-                                           @NonNull final ExtraFieldHolder extra) {
+                                           @Nullable final ExtraFieldHolder extra) {
         if(extra == null) {
             return;
         }

@@ -64,7 +64,7 @@ public class BeerSearchFormFragment extends EntrySearchFragment.SearchFormFragme
     protected boolean parsePresetField(@NonNull ExtraFieldHolder extra) {
         switch(extra.name) {
             case Tables.Extras.Beer.SERVING:
-                if(!extra.value.equals("0")) {
+                if(extra.value != null && !extra.value.equals("0")) {
                     final int offset = Integer.parseInt(extra.value) - 1;
                     final ExtraFieldHolder offsetExtra =
                             new ExtraFieldHolder(extra.id, extra.name, true, offset + "");

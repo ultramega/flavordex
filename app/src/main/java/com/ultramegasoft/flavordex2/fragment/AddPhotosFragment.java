@@ -76,7 +76,10 @@ public class AddPhotosFragment extends AbsPhotosFragment {
             return;
         }
         if(savedInstanceState != null) {
-            mCache = savedInstanceState.getParcelable(STATE_CACHE);
+            final BitmapCache cache = savedInstanceState.getParcelable(STATE_CACHE);
+            if(cache != null) {
+                mCache = cache;
+            }
         }
         mAdapter = new ImageAdapter();
     }

@@ -269,7 +269,9 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     private void saveData() {
         setEditMode(false, true);
         mData = mRadarView.getData();
-        new DataSaver(getContext(), mEntryId, mData).execute();
+        if(mData != null) {
+            new DataSaver(getContext(), mEntryId, mData).execute();
+        }
     }
 
     /**

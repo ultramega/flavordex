@@ -293,20 +293,20 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         /**
          * The list of filter values
          */
-        @Nullable
-        private ContentValues mFilters;
+        @NonNull
+        private final ContentValues mFilters = new ContentValues();
 
         /**
          * The where clause
          */
-        @Nullable
-        private StringBuilder mWhere;
+        @NonNull
+        private final StringBuilder mWhere = new StringBuilder();
 
         /**
          * The values for the parameters of the where clause
          */
-        @Nullable
-        private ArrayList<String> mWhereArgs;
+        @NonNull
+        private final ArrayList<String> mWhereArgs = new ArrayList<>();
 
         @NonNull
         @Override
@@ -360,8 +360,12 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
 
             if(savedInstanceState != null) {
                 //noinspection unchecked
-                mFormHelper.setExtras((LinkedHashMap<String, ExtraFieldHolder>)savedInstanceState
-                        .getSerializable(STATE_EXTRAS));
+                final LinkedHashMap<String, ExtraFieldHolder> extras =
+                        (LinkedHashMap<String, ExtraFieldHolder>)savedInstanceState
+                                .getSerializable(STATE_EXTRAS);
+                if(extras != null) {
+                    mFormHelper.setExtras(extras);
+                }
             } else {
                 getLoaderManager().initLoader(LOADER_EXTRAS, null, this);
             }
@@ -475,9 +479,9 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
          */
         @NonNull
         public Intent getData() {
-            mFilters = new ContentValues();
-            mWhere = new StringBuilder();
-            mWhereArgs = new ArrayList<>();
+            mFilters.clear();
+            mWhere.setLength(0);
+            mWhereArgs.clear();
 
             mFilters.put(Tables.Entries.CAT_ID, mCatId);
 

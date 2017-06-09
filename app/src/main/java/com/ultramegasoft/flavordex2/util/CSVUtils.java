@@ -514,7 +514,9 @@ public class CSVUtils {
             Uri uri;
             for(int i = 0; i < array.length(); i++) {
                 uri = PhotoUtils.parsePath(array.optString(i));
-                entry.addPhoto(0, null, uri);
+                if(uri != null) {
+                    entry.addPhoto(0, null, uri);
+                }
             }
         } catch(JSONException e) {
             Log.w(TAG, "Failed to parse photos for: " + entry.title);
@@ -542,6 +544,9 @@ public class CSVUtils {
         for(String photo : photosField.split(",")) {
             path = photo.trim().substring(0, photo.indexOf('|'));
             uri = PhotoUtils.parsePath(path);
+            if(uri == null) {
+                continue;
+            }
             hash = PhotoUtils.getMD5Hash(cr, uri);
             if(hash != null) {
                 entry.addPhoto(0, hash, uri);

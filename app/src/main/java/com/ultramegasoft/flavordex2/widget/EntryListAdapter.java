@@ -60,7 +60,11 @@ public class EntryListAdapter extends CursorAdapter {
                 @Nullable
                 @Override
                 protected Bitmap getBitmap(@NonNull Thumb thumb) {
-                    return PhotoUtils.getThumb(thumb.get().getContext(), (Long)thumb.key);
+                    final ImageView imageView = thumb.get();
+                    if(imageView == null) {
+                        return null;
+                    }
+                    return PhotoUtils.getThumb(imageView.getContext(), (Long)thumb.key);
                 }
             };
 

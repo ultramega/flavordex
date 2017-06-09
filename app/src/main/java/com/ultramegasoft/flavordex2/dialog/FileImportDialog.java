@@ -137,7 +137,7 @@ public class FileImportDialog extends ImportDialog
                 break;
             case REQUEST_SET_CATEGORY:
                 CatListDialog.closeDialog(getFragmentManager());
-                if(resultCode == Activity.RESULT_OK && data != null) {
+                if(resultCode == Activity.RESULT_OK && data != null && mData != null) {
                     final long catId = data.getLongExtra(CatListDialog.EXTRA_CAT_ID, 0);
                     for(EntryHolder entry : mData.entries) {
                         entry.catId = catId;
@@ -155,6 +155,9 @@ public class FileImportDialog extends ImportDialog
      * Uncheck duplicate entries.
      */
     private void uncheckDuplicates() {
+        if(mData == null) {
+            return;
+        }
         final ListView listView = getListView();
         for(int i = 0; i < mData.entries.size(); i++) {
             listView.setItemChecked(i, !mData.duplicates.contains(mData.entries.get(i)));
@@ -174,11 +177,13 @@ public class FileImportDialog extends ImportDialog
     @Override
     protected void insertSelected() {
         final CSVListAdapter adapter = (CSVListAdapter)getListAdapter();
-        final ArrayList<EntryHolder> entries = new ArrayList<>();
-        for(long i : getListView().getCheckedItemIds()) {
-            entries.add(adapter.getItem((int)i));
+        if(adapter != null) {
+            final ArrayList<EntryHolder> entries = new ArrayList<>();
+            for(long i : getListView().getCheckedItemIds()) {
+                entries.add(adapter.getItem((int)i));
+            }
+            DataSaverFragment.init(getFragmentManager(), entries);
         }
-        DataSaverFragment.init(getFragmentManager(), entries);
     }
 
     @Override
@@ -197,6 +202,9 @@ public class FileImportDialog extends ImportDialog
      */
     private void validateData() {
         invalidateButtons();
+        if(mData == null) {
+            return;
+        }
         if(!mData.hasCategory) {
             CatListDialog.showDialog(getFragmentManager(), this, REQUEST_SET_CATEGORY);
         } else if(!mData.duplicates.isEmpty()) {

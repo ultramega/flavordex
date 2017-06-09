@@ -112,7 +112,11 @@ abstract class AbsPhotosFragment extends Fragment {
                 .hasSystemFeature(PackageManager.FEATURE_CAMERA);
 
         if(savedInstanceState != null) {
-            mPhotos = savedInstanceState.getParcelableArrayList(STATE_PHOTOS);
+            final ArrayList<PhotoHolder> photos =
+                    savedInstanceState.getParcelableArrayList(STATE_PHOTOS);
+            if(photos != null) {
+                mPhotos = photos;
+            }
             mCapturedPhoto = savedInstanceState.getParcelable(STATE_CAPTURE_URI);
             final Uri loadingUri = savedInstanceState.getParcelable(STATE_LOADING_URI);
             if(loadingUri != null) {
@@ -191,8 +195,10 @@ abstract class AbsPhotosFragment extends Fragment {
                 case REQUEST_CAPTURE_IMAGE:
                     try {
                         uri = mCapturedPhoto;
-                        MediaStore.Images.Media.insertImage(cr, uri.getPath(),
-                                uri.getLastPathSegment(), null);
+                        if(uri != null) {
+                            MediaStore.Images.Media.insertImage(cr, uri.getPath(),
+                                    uri.getLastPathSegment(), null);
+                        }
                     } catch(FileNotFoundException e) {
                         Log.e(TAG, "Failed to save file", e);
                     }

@@ -27,6 +27,7 @@ import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -132,6 +133,10 @@ public class FlavordexProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+        final Context context = getContext();
+        if(context == null) {
+            return false;
+        }
         mDbHelper = new DatabaseHelper(getContext());
         mBackupManager = new BackupManager(getContext());
         //noinspection ConstantConditions

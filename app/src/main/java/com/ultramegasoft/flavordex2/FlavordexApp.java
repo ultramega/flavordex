@@ -203,7 +203,10 @@ public class FlavordexApp extends Application
      * @return The real display name
      */
     @NonNull
-    public static String getRealCatName(@NonNull Context context, @NonNull String name) {
+    public static String getRealCatName(@NonNull Context context, @Nullable String name) {
+        if(name == null) {
+            return "";
+        }
         if(sCatNameMap.containsKey(name)) {
             return context.getString(sCatNameMap.get(name));
         }
@@ -276,6 +279,9 @@ public class FlavordexApp extends Application
     private class LocatorTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
+            if(mLocation == null) {
+                return null;
+            }
             final ContentResolver cr = getContentResolver();
             final Cursor cursor = cr.query(Tables.Locations.CONTENT_URI, null, null, null, null);
             if(cursor == null) {

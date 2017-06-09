@@ -31,6 +31,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -352,7 +353,10 @@ public class EntryUtils {
      * @return The filtered text
      */
     @NonNull
-    public static String filterName(@NonNull String name) {
+    public static String filterName(@Nullable String name) {
+        if(TextUtils.isEmpty(name)) {
+            return "";
+        }
         for(int i = 0; i < name.length(); i++) {
             if(name.charAt(i) != '_') {
                 return name.substring(i);

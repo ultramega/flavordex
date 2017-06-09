@@ -116,8 +116,12 @@ public class EditInfoFragment extends LoadingProgressFragment
             getLoaderManager().initLoader(LOADER_MAIN, null, this).forceLoad();
         } else {
             //noinspection unchecked
-            mFormHelper.setExtras((LinkedHashMap<String, ExtraFieldHolder>)savedInstanceState
-                    .getSerializable(STATE_EXTRAS));
+            final LinkedHashMap<String, ExtraFieldHolder> extras =
+                    (LinkedHashMap<String, ExtraFieldHolder>)savedInstanceState
+                            .getSerializable(STATE_EXTRAS);
+            if(extras != null) {
+                mFormHelper.setExtras(extras);
+            }
             hideLoadingIndicator(false);
         }
     }
@@ -171,16 +175,14 @@ public class EditInfoFragment extends LoadingProgressFragment
      * @param entry The entry
      */
     private void populateFields(@NonNull EntryHolder entry) {
-        if(entry != null) {
-            mFormHelper.mTxtTitle.setText(entry.title);
-            mFormHelper.mTxtMaker.setText(entry.maker);
-            mFormHelper.mTxtOrigin.setText(entry.origin);
-            mFormHelper.mTxtPrice.setText(entry.price);
-            mFormHelper.mTxtLocation.setText(entry.location);
-            mDateInputWidget.setDate(new Date(entry.date));
-            mRatingBar.setRating(entry.rating);
-            mFormHelper.mTxtNotes.setText(entry.notes);
-        }
+        mFormHelper.mTxtTitle.setText(entry.title);
+        mFormHelper.mTxtMaker.setText(entry.maker);
+        mFormHelper.mTxtOrigin.setText(entry.origin);
+        mFormHelper.mTxtPrice.setText(entry.price);
+        mFormHelper.mTxtLocation.setText(entry.location);
+        mDateInputWidget.setDate(new Date(entry.date));
+        mRatingBar.setRating(entry.rating);
+        mFormHelper.mTxtNotes.setText(entry.notes);
     }
 
     /**
@@ -218,12 +220,14 @@ public class EditInfoFragment extends LoadingProgressFragment
             entry.catId = mCatId;
         }
 
+        final Date date = mDateInputWidget.getDate();
+
         entry.title = mFormHelper.mTxtTitle.getText().toString();
         entry.maker = mFormHelper.mTxtMaker.getText().toString();
         entry.origin = mFormHelper.mTxtOrigin.getText().toString();
         entry.price = mFormHelper.mTxtPrice.getText().toString();
         entry.location = mFormHelper.mTxtLocation.getText().toString();
-        entry.date = mDateInputWidget.getDate().getTime();
+        entry.date = date == null ? new Date().getTime() : date.getTime();
         entry.rating = mRatingBar.getRating();
         entry.notes = mFormHelper.mTxtNotes.getText().toString();
 
@@ -246,9 +250,12 @@ public class EditInfoFragment extends LoadingProgressFragment
         switch(loader.getId()) {
             case LOADER_MAIN:
                 final DataLoader.Holder holder = (DataLoader.Holder)data;
-
-                populateFields(holder.entry);
-                mFormHelper.setExtras(holder.extras);
+                if(holder != null) {
+                    if(holder.entry != null) {
+                        populateFields(holder.entry);
+                    }
+                    mFormHelper.setExtras(holder.extras);
+                }
 
                 hideLoadingIndicator(true);
                 mFormHelper.mTxtTitle.setSelection(mFormHelper.mTxtTitle.getText().length());
@@ -402,7 +409,6 @@ public class EditInfoFragment extends LoadingProgressFragment
             /**
              * The entry
              */
-            @Nullable
             public EntryHolder entry;
 
             /**

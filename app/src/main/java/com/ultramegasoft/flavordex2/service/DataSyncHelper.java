@@ -125,6 +125,9 @@ class DataSyncHelper {
      * Send updated journal data to the backend.
      */
     private void pushUpdates() throws ApiException {
+        if(mSync == null) {
+            return;
+        }
         final ContentResolver cr = mContext.getContentResolver();
 
         String where = Tables.Cats.UUID + " = ?";
@@ -134,7 +137,7 @@ class DataSyncHelper {
         values.put(Tables.Cats.SYNCED, true);
         for(CatRecord catRecord : getUpdatedCats()) {
             final UpdateResponse response = mSync.putCat(catRecord);
-            if(response.success) {
+            if(response != null && response.success) {
                 whereArgs[0] = catRecord.uuid;
                 cr.update(Tables.Cats.CONTENT_URI, values, where, whereArgs);
             }
@@ -146,7 +149,7 @@ class DataSyncHelper {
         values.put(Tables.Entries.SYNCED, true);
         for(EntryRecord entryRecord : getUpdatedEntries()) {
             final UpdateResponse response = mSync.putEntry(entryRecord);
-            if(response.success) {
+            if(response != null && response.success) {
                 whereArgs[0] = entryRecord.uuid;
                 cr.update(Tables.Entries.CONTENT_URI, values, where, whereArgs);
             }
@@ -469,9 +472,13 @@ class DataSyncHelper {
         if(filePath == null) {
             return null;
         }
+        final Uri fileUri = PhotoUtils.parsePath(filePath);
+        if(fileUri == null) {
+            return null;
+        }
 
         final ContentResolver cr = mContext.getContentResolver();
-        final String hash = PhotoUtils.getMD5Hash(cr, PhotoUtils.parsePath(filePath));
+        final String hash = PhotoUtils.getMD5Hash(cr, fileUri);
         if(hash != null) {
             final Uri uri = ContentUris.withAppendedId(Tables.Photos.CONTENT_ID_URI_BASE, photoId);
             final ContentValues values = new ContentValues();
@@ -486,8 +493,14 @@ class DataSyncHelper {
      * Fetch all the changed records from the backend.
      */
     private void fetchUpdates() throws ApiException {
+        if(mSync == null) {
+            return;
+        }
         final ContentResolver cr = mContext.getContentResolver();
         final SyncRecord syncRecord = mSync.getUpdates();
+        if(syncRecord == null) {
+            return;
+        }
 
         String[] whereArgs = new String[2];
         if(syncRecord.deletedCats != null) {
@@ -558,7 +571,10 @@ class DataSyncHelper {
      *
      * @param record The category record
      */
-    private void parseCat(@NonNull CatRecord record) {
+    private void parseCat(@Nullable CatRecord record) {
+        if(record == null) {
+            return;
+        }
         final ContentResolver cr = mContext.getContentResolver();
         final long catId = getCatId(record.uuid);
         Uri uri;
@@ -647,7 +663,10 @@ class DataSyncHelper {
      *
      * @param record The entry record
      */
-    private void parseEntry(@NonNull EntryRecord record) {
+    private void parseEntry(@Nullable EntryRecord record) {
+        if(record == null) {
+            return;
+        }
         final ContentResolver cr = mContext.getContentResolver();
         final long entryId = getEntryId(record.uuid);
         PhotoUtils.deleteThumb(mContext, entryId);
