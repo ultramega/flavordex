@@ -355,6 +355,7 @@ public class FileImportDialog extends ImportDialog
             mEntries = args.getParcelableArrayList(ARG_ENTRIES);
         }
 
+        @SuppressWarnings("deprecation")
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -404,6 +405,7 @@ public class FileImportDialog extends ImportDialog
 
             @Override
             protected void onProgressUpdate(Integer... values) {
+                //noinspection deprecation
                 final ProgressDialog dialog = (ProgressDialog)getDialog();
                 if(dialog != null) {
                     dialog.setProgress(values[0]);

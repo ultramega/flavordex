@@ -190,6 +190,7 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
             mEntryIds = args.getLongArray(ARG_ENTRY_IDS);
         }
 
+        @SuppressWarnings("deprecation")
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -241,6 +242,7 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
 
             @Override
             protected void onProgressUpdate(Integer... values) {
+                //noinspection deprecation
                 final ProgressDialog dialog = (ProgressDialog)getDialog();
                 if(dialog != null) {
                     dialog.setProgress(values[0]);

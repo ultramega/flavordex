@@ -296,6 +296,7 @@ public class ExportDialog extends DialogFragment {
             mFilePath = args.getString(ARG_FILE_PATH);
         }
 
+        @SuppressWarnings("deprecation")
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -502,6 +503,7 @@ public class ExportDialog extends DialogFragment {
 
             @Override
             protected void onProgressUpdate(Integer... values) {
+                //noinspection deprecation
                 final ProgressDialog dialog = (ProgressDialog)getDialog();
                 if(dialog != null) {
                     dialog.setProgress(values[0]);

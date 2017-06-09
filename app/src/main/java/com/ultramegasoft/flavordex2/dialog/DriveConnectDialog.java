@@ -83,6 +83,7 @@ public class DriveConnectDialog extends DialogFragment
         }
     }
 
+    @SuppressWarnings("deprecation")
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

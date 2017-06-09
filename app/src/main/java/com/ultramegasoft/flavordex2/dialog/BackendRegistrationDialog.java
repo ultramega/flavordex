@@ -57,6 +57,7 @@ public class BackendRegistrationDialog extends BackgroundProgressDialog {
         new RegisterTask().execute();
     }
 
+    @SuppressWarnings("deprecation")
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

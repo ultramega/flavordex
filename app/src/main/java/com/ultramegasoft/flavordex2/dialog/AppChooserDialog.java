@@ -345,6 +345,7 @@ public class AppChooserDialog extends DialogFragment {
             mAppNames = args.getCharSequenceArray(ARG_APP_NAMES);
         }
 
+        @SuppressWarnings("deprecation")
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -416,6 +417,7 @@ public class AppChooserDialog extends DialogFragment {
 
             @Override
             protected void onProgressUpdate(Integer... values) {
+                //noinspection deprecation
                 final ProgressDialog dialog = (ProgressDialog)getDialog();
                 if(dialog != null) {
                     dialog.setMessage(mAppNames[values[0]]);
