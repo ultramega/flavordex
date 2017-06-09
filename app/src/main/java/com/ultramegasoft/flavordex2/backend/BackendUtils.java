@@ -199,7 +199,7 @@ public class BackendUtils {
         try {
             record = registration.register();
             if(record != null) {
-                BackendUtils.setClientId(context, record.clientId);
+                setClientId(context, record.clientId);
                 PreferenceManager.getDefaultSharedPreferences(context).edit()
                         .putBoolean(FlavordexApp.PREF_SYNC_DATA, true).apply();
 
