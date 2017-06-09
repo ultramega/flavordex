@@ -61,7 +61,7 @@ public class BeerSearchFormFragment extends EntrySearchFragment.SearchFormFragme
     }
 
     @Override
-    protected boolean parsePresetField(ExtraFieldHolder extra) {
+    protected boolean parsePresetField(@NonNull ExtraFieldHolder extra) {
         switch(extra.name) {
             case Tables.Extras.Beer.SERVING:
                 if(!extra.value.equals("0")) {
