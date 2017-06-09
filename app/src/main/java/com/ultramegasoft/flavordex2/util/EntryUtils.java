@@ -419,7 +419,7 @@ public class EntryUtils {
     }
 
     /**
-     * Sent a sharing Intent.
+     * Send a sharing Intent.
      *
      * @param context The Context
      * @param title   The message title
