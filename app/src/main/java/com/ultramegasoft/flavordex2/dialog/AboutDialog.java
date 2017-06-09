@@ -103,7 +103,7 @@ public class AboutDialog extends DialogFragment {
 
         if(GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(getContext())
                 != null) {
-            final TextView gmsText = (TextView)root.findViewById(R.id.about_gms);
+            final TextView gmsText = root.findViewById(R.id.about_gms);
             gmsText.setVisibility(View.VISIBLE);
             gmsText.setOnClickListener(new View.OnClickListener() {
                 @Override

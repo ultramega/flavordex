@@ -168,7 +168,7 @@ public class DateInputWidget extends LinearLayout
         setOrientation(HORIZONTAL);
         setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
 
-        mTxtDate = (TextView)findViewById(R.id.diw_date);
+        mTxtDate = findViewById(R.id.diw_date);
         findViewById(R.id.diw_button_set_date).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,8 +176,8 @@ public class DateInputWidget extends LinearLayout
             }
         });
 
-        mLayoutTime = (LinearLayout)findViewById(R.id.diw_time_layout);
-        mTxtTime = (TextView)findViewById(R.id.diw_time);
+        mLayoutTime = findViewById(R.id.diw_time_layout);
+        mTxtTime = findViewById(R.id.diw_time);
         findViewById(R.id.diw_button_set_time).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -185,7 +185,7 @@ public class DateInputWidget extends LinearLayout
             }
         });
 
-        mBtnClear = (ImageButton)findViewById(R.id.diw_button_clear);
+        mBtnClear = findViewById(R.id.diw_button_clear);
         mBtnClear.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

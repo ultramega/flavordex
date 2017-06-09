@@ -56,12 +56,12 @@ class WhiskeyEntryFormHelper extends EntryFormHelper {
     @Override
     protected void loadLayout(@NonNull View root) {
         super.loadLayout(root);
-        mTxtType = (AutoCompleteTextView)root.findViewById(R.id.entry_type);
+        mTxtType = root.findViewById(R.id.entry_type);
         mTxtType.setAdapter(ArrayAdapter.createFromResource(mFragment.getContext(),
                 R.array.whiskey_types, android.R.layout.simple_dropdown_item_1line));
 
-        mTxtAge = (EditText)root.findViewById(R.id.entry_stats_age);
-        mTxtABV = (EditText)root.findViewById(R.id.entry_stats_abv);
+        mTxtAge = root.findViewById(R.id.entry_stats_age);
+        mTxtABV = root.findViewById(R.id.entry_stats_abv);
     }
 
     @Override

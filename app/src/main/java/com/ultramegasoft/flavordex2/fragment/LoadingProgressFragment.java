@@ -54,7 +54,7 @@ public abstract class LoadingProgressFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_loading, container, false);
-        mLayout = (ViewGroup)root.findViewById(R.id.layout);
+        mLayout = root.findViewById(R.id.layout);
         mLoadingOverlay = root.findViewById(R.id.progress);
 
         inflater.inflate(getLayoutId(), mLayout);

@@ -140,7 +140,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                              @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_view_flavors, container, false);
 
-        mRadarView = (RadarView)root.findViewById(R.id.radar);
+        mRadarView = root.findViewById(R.id.radar);
         mRadarView.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View v) {
                 if(!mRadarView.isInteractive()) {
@@ -151,7 +151,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
             }
         });
 
-        mEditWidget = (RadarEditWidget)root.findViewById(R.id.edit_widget);
+        mEditWidget = root.findViewById(R.id.edit_widget);
         mEditWidget.setTarget(mRadarView);
         mEditWidget.setOnButtonClickListener(new RadarEditWidget.OnButtonClickListener() {
             @Override

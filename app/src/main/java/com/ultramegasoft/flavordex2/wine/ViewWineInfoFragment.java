@@ -57,10 +57,10 @@ public class ViewWineInfoFragment extends ViewInfoFragment {
                              @Nullable Bundle savedInstanceState) {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
-        mTxtVarietal = (TextView)root.findViewById(R.id.entry_varietal);
+        mTxtVarietal = root.findViewById(R.id.entry_varietal);
 
-        mTxtVintage = (TextView)root.findViewById(R.id.entry_stats_vintage);
-        mTxtABV = (TextView)root.findViewById(R.id.entry_stats_abv);
+        mTxtVintage = root.findViewById(R.id.entry_stats_vintage);
+        mTxtABV = root.findViewById(R.id.entry_stats_abv);
 
         return root;
     }

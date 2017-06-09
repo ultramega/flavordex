@@ -111,13 +111,13 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
      * @param root The root of the layout
      */
     protected void loadLayout(@NonNull View root) {
-        mTxtTitle = (EditText)root.findViewById(R.id.entry_title);
-        mTxtMaker = (AutoCompleteTextView)root.findViewById(R.id.entry_maker);
-        mTxtOrigin = (EditText)root.findViewById(R.id.entry_origin);
-        mTxtPrice = (EditText)root.findViewById(R.id.entry_price);
-        mTxtLocation = (EditText)root.findViewById(R.id.entry_location);
-        mTxtNotes = (EditText)root.findViewById(R.id.entry_notes);
-        mInfoTable = (TableLayout)root.findViewById(R.id.entry_info);
+        mTxtTitle = root.findViewById(R.id.entry_title);
+        mTxtMaker = root.findViewById(R.id.entry_maker);
+        mTxtOrigin = root.findViewById(R.id.entry_origin);
+        mTxtPrice = root.findViewById(R.id.entry_price);
+        mTxtLocation = root.findViewById(R.id.entry_location);
+        mTxtNotes = root.findViewById(R.id.entry_notes);
+        mInfoTable = root.findViewById(R.id.entry_info);
     }
 
     /**
@@ -131,8 +131,8 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
             mExtras.put(extra.getKey(), extra.getValue());
             if(!extra.getValue().preset) {
                 final View root = inflater.inflate(R.layout.edit_info_extra, mInfoTable, false);
-                final TextView label = (TextView)root.findViewById(R.id.label);
-                final EditText value = (EditText)root.findViewById(R.id.value);
+                final TextView label = root.findViewById(R.id.label);
+                final EditText value = root.findViewById(R.id.value);
                 label.setText(mFragment.getString(R.string.label_field, extra.getValue().name));
                 initEditText(value, extra.getValue());
                 mInfoTable.addView(root);

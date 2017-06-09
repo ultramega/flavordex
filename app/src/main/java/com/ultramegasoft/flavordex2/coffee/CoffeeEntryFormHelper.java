@@ -75,21 +75,21 @@ class CoffeeEntryFormHelper extends EntryFormHelper {
     @Override
     protected void loadLayout(@NonNull View root) {
         super.loadLayout(root);
-        mTxtRoaster = (EditText)root.findViewById(R.id.entry_roaster);
-        mTxtRoastDate = (EditText)root.findViewById(R.id.entry_roast_date);
-        mTxtGrind = (EditText)root.findViewById(R.id.entry_grind);
-        mSpnBrewMethod = (Spinner)root.findViewById(R.id.entry_brew_method);
-        mTxtDose = (EditText)root.findViewById(R.id.entry_stats_dose);
-        mTxtEspMass = (EditText)root.findViewById(R.id.entry_stats_esp_mass);
-        mTxtWaterMass = (EditText)root.findViewById(R.id.entry_stats_water_mass);
-        mTxtTemp = (EditText)root.findViewById(R.id.entry_stats_temp);
-        mTxtExtTimeM = (EditText)root.findViewById(R.id.entry_stats_ext_time_m);
-        mTxtExtTimeS = (EditText)root.findViewById(R.id.entry_stats_ext_time_s);
-        mTxtTDS = (EditText)root.findViewById(R.id.entry_stats_tds);
-        mTxtYield = (EditText)root.findViewById(R.id.entry_stats_yield);
+        mTxtRoaster = root.findViewById(R.id.entry_roaster);
+        mTxtRoastDate = root.findViewById(R.id.entry_roast_date);
+        mTxtGrind = root.findViewById(R.id.entry_grind);
+        mSpnBrewMethod = root.findViewById(R.id.entry_brew_method);
+        mTxtDose = root.findViewById(R.id.entry_stats_dose);
+        mTxtEspMass = root.findViewById(R.id.entry_stats_esp_mass);
+        mTxtWaterMass = root.findViewById(R.id.entry_stats_water_mass);
+        mTxtTemp = root.findViewById(R.id.entry_stats_temp);
+        mTxtExtTimeM = root.findViewById(R.id.entry_stats_ext_time_m);
+        mTxtExtTimeS = root.findViewById(R.id.entry_stats_ext_time_s);
+        mTxtTDS = root.findViewById(R.id.entry_stats_tds);
+        mTxtYield = root.findViewById(R.id.entry_stats_yield);
 
-        mRowEspMass = (TableRow)root.findViewById(R.id.esp_mass_row);
-        mRowWaterMass = (TableRow)root.findViewById(R.id.water_mass_row);
+        mRowEspMass = root.findViewById(R.id.esp_mass_row);
+        mRowWaterMass = root.findViewById(R.id.water_mass_row);
     }
 
     @Override

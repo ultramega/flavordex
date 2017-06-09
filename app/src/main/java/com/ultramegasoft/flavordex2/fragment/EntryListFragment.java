@@ -279,7 +279,7 @@ public class EntryListFragment extends ListFragment
                              Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_entry_list, container, false);
 
-        final FrameLayout list = (FrameLayout)root.findViewById(R.id.list);
+        final FrameLayout list = root.findViewById(R.id.list);
         list.addView(super.onCreateView(inflater, container, savedInstanceState));
 
         return root;
@@ -435,7 +435,7 @@ public class EntryListFragment extends ListFragment
      */
     @SuppressLint("PrivateResource")
     private void setupToolbar() {
-        mToolbar = (Toolbar)getActivity().findViewById(R.id.list_toolbar);
+        mToolbar = getActivity().findViewById(R.id.list_toolbar);
         if(mToolbar != null) {
             mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
             mToolbar.setNavigationContentDescription(R.string.abc_action_bar_up_description);
@@ -586,7 +586,7 @@ public class EntryListFragment extends ListFragment
      */
     private void showExportToolbar(boolean show, boolean animate) {
         if(mExportToolbar == null) {
-            mExportToolbar = (Toolbar)getActivity().findViewById(R.id.export_toolbar);
+            mExportToolbar = getActivity().findViewById(R.id.export_toolbar);
             mExportToolbar.inflateMenu(R.menu.export_menu);
             mExportToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override

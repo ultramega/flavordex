@@ -154,12 +154,12 @@ public class AccountDialog extends DialogFragment {
         final View root =
                 LayoutInflater.from(getContext()).inflate(R.layout.dialog_account, null, false);
 
-        mTxtMessage = (TextView)root.findViewById(R.id.message);
-        mTxtPassword = (EditText)root.findViewById(R.id.password);
-        mTxtEmail = (EditText)root.findViewById(R.id.email);
-        mTxtNewPassword = (EditText)root.findViewById(R.id.new_password);
-        mButtonEmail = (Button)root.findViewById(R.id.button_change_email);
-        mButtonPassword = (Button)root.findViewById(R.id.button_change_password);
+        mTxtMessage = root.findViewById(R.id.message);
+        mTxtPassword = root.findViewById(R.id.password);
+        mTxtEmail = root.findViewById(R.id.email);
+        mTxtNewPassword = root.findViewById(R.id.new_password);
+        mButtonEmail = root.findViewById(R.id.button_change_email);
+        mButtonPassword = root.findViewById(R.id.button_change_password);
 
         mTxtEmail.setText(mCurrentEmail);
 

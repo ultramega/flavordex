@@ -118,7 +118,7 @@ public class AddEntryFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_add_entry, container, false);
 
-        mPager = (ViewPager)root.findViewById(R.id.pager);
+        mPager = root.findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(2);
         mPager.setAdapter(new PagerAdapter());
 

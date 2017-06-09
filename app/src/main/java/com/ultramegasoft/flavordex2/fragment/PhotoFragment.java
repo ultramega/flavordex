@@ -80,8 +80,8 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
         }
 
         mRootView = inflater.inflate(R.layout.fragment_photo, container, false);
-        mProgressBar = (ProgressBar)mRootView.findViewById(R.id.progress);
-        mImageView = (ImageView)mRootView.findViewById(R.id.image);
+        mProgressBar = mRootView.findViewById(R.id.progress);
+        mImageView = mRootView.findViewById(R.id.image);
 
         mImageView.getViewTreeObserver()
                 .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

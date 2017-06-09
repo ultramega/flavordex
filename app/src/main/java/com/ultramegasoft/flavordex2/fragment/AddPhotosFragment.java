@@ -217,7 +217,7 @@ public class AddPhotosFragment extends AbsPhotosFragment {
                         .inflate(R.layout.photo_grid_item, parent, false);
 
                 final Holder holder = new Holder();
-                holder.image = (ImageView)convertView.findViewById(R.id.image);
+                holder.image = convertView.findViewById(R.id.image);
                 holder.removeButton = convertView.findViewById(R.id.button_remove_photo);
                 convertView.setTag(holder);
             }

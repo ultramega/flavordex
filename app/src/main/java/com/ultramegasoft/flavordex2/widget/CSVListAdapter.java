@@ -102,10 +102,10 @@ public class CSVListAdapter extends BaseAdapter {
             convertView.findViewById(R.id.thumb).setVisibility(View.GONE);
 
             final Holder holder = new Holder();
-            holder.title = (TextView)convertView.findViewById(R.id.title);
-            holder.maker = (TextView)convertView.findViewById(R.id.maker);
-            holder.rating = (RatingBar)convertView.findViewById(R.id.rating);
-            holder.date = (TextView)convertView.findViewById(R.id.date);
+            holder.title = convertView.findViewById(R.id.title);
+            holder.maker = convertView.findViewById(R.id.maker);
+            holder.rating = convertView.findViewById(R.id.rating);
+            holder.date = convertView.findViewById(R.id.date);
             convertView.setTag(holder);
         }
 

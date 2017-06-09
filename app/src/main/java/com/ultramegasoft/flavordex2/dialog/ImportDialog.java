@@ -61,9 +61,9 @@ public abstract class ImportDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final View root = LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
 
-        mListContainer = (FrameLayout)root.findViewById(R.id.list_container);
+        mListContainer = root.findViewById(R.id.list_container);
 
-        mListView = (ListView)root.findViewById(R.id.list);
+        mListView = root.findViewById(R.id.list);
         mListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -72,11 +72,11 @@ public abstract class ImportDialog extends DialogFragment {
             }
         });
 
-        final TextView emptyView = (TextView)root.findViewById(R.id.empty);
+        final TextView emptyView = root.findViewById(R.id.empty);
         emptyView.setText(R.string.message_import_no_data);
         mListView.setEmptyView(emptyView);
 
-        mProgressBar = (ProgressBar)root.findViewById(R.id.progress);
+        mProgressBar = root.findViewById(R.id.progress);
 
         return new AlertDialog.Builder(getContext())
                 .setTitle(R.string.title_import)

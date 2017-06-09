@@ -57,10 +57,10 @@ public class ViewWhiskeyInfoFragment extends ViewInfoFragment {
                              @Nullable Bundle savedInstanceState) {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
-        mTxtType = (TextView)root.findViewById(R.id.entry_type);
+        mTxtType = root.findViewById(R.id.entry_type);
 
-        mTxtAge = (TextView)root.findViewById(R.id.entry_stats_age);
-        mTxtABV = (TextView)root.findViewById(R.id.entry_stats_abv);
+        mTxtAge = root.findViewById(R.id.entry_stats_age);
+        mTxtABV = root.findViewById(R.id.entry_stats_abv);
 
         return root;
     }

@@ -187,11 +187,11 @@ public class EditCatFragment extends LoadingProgressFragment
                              Bundle savedInstanceState) {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
-        mTxtTitle = (EditText)root.findViewById(R.id.cat_name);
+        mTxtTitle = root.findViewById(R.id.cat_name);
 
-        mTableExtras = (TableLayout)root.findViewById(R.id.cat_extras);
-        mTableFlavors = (TableLayout)root.findViewById(R.id.cat_flavor);
-        mRadarView = (RadarView)root.findViewById(R.id.radar);
+        mTableExtras = root.findViewById(R.id.cat_extras);
+        mTableFlavors = root.findViewById(R.id.cat_flavor);
+        mRadarView = root.findViewById(R.id.radar);
 
         root.findViewById(R.id.button_add_extra).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -418,7 +418,7 @@ public class EditCatFragment extends LoadingProgressFragment
         final View root = inflater.inflate(R.layout.edit_cat_field, tableLayout, false);
 
         final InputFilter[] filters = new InputFilter[] {new InputFilter.LengthFilter(maxLength)};
-        final EditText editText = (EditText)root.findViewById(R.id.field_name);
+        final EditText editText = root.findViewById(R.id.field_name);
         editText.setFilters(filters);
         editText.setHint(hint);
         editText.setText(text);
@@ -437,7 +437,7 @@ public class EditCatFragment extends LoadingProgressFragment
             }
         });
 
-        final ImageButton deleteButton = (ImageButton)root.findViewById(R.id.button_delete);
+        final ImageButton deleteButton = root.findViewById(R.id.button_delete);
         deleteButton.setContentDescription(getString(deleteHint));
         deleteButton.setOnClickListener(new View.OnClickListener() {
             private boolean mDeleted = deleted;

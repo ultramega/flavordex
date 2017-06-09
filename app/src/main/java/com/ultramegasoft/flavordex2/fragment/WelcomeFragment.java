@@ -47,7 +47,7 @@ public class WelcomeFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_welcome, container, false);
 
-        final TextView version = (TextView)root.findViewById(R.id.text_version);
+        final TextView version = root.findViewById(R.id.text_version);
         version.setText(getString(R.string.message_version, BuildConfig.VERSION_NAME));
 
         ((TextView)root.findViewById(R.id.text_copyright))

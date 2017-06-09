@@ -80,7 +80,7 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
      * Set up the list Toolbar.
      */
     private void setupToolbar() {
-        final Toolbar toolbar = (Toolbar)getActivity().findViewById(R.id.list_toolbar);
+        final Toolbar toolbar = getActivity().findViewById(R.id.list_toolbar);
         if(toolbar != null) {
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.cat_list_menu);

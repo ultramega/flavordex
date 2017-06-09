@@ -130,8 +130,8 @@ public class EditInfoFragment extends LoadingProgressFragment
 
         mFormHelper = createHelper(root);
 
-        mDateInputWidget = (DateInputWidget)root.findViewById(R.id.entry_date);
-        mRatingBar = (RatingBar)root.findViewById(R.id.entry_rating);
+        mDateInputWidget = root.findViewById(R.id.entry_date);
+        mRatingBar = root.findViewById(R.id.entry_rating);
 
         final Date date = new Date();
         mDateInputWidget.setDate(date);

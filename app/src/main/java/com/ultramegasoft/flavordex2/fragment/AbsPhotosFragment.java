@@ -135,7 +135,7 @@ abstract class AbsPhotosFragment extends Fragment {
 
             if(!PermissionUtils.hasExternalStoragePerm(getContext())
                     && PermissionUtils.shouldAskExternalStoragePerm(getActivity())) {
-                final Button permButton = (Button)root.findViewById(R.id.button_grant_permission);
+                final Button permButton = root.findViewById(R.id.button_grant_permission);
                 permButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

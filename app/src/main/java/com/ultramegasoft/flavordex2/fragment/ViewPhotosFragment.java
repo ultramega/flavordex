@@ -115,7 +115,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
 
         final View root = inflater.inflate(R.layout.fragment_entry_photos, container, false);
 
-        mPager = (ViewPager)root.findViewById(R.id.pager);
+        mPager = root.findViewById(R.id.pager);
         mPager.setAdapter(new PagerAdapter());
 
         return root;
@@ -215,7 +215,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
             mNoDataLayout =
                     (LinearLayout)((ViewStub)activity.findViewById(R.id.no_photos)).inflate();
 
-            final Button btnTakePhoto = (Button)mNoDataLayout.findViewById(R.id.button_take_photo);
+            final Button btnTakePhoto = mNoDataLayout.findViewById(R.id.button_take_photo);
             if(hasCamera()) {
                 btnTakePhoto.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
@@ -226,7 +226,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
                 btnTakePhoto.setEnabled(false);
             }
 
-            final Button btnAddPhoto = (Button)mNoDataLayout.findViewById(R.id.button_add_photo);
+            final Button btnAddPhoto = mNoDataLayout.findViewById(R.id.button_add_photo);
             btnAddPhoto.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     addPhotoFromGallery();

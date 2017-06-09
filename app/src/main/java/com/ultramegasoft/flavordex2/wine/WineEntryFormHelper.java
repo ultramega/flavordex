@@ -56,12 +56,12 @@ class WineEntryFormHelper extends EntryFormHelper {
     @Override
     protected void loadLayout(@NonNull View root) {
         super.loadLayout(root);
-        mTxtVarietal = (AutoCompleteTextView)root.findViewById(R.id.entry_varietal);
+        mTxtVarietal = root.findViewById(R.id.entry_varietal);
         mTxtVarietal.setAdapter(SpecialArrayAdapter.createFromResource(mFragment.getContext(),
                 R.array.wine_varietals, android.R.layout.simple_dropdown_item_1line));
 
-        mTxtVintage = (EditText)root.findViewById(R.id.entry_stats_vintage);
-        mTxtABV = (EditText)root.findViewById(R.id.entry_stats_abv);
+        mTxtVintage = root.findViewById(R.id.entry_stats_vintage);
+        mTxtABV = root.findViewById(R.id.entry_stats_abv);
     }
 
     @Override

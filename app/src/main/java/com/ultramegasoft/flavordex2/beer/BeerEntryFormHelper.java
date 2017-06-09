@@ -60,16 +60,16 @@ class BeerEntryFormHelper extends EntryFormHelper {
     @Override
     protected void loadLayout(@NonNull View root) {
         super.loadLayout(root);
-        mTxtStyle = (AutoCompleteTextView)root.findViewById(R.id.entry_style);
+        mTxtStyle = root.findViewById(R.id.entry_style);
         mTxtStyle.setAdapter(SpecialArrayAdapter.createFromResource(mFragment.getContext(),
                 R.array.beer_styles, android.R.layout.simple_dropdown_item_1line));
 
-        mSpnServing = (Spinner)root.findViewById(R.id.entry_serving_type);
+        mSpnServing = root.findViewById(R.id.entry_serving_type);
 
-        mTxtIBU = (EditText)root.findViewById(R.id.entry_stats_ibu);
-        mTxtABV = (EditText)root.findViewById(R.id.entry_stats_abv);
-        mTxtOG = (EditText)root.findViewById(R.id.entry_stats_og);
-        mTxtFG = (EditText)root.findViewById(R.id.entry_stats_fg);
+        mTxtIBU = root.findViewById(R.id.entry_stats_ibu);
+        mTxtABV = root.findViewById(R.id.entry_stats_abv);
+        mTxtOG = root.findViewById(R.id.entry_stats_og);
+        mTxtFG = root.findViewById(R.id.entry_stats_fg);
     }
 
     @Override

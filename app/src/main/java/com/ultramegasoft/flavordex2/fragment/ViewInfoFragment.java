@@ -130,14 +130,14 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
                              @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(getLayoutId(), container, false);
 
-        mTxtTitle = (TextView)rootView.findViewById(R.id.entry_title);
-        mRatingBar = (RatingBar)rootView.findViewById(R.id.entry_rating);
-        mTxtMaker = (TextView)rootView.findViewById(R.id.entry_maker);
-        mTxtOrigin = (TextView)rootView.findViewById(R.id.entry_origin);
-        mTxtPrice = (TextView)rootView.findViewById(R.id.entry_price);
-        mTxtLocation = (TextView)rootView.findViewById(R.id.entry_location);
-        mTxtDate = (TextView)rootView.findViewById(R.id.entry_date);
-        mTxtNotes = (TextView)rootView.findViewById(R.id.entry_notes);
+        mTxtTitle = rootView.findViewById(R.id.entry_title);
+        mRatingBar = rootView.findViewById(R.id.entry_rating);
+        mTxtMaker = rootView.findViewById(R.id.entry_maker);
+        mTxtOrigin = rootView.findViewById(R.id.entry_origin);
+        mTxtPrice = rootView.findViewById(R.id.entry_price);
+        mTxtLocation = rootView.findViewById(R.id.entry_location);
+        mTxtDate = rootView.findViewById(R.id.entry_date);
+        mTxtNotes = rootView.findViewById(R.id.entry_notes);
 
         return rootView;
     }
@@ -241,7 +241,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param data A LinkedHashMap containing the extra values
      */
     protected void populateExtras(@NonNull LinkedHashMap<String, ExtraFieldHolder> data) {
-        final TableLayout table = (TableLayout)getActivity().findViewById(R.id.entry_info);
+        final TableLayout table = getActivity().findViewById(R.id.entry_info);
         if(!mExtraRows.isEmpty()) {
             for(View tableRow : mExtraRows) {
                 table.removeView(tableRow);

@@ -116,11 +116,11 @@ public class EntryListAdapter extends CursorAdapter {
                 LayoutInflater.from(context).inflate(R.layout.entry_list_item, parent, false);
 
         final Holder holder = new Holder();
-        holder.thumb = (ImageView)view.findViewById(R.id.thumb);
-        holder.title = (TextView)view.findViewById(R.id.title);
-        holder.maker = (TextView)view.findViewById(R.id.maker);
-        holder.rating = (RatingBar)view.findViewById(R.id.rating);
-        holder.date = (TextView)view.findViewById(R.id.date);
+        holder.thumb = view.findViewById(R.id.thumb);
+        holder.title = view.findViewById(R.id.title);
+        holder.maker = view.findViewById(R.id.maker);
+        holder.rating = view.findViewById(R.id.rating);
+        holder.date = view.findViewById(R.id.date);
         view.setTag(holder);
 
         if(mMultiChoice) {

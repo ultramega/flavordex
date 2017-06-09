@@ -253,7 +253,7 @@ public class SpecialArrayAdapter<T> extends BaseAdapter implements Filterable {
             if(mFieldId == 0) {
                 text = (TextView)view;
             } else {
-                text = (TextView)view.findViewById(mFieldId);
+                text = view.findViewById(mFieldId);
             }
         } catch(ClassCastException e) {
             Log.e("ArrayAdapter", "You must supply a resource ID for a TextView");

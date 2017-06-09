@@ -61,14 +61,14 @@ public class ViewBeerInfoFragment extends ViewInfoFragment {
                              @Nullable Bundle savedInstanceState) {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
-        mTxtStyle = (TextView)root.findViewById(R.id.entry_style);
+        mTxtStyle = root.findViewById(R.id.entry_style);
 
-        mTxtServingType = (TextView)root.findViewById(R.id.entry_serving_type);
+        mTxtServingType = root.findViewById(R.id.entry_serving_type);
 
-        mTxtIBU = (TextView)root.findViewById(R.id.entry_stats_ibu);
-        mTxtABV = (TextView)root.findViewById(R.id.entry_stats_abv);
-        mTxtOG = (TextView)root.findViewById(R.id.entry_stats_og);
-        mTxtFG = (TextView)root.findViewById(R.id.entry_stats_fg);
+        mTxtIBU = root.findViewById(R.id.entry_stats_ibu);
+        mTxtABV = root.findViewById(R.id.entry_stats_abv);
+        mTxtOG = root.findViewById(R.id.entry_stats_og);
+        mTxtFG = root.findViewById(R.id.entry_stats_fg);
 
         return root;
     }

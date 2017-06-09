@@ -71,21 +71,21 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
                              @Nullable Bundle savedInstanceState) {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
-        mTxtRoaster = (TextView)root.findViewById(R.id.entry_roaster);
-        mTxtRoastDate = (TextView)root.findViewById(R.id.entry_roast_date);
-        mTxtGrind = (TextView)root.findViewById(R.id.entry_grind);
-        mTxtBrewMethod = (TextView)root.findViewById(R.id.entry_brew_method);
+        mTxtRoaster = root.findViewById(R.id.entry_roaster);
+        mTxtRoastDate = root.findViewById(R.id.entry_roast_date);
+        mTxtGrind = root.findViewById(R.id.entry_grind);
+        mTxtBrewMethod = root.findViewById(R.id.entry_brew_method);
 
-        mTxtDose = (TextView)root.findViewById(R.id.entry_stats_dose);
-        mTxtMass = (TextView)root.findViewById(R.id.entry_stats_mass);
-        mTxtRatio = (TextView)root.findViewById(R.id.entry_stats_ratio);
-        mTxtTemp = (TextView)root.findViewById(R.id.entry_stats_temp);
-        mTxtExtTime = (TextView)root.findViewById(R.id.entry_stats_ext_time);
-        mTxtTDS = (TextView)root.findViewById(R.id.entry_stats_tds);
-        mTxtYield = (TextView)root.findViewById(R.id.entry_stats_yield);
+        mTxtDose = root.findViewById(R.id.entry_stats_dose);
+        mTxtMass = root.findViewById(R.id.entry_stats_mass);
+        mTxtRatio = root.findViewById(R.id.entry_stats_ratio);
+        mTxtTemp = root.findViewById(R.id.entry_stats_temp);
+        mTxtExtTime = root.findViewById(R.id.entry_stats_ext_time);
+        mTxtTDS = root.findViewById(R.id.entry_stats_tds);
+        mTxtYield = root.findViewById(R.id.entry_stats_yield);
 
-        mTxtLabelMass = (TextView)root.findViewById(R.id.label_mass);
-        mTxtLabelRatio = (TextView)root.findViewById(R.id.label_ratio);
+        mTxtLabelMass = root.findViewById(R.id.label_mass);
+        mTxtLabelRatio = root.findViewById(R.id.label_ratio);
 
         return root;
     }

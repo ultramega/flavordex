@@ -100,7 +100,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
                              @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_search, null);
 
-        mSpnCat = (Spinner)root.findViewById(R.id.entry_cat);
+        mSpnCat = root.findViewById(R.id.entry_cat);
 
         root.findViewById(R.id.button_clear).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -316,12 +316,12 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
 
             mFormHelper = createHelper(root);
 
-            mDateMin = (DateInputWidget)root.findViewById(R.id.entry_date_min);
-            mDateMax = (DateInputWidget)root.findViewById(R.id.entry_date_max);
-            mRatingMin = (RatingBar)root.findViewById(R.id.entry_rating_min);
-            mRatingMax = (RatingBar)root.findViewById(R.id.entry_rating_max);
-            mTxtRatingMin = (TextView)root.findViewById(R.id.rating_min_text);
-            mTxtRatingMax = (TextView)root.findViewById(R.id.rating_max_text);
+            mDateMin = root.findViewById(R.id.entry_date_min);
+            mDateMax = root.findViewById(R.id.entry_date_max);
+            mRatingMin = root.findViewById(R.id.entry_rating_min);
+            mRatingMax = root.findViewById(R.id.entry_rating_max);
+            mTxtRatingMin = root.findViewById(R.id.rating_min_text);
+            mTxtRatingMax = root.findViewById(R.id.rating_max_text);
 
             setupEventHandlers();
 

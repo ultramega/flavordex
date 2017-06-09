@@ -185,11 +185,11 @@ public class CatDeleteDialog extends DialogFragment
         final LayoutInflater inflater = LayoutInflater.from(getContext());
         final View root = inflater.inflate(R.layout.dialog_delete_cat, null);
 
-        mCheckLayout = (LinearLayout)root.findViewById(R.id.check_entries);
-        mTxtMessage = (TextView)root.findViewById(R.id.message);
+        mCheckLayout = root.findViewById(R.id.check_entries);
+        mTxtMessage = root.findViewById(R.id.message);
         mTxtMessage.setFreezesText(true);
 
-        mCheckBox = (CheckBox)root.findViewById(R.id.checkbox);
+        mCheckBox = root.findViewById(R.id.checkbox);
         mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -197,7 +197,7 @@ public class CatDeleteDialog extends DialogFragment
             }
         });
 
-        mTxtCheckEntries = (TextView)root.findViewById(R.id.check_message);
+        mTxtCheckEntries = root.findViewById(R.id.check_message);
         mTxtCheckEntries.setFreezesText(true);
         mTxtCheckEntries.setOnClickListener(new View.OnClickListener() {
             @Override

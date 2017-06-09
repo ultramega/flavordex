@@ -217,8 +217,8 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
             convertView = inflater.inflate(layoutId, parent, false);
 
             final Holder holder = new Holder();
-            holder.textView = (TextView)convertView.findViewById(android.R.id.text1);
-            holder.textView2 = (TextView)convertView.findViewById(android.R.id.text2);
+            holder.textView = convertView.findViewById(android.R.id.text1);
+            holder.textView2 = convertView.findViewById(android.R.id.text2);
             convertView.setTag(holder);
         }
 

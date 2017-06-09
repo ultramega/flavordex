@@ -99,7 +99,7 @@ public class AppChooserDialog extends DialogFragment {
         final View root =
                 LayoutInflater.from(getContext()).inflate(R.layout.dialog_app_chooser, null);
 
-        mListView = (ListView)root.findViewById(R.id.list);
+        mListView = root.findViewById(R.id.list);
         mListView.setAdapter(new AppListAdapter(getContext(), multiChoice));
 
         final int count;
@@ -127,7 +127,7 @@ public class AppChooserDialog extends DialogFragment {
             });
         }
 
-        final TextView header = (TextView)root.findViewById(R.id.header);
+        final TextView header = root.findViewById(R.id.header);
         final String appsString = getResources().getQuantityString(R.plurals.app, count);
         header.setText(getString(R.string.header_select_app, appsString));
 
@@ -265,8 +265,8 @@ public class AppChooserDialog extends DialogFragment {
                 convertView = LayoutInflater.from(mContext).inflate(id, parent, false);
 
                 final Holder holder = new Holder();
-                holder.icon = (ImageView)convertView.findViewById(R.id.icon);
-                holder.title = (TextView)convertView.findViewById(R.id.title);
+                holder.icon = convertView.findViewById(R.id.icon);
+                holder.title = convertView.findViewById(R.id.title);
                 convertView.setTag(holder);
 
                 convertView.findViewById(R.id.checkbox)

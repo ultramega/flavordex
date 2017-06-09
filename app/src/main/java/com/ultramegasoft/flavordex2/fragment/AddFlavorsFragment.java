@@ -82,7 +82,7 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_add_flavors, container, false);
-        mRadarView = (RadarView)root.findViewById(R.id.radar);
+        mRadarView = root.findViewById(R.id.radar);
         ((RadarEditWidget)root.findViewById(R.id.edit_widget)).setTarget(mRadarView);
         return root;
     }
