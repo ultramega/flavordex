@@ -254,7 +254,7 @@
     <string name="welcome_header">Welcome to Flavordex</string>
     <string name="welcome_description">Tasting Journal</string>
 
-    <string name="about_website_url" translatable="false">http://flavordex.com/</string>
+    <string name="about_website_url" translatable="false">http://flavordex.ultramegasoft.com/</string>
     <string name="about_email" translatable="false">flavordex@ultramegasoft.com</string>
     <string name="about_version">Version: </string>
     <string name="about_support">Support: </string>
