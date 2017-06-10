@@ -30,6 +30,9 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.security.ProviderInstaller;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -100,6 +103,11 @@ abstract class Endpoint {
      * @param context The Context to use
      */
     Endpoint(@NonNull Context context) {
+        try {
+            ProviderInstaller.installIfNeeded(context);
+        } catch(GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
         mContext = context;
         //noinspection ConstantConditions
         final Uri apiUri = Uri.parse(context.getString(
