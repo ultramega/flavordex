@@ -126,8 +126,11 @@ public class AppImportUtils {
                 appHolder = new AppHolder(i);
                 appHolder.icon = pm.getApplicationIcon(appInfo);
                 appHolder.title = pm.getApplicationLabel(appInfo);
-                //noinspection ConstantConditions
-                appHolder.supported = getProviderInfo(pm, i).exported;
+
+                final ProviderInfo pi = getProviderInfo(pm, i);
+                if(pi != null) {
+                    appHolder.supported = pi.exported;
+                }
 
                 apps.add(appHolder);
             } catch(PackageManager.NameNotFoundException ignored) {
