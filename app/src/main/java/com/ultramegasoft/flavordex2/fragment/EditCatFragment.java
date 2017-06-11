@@ -497,6 +497,7 @@ public class EditCatFragment extends LoadingProgressFragment
             if(field.isEmpty() || field.delete) {
                 continue;
             }
+            assert field.name != null;
             data.add(new RadarHolder(field.name, 0));
         }
         return data;
