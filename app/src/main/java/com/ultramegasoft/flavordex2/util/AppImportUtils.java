@@ -34,6 +34,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
@@ -125,6 +126,7 @@ public class AppImportUtils {
                 appHolder = new AppHolder(i);
                 appHolder.icon = pm.getApplicationIcon(appInfo);
                 appHolder.title = pm.getApplicationLabel(appInfo);
+                //noinspection ConstantConditions
                 appHolder.supported = getProviderInfo(pm, i).exported;
 
                 apps.add(appHolder);
@@ -171,7 +173,7 @@ public class AppImportUtils {
      */
     public static boolean isAppInstalled(@NonNull Context context, int app, boolean checkSupport) {
         final ProviderInfo pi = getProviderInfo(context.getPackageManager(), app);
-        return !checkSupport || pi.exported;
+        return pi != null && (!checkSupport || pi.exported);
     }
 
     /**
@@ -181,7 +183,7 @@ public class AppImportUtils {
      * @param app The app
      * @return The ProviderInfo for the app's ContentProvider
      */
-    @NonNull
+    @Nullable
     private static ProviderInfo getProviderInfo(@NonNull PackageManager pm, int app) {
         return pm.resolveContentProvider(sPackageNames[app] + ".provider", 0);
     }
