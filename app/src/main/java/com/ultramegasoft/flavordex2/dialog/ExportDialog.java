@@ -483,7 +483,7 @@ public class ExportDialog extends DialogFragment {
              */
             private void loadPhotos(@NonNull EntryHolder entry) {
                 final Uri uri = Uri.withAppendedPath(mEntryUri, "photos");
-                final Cursor cursor = mResolver.query(uri, null, null, null, null);
+                final Cursor cursor = mResolver.query(uri, null, null, null, Tables.Photos.POS);
                 if(cursor != null) {
                     try {
                         String path;
