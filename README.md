@@ -2,7 +2,7 @@
 
 Flavordex is a customizable tasting journal for Android devices.
 
-   * [Official Website](http://flavordex.com/)
+   * [Official Website](http://flavordex.ultramegasoft.com/)
    * [Google Play Page](https://play.google.com/store/apps/details?id=com.ultramegasoft.flavordex2)
    * [Amazon Appstore Page](https://www.amazon.com/gp/mas/dl/android?p=com.ultramegasoft.flavordex2)
    * [Windows Version](https://github.com/ultramega/flavordex-uwp)
@@ -40,7 +40,7 @@ application.
 If you would like to support this project, donations are greatly appreciated!
 
 - [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NKT58XX87QL4G)
-- [![Flattr this](https://button.flattr.com/flattr-badge-large.png)](https://flattr.com/submit/auto?fid=jeznxl&url=http%3A%2F%2Fflavordex.com%2F)
+- [![Flattr this](https://button.flattr.com/flattr-badge-large.png)](https://flattr.com/submit/auto?fid=jeznxl&url=http%3A%2F%2Fflavordex.ultramegasoft.com%2F)
 - Bitcoin: 14YxiZKnGhYog3sL1fWq7QCdxTcCTCguRo
 
 ## License
