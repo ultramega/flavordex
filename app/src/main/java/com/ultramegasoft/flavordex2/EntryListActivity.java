@@ -38,8 +38,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.Twitter;
 import com.ultramegasoft.flavordex2.dialog.AboutDialog;
 import com.ultramegasoft.flavordex2.dialog.AppChooserDialog;
 import com.ultramegasoft.flavordex2.dialog.FileImportDialog;
@@ -52,8 +51,6 @@ import com.ultramegasoft.flavordex2.fragment.WelcomeFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.AppImportUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
-
-import io.fabric.sdk.android.Fabric;
 
 /**
  * The main application Activity. This shows a list of the categories or all the journal entries in
@@ -141,9 +138,7 @@ public class EntryListActivity extends AppCompatActivity
             mFilters = savedInstanceState.getParcelable(STATE_FILTERS);
         }
 
-        final TwitterAuthConfig twitterConfig = new TwitterAuthConfig(
-                getString(R.string.twitter_key), getString(R.string.twitter_secret));
-        Fabric.with(this, new TwitterCore(twitterConfig));
+        Twitter.initialize(this);
     }
 
     @Override
