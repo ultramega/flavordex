@@ -7,9 +7,6 @@ Flavordex is a customizable tasting journal for Android devices.
    * [Amazon Appstore Page](https://www.amazon.com/gp/mas/dl/android?p=com.ultramegasoft.flavordex2)
    * [Windows Version](https://github.com/ultramega/flavordex-uwp)
 
-Cross-platform testing for Flavordex.com is provided by:  
-[![BrowserStack](http://flavordex.com/img/browserstack-logo-2x.png)](https://www.browserstack.com)
-
 ## Setup
 
 This project will not work out of the box. The application makes use of several external APIs, and
@@ -21,13 +18,14 @@ provide your own credentials to get the project up and running.
      in the *fabric.properties* file using the key `apiKey`.
    * For [Facebook](https://developers.facebook.com/) and [Twitter](https://apps.twitter.com/),
      place the credentials in a values resource file called *keys.xml*:
-   
-        <?xml version="1.0" encoding="utf-8"?>
-        <resources>
-            <string name="facebook_app_id" translatable="false"></string>
-            <string name="twitter_key" translatable="false"></string>
-            <string name="twitter_secret" translatable="false"></string>
-        </resources>
+     ```xml
+     <?xml version="1.0" encoding="utf-8"?>
+     <resources>
+         <string name="facebook_app_id" translatable="false"></string>
+         <string name="com.twitter.sdk.android.CONSUMER_KEY" translatable="false"></string>
+         <string name="com.twitter.sdk.android.CONSUMER_SECRET" translatable="false"></string>
+     </resources>
+     ```
 
 ## Backend Server
 
