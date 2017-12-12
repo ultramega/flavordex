@@ -33,14 +33,6 @@ To set up a server to enable data syncing, you'll need the
 [Flavordex API Server](https://github.com/ultramega/flavordex-api-server), which is a PHP/MySQL
 application.
 
-## Donate
-
-If you would like to support this project, donations are greatly appreciated!
-
-- [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NKT58XX87QL4G)
-- [![Flattr this](https://button.flattr.com/flattr-badge-large.png)](https://flattr.com/submit/auto?fid=jeznxl&url=http%3A%2F%2Fflavordex.ultramegasoft.com%2F)
-- Bitcoin: 14YxiZKnGhYog3sL1fWq7QCdxTcCTCguRo
-
 ## License
 
 The source code for Flavordex is released under the terms of the
