@@ -23,7 +23,6 @@
 package com.ultramegasoft.flavordex2.dialog;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -36,7 +35,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.R;
 
@@ -101,18 +99,6 @@ public class AboutDialog extends DialogFragment {
                 .setText(getString(R.string.message_copyright,
                         Calendar.getInstance().get(Calendar.YEAR)));
 
-        if(GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(getContext())
-                != null) {
-            final TextView gmsText = root.findViewById(R.id.about_gms);
-            gmsText.setVisibility(View.VISIBLE);
-            gmsText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    GmsNoticeDialog.showDialog(getFragmentManager());
-                }
-            });
-        }
-
         return root;
     }
 
@@ -138,33 +124,5 @@ public class AboutDialog extends DialogFragment {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(getString(R.string.about_website_url)));
         startActivity(intent);
-    }
-
-    /**
-     * Dialog to show the Google Play Services legal notice.
-     */
-    public static class GmsNoticeDialog extends DialogFragment {
-        private static final String TAG = "GmsNoticeDialog";
-
-        /**
-         * Show the dialog.
-         *
-         * @param fm The FragmentManager to use
-         */
-        public static void showDialog(@NonNull FragmentManager fm) {
-            final DialogFragment fragment = new GmsNoticeDialog();
-            fragment.show(fm, TAG);
-        }
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final String message = GoogleApiAvailability.getInstance()
-                    .getOpenSourceSoftwareLicenseInfo(getContext());
-            return new AlertDialog.Builder(getContext())
-                    .setMessage(message)
-                    .setPositiveButton(R.string.button_ok, null)
-                    .create();
-        }
     }
 }

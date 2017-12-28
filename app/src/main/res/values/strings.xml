@@ -261,5 +261,4 @@
     <string name="about_website">Website: </string>
     <string name="about_send_email">Contact Support</string>
     <string name="about_email_subject">Flavordex %s</string>
-    <string name="about_gms">Google Play Services Legal Notice</string>
 </resources>

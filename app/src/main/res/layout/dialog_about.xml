@@ -81,16 +81,6 @@
     </TableLayout>
 
     <TextView
-        android:id="@+id/about_gms"
-        style="@style/Link"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:text="@string/about_gms"
-        android:textSize="14sp"
-        android:visibility="gone" />
-
-    <TextView
         android:id="@+id/about_copyright"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
