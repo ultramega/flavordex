@@ -179,7 +179,7 @@ public class LoginActivity extends AppCompatActivity
                 }
             });
         } else {
-            ((View)findViewById(R.id.button_email).getParent()).setVisibility(View.GONE);
+            ((View)(findViewById(R.id.button_email)).getParent()).setVisibility(View.GONE);
             findViewById(R.id.email_form).setVisibility(View.VISIBLE);
             mTxtEmail.setText(savedEmail);
             mTxtPassword.requestFocus();
