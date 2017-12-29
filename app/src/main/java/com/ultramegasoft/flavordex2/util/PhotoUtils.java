@@ -40,8 +40,10 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 
+import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.provider.Tables;
 
 import java.io.File;
@@ -102,10 +104,13 @@ public class PhotoUtils {
      * @return Image capture Intent
      */
     @Nullable
-    public static Intent getTakePhotoIntent() {
+    public static Intent getTakePhotoIntent(@NonNull Context context) {
         try {
             final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getOutputMediaFile()));
+            final Uri uri = FileProvider.getUriForFile(context,
+                    BuildConfig.APPLICATION_ID + ".fileprovider", getOutputMediaFile());
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             return intent;
         } catch(IOException e) {
             Log.e(TAG, "Failed to create new file", e);
@@ -203,7 +208,7 @@ public class PhotoUtils {
             final Cursor cursor = cr.query(uri, projection, null, null, null);
             if(cursor != null) {
                 try {
-                    if(cursor.moveToFirst()) {
+                    if(cursor.moveToFirst() && cursor.getColumnCount() > 0) {
                         rotation = cursor.getInt(0);
                     }
                 } finally {

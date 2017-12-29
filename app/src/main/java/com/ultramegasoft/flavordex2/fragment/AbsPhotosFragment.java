@@ -249,7 +249,7 @@ abstract class AbsPhotosFragment extends Fragment {
      * Launch an image capturing Intent.
      */
     final void takePhoto() {
-        final Intent intent = PhotoUtils.getTakePhotoIntent();
+        final Intent intent = PhotoUtils.getTakePhotoIntent(getContext());
         if(intent != null && intent.resolveActivity(getContext().getPackageManager()) != null) {
             mCapturedPhoto = intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT);
             getParentFragment().startActivityForResult(intent, REQUEST_CAPTURE_IMAGE);
