@@ -30,10 +30,6 @@ buildscript {
 }
 apply plugin: 'com.android.application'
 
-repositories {
-    mavenCentral()
-}
-
 android {
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
