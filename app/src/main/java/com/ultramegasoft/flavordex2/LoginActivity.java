@@ -138,7 +138,7 @@ public class LoginActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_login);
 
-        mSwitcher = (ViewSwitcher)findViewById(R.id.switcher);
+        mSwitcher = findViewById(R.id.switcher);
 
         setupEmail();
         setupGoogle((SignInButton)findViewById(R.id.button_google));
@@ -164,9 +164,9 @@ public class LoginActivity extends AppCompatActivity
      * Set up email based authentication.
      */
     private void setupEmail() {
-        mTxtEmail = (EditText)findViewById(R.id.email);
-        mTxtPassword = (EditText)findViewById(R.id.password);
-        mButtonResetPassword = (Button)findViewById(R.id.button_reset_password);
+        mTxtEmail = findViewById(R.id.email);
+        mTxtPassword = findViewById(R.id.password);
+        mButtonResetPassword = findViewById(R.id.button_reset_password);
 
         final String savedEmail = BackendUtils.getEmail(this);
         if(savedEmail == null) {
