@@ -31,7 +31,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -247,7 +246,7 @@ public class EditInfoFragment extends LoadingProgressFragment
                 mIsLoading = true;
                 final Activity activity = getActivity();
                 if(activity != null) {
-                    ActivityCompat.invalidateOptionsMenu(activity);
+                    activity.invalidateOptionsMenu();
                     return new DataLoader(activity, mCatId, mEntryId);
                 }
         }
@@ -273,7 +272,7 @@ public class EditInfoFragment extends LoadingProgressFragment
 
                 final Activity activity = getActivity();
                 if(activity != null) {
-                    ActivityCompat.invalidateOptionsMenu(activity);
+                    activity.invalidateOptionsMenu();
                 }
                 break;
         }

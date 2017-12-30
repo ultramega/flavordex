@@ -37,7 +37,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -569,7 +568,7 @@ public class EditCatFragment extends LoadingProgressFragment
         }
 
         mIsLoading = true;
-        ActivityCompat.invalidateOptionsMenu(activity);
+        activity.invalidateOptionsMenu();
         return new DataLoader(activity, mCatId);
     }
 
@@ -590,7 +589,7 @@ public class EditCatFragment extends LoadingProgressFragment
         mRadarView.setData(getRadarData());
 
         if(activity != null) {
-            ActivityCompat.invalidateOptionsMenu(activity);
+            activity.invalidateOptionsMenu();
         }
     }
 
