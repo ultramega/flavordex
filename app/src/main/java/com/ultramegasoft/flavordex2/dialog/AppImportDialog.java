@@ -47,6 +47,8 @@ import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.EntryListAdapter;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Dialog for importing journal entries from the original Flavordex apps.
  *
@@ -227,35 +229,64 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
         protected void startTask() {
             final Context context = getContext();
             if(context != null) {
-                new ImportTask(context).execute();
+                new ImportTask(context, this, mApp, mEntryIds).execute();
             }
         }
 
         /**
          * Task for importing entries in the background.
          */
-        private class ImportTask extends AsyncTask<Void, Integer, Void> {
+        private static class ImportTask extends AsyncTask<Void, Integer, Void> {
             /**
-             * The Context
+             * The Context reference
              */
             @NonNull
-            private final Context mContext;
+            private final WeakReference<Context> mContext;
 
             /**
-             * @param context The Context
+             * The Fragment
              */
-            ImportTask(@NonNull Context context) {
-                mContext = context.getApplicationContext();
+            @NonNull
+            private final ImporterFragment mFragment;
+
+            /**
+             * The source app
+             */
+            private final int mApp;
+
+            /**
+             * The list of source entry IDs to import
+             */
+            @NonNull
+            private final long[] mEntryIds;
+
+            /**
+             * @param context  The Context
+             * @param fragment The Fragment
+             * @param app      The source app
+             * @param entryIds The list of source entry IDs to import
+             */
+            ImportTask(@NonNull Context context, @NonNull ImporterFragment fragment, int app,
+                       @NonNull long[] entryIds) {
+                mContext = new WeakReference<>(context.getApplicationContext());
+                mFragment = fragment;
+                mApp = app;
+                mEntryIds = entryIds;
             }
 
             @Override
             protected Void doInBackground(Void... params) {
+                final Context context = mContext.get();
+                if(context == null) {
+                    return null;
+                }
+
                 EntryHolder entry;
                 int i = 0;
                 for(long id : mEntryIds) {
-                    entry = AppImportUtils.importEntry(mContext, mApp, id);
+                    entry = AppImportUtils.importEntry(context, mApp, id);
                     try {
-                        EntryUtils.insertEntry(mContext, entry);
+                        EntryUtils.insertEntry(context, entry);
                     } catch(SQLiteException e) {
                         Log.e(TAG, "Failed to insert entry: " + entry.title, e);
                     }
@@ -266,8 +297,7 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
 
             @Override
             protected void onProgressUpdate(Integer... values) {
-                //noinspection deprecation
-                final ProgressDialog dialog = (ProgressDialog)getDialog();
+                final ProgressDialog dialog = (ProgressDialog)mFragment.getDialog();
                 if(dialog != null) {
                     dialog.setProgress(values[0]);
                 }
@@ -275,9 +305,13 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
 
             @Override
             protected void onPostExecute(Void result) {
-                Toast.makeText(mContext, R.string.message_import_complete, Toast.LENGTH_LONG)
-                        .show();
-                dismiss();
+                final Context context = mContext.get();
+                if(context != null) {
+                    Toast.makeText(context, R.string.message_import_complete, Toast.LENGTH_LONG)
+                            .show();
+                }
+
+                mFragment.dismiss();
             }
         }
     }

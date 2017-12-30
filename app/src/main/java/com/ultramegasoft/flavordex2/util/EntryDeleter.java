@@ -26,6 +26,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Task for deleting an entry in the background.
  *
@@ -33,10 +35,10 @@ import android.support.annotation.NonNull;
  */
 public class EntryDeleter extends AsyncTask<Void, Void, Void> {
     /**
-     * The Context
+     * The Context reference
      */
     @NonNull
-    private final Context mContext;
+    private final WeakReference<Context> mContext;
 
     /**
      * The entry ID
@@ -48,13 +50,16 @@ public class EntryDeleter extends AsyncTask<Void, Void, Void> {
      * @param entryId The entry ID
      */
     public EntryDeleter(@NonNull Context context, long entryId) {
-        mContext = context.getApplicationContext();
+        mContext = new WeakReference<>(context.getApplicationContext());
         mEntryId = entryId;
     }
 
     @Override
     protected Void doInBackground(Void... params) {
-        EntryUtils.delete(mContext, mEntryId);
+        final Context context = mContext.get();
+        if(context != null) {
+            EntryUtils.delete(context, mEntryId);
+        }
         return null;
     }
 }

@@ -55,6 +55,8 @@ import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.HtmlCompat;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Dialog for confirming the deletion of a category. This also handles the deleting of the
  * category.
@@ -264,10 +266,10 @@ public class CatDeleteDialog extends DialogFragment
      */
     private static class CatDeleteTask extends AsyncTask<Void, Void, Void> {
         /**
-         * The Context
+         * The Context reference
          */
         @NonNull
-        private final Context mContext;
+        private final WeakReference<Context> mContext;
 
         /**
          * The category database ID
@@ -279,13 +281,18 @@ public class CatDeleteDialog extends DialogFragment
          * @param catId   The category database ID
          */
         CatDeleteTask(@NonNull Context context, long catId) {
-            mContext = context.getApplicationContext();
+            mContext = new WeakReference<>(context.getApplicationContext());
             mCatId = catId;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            final ContentResolver cr = mContext.getContentResolver();
+            final Context context = mContext.get();
+            if(context == null) {
+                return null;
+            }
+
+            final ContentResolver cr = context.getContentResolver();
 
             Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_CAT_URI_BASE, mCatId);
             final Cursor cursor =
@@ -293,7 +300,7 @@ public class CatDeleteDialog extends DialogFragment
             if(cursor != null) {
                 try {
                     while(cursor.moveToNext()) {
-                        PhotoUtils.deleteThumb(mContext, cursor.getLong(0));
+                        PhotoUtils.deleteThumb(context, cursor.getLong(0));
                     }
                 } finally {
                     cursor.close();
@@ -303,7 +310,7 @@ public class CatDeleteDialog extends DialogFragment
             uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
             cr.delete(uri, null, null);
             cr.notifyChange(Tables.Entries.CONTENT_URI, null);
-            BackendUtils.requestDataSync(mContext);
+            BackendUtils.requestDataSync(context);
             return null;
         }
     }

@@ -57,6 +57,7 @@ import com.ultramegasoft.radarchart.RadarEditWidget;
 import com.ultramegasoft.radarchart.RadarHolder;
 import com.ultramegasoft.radarchart.RadarView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 /**
@@ -399,10 +400,10 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
      */
     private static class DataSaver extends AsyncTask<Void, Void, Void> {
         /**
-         * The Context
+         * The Context reference
          */
         @NonNull
-        private final Context mContext;
+        private final WeakReference<Context> mContext;
 
         /**
          * The entry ID to save the flavors to
@@ -421,14 +422,19 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
          * @param data    The radar chart data to insert
          */
         DataSaver(@NonNull Context context, long entryId, @NonNull ArrayList<RadarHolder> data) {
-            mContext = context.getApplicationContext();
+            mContext = new WeakReference<>(context.getApplicationContext());
             mEntryId = entryId;
             mData = data;
         }
 
         @Override
         protected Void doInBackground(Void... arg0) {
-            final ContentResolver cr = mContext.getContentResolver();
+            final Context context = mContext.get();
+            if(context == null) {
+                return null;
+            }
+
+            final ContentResolver cr = context.getContentResolver();
             Uri uri =
                     Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/flavor");
             final ContentValues[] valuesArray = new ContentValues[mData.size()];
@@ -446,7 +452,8 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
 
             EntryUtils.markChanged(cr, mEntryId);
 
-            BackendUtils.requestDataSync(mContext);
+            BackendUtils.requestDataSync(context);
+
             return null;
         }
     }

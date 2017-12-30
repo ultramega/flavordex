@@ -55,6 +55,7 @@ import com.ultramegasoft.flavordex2.util.AppImportUtils;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 /**
@@ -380,30 +381,57 @@ public class AppChooserDialog extends DialogFragment {
         protected void startTask() {
             final Context context = getContext();
             if(context != null) {
-                new ImportTask(context).execute();
+                new ImportTask(context, this, mApps, mAppNames).execute();
             }
         }
 
         /**
          * Task for importing entries in the background.
          */
-        private class ImportTask extends AsyncTask<Void, Integer, Void> {
+        private static class ImportTask extends AsyncTask<Void, Integer, Void> {
             /**
-             * The Context
+             * The Context reference
              */
             @NonNull
-            private final Context mContext;
+            private final WeakReference<Context> mContext;
+
+            /**
+             * The Fragment
+             */
+            @NonNull
+            private final ImporterFragment mFragment;
+
+            /**
+             * The list of source apps to import from
+             */
+            @NonNull
+            private final int[] mApps;
+
+            /**
+             * The names of the apps
+             */
+            @NonNull
+            private final CharSequence[] mAppNames;
 
             /**
              * @param context The Context
              */
-            ImportTask(@NonNull Context context) {
-                mContext = context.getApplicationContext();
+            ImportTask(@NonNull Context context, @NonNull ImporterFragment fragment,
+                       @NonNull int[] apps, @NonNull CharSequence[] appNames) {
+                mContext = new WeakReference<>(context.getApplicationContext());
+                mFragment = fragment;
+                mApps = apps;
+                mAppNames = appNames;
             }
 
             @Override
             protected Void doInBackground(Void... params) {
-                final ContentResolver cr = mContext.getContentResolver();
+                final Context context = mContext.get();
+                if(context == null) {
+                    return null;
+                }
+
+                final ContentResolver cr = context.getContentResolver();
 
                 int appId;
                 for(int i = 0; i < mApps.length; i++) {
@@ -423,9 +451,9 @@ public class AppChooserDialog extends DialogFragment {
                         count = cursor.getCount();
                         int j = 0;
                         while(cursor.moveToNext()) {
-                            entry = AppImportUtils.importEntry(mContext, appId, cursor.getLong(0));
+                            entry = AppImportUtils.importEntry(context, appId, cursor.getLong(0));
                             try {
-                                EntryUtils.insertEntry(mContext, entry);
+                                EntryUtils.insertEntry(context, entry);
                             } catch(SQLiteException e) {
                                 Log.e(TAG, "Failed to insert entry: " + entry.title, e);
                             }
@@ -441,8 +469,7 @@ public class AppChooserDialog extends DialogFragment {
 
             @Override
             protected void onProgressUpdate(Integer... values) {
-                //noinspection deprecation
-                final ProgressDialog dialog = (ProgressDialog)getDialog();
+                final ProgressDialog dialog = (ProgressDialog)mFragment.getDialog();
                 if(dialog != null) {
                     dialog.setMessage(mAppNames[values[0]]);
                     dialog.setMax(values[2]);
@@ -452,9 +479,13 @@ public class AppChooserDialog extends DialogFragment {
 
             @Override
             protected void onPostExecute(Void result) {
-                Toast.makeText(mContext, R.string.message_import_complete, Toast.LENGTH_LONG)
-                        .show();
-                dismiss();
+                final Context context = mContext.get();
+                if(context != null) {
+                    Toast.makeText(context, R.string.message_import_complete, Toast.LENGTH_LONG)
+                            .show();
+                }
+
+                mFragment.dismiss();
             }
         }
     }

@@ -60,6 +60,7 @@ import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 /**
@@ -422,10 +423,10 @@ public class ViewPhotosFragment extends AbsPhotosFragment
      */
     private static class PhotoSaver extends AsyncTask<Void, Void, Boolean> {
         /**
-         * The Context
+         * The Context reference
          */
         @NonNull
-        private final Context mContext;
+        private final WeakReference<Context> mContext;
 
         /**
          * The entry ID to assign the photo to
@@ -444,14 +445,19 @@ public class ViewPhotosFragment extends AbsPhotosFragment
          * @param photo   The photo to save
          */
         PhotoSaver(@NonNull Context context, long entryId, @NonNull PhotoHolder photo) {
-            mContext = context.getApplicationContext();
+            mContext = new WeakReference<>(context.getApplicationContext());
             mEntryId = entryId;
             mPhoto = photo;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            final ContentResolver cr = mContext.getContentResolver();
+            final Context context = mContext.get();
+            if(context == null) {
+                return false;
+            }
+
+            final ContentResolver cr = context.getContentResolver();
             Uri uri = PhotoUtils.getFileUri(cr, mPhoto.uri);
             if(uri == null) {
                 return false;
@@ -459,7 +465,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
             mPhoto.uri = uri;
 
             if(mPhoto.hash == null) {
-                mPhoto.hash = PhotoUtils.getMD5Hash(mContext.getContentResolver(), mPhoto.uri);
+                mPhoto.hash = PhotoUtils.getMD5Hash(cr, mPhoto.uri);
             }
 
             final ContentValues values = new ContentValues();
@@ -482,17 +488,21 @@ public class ViewPhotosFragment extends AbsPhotosFragment
                 mPhoto.id = Long.valueOf(uri.getLastPathSegment());
             }
 
-            PhotoUtils.deleteThumb(mContext, mEntryId);
+            PhotoUtils.deleteThumb(context, mEntryId);
             EntryUtils.markChanged(cr, mEntryId);
-            BackendUtils.requestDataSync(mContext);
-            BackendUtils.requestPhotoSync(mContext);
+            BackendUtils.requestDataSync(context);
+            BackendUtils.requestPhotoSync(context);
+
             return true;
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
             if(!result) {
-                Toast.makeText(mContext, R.string.error_insert_photo, Toast.LENGTH_LONG).show();
+                final Context context = mContext.get();
+                if(context != null) {
+                    Toast.makeText(context, R.string.error_insert_photo, Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
@@ -502,10 +512,10 @@ public class ViewPhotosFragment extends AbsPhotosFragment
      */
     private static class PhotoDeleter extends AsyncTask<Void, Void, Void> {
         /**
-         * The Context
+         * The Context reference
          */
         @NonNull
-        private final Context mContext;
+        private final WeakReference<Context> mContext;
 
         /**
          * The entry ID the photo is assigned to
@@ -524,16 +534,22 @@ public class ViewPhotosFragment extends AbsPhotosFragment
          * @param photo   The photo to delete
          */
         PhotoDeleter(@NonNull Context context, long entryId, @NonNull PhotoHolder photo) {
-            mContext = context.getApplicationContext();
+            mContext = new WeakReference<>(context.getApplicationContext());
             mEntryId = entryId;
             mPhoto = photo;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            EntryUtils.deletePhoto(mContext, mPhoto.id);
-            EntryUtils.markChanged(mContext.getContentResolver(), mEntryId);
-            BackendUtils.requestDataSync(mContext);
+            final Context context = mContext.get();
+            if(context == null) {
+                return null;
+            }
+
+            EntryUtils.deletePhoto(context, mPhoto.id);
+            EntryUtils.markChanged(context.getContentResolver(), mEntryId);
+            BackendUtils.requestDataSync(context);
+
             return null;
         }
     }

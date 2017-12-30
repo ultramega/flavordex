@@ -65,6 +65,7 @@ import com.ultramegasoft.flavordex2.util.EntryUtils;
 import com.ultramegasoft.radarchart.RadarHolder;
 import com.ultramegasoft.radarchart.RadarView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 /**
@@ -731,10 +732,10 @@ public class EditCatFragment extends LoadingProgressFragment
      */
     private static class DataSaver extends AsyncTask<Void, Void, Void> {
         /**
-         * The Context
+         * The Context reference
          */
         @NonNull
-        private final Context mContext;
+        private final WeakReference<Context> mContext;
 
         /**
          * The ContentResolver to use
@@ -775,7 +776,7 @@ public class EditCatFragment extends LoadingProgressFragment
         DataSaver(@NonNull Context context, @NonNull ContentValues catInfo,
                   @NonNull ArrayList<Field> extras, @NonNull ArrayList<Field> flavors,
                   long catId) {
-            mContext = context.getApplicationContext();
+            mContext = new WeakReference<>(context.getApplicationContext());
             mResolver = context.getContentResolver();
             mCatInfo = catInfo;
             mExtras = extras;
@@ -785,12 +786,18 @@ public class EditCatFragment extends LoadingProgressFragment
 
         @Override
         protected Void doInBackground(Void... params) {
+            final Context context = mContext.get();
+            if(context == null) {
+                return null;
+            }
+
             final Uri catUri = updateCat();
             if(catUri != null) {
                 updateExtras(catUri);
                 updateFlavors(catUri);
-                BackendUtils.requestDataSync(mContext);
+                BackendUtils.requestDataSync(context);
             }
+
             return null;
         }
 

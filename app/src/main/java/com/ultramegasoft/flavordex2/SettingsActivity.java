@@ -63,6 +63,8 @@ import com.ultramegasoft.flavordex2.dialog.CatListDialog;
 import com.ultramegasoft.flavordex2.dialog.DriveConnectDialog;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Activity for changing user preferences.
  *
@@ -430,16 +432,16 @@ public class SettingsActivity extends AppCompatActivity {
      */
     private static class LogoutTask extends AsyncTask<Void, Void, Void> {
         /**
-         * The Context
+         * The Context reference
          */
         @NonNull
-        private final Context mContext;
+        private final WeakReference<Context> mContext;
 
         /**
          * @param context The Context
          */
         LogoutTask(@NonNull Context context) {
-            mContext = context.getApplicationContext();
+            mContext = new WeakReference<>(context.getApplicationContext());
         }
 
         @Override
@@ -468,7 +470,12 @@ public class SettingsActivity extends AppCompatActivity {
          * Log the user out from Google.
          */
         private void logoutGoogle() {
-            final GoogleApiClient apiClient = new GoogleApiClient.Builder(mContext)
+            final Context context = mContext.get();
+            if(context == null) {
+                return;
+            }
+
+            final GoogleApiClient apiClient = new GoogleApiClient.Builder(context)
                     .addApi(Auth.GOOGLE_SIGN_IN_API, GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .build();
             final ConnectionResult result = apiClient.blockingConnect();
@@ -497,21 +504,25 @@ public class SettingsActivity extends AppCompatActivity {
      */
     private static class UnregisterTask extends AsyncTask<Void, Void, Void> {
         /**
-         * The Context
+         * The Context reference
          */
         @NonNull
-        private final Context mContext;
+        private final WeakReference<Context> mContext;
 
         /**
          * @param context The Context
          */
         UnregisterTask(@NonNull Context context) {
-            mContext = context.getApplicationContext();
+            mContext = new WeakReference<>(context.getApplicationContext());
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            BackendUtils.unregisterClient(mContext);
+            final Context context = mContext.get();
+            if(context != null) {
+                BackendUtils.unregisterClient(context);
+            }
+
             return null;
         }
     }

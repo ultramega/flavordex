@@ -35,6 +35,8 @@ import android.widget.Toast;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Dialog for registering the client device with the backend.
  *
@@ -57,7 +59,7 @@ public class BackendRegistrationDialog extends BackgroundProgressDialog {
     protected void startTask() {
         final Context context = getContext();
         if(context != null) {
-            new RegisterTask(context).execute();
+            new RegisterTask(context, this).execute();
         }
     }
 
@@ -73,29 +75,43 @@ public class BackendRegistrationDialog extends BackgroundProgressDialog {
     /**
      * Task to register the client with the backend.
      */
-    private class RegisterTask extends AsyncTask<Void, Void, Boolean> {
+    private static class RegisterTask extends AsyncTask<Void, Void, Boolean> {
         /**
-         * The Context
+         * The Context reference
          */
         @NonNull
-        private final Context mContext;
+        private final WeakReference<Context> mContext;
 
-        RegisterTask(@NonNull Context context) {
-            mContext = context.getApplicationContext();
+        /**
+         * The Fragment
+         */
+        @NonNull
+        private final BackendRegistrationDialog mFragment;
+
+        /**
+         * @param context  The Context
+         * @param fragment The Fragment
+         */
+        RegisterTask(@NonNull Context context, @NonNull BackendRegistrationDialog fragment) {
+            mContext = new WeakReference<>(context.getApplicationContext());
+            mFragment = fragment;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            return BackendUtils.registerClient(mContext);
+            final Context context = mContext.get();
+            return context != null && BackendUtils.registerClient(context);
+
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
-            if(!result) {
-                Toast.makeText(mContext, R.string.error_register_failed, Toast.LENGTH_LONG)
-                        .show();
+            final Context context = mContext.get();
+            if(!result && context != null) {
+                Toast.makeText(context, R.string.error_register_failed, Toast.LENGTH_LONG).show();
             }
-            dismiss();
+
+            mFragment.dismiss();
         }
     }
 }

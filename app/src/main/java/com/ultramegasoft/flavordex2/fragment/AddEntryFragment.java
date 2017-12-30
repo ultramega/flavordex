@@ -63,6 +63,8 @@ import com.ultramegasoft.flavordex2.whiskey.EditWhiskeyInfoFragment;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.wine.EditWineInfoFragment;
 
+import java.lang.ref.WeakReference;
+
 /**
  * The parent Fragment for the entry creation pages.
  *
@@ -332,7 +334,7 @@ public class AddEntryFragment extends Fragment {
 
             final Context context = getContext();
             if(context != null) {
-                new DataSaver(context).execute();
+                new DataSaver(context, this, mEntry).execute();
             }
         }
 
@@ -361,27 +363,61 @@ public class AddEntryFragment extends Fragment {
         /**
          * Task for saving a new entry into the database in the background.
          */
-        private class DataSaver extends AsyncTask<Void, Void, Long> {
+        private static class DataSaver extends AsyncTask<Void, Void, Long> {
             /**
-             * The Context
+             * The Context reference
              */
             @NonNull
-            private final Context mContext;
+            private final WeakReference<Context> mContext;
 
             /**
-             * @param context The Context
+             * The Fragment
              */
-            DataSaver(@NonNull Context context) {
-                mContext = context.getApplicationContext();
+            @NonNull
+            private final DataSaverFragment mFragment;
+
+            /**
+             * The Application reference
+             */
+            @NonNull
+            private final WeakReference<FlavordexApp> mApp;
+
+            /**
+             * The entry to save
+             */
+            @NonNull
+            private final EntryHolder mEntry;
+
+            /**
+             * @param context  The Context
+             * @param fragment The Fragment
+             * @param entry    The entry to save
+             */
+            DataSaver(@NonNull Context context, @NonNull DataSaverFragment fragment,
+                      @NonNull EntryHolder entry) {
+                mContext = new WeakReference<>(context.getApplicationContext());
+                mFragment = fragment;
+
+                final Activity activity = fragment.getActivity();
+                final FlavordexApp app =
+                        activity != null ? (FlavordexApp)activity.getApplication() : null;
+                mApp = new WeakReference<>(app);
+
+                mEntry = entry;
             }
 
             @Override
             protected Long doInBackground(Void... params) {
+                final Context context = mContext.get();
+                if(context == null) {
+                    return 0L;
+                }
+
                 try {
                     if(mEntry.getFlavors().isEmpty()) {
                         getDefaultFlavors();
                     }
-                    final Uri entryUri = EntryUtils.insertEntry(mContext, mEntry);
+                    final Uri entryUri = EntryUtils.insertEntry(context, mEntry);
                     checkLocation(mEntry.location);
                     return Long.valueOf(entryUri.getLastPathSegment());
                 } catch(SQLiteException e) {
@@ -393,7 +429,7 @@ public class AddEntryFragment extends Fragment {
 
             @Override
             protected void onPostExecute(Long entryId) {
-                onComplete(entryId);
+                mFragment.onComplete(entryId);
             }
 
             /**
@@ -402,12 +438,12 @@ public class AddEntryFragment extends Fragment {
              * @param newLocationName The name of the location supplied by the user
              */
             private void checkLocation(@Nullable String newLocationName) {
-                final Activity activity = getActivity();
-                if(activity == null || TextUtils.isEmpty(newLocationName)) {
+                final Context context = mContext.get();
+                final FlavordexApp app = mApp.get();
+                if(app == null || context == null || TextUtils.isEmpty(newLocationName)) {
                     return;
                 }
 
-                final FlavordexApp app = (FlavordexApp)activity.getApplication();
                 final Location location = app.getLocation();
                 final String locationName = app.getLocationName();
                 if(location != null && !TextUtils.isEmpty(locationName)
@@ -417,7 +453,7 @@ public class AddEntryFragment extends Fragment {
                     values.put(Tables.Locations.LATITUDE, location.getLatitude());
                     values.put(Tables.Locations.LONGITUDE, location.getLongitude());
 
-                    mContext.getContentResolver().insert(Tables.Locations.CONTENT_URI, values);
+                    context.getContentResolver().insert(Tables.Locations.CONTENT_URI, values);
                 }
             }
 
@@ -425,7 +461,12 @@ public class AddEntryFragment extends Fragment {
              * Get the default flavors with 0 values in case the user did not supply data.
              **/
             private void getDefaultFlavors() {
-                final ContentResolver cr = mContext.getContentResolver();
+                final Context context = mContext.get();
+                if(context == null) {
+                    return;
+                }
+
+                final ContentResolver cr = context.getContentResolver();
                 final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE,
                         mEntry.catId);
                 final Cursor cursor = cr.query(Uri.withAppendedPath(uri, "flavor"), null, null,

@@ -49,6 +49,7 @@ import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
 import java.io.FileNotFoundException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 /**
@@ -125,7 +126,7 @@ abstract class AbsPhotosFragment extends Fragment {
             mCapturedPhoto = savedInstanceState.getParcelable(STATE_CAPTURE_URI);
             final Uri loadingUri = savedInstanceState.getParcelable(STATE_LOADING_URI);
             if(loadingUri != null) {
-                mPhotoLoader = new PhotoLoader(context, loadingUri);
+                mPhotoLoader = new PhotoLoader(context, this, loadingUri);
                 mPhotoLoader.execute();
             }
         }
@@ -218,7 +219,7 @@ abstract class AbsPhotosFragment extends Fragment {
             }
 
             if(uri != null) {
-                mPhotoLoader = new PhotoLoader(context, uri);
+                mPhotoLoader = new PhotoLoader(context, this, uri);
                 mPhotoLoader.execute();
             }
         }
@@ -347,11 +348,18 @@ abstract class AbsPhotosFragment extends Fragment {
     /**
      * Task for loading new photos in the background.
      */
-    private class PhotoLoader extends AsyncTask<Void, Void, PhotoHolder> {
+    private static class PhotoLoader extends AsyncTask<Void, Void, PhotoHolder> {
         /**
-         * The Context
+         * The Context reference
          */
-        private final Context mContext;
+        @NonNull
+        private final WeakReference<Context> mContext;
+
+        /**
+         * The Fragment
+         */
+        @NonNull
+        private final AbsPhotosFragment mFragment;
 
         /**
          * The Uri to load
@@ -360,11 +368,14 @@ abstract class AbsPhotosFragment extends Fragment {
         private final Uri mUri;
 
         /**
-         * @param context The Context
-         * @param uri     The Uri to load
+         * @param context  The Context
+         * @param fragment The Fragment
+         * @param uri      The Uri to load
          */
-        PhotoLoader(@NonNull Context context, @NonNull Uri uri) {
-            mContext = context.getApplicationContext();
+        PhotoLoader(@NonNull Context context, @NonNull AbsPhotosFragment fragment,
+                    @NonNull Uri uri) {
+            mContext = new WeakReference<>(context.getApplicationContext());
+            mFragment = fragment;
             mUri = uri;
         }
 
@@ -380,16 +391,22 @@ abstract class AbsPhotosFragment extends Fragment {
 
         @Override
         protected PhotoHolder doInBackground(Void... params) {
-            final String hash = PhotoUtils.getMD5Hash(mContext.getContentResolver(), mUri);
-            return new PhotoHolder(0, hash, mUri, 0);
+            final Context context = mContext.get();
+            if(context != null) {
+                final String hash = PhotoUtils.getMD5Hash(context.getContentResolver(), mUri);
+                return new PhotoHolder(0, hash, mUri, 0);
+            }
+
+            return null;
         }
 
         @Override
         protected void onPostExecute(PhotoHolder holder) {
-            if(isCancelled()) {
+            if(holder == null || isCancelled()) {
                 return;
             }
-            addPhoto(holder);
+
+            mFragment.addPhoto(holder);
         }
     }
 }

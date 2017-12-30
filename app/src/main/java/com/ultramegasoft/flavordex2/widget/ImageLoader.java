@@ -70,10 +70,10 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
     private final BitmapCache mCache;
 
     /**
-     * The Context
+     * The Context reference
      */
     @NonNull
-    private final Context mContext;
+    private final WeakReference<Context> mContext;
 
     /**
      * @param imageView The ImageView to hold the image
@@ -89,15 +89,21 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
         mHeight = height;
         mUri = uri;
         mCache = cache;
-        mContext = imageView.getContext().getApplicationContext();
+        mContext = new WeakReference<>(imageView.getContext().getApplicationContext());
     }
 
     @Override
     protected Bitmap doInBackground(Void... args) {
-        final Bitmap bitmap = PhotoUtils.loadBitmap(mContext, mUri, mWidth, mHeight);
+        final Context context = mContext.get();
+        if(context == null) {
+            return null;
+        }
+
+        final Bitmap bitmap = PhotoUtils.loadBitmap(context, mUri, mWidth, mHeight);
         if(mCache != null && bitmap != null) {
             mCache.put(mUri, bitmap);
         }
+
         return bitmap;
     }
 

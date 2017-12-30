@@ -42,6 +42,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.provider.Tables;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
 /**
@@ -243,7 +244,7 @@ public class FlavordexApp extends Application
     private void setLocation(@Nullable Location location) {
         mLocation = location;
         if(location != null) {
-            new LocatorTask().execute();
+            new LocatorTask(this, location).execute();
         } else {
             mLocationName = null;
         }
@@ -278,13 +279,36 @@ public class FlavordexApp extends Application
     /**
      * Task for finding the nearest location from the database in the background.
      */
-    private class LocatorTask extends AsyncTask<Void, Void, Void> {
+    private static class LocatorTask extends AsyncTask<Void, Void, Void> {
+        /**
+         * The Application reference
+         */
+        @NonNull
+        private final WeakReference<FlavordexApp> mApp;
+
+        /**
+         * The Location to process
+         */
+        @NonNull
+        private final Location mLocation;
+
+        /**
+         * @param app      The Application reference
+         * @param location The Location to process
+         */
+        LocatorTask(@NonNull FlavordexApp app, @NonNull Location location) {
+            mApp = new WeakReference<>(app);
+            mLocation = location;
+        }
+
         @Override
         protected Void doInBackground(Void... params) {
-            if(mLocation == null) {
+            final FlavordexApp app = mApp.get();
+            if(app == null) {
                 return null;
             }
-            final ContentResolver cr = getContentResolver();
+
+            final ContentResolver cr = app.getContentResolver();
             final Cursor cursor = cr.query(Tables.Locations.CONTENT_URI, null, null, null, null);
             if(cursor == null) {
                 return null;
@@ -315,7 +339,7 @@ public class FlavordexApp extends Application
                     }
                 }
 
-                mLocationName = closestName;
+                app.mLocationName = closestName;
             } finally {
                 cursor.close();
             }

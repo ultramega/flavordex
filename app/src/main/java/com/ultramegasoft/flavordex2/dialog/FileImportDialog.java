@@ -52,6 +52,7 @@ import com.ultramegasoft.flavordex2.widget.CSVListAdapter;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 /**
@@ -204,12 +205,7 @@ public class FileImportDialog extends ImportDialog
         }
 
         setListShown(false);
-        return new AsyncTaskLoader<CSVUtils.CSVHolder>(context) {
-            @Override
-            public CSVUtils.CSVHolder loadInBackground() {
-                return CSVUtils.importCSV(getContext(), new File(mFilePath));
-            }
-        };
+        return new CsvLoader(context, mFilePath);
     }
 
     /**
@@ -268,6 +264,30 @@ public class FileImportDialog extends ImportDialog
 
     @Override
     public void onLoaderReset(Loader<CSVUtils.CSVHolder> loader) {
+    }
+
+    /**
+     * Asynchronously loads CSV files.
+     */
+    private static class CsvLoader extends AsyncTaskLoader<CSVUtils.CSVHolder> {
+        /**
+         * The path to the selected file
+         */
+        private String mFilePath;
+
+        /**
+         * @param context  The Context
+         * @param filePath The path to the selected file
+         */
+        CsvLoader(@NonNull Context context, @NonNull String filePath) {
+            super(context);
+            mFilePath = filePath;
+        }
+
+        @Override
+        public CSVUtils.CSVHolder loadInBackground() {
+            return CSVUtils.importCSV(getContext(), new File(mFilePath));
+        }
     }
 
     /**
@@ -399,45 +419,65 @@ public class FileImportDialog extends ImportDialog
         protected void startTask() {
             final Context context = getContext();
             if(context != null) {
-                new SaveTask(context).execute();
+                new SaveTask(context, this, mEntries).execute();
             }
         }
 
         /**
          * Task for saving entries in the background.
          */
-        private class SaveTask extends AsyncTask<Void, Integer, Void> {
+        private static class SaveTask extends AsyncTask<Void, Integer, Void> {
             /**
-             * The Context
+             * The Context reference
              */
             @NonNull
-            private final Context mContext;
+            private final WeakReference<Context> mContext;
+
+            /**
+             * The Fragment
+             */
+            @NonNull
+            private final DataSaverFragment mFragment;
+
+            /**
+             * The list of entries
+             */
+            @NonNull
+            private final ArrayList<EntryHolder> mEntries;
 
             /**
              * @param context The Context
              */
-            SaveTask(@NonNull Context context) {
-                mContext = context.getApplicationContext();
+            SaveTask(@NonNull Context context, @NonNull DataSaverFragment fragment,
+                     @NonNull ArrayList<EntryHolder> entries) {
+                mContext = new WeakReference<>(context.getApplicationContext());
+                mFragment = fragment;
+                mEntries = entries;
             }
 
             @Override
             protected Void doInBackground(Void... params) {
+                final Context context = mContext.get();
+                if(context == null) {
+                    return null;
+                }
+
                 int i = 0;
                 for(EntryHolder entry : mEntries) {
                     try {
-                        EntryUtils.insertEntry(mContext, entry);
+                        EntryUtils.insertEntry(context, entry);
                     } catch(SQLiteException e) {
                         Log.e(TAG, "Failed to insert entry: " + entry.title, e);
                     }
                     publishProgress(++i);
                 }
+
                 return null;
             }
 
             @Override
             protected void onProgressUpdate(Integer... values) {
-                //noinspection deprecation
-                final ProgressDialog dialog = (ProgressDialog)getDialog();
+                final ProgressDialog dialog = (ProgressDialog)mFragment.getDialog();
                 if(dialog != null) {
                     dialog.setProgress(values[0]);
                 }
@@ -445,9 +485,13 @@ public class FileImportDialog extends ImportDialog
 
             @Override
             protected void onPostExecute(Void result) {
-                Toast.makeText(mContext, R.string.message_import_complete, Toast.LENGTH_LONG)
-                        .show();
-                dismiss();
+                final Context context = mContext.get();
+                if(context != null) {
+                    Toast.makeText(context, R.string.message_import_complete, Toast.LENGTH_LONG)
+                            .show();
+                }
+
+                mFragment.dismiss();
             }
         }
     }

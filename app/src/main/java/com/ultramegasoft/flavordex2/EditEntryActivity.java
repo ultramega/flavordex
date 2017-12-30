@@ -49,6 +49,8 @@ import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.wine.EditWineInfoFragment;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Activity for editing a journal entry.
  *
@@ -178,10 +180,10 @@ public class EditEntryActivity extends AppCompatActivity {
      */
     private static class DataSaver extends AsyncTask<Void, Void, Void> {
         /**
-         * The Context
+         * The Context reference
          */
         @NonNull
-        private final Context mContext;
+        private final WeakReference<Context> mContext;
 
         /**
          * The entry to save
@@ -194,12 +196,18 @@ public class EditEntryActivity extends AppCompatActivity {
          * @param entry   The entry to save
          */
         DataSaver(@NonNull Context context, @NonNull EntryHolder entry) {
-            mContext = context.getApplicationContext();
+            mContext = new WeakReference<>(context.getApplicationContext());
             mEntry = entry;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
+            final Context context = mContext.get();
+            if(context == null) {
+                return null;
+            }
+
+            final ContentResolver cr = context.getContentResolver();
             final Uri uri =
                     ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, mEntry.id);
 
@@ -214,21 +222,22 @@ public class EditEntryActivity extends AppCompatActivity {
             values.put(Tables.Entries.NOTES, mEntry.notes);
             values.put(Tables.Entries.UPDATED, System.currentTimeMillis());
             values.put(Tables.Entries.SYNCED, false);
-            mContext.getContentResolver().update(uri, values, null, null);
+            cr.update(uri, values, null, null);
 
-            updateExtras(uri);
+            updateExtras(cr, uri);
 
-            BackendUtils.requestDataSync(mContext);
+            BackendUtils.requestDataSync(context);
+
             return null;
         }
 
         /**
          * Update the entry extra fields.
          *
+         * @param cr       The ContentResolver
          * @param entryUri The Uri for the entry
          */
-        private void updateExtras(@NonNull Uri entryUri) {
-            final ContentResolver cr = mContext.getContentResolver();
+        private void updateExtras(@NonNull ContentResolver cr, @NonNull Uri entryUri) {
             final Uri uri = Uri.withAppendedPath(entryUri, "extras");
             final ContentValues values = new ContentValues();
             for(ExtraFieldHolder extra : mEntry.getExtras()) {

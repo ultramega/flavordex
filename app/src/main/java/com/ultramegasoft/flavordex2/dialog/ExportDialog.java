@@ -62,6 +62,7 @@ import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -332,7 +333,7 @@ public class ExportDialog extends DialogFragment {
             try {
                 final Context context = getContext();
                 if(context != null) {
-                    new DataExporter(context, new CSVWriter(new FileWriter(mFilePath))).execute();
+                    new DataExporter(context, this, mEntryIds, new CSVWriter(new FileWriter(mFilePath))).execute();
                 }
             } catch(IOException e) {
                 Log.e(TAG, "Failed to open new file for writing", e);
@@ -355,12 +356,18 @@ public class ExportDialog extends DialogFragment {
         /**
          * Task for exporting the data in the background.
          */
-        private class DataExporter extends AsyncTask<Void, Integer, Boolean> {
+        private static class DataExporter extends AsyncTask<Void, Integer, Boolean> {
             /**
-             * The Context
+             * The Context reference
              */
             @NonNull
-            private final Context mContext;
+            private final WeakReference<Context> mContext;
+
+            /**
+             * The Fragment
+             */
+            @NonNull
+            private final ExporterFragment mFragment;
 
             /**
              * The ContentResolver to load entries from the database
@@ -375,6 +382,12 @@ public class ExportDialog extends DialogFragment {
             private final CSVWriter mWriter;
 
             /**
+             * The list of entry IDs to export
+             */
+            @NonNull
+            private final long[] mEntryIds;
+
+            /**
              * The Uri for the current entry
              */
             @Nullable
@@ -384,8 +397,11 @@ public class ExportDialog extends DialogFragment {
              * @param context The Context
              * @param writer  The CSVWriter to use for writing
              */
-            DataExporter(@NonNull Context context, @NonNull CSVWriter writer) {
-                mContext = context.getApplicationContext();
+            DataExporter(@NonNull Context context, @NonNull ExporterFragment fragment,
+                         @NonNull long[] entryIds, @NonNull CSVWriter writer) {
+                mContext = new WeakReference<>(context.getApplicationContext());
+                mFragment = fragment;
+                mEntryIds = entryIds;
                 mResolver = context.getContentResolver();
                 mWriter = writer;
             }
@@ -526,8 +542,7 @@ public class ExportDialog extends DialogFragment {
 
             @Override
             protected void onProgressUpdate(Integer... values) {
-                //noinspection deprecation
-                final ProgressDialog dialog = (ProgressDialog)getDialog();
+                final ProgressDialog dialog = (ProgressDialog)mFragment.getDialog();
                 if(dialog != null) {
                     dialog.setProgress(values[0]);
                 }
@@ -536,12 +551,15 @@ public class ExportDialog extends DialogFragment {
             @Override
             protected void onPostExecute(Boolean result) {
                 if(result) {
-                    Toast.makeText(mContext, R.string.message_export_complete, Toast.LENGTH_LONG)
-                            .show();
+                    final Context context = mContext.get();
+                    if(context != null) {
+                        Toast.makeText(context, R.string.message_export_complete, Toast.LENGTH_LONG)
+                                .show();
+                    }
                 } else {
-                    showError(R.string.error_csv_export);
+                    mFragment.showError(R.string.error_csv_export);
                 }
-                dismiss();
+                mFragment.dismiss();
             }
         }
     }
