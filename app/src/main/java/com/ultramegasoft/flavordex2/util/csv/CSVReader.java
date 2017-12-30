@@ -60,7 +60,7 @@ public class CSVReader implements Closeable {
     public String[] readNext() {
         final List<String> fields = new ArrayList<>();
 
-        String field = "";
+        StringBuilder field = new StringBuilder();
         boolean useQuotes = false;
         boolean inValue = false;
         char character;
@@ -93,7 +93,7 @@ public class CSVReader implements Closeable {
                 if(character == '"') {
                     character = (char)mReader.read();
                     if(character == '"') {
-                        field += character;
+                        field.append(character);
                         continue;
                     } else {
                         mReader.unread(character);
@@ -104,8 +104,8 @@ public class CSVReader implements Closeable {
                 if((!useQuotes && (character == ',' || character == '\r' || character == '\n'))
                         || (useQuotes && character == '"')) {
                     inValue = false;
-                    fields.add(field);
-                    field = "";
+                    fields.add(field.toString());
+                    field = new StringBuilder();
                     if(useQuotes) {
                         character = (char)mReader.read();
                         if(character != ',') {
@@ -115,7 +115,7 @@ public class CSVReader implements Closeable {
                     continue;
                 }
 
-                field += character;
+                field.append(character);
             }
         } catch(IOException e) {
             return null;
