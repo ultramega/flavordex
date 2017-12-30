@@ -198,11 +198,13 @@ public class AddPhotosFragment extends AbsPhotosFragment {
         }
 
         @Override
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
         public int getViewTypeCount() {
             return 2;
         }
 
         @Override
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
         public int getItemViewType(int position) {
             return mData.get(position) == mPlaceholder ? ADD_BUTTON_VIEW_TYPE : NORMAL_VIEW_TYPE;
         }

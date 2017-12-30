@@ -325,6 +325,7 @@ public class FileImportDialog extends ImportDialog
 
         @NonNull
         @Override
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Bundle args = getArguments();
             final int num = args != null ? args.getInt(ARG_NUM) : 0;
@@ -401,9 +402,9 @@ public class FileImportDialog extends ImportDialog
             }
         }
 
-        @SuppressWarnings("deprecation")
         @NonNull
         @Override
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final ProgressDialog dialog = new ProgressDialog(getContext());
 
@@ -478,6 +479,8 @@ public class FileImportDialog extends ImportDialog
 
             @Override
             protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+
                 final ProgressDialog dialog = (ProgressDialog)mFragment.getDialog();
                 if(dialog != null) {
                     dialog.setProgress(values[0]);
@@ -486,6 +489,8 @@ public class FileImportDialog extends ImportDialog
 
             @Override
             protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+
                 final Context context = mContext.get();
                 if(context != null) {
                     Toast.makeText(context, R.string.message_import_complete, Toast.LENGTH_LONG)

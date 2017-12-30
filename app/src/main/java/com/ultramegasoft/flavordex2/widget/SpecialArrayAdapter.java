@@ -271,6 +271,7 @@ public class SpecialArrayAdapter<T> extends BaseAdapter implements Filterable {
     }
 
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
         return createViewFromResource(position, convertView, parent, mDropDownResource);
     }

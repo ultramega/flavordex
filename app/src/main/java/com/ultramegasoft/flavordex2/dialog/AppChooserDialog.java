@@ -209,6 +209,7 @@ public class AppChooserDialog extends DialogFragment {
     /**
      * Custom Adapter for listing installed apps.
      */
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     private static class AppListAdapter extends BaseAdapter {
         /**
          * The Context
@@ -362,9 +363,9 @@ public class AppChooserDialog extends DialogFragment {
             }
         }
 
-        @SuppressWarnings("deprecation")
         @NonNull
         @Override
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final ProgressDialog dialog = new ProgressDialog(getContext());
 
@@ -469,6 +470,8 @@ public class AppChooserDialog extends DialogFragment {
 
             @Override
             protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+
                 final ProgressDialog dialog = (ProgressDialog)mFragment.getDialog();
                 if(dialog != null) {
                     dialog.setMessage(mAppNames[values[0]]);
@@ -479,6 +482,8 @@ public class AppChooserDialog extends DialogFragment {
 
             @Override
             protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+
                 final Context context = mContext.get();
                 if(context != null) {
                     Toast.makeText(context, R.string.message_import_complete, Toast.LENGTH_LONG)

@@ -142,6 +142,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
 
     @Nullable
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_view_flavors, container, false);
@@ -232,6 +233,8 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
                 case REQUEST_RESET:

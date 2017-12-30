@@ -38,6 +38,8 @@ public class FcmService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage message) {
+        super.onMessageReceived(message);
+
         Log.i(TAG, "Received Message: " + message.getData().get("message"));
         BackendUtils.requestDataSync(this);
     }

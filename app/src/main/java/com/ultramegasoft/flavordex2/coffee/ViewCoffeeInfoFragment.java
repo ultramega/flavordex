@@ -91,6 +91,7 @@ public class ViewCoffeeInfoFragment extends ViewInfoFragment {
     }
 
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     protected int getLayoutId() {
         return R.layout.fragment_view_info_coffee;
     }

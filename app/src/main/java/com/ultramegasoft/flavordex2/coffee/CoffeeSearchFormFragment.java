@@ -39,12 +39,14 @@ import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
  */
 public class CoffeeSearchFormFragment extends EntrySearchFragment.SearchFormFragment {
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     protected int getLayoutId() {
         return R.layout.fragment_search_form_coffee;
     }
 
     @NonNull
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     protected EntryFormHelper createHelper(@NonNull View root) {
         final CoffeeEntryFormHelper helper = new CoffeeEntryFormHelper(this, root);
         helper.mSpnBrewMethod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

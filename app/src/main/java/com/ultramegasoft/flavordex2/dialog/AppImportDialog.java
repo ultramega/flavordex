@@ -210,9 +210,9 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
             }
         }
 
-        @SuppressWarnings("deprecation")
         @NonNull
         @Override
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final ProgressDialog dialog = new ProgressDialog(getContext());
 
@@ -297,6 +297,8 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
 
             @Override
             protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+
                 final ProgressDialog dialog = (ProgressDialog)mFragment.getDialog();
                 if(dialog != null) {
                     dialog.setProgress(values[0]);
@@ -305,6 +307,8 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
 
             @Override
             protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+
                 final Context context = mContext.get();
                 if(context != null) {
                     Toast.makeText(context, R.string.message_import_complete, Toast.LENGTH_LONG)

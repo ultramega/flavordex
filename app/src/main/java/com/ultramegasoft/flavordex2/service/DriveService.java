@@ -32,8 +32,8 @@ import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.events.CompletionEvent;
 import com.google.android.gms.drive.events.DriveEventService;
 import com.google.android.gms.drive.metadata.CustomPropertyKey;
-import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
+import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
 
 /**
@@ -51,6 +51,7 @@ public class DriveService extends DriveEventService {
             new CustomPropertyKey("hash", CustomPropertyKey.PUBLIC);
 
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public void onCompletion(CompletionEvent event) {
         Log.i(TAG, "Received completion event from Drive.");
         if(event.getStatus() == CompletionEvent.STATUS_SUCCESS) {

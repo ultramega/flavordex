@@ -178,8 +178,8 @@ public class ExportDialog extends DialogFragment {
                      */
                     private static final String mAllowed = "_-.";
 
-                    @SuppressWarnings("SimplifiableIfStatement")
                     @Override
+                    @SuppressWarnings({"SimplifiableIfStatement", "MethodDoesntCallSuperMethod"})
                     public boolean isAllowed(char c) {
                         if('0' <= c && c <= '9') {
                             return true;
@@ -313,9 +313,9 @@ public class ExportDialog extends DialogFragment {
             }
         }
 
-        @SuppressWarnings("deprecation")
         @NonNull
         @Override
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final ProgressDialog dialog = new ProgressDialog(getContext());
 
@@ -542,6 +542,8 @@ public class ExportDialog extends DialogFragment {
 
             @Override
             protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+
                 final ProgressDialog dialog = (ProgressDialog)mFragment.getDialog();
                 if(dialog != null) {
                     dialog.setProgress(values[0]);
@@ -550,6 +552,8 @@ public class ExportDialog extends DialogFragment {
 
             @Override
             protected void onPostExecute(Boolean result) {
+                super.onPostExecute(result);
+
                 if(result) {
                     final Context context = mContext.get();
                     if(context != null) {

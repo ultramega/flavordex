@@ -66,6 +66,7 @@ public class ViewWhiskeyInfoFragment extends ViewInfoFragment {
     }
 
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     protected int getLayoutId() {
         return R.layout.fragment_view_info_whiskey;
     }

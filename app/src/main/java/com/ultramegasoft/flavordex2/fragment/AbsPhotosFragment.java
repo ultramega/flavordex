@@ -195,6 +195,8 @@ abstract class AbsPhotosFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         final Context context = getContext();
         if(context != null && resultCode == Activity.RESULT_OK) {
             final ContentResolver cr = context.getContentResolver();
@@ -402,6 +404,8 @@ abstract class AbsPhotosFragment extends Fragment {
 
         @Override
         protected void onPostExecute(PhotoHolder holder) {
+            super.onPostExecute(holder);
+
             if(holder == null || isCancelled()) {
                 return;
             }

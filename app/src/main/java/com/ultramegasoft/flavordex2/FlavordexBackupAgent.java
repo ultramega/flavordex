@@ -45,6 +45,8 @@ public class FlavordexBackupAgent extends BackupAgentHelper {
 
     @Override
     public void onCreate() {
+        super.onCreate();
+
         final FileBackupHelper db = new FileBackupHelper(this,
                 "../databases/" + DatabaseHelper.DATABASE_NAME);
         addHelper(KEY_DB, db);

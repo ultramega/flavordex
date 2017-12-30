@@ -35,6 +35,7 @@ import com.ultramegasoft.flavordex2.util.EntryFormHelper;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("MethodDoesntCallSuperMethod")
 public class EditCoffeeInfoFragment extends EditInfoFragment {
     @Override
     protected int getLayoutId() {

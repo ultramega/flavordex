@@ -109,6 +109,8 @@ public class ImageLoader extends AsyncTask<Void, Void, Bitmap> {
 
     @Override
     protected void onPostExecute(Bitmap result) {
+        super.onPostExecute(result);
+
         if(result != null) {
             final ImageView imageView = mImageViewReference.get();
             if(imageView != null) {

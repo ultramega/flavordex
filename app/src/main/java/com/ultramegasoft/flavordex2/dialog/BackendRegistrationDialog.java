@@ -63,9 +63,9 @@ public class BackendRegistrationDialog extends BackgroundProgressDialog {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @NonNull
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final ProgressDialog dialog = new ProgressDialog(getContext());
         dialog.setMessage(getString(R.string.message_registering_client));
@@ -106,6 +106,8 @@ public class BackendRegistrationDialog extends BackgroundProgressDialog {
 
         @Override
         protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+
             final Context context = mContext.get();
             if(!result && context != null) {
                 Toast.makeText(context, R.string.error_register_failed, Toast.LENGTH_LONG).show();

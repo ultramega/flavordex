@@ -34,6 +34,7 @@ import com.ultramegasoft.flavordex2.util.EntryFormHelper;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("MethodDoesntCallSuperMethod")
 public class EditWhiskeyInfoFragment extends EditInfoFragment {
     @Override
     protected int getLayoutId() {

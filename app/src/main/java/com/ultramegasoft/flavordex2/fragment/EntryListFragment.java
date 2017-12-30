@@ -294,6 +294,7 @@ public class EntryListFragment extends ListFragment
     }
 
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
         if(enter) {
             return AnimationUtils.loadAnimation(getContext(), R.anim.fragment_in_from_right);
@@ -427,6 +428,8 @@ public class EntryListFragment extends ListFragment
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
                 case REQUEST_SELECT_CAT:

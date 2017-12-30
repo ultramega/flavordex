@@ -174,6 +174,8 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
                 case REQUEST_DELETE_ENTRY:

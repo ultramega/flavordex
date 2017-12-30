@@ -491,11 +491,13 @@ public class FileSelectorDialog extends DialogFragment {
         }
 
         @Override
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
         public int getViewTypeCount() {
             return 2;
         }
 
         @Override
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
         public int getItemViewType(int position) {
             return mTypes.get(position);
         }

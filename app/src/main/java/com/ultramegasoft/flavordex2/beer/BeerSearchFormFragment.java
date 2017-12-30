@@ -38,12 +38,14 @@ import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
  */
 public class BeerSearchFormFragment extends EntrySearchFragment.SearchFormFragment {
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     protected int getLayoutId() {
         return R.layout.fragment_search_form_beer;
     }
 
     @NonNull
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     protected EntryFormHelper createHelper(@NonNull View root) {
         return new BeerEntryFormHelper(this, root);
     }

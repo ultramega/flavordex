@@ -105,11 +105,13 @@ public class EntryListAdapter extends CursorAdapter {
     }
 
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public int getItemViewType(int position) {
         return mMultiChoice ? 1 : 0;
     }
 
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public int getViewTypeCount() {
         return 2;
     }

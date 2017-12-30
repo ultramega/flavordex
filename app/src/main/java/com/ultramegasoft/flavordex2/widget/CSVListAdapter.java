@@ -88,6 +88,7 @@ public class CSVListAdapter extends BaseAdapter {
     }
 
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public boolean hasStableIds() {
         return true;
     }

@@ -95,8 +95,9 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
     private Spinner mSpnCat;
 
     @Nullable
-    @SuppressLint("InflateParams")
     @Override
+    @SuppressLint("InflateParams")
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_search, null);
@@ -324,6 +325,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
 
         @NonNull
         @Override
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                                  @Nullable Bundle savedInstanceState) {
             final View root = inflater.inflate(getLayoutId(), container, false);

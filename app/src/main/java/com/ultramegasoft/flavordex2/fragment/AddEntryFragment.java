@@ -122,6 +122,7 @@ public class AddEntryFragment extends Fragment {
 
     @Nullable
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_add_entry, container, false);
@@ -159,6 +160,8 @@ public class AddEntryFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         final Fragment fragment = getChildFragmentManager().findFragmentById(R.id.pager);
         if(fragment != null) {
             fragment.onActivityResult(requestCode, resultCode, data);
@@ -264,6 +267,7 @@ public class AddEntryFragment extends Fragment {
         }
 
         @Override
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
         public CharSequence getPageTitle(int position) {
             return getText(mPageNames[position]);
         }
@@ -428,6 +432,8 @@ public class AddEntryFragment extends Fragment {
 
             @Override
             protected void onPostExecute(Long entryId) {
+                super.onPostExecute(entryId);
+
                 mFragment.onComplete(entryId);
             }
 

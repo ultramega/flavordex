@@ -171,6 +171,7 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     }
 
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
         if(enter) {
             return AnimationUtils.loadAnimation(getContext(), R.anim.fragment_in_from_left);

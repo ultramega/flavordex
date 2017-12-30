@@ -205,6 +205,7 @@ public class CatListAdapter extends BaseAdapter implements ThemedSpinnerAdapter 
     }
 
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
         return createView(mHelper.getDropDownViewInflater(), mDropDownResource, position,
                 convertView, parent);

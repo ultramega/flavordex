@@ -133,6 +133,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
 
     @NonNull
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(getLayoutId(), container, false);

@@ -43,6 +43,7 @@ import java.util.Calendar;
 public class WelcomeFragment extends Fragment {
     @Nullable
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_welcome, container, false);

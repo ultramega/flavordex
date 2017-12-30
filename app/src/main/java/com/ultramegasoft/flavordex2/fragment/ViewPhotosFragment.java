@@ -413,6 +413,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         }
 
         @Override
+        @SuppressWarnings("MethodDoesntCallSuperMethod")
         public int getItemPosition(Object object) {
             return POSITION_NONE;
         }
@@ -498,6 +499,8 @@ public class ViewPhotosFragment extends AbsPhotosFragment
 
         @Override
         protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+
             if(!result) {
                 final Context context = mContext.get();
                 if(context != null) {

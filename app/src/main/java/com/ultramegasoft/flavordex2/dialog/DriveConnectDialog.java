@@ -90,9 +90,9 @@ public class DriveConnectDialog extends DialogFragment
         }
     }
 
-    @SuppressWarnings("deprecation")
     @NonNull
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final ProgressDialog dialog = new ProgressDialog(getContext());
         dialog.setMessage(getString(R.string.message_connecting_drive));
@@ -107,6 +107,8 @@ public class DriveConnectDialog extends DialogFragment
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         switch(requestCode) {
             case REQUEST_RESOLVE_CONNECTION:
                 if(resultCode == Activity.RESULT_OK) {

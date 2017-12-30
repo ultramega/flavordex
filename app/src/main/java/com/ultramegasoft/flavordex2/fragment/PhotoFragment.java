@@ -72,6 +72,7 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Nullable
     @Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final Bundle args = getArguments();
