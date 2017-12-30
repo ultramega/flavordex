@@ -14,8 +14,6 @@ the credentials are not included in the public repository for security reasons. 
 provide your own credentials to get the project up and running.
 
    * Create a [Firebase](https://firebase.google.com/) project to get a *google-services.json* file.
-   * For [Fabric](https://get.fabric.io/), instead of adding the API key to the manifest, place it
-     in the *fabric.properties* file using the key `apiKey`.
    * For [Facebook](https://developers.facebook.com/) and [Twitter](https://apps.twitter.com/),
      place the credentials in a values resource file called *keys.xml*:
      ```xml
