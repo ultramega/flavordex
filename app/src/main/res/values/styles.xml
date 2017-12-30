@@ -61,12 +61,6 @@
         <item name="android:textSize">24sp</item>
     </style>
 
-    <style name="TableText.Header">
-        <item name="android:textStyle">bold</item>
-        <item name="android:gravity">center|top</item>
-        <item name="android:textIsSelectable">false</item>
-    </style>
-
     <style name="TableText.Label">
         <item name="android:textColor">?android:attr/textColorSecondary</item>
         <item name="android:gravity">right|center_vertical</item>
