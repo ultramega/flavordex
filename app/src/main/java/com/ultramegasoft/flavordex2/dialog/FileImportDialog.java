@@ -273,7 +273,8 @@ public class FileImportDialog extends ImportDialog
         /**
          * The path to the selected file
          */
-        private String mFilePath;
+        @NonNull
+        private final String mFilePath;
 
         /**
          * @param context  The Context
