@@ -52,7 +52,7 @@ public abstract class LoadingProgressFragment extends Fragment {
     @NonNull
     @Override
     @SuppressWarnings("MethodDoesntCallSuperMethod")
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_loading, container, false);
         mLayout = root.findViewById(R.id.layout);

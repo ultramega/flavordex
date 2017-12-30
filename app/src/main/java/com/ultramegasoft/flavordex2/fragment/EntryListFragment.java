@@ -324,7 +324,7 @@ public class EntryListFragment extends ListFragment
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(STATE_SELECTED_ITEM, mActivatedItem);
         outState.putBoolean(STATE_EXPORT_MODE, mExportMode);

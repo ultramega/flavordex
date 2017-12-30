@@ -116,7 +116,7 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final Context context = getContext();
         if(context == null) {
@@ -175,7 +175,7 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        
+
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
                 case REQUEST_DELETE_ENTRY:

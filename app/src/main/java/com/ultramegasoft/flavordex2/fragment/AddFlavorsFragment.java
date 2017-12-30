@@ -85,7 +85,7 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
     @Nullable
     @Override
     @SuppressWarnings("MethodDoesntCallSuperMethod")
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_add_flavors, container, false);
         mRadarView = root.findViewById(R.id.radar);

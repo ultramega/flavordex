@@ -130,7 +130,7 @@ public class EditInfoFragment extends LoadingProgressFragment
 
     @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View root = super.onCreateView(inflater, container, savedInstanceState);
 
@@ -169,7 +169,7 @@ public class EditInfoFragment extends LoadingProgressFragment
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_EXTRAS, mFormHelper.getExtras());
     }

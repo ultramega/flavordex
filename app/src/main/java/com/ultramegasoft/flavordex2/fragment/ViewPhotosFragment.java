@@ -113,7 +113,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         if(!isMediaReadable()) {
             return super.onCreateView(inflater, container, savedInstanceState);
@@ -128,7 +128,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if(!isMediaReadable()) {
             return;
@@ -141,7 +141,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_CURRENT_ITEM, mCurrentItem);
     }
@@ -414,7 +414,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
 
         @Override
         @SuppressWarnings("MethodDoesntCallSuperMethod")
-        public int getItemPosition(Object object) {
+        public int getItemPosition(@NonNull Object object) {
             return POSITION_NONE;
         }
     }

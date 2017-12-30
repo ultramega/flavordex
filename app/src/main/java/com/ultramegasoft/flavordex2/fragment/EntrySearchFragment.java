@@ -98,7 +98,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
     @Override
     @SuppressLint("InflateParams")
     @SuppressWarnings("MethodDoesntCallSuperMethod")
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_search, null);
 
@@ -326,7 +326,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         @NonNull
         @Override
         @SuppressWarnings("MethodDoesntCallSuperMethod")
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                                  @Nullable Bundle savedInstanceState) {
             final View root = inflater.inflate(getLayoutId(), container, false);
 
@@ -345,7 +345,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         }
 
         @Override
-        public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
             final Bundle args = getArguments();
             if(args != null) {
@@ -388,7 +388,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         }
 
         @Override
-        public void onSaveInstanceState(Bundle outState) {
+        public void onSaveInstanceState(@NonNull Bundle outState) {
             super.onSaveInstanceState(outState);
             outState.putSerializable(STATE_EXTRAS, mFormHelper.getExtras());
         }

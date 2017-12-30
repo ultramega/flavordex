@@ -143,7 +143,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     @Nullable
     @Override
     @SuppressWarnings("MethodDoesntCallSuperMethod")
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_view_flavors, container, false);
 
@@ -189,7 +189,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_EDIT_MODE, mEditMode);
         outState.putParcelableArrayList(STATE_DATA, mData);

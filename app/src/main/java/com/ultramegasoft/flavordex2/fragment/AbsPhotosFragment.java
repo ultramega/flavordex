@@ -134,7 +134,7 @@ abstract class AbsPhotosFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         if(!mMediaReadable) {
             final View root = inflater.inflate(R.layout.no_media, container, false);
@@ -162,7 +162,7 @@ abstract class AbsPhotosFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(STATE_PHOTOS, mPhotos);
         outState.putParcelable(STATE_CAPTURE_URI, mCapturedPhoto);

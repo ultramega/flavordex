@@ -86,7 +86,7 @@ public class AddPhotosFragment extends AbsPhotosFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         if(!isMediaReadable()) {
             return super.onCreateView(inflater, container, savedInstanceState);
@@ -98,7 +98,7 @@ public class AddPhotosFragment extends AbsPhotosFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(STATE_CACHE, mCache);
     }

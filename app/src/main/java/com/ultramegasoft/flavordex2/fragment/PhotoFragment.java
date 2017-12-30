@@ -73,7 +73,7 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
     @Nullable
     @Override
     @SuppressWarnings("MethodDoesntCallSuperMethod")
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final Bundle args = getArguments();
         mUri = args != null ? (Uri)args.getParcelable(ARG_URI) : null;
