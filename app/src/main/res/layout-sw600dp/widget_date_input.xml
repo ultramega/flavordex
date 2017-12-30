@@ -37,7 +37,7 @@
         android:layout_height="match_parent"
         android:ellipsize="end"
         android:gravity="center_vertical"
-        android:maxLines="1" />
+        android:singleLine="true" />
 
     <LinearLayout
         android:id="@+id/diw_time_layout"
@@ -59,7 +59,7 @@
             android:layout_height="match_parent"
             android:ellipsize="end"
             android:gravity="center_vertical"
-            android:maxLines="1" />
+            android:singleLine="true" />
     </LinearLayout>
 
     <ImageButton

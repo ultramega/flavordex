@@ -38,7 +38,7 @@
         android:layout_weight="1"
         android:ellipsize="start"
         android:gravity="end|center_vertical"
-        android:maxLines="1" />
+        android:singleLine="true" />
 
     <EditText
         android:id="@+id/file_name"
@@ -46,8 +46,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="2"
         android:hint="@string/hint_file_name"
-        android:maxLines="1"
-        android:selectAllOnFocus="true" />
+        android:selectAllOnFocus="true"
+        android:singleLine="true" />
 
     <TextView
         style="@style/TextAppearance.AppCompat.Subhead"
