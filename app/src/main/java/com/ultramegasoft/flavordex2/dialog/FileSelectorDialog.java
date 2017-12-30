@@ -177,11 +177,19 @@ public class FileSelectorDialog extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        final Context context = getContext();
+        if(context == null) {
+            return;
+        }
+
         final Bundle args = getArguments();
-        mPath = args.getString(ARG_PATH);
-        mRootPath = args.getString(ARG_ROOT_PATH);
-        mAllowDirectories = args.getBoolean(ARG_ALLOW_DIRECTORIES, false);
-        mNameFilter = args.getString(ARG_NAME_FILTER);
+        if(args != null) {
+            mPath = args.getString(ARG_PATH);
+            mRootPath = args.getString(ARG_ROOT_PATH);
+            mAllowDirectories = args.getBoolean(ARG_ALLOW_DIRECTORIES, false);
+            mNameFilter = args.getString(ARG_NAME_FILTER);
+        }
 
         if(savedInstanceState != null) {
             mPath = savedInstanceState.getString(STATE_PATH, mPath);
@@ -196,12 +204,12 @@ public class FileSelectorDialog extends DialogFragment {
         }
 
         if(!new File(mPath).canRead()) {
-            Toast.makeText(getContext(), R.string.error_read_dir, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.error_read_dir, Toast.LENGTH_LONG).show();
             dismiss();
             return;
         }
 
-        mAdapter = new FileListAdapter(getContext());
+        mAdapter = new FileListAdapter(context);
     }
 
     @Override
@@ -214,7 +222,12 @@ public class FileSelectorDialog extends DialogFragment {
     @Override
     @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final View root = LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
+        final Context context = getContext();
+        if(context == null) {
+            return super.onCreateDialog(savedInstanceState);
+        }
+
+        final View root = LayoutInflater.from(context).inflate(R.layout.list_dialog, null);
         mListView = root.findViewById(R.id.list);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -234,7 +247,7 @@ public class FileSelectorDialog extends DialogFragment {
         mEmpty.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context)
                 .setTitle(R.string.title_select_file)
                 .setView(root)
                 .setNegativeButton(R.string.button_cancel, null);

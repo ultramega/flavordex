@@ -38,6 +38,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -153,10 +154,17 @@ public class EditCatFragment extends LoadingProgressFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCatId = getArguments().getLong(ARG_CAT_ID);
+
+        final Activity activity = getActivity();
+        if(activity == null) {
+            return;
+        }
+
+        final Bundle args = getArguments();
+        mCatId = args != null ? args.getLong(ARG_CAT_ID) : 0;
         setHasOptionsMenu(true);
         if(mCatId > 0) {
-            getActivity().setTitle(getString(R.string.title_edit_cat));
+            activity.setTitle(getString(R.string.title_edit_cat));
         }
     }
 
@@ -220,7 +228,8 @@ public class EditCatFragment extends LoadingProgressFragment
 
     @Override
     protected int getLayoutId() {
-        final String cat = getArguments().getString(ARG_CAT_NAME);
+        final Bundle args = getArguments();
+        final String cat = args != null ? args.getString(ARG_CAT_NAME) : null;
 
         if(FlavordexApp.CAT_BEER.equals(cat)) {
             return R.layout.fragment_edit_cat_beer;
@@ -274,10 +283,14 @@ public class EditCatFragment extends LoadingProgressFragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
                 case REQUEST_DELETE_CAT:
-                    getActivity().finish();
+                    final Activity activity = getActivity();
+                    if(activity != null) {
+                        activity.finish();
+                    }
                     break;
             }
         }
@@ -521,7 +534,8 @@ public class EditCatFragment extends LoadingProgressFragment
      * Save the category data and close the Activity.
      */
     private void saveData() {
-        if(!validateForm()) {
+        final Activity activity = getActivity();
+        if(activity == null || !validateForm()) {
             return;
         }
 
@@ -531,31 +545,42 @@ public class EditCatFragment extends LoadingProgressFragment
             info.put(Tables.Cats.NAME, title);
         }
 
-        new DataSaver(getContext(), info, mExtraFields, mFlavorFields, mCatId).execute();
+        new DataSaver(activity, info, mExtraFields, mFlavorFields, mCatId).execute();
 
-        getActivity().finish();
+        activity.finish();
     }
 
     /**
      * Open the delete confirmation dialog.
      */
     private void confirmDeleteCat() {
-        if(mCatId > 0) {
-            CatDeleteDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_CAT, mCatId);
+        final FragmentManager fm = getFragmentManager();
+        if(fm != null && mCatId > 0) {
+            CatDeleteDialog.showDialog(fm, this, REQUEST_DELETE_CAT, mCatId);
         }
     }
 
     @Override
     public Loader<DataLoader.Holder> onCreateLoader(int id, Bundle args) {
+        final Activity activity = getActivity();
+        if(activity == null) {
+            return null;
+        }
+
         mIsLoading = true;
-        ActivityCompat.invalidateOptionsMenu(getActivity());
-        return new DataLoader(getContext(), mCatId);
+        ActivityCompat.invalidateOptionsMenu(activity);
+        return new DataLoader(activity, mCatId);
     }
 
     @Override
     public void onLoadFinished(Loader<DataLoader.Holder> loader, DataLoader.Holder data) {
+        mIsLoading = false;
+        getLoaderManager().destroyLoader(0);
+        hideLoadingIndicator(true);
+
+        final Activity activity = getActivity();
         if(mTxtTitle != null) {
-            mTxtTitle.setText(FlavordexApp.getRealCatName(getContext(), data.catName));
+            mTxtTitle.setText(FlavordexApp.getRealCatName(activity, data.catName));
             mTxtTitle.setSelection(mTxtTitle.length());
         }
         mExtraFields = data.extras;
@@ -563,11 +588,9 @@ public class EditCatFragment extends LoadingProgressFragment
         populateFields();
         mRadarView.setData(getRadarData());
 
-        mIsLoading = false;
-        ActivityCompat.invalidateOptionsMenu(getActivity());
-
-        hideLoadingIndicator(true);
-        getLoaderManager().destroyLoader(0);
+        if(activity != null) {
+            ActivityCompat.invalidateOptionsMenu(activity);
+        }
     }
 
     @Override

@@ -25,6 +25,7 @@ package com.ultramegasoft.flavordex2.dialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -74,7 +75,13 @@ public class DriveConnectDialog extends DialogFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mClient = new GoogleApiClient.Builder(getContext(), this, this)
+
+        final Context context = getContext();
+        if(context == null) {
+            return;
+        }
+
+        mClient = new GoogleApiClient.Builder(context, this, this)
                 .addApi(Drive.API)
                 .addScope(Drive.SCOPE_APPFOLDER)
                 .build();

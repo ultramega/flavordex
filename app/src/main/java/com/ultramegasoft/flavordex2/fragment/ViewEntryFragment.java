@@ -24,6 +24,7 @@ package com.ultramegasoft.flavordex2.fragment;
 
 import android.app.Activity;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -98,8 +99,13 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setHasOptionsMenu(true);
-        mEntryId = getArguments().getLong(ARG_ENTRY_ID);
+
+        final Bundle args = getArguments();
+        if(args != null) {
+            mEntryId = args.getLong(ARG_ENTRY_ID);
+        }
     }
 
     @Override
@@ -112,27 +118,34 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        final Context context = getContext();
+        if(context == null) {
+            return super.onCreateView(inflater, container, savedInstanceState);
+        }
+
         mTabHost = (FragmentTabHost)inflater.inflate(R.layout.tab_layout, container, false);
         mTabHost.setup(getContext(), getChildFragmentManager(), R.id.content);
 
-        final Bundle args = new Bundle();
-        args.putLong(ARG_ENTRY_ID, mEntryId);
-        args.putLong(ARG_ENTRY_CAT_ID, getArguments().getLong(ARG_ENTRY_CAT_ID));
+        final Bundle tabArgs = new Bundle();
+        tabArgs.putLong(ARG_ENTRY_ID, mEntryId);
+
+        final Bundle args = getArguments();
+        tabArgs.putLong(ARG_ENTRY_CAT_ID, args != null ? args.getLong(ARG_ENTRY_CAT_ID) : 0);
 
         Drawable icon;
         TabHost.TabSpec tab;
 
-        icon = ActivityCompat.getDrawable(getContext(), R.drawable.ic_description);
+        icon = ActivityCompat.getDrawable(context, R.drawable.ic_description);
         tab = mTabHost.newTabSpec("info_" + mEntryId).setIndicator(null, icon);
-        mTabHost.addTab(tab, getEntryInfoClass(), args);
+        mTabHost.addTab(tab, getEntryInfoClass(), tabArgs);
 
-        icon = ActivityCompat.getDrawable(getContext(), R.drawable.ic_radar);
+        icon = ActivityCompat.getDrawable(context, R.drawable.ic_radar);
         tab = mTabHost.newTabSpec("flavors_" + mEntryId).setIndicator(null, icon);
-        mTabHost.addTab(tab, ViewFlavorsFragment.class, args);
+        mTabHost.addTab(tab, ViewFlavorsFragment.class, tabArgs);
 
-        icon = ActivityCompat.getDrawable(getContext(), R.drawable.ic_photo);
+        icon = ActivityCompat.getDrawable(context, R.drawable.ic_photo);
         tab = mTabHost.newTabSpec("photos_" + mEntryId).setIndicator(null, icon);
-        mTabHost.addTab(tab, ViewPhotosFragment.class, args);
+        mTabHost.addTab(tab, ViewPhotosFragment.class, tabArgs);
 
         return mTabHost;
     }
@@ -147,10 +160,13 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_delete_entry:
-                ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_ENTRY,
-                        getString(R.string.title_delete_entry),
-                        getString(R.string.message_confirm_delete, mEntryTitle),
-                        R.drawable.ic_delete);
+                final FragmentManager fm = getFragmentManager();
+                if(fm != null) {
+                    ConfirmationDialog.showDialog(fm, this, REQUEST_DELETE_ENTRY,
+                            getString(R.string.title_delete_entry),
+                            getString(R.string.message_confirm_delete, mEntryTitle),
+                            R.drawable.ic_delete);
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -161,7 +177,10 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
                 case REQUEST_DELETE_ENTRY:
-                    new EntryDeleter(getContext(), mEntryId).execute();
+                    final Context context = getContext();
+                    if(context != null) {
+                        new EntryDeleter(context, mEntryId).execute();
+                    }
                     return;
             }
         }
@@ -194,19 +213,21 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
         new Handler().post(new Runnable() {
             @Override
             public void run() {
+                final EntryListActivity activity = (EntryListActivity)getActivity();
                 final FragmentManager fm = getFragmentManager();
-                final Fragment fragment = fm.findFragmentById(R.id.entry_list);
-                if(fragment instanceof EntryListFragment) {
-                    ((EntryListFragment)fragment).clearSelection();
-                } else if(fragment instanceof CatListFragment) {
-                    final ActionBar actionBar =
-                            ((AppCompatActivity)getActivity()).getSupportActionBar();
-                    if(actionBar != null) {
-                        actionBar.setSubtitle(null);
+                if(activity != null && fm != null) {
+                    final Fragment fragment = fm.findFragmentById(R.id.entry_list);
+                    if(fragment instanceof EntryListFragment) {
+                        ((EntryListFragment)fragment).clearSelection();
+                    } else if(fragment instanceof CatListFragment) {
+                        final ActionBar actionBar = activity.getSupportActionBar();
+                        if(actionBar != null) {
+                            actionBar.setSubtitle(null);
+                        }
+                        activity.onItemSelected(-1, null, 0);
+                    } else {
+                        activity.finish();
                     }
-                    ((EntryListActivity)getActivity()).onItemSelected(-1, null, 0);
-                } else {
-                    getActivity().finish();
                 }
             }
         });
@@ -219,7 +240,8 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
      */
     @NonNull
     private Class<? extends ViewInfoFragment> getEntryInfoClass() {
-        final String cat = getArguments().getString(ARG_ENTRY_CAT);
+        final Bundle args = getArguments();
+        final String cat = args != null ? args.getString(ARG_ENTRY_CAT) : null;
 
         if(FlavordexApp.CAT_BEER.equals(cat)) {
             return ViewBeerInfoFragment.class;
@@ -244,17 +266,26 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
      */
     private void setEntryTitle(@Nullable String title) {
         mEntryTitle = title;
-        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setSubtitle(title);
+
+        final AppCompatActivity activity = (AppCompatActivity)getActivity();
+        if(activity != null) {
+            final ActionBar actionBar = activity.getSupportActionBar();
+            if(actionBar != null) {
+                actionBar.setSubtitle(title);
+            }
         }
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        final Context context = getContext();
+        if(context == null) {
+            return null;
+        }
+
         final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId);
         final String[] projection = new String[] {Tables.Entries.TITLE};
-        return new CursorLoader(getContext(), uri, projection, null, null, null);
+        return new CursorLoader(context, uri, projection, null, null, null);
     }
 
     @Override

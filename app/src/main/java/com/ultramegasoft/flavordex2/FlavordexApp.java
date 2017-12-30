@@ -203,13 +203,15 @@ public class FlavordexApp extends Application
      * @return The real display name
      */
     @NonNull
-    public static String getRealCatName(@NonNull Context context, @Nullable String name) {
+    public static String getRealCatName(@Nullable Context context, @Nullable String name) {
         if(name == null) {
             return "";
         }
-        if(sCatNameMap.containsKey(name)) {
+
+        if(context != null && sCatNameMap.containsKey(name)) {
             return context.getString(sCatNameMap.get(name));
         }
+
         return name;
     }
 
@@ -254,7 +256,7 @@ public class FlavordexApp extends Application
      */
     private void setLocationEnabled(boolean enabled) {
         final LocationManager lm = (LocationManager)getSystemService(LOCATION_SERVICE);
-        if(!lm.getProviders(true).contains(LocationManager.NETWORK_PROVIDER)) {
+        if(lm == null || !lm.getProviders(true).contains(LocationManager.NETWORK_PROVIDER)) {
             return;
         }
 

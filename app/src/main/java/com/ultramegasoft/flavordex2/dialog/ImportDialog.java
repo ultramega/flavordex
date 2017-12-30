@@ -24,6 +24,7 @@ package com.ultramegasoft.flavordex2.dialog;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -59,7 +60,12 @@ public abstract class ImportDialog extends DialogFragment {
     @Override
     @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final View root = LayoutInflater.from(getContext()).inflate(R.layout.list_dialog, null);
+        final Context context = getContext();
+        if(context == null) {
+            return super.onCreateDialog(savedInstanceState);
+        }
+
+        final View root = LayoutInflater.from(context).inflate(R.layout.list_dialog, null);
 
         mListContainer = root.findViewById(R.id.list_container);
 
@@ -78,7 +84,7 @@ public abstract class ImportDialog extends DialogFragment {
 
         mProgressBar = root.findViewById(R.id.progress);
 
-        return new AlertDialog.Builder(getContext())
+        return new AlertDialog.Builder(context)
                 .setTitle(R.string.title_import)
                 .setIcon(R.drawable.ic_import)
                 .setView(root)

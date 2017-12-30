@@ -24,6 +24,7 @@ package com.ultramegasoft.flavordex2.dialog;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -90,8 +91,10 @@ public class AccountDialog extends DialogFragment {
     private abstract class AccountUpdater {
         /**
          * Execute the update request.
+         *
+         * @param context The Context
          */
-        public void execute() {
+        public void execute(@NonNull final Context context) {
             if(mUser == null || mCurrentEmail == null) {
                 return;
             }
@@ -102,7 +105,11 @@ public class AccountDialog extends DialogFragment {
                         public void onComplete(@NonNull Task<Void> task) {
                             if(!task.isSuccessful()) {
                                 try {
-                                    throw task.getException();
+                                    final Exception exception = task.getException();
+                                    if(exception == null) {
+                                        throw new NullPointerException("exception is null");
+                                    }
+                                    throw exception;
                                 } catch(FirebaseAuthInvalidUserException e) {
                                     onUserError();
                                 } catch(FirebaseAuthInvalidCredentialsException e) {
@@ -115,7 +122,7 @@ public class AccountDialog extends DialogFragment {
                                     onUnknownError();
                                 }
                             } else {
-                                doTask();
+                                doTask(context.getApplicationContext());
                             }
                         }
                     });
@@ -123,8 +130,10 @@ public class AccountDialog extends DialogFragment {
 
         /**
          * Executed after the user is successfully reauthenticated.
+         *
+         * @param context The Context
          */
-        protected abstract void doTask();
+        protected abstract void doTask(@NonNull Context context);
     }
 
     /**
@@ -154,8 +163,13 @@ public class AccountDialog extends DialogFragment {
     @Override
     @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final Context context = getContext();
+        if(context == null) {
+            return super.onCreateDialog(savedInstanceState);
+        }
+
         final View root =
-                LayoutInflater.from(getContext()).inflate(R.layout.dialog_account, null, false);
+                LayoutInflater.from(context).inflate(R.layout.dialog_account, null, false);
 
         mTxtMessage = root.findViewById(R.id.message);
         mTxtPassword = root.findViewById(R.id.password);
@@ -203,7 +217,7 @@ public class AccountDialog extends DialogFragment {
             }
         });
 
-        return new AlertDialog.Builder(getContext())
+        return new AlertDialog.Builder(context)
                 .setTitle(R.string.title_account)
                 .setView(root)
                 .setPositiveButton(R.string.button_close, null)
@@ -235,8 +249,13 @@ public class AccountDialog extends DialogFragment {
      * Initiate a request to change the email address for the current user.
      */
     private void changeEmail() {
+        final Context context = getContext();
+        if(context == null) {
+            return;
+        }
+
         new AccountUpdater() {
-            protected void doTask() {
+            protected void doTask(@NonNull final Context context) {
                 if(mUser == null) {
                     return;
                 }
@@ -246,7 +265,11 @@ public class AccountDialog extends DialogFragment {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if(!task.isSuccessful()) {
                                     try {
-                                        throw task.getException();
+                                        final Exception exception = task.getException();
+                                        if(exception == null) {
+                                            throw new NullPointerException("exception is null");
+                                        }
+                                        throw exception;
                                     } catch(FirebaseAuthInvalidCredentialsException e) {
                                         mTxtEmail.setError(getString(R.string.error_invalid_email));
                                         mTxtEmail.requestFocus();
@@ -273,21 +296,26 @@ public class AccountDialog extends DialogFragment {
                                 } else {
                                     mTxtPassword.setText(null);
                                     mCurrentEmail = mUser.getEmail();
-                                    BackendUtils.setEmail(getContext(), mCurrentEmail);
+                                    BackendUtils.setEmail(context, mCurrentEmail);
                                     mTxtMessage.setText(R.string.message_email_changed);
                                 }
                             }
                         });
             }
-        }.execute();
+        }.execute(context);
     }
 
     /**
      * Initiate a request to change the password for the current user.
      */
     private void changePassword() {
+        final Context context = getContext();
+        if(context == null) {
+            return;
+        }
+
         new AccountUpdater() {
-            protected void doTask() {
+            protected void doTask(@NonNull Context context) {
                 if(mUser == null) {
                     return;
                 }
@@ -298,7 +326,11 @@ public class AccountDialog extends DialogFragment {
                                 if(!task.isSuccessful()) {
                                     mTxtNewPassword.setText(null);
                                     try {
-                                        throw task.getException();
+                                        final Exception exception = task.getException();
+                                        if(exception == null) {
+                                            throw new NullPointerException("exception is null");
+                                        }
+                                        throw exception;
                                     } catch(FirebaseAuthWeakPasswordException e) {
                                         mTxtNewPassword
                                                 .setError(getString(R.string.error_weak_password));
@@ -318,7 +350,7 @@ public class AccountDialog extends DialogFragment {
                             }
                         });
             }
-        }.execute();
+        }.execute(context);
     }
 
     /**

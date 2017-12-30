@@ -24,6 +24,7 @@ package com.ultramegasoft.flavordex2.fragment;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -108,7 +109,11 @@ abstract class AbsPhotosFragment extends Fragment {
         }
         setHasOptionsMenu(true);
 
-        mHasCamera = getContext().getPackageManager()
+        final Context context = getContext();
+        if(context == null) {
+            return;
+        }
+        mHasCamera = context.getPackageManager()
                 .hasSystemFeature(PackageManager.FEATURE_CAMERA);
 
         if(savedInstanceState != null) {
@@ -120,7 +125,7 @@ abstract class AbsPhotosFragment extends Fragment {
             mCapturedPhoto = savedInstanceState.getParcelable(STATE_CAPTURE_URI);
             final Uri loadingUri = savedInstanceState.getParcelable(STATE_LOADING_URI);
             if(loadingUri != null) {
-                mPhotoLoader = new PhotoLoader(loadingUri);
+                mPhotoLoader = new PhotoLoader(context, loadingUri);
                 mPhotoLoader.execute();
             }
         }
@@ -137,13 +142,14 @@ abstract class AbsPhotosFragment extends Fragment {
                 return root;
             }
 
-            if(!PermissionUtils.hasExternalStoragePerm(getContext())
-                    && PermissionUtils.shouldAskExternalStoragePerm(getActivity())) {
+            final Activity activity = getActivity();
+            if(activity != null && !PermissionUtils.hasExternalStoragePerm(activity)
+                    && PermissionUtils.shouldAskExternalStoragePerm(activity)) {
                 final Button permButton = root.findViewById(R.id.button_grant_permission);
                 permButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        PermissionUtils.requestExternalStoragePerm(getActivity());
+                        PermissionUtils.requestExternalStoragePerm(activity);
                     }
                 });
                 permButton.setVisibility(View.VISIBLE);
@@ -188,8 +194,9 @@ abstract class AbsPhotosFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == Activity.RESULT_OK) {
-            final ContentResolver cr = getContext().getContentResolver();
+        final Context context = getContext();
+        if(context != null && resultCode == Activity.RESULT_OK) {
+            final ContentResolver cr = context.getContentResolver();
             Uri uri = null;
             switch(requestCode) {
                 case REQUEST_CAPTURE_IMAGE:
@@ -211,7 +218,7 @@ abstract class AbsPhotosFragment extends Fragment {
             }
 
             if(uri != null) {
-                mPhotoLoader = new PhotoLoader(uri);
+                mPhotoLoader = new PhotoLoader(context, uri);
                 mPhotoLoader.execute();
             }
         }
@@ -249,22 +256,34 @@ abstract class AbsPhotosFragment extends Fragment {
      * Launch an image capturing Intent.
      */
     final void takePhoto() {
-        final Intent intent = PhotoUtils.getTakePhotoIntent(getContext());
-        if(intent != null && intent.resolveActivity(getContext().getPackageManager()) != null) {
-            mCapturedPhoto = intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT);
-            getParentFragment().startActivityForResult(intent, REQUEST_CAPTURE_IMAGE);
+        final Context context = getContext();
+        final Fragment parent = getParentFragment();
+        if(context == null || parent == null) {
             return;
         }
-        Toast.makeText(getContext(), R.string.error_camera, Toast.LENGTH_LONG).show();
+
+        final Intent intent = PhotoUtils.getTakePhotoIntent(context);
+        if(intent != null && intent.resolveActivity(getContext().getPackageManager()) != null) {
+            mCapturedPhoto = intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT);
+            parent.startActivityForResult(intent, REQUEST_CAPTURE_IMAGE);
+            return;
+        }
+        Toast.makeText(context, R.string.error_camera, Toast.LENGTH_LONG).show();
     }
 
     /**
      * Launch an image selection Intent.
      */
     final void addPhotoFromGallery() {
+        final Context context = getContext();
+        final Fragment parent = getParentFragment();
+        if(context == null || parent == null) {
+            return;
+        }
+
         final Intent intent = PhotoUtils.getSelectPhotoIntent();
-        if(intent.resolveActivity(getContext().getPackageManager()) != null) {
-            getParentFragment().startActivityForResult(intent, REQUEST_SELECT_IMAGE);
+        if(intent.resolveActivity(context.getPackageManager()) != null) {
+            parent.startActivityForResult(intent, REQUEST_SELECT_IMAGE);
         }
     }
 
@@ -330,15 +349,22 @@ abstract class AbsPhotosFragment extends Fragment {
      */
     private class PhotoLoader extends AsyncTask<Void, Void, PhotoHolder> {
         /**
+         * The Context
+         */
+        private final Context mContext;
+
+        /**
          * The Uri to load
          */
         @NonNull
         private final Uri mUri;
 
         /**
-         * @param uri The Uri to load
+         * @param context The Context
+         * @param uri     The Uri to load
          */
-        PhotoLoader(@NonNull Uri uri) {
+        PhotoLoader(@NonNull Context context, @NonNull Uri uri) {
+            mContext = context.getApplicationContext();
             mUri = uri;
         }
 
@@ -354,7 +380,7 @@ abstract class AbsPhotosFragment extends Fragment {
 
         @Override
         protected PhotoHolder doInBackground(Void... params) {
-            final String hash = PhotoUtils.getMD5Hash(getContext().getContentResolver(), mUri);
+            final String hash = PhotoUtils.getMD5Hash(mContext.getContentResolver(), mUri);
             return new PhotoHolder(0, hash, mUri, 0);
         }
 

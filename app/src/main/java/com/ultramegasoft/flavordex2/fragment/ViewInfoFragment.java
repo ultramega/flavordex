@@ -22,7 +22,9 @@
  */
 package com.ultramegasoft.flavordex2.fragment;
 
+import android.app.Activity;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -113,7 +115,12 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ENTRY_ID);
+
+        final Bundle args = getArguments();
+        if(args != null) {
+            mEntryId = args.getLong(ViewEntryFragment.ARG_ENTRY_ID);
+        }
+
         setHasOptionsMenu(true);
     }
 
@@ -158,12 +165,14 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        if(mTitle == null) {
+        final Context context = getContext();
+        if(context == null || mTitle == null) {
             return;
         }
+
         final MenuItem shareItem = menu.findItem(R.id.menu_share);
         if(shareItem != null) {
-            final Intent shareIntent = EntryUtils.getShareIntent(getContext(), mTitle, mRating);
+            final Intent shareIntent = EntryUtils.getShareIntent(context, mTitle, mRating);
             final ShareActionProvider actionProvider =
                     (ShareActionProvider)MenuItemCompat.getActionProvider(shareItem);
             if(actionProvider != null) {
@@ -176,7 +185,10 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_edit_entry:
-                EditEntryActivity.startActivity(getContext(), mEntryId, mEntryCat);
+                final Context context = getContext();
+                if(context != null) {
+                    EditEntryActivity.startActivity(context, mEntryId, mEntryCat);
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -235,7 +247,10 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
         mRatingBar.setRating(mRating);
         mTxtNotes.setText(data.getString(data.getColumnIndex(Tables.Entries.NOTES)));
 
-        getActivity().invalidateOptionsMenu();
+        final Activity activity = getActivity();
+        if(activity != null) {
+            activity.invalidateOptionsMenu();
+        }
     }
 
     /**
@@ -244,7 +259,12 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
      * @param data A LinkedHashMap containing the extra values
      */
     protected void populateExtras(@NonNull LinkedHashMap<String, ExtraFieldHolder> data) {
-        final TableLayout table = getActivity().findViewById(R.id.entry_info);
+        final Activity activity = getActivity();
+        if(activity == null) {
+            return;
+        }
+
+        final TableLayout table = activity.findViewById(R.id.entry_info);
         if(!mExtraRows.isEmpty()) {
             for(View tableRow : mExtraRows) {
                 table.removeView(tableRow);
@@ -252,7 +272,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
             mExtraRows.clear();
         }
         if(data.size() > 0) {
-            final LayoutInflater inflater = LayoutInflater.from(getContext());
+            final LayoutInflater inflater = LayoutInflater.from(activity);
             for(ExtraFieldHolder extra : data.values()) {
                 if(extra.preset) {
                     continue;
@@ -328,13 +348,18 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        final Context context = getContext();
+        if(context == null) {
+            return null;
+        }
+
         Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId);
         switch(id) {
             case LOADER_MAIN:
-                return new CursorLoader(getContext(), uri, null, null, null, null);
+                return new CursorLoader(context, uri, null, null, null, null);
             case LOADER_EXTRAS:
                 uri = Uri.withAppendedPath(uri, "extras");
-                return new CursorLoader(getContext(), uri, null, null, null,
+                return new CursorLoader(context, uri, null, null, null,
                         Tables.EntriesExtras.EXTRA + " ASC");
         }
 

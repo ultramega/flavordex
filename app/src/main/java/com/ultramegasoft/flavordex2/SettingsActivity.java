@@ -33,6 +33,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.CheckBoxPreference;
@@ -178,8 +179,12 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onResume() {
             super.onResume();
-            mPrefLocation.setEnabled(PermissionUtils.hasLocationPerm(getContext())
-                    || PermissionUtils.shouldAskLocationPerm(getActivity()));
+
+            final Activity activity = getActivity();
+            if(activity != null) {
+                mPrefLocation.setEnabled(PermissionUtils.hasLocationPerm(activity)
+                        || PermissionUtils.shouldAskLocationPerm(activity));
+            }
         }
 
         @Override
@@ -197,8 +202,10 @@ public class SettingsActivity extends AppCompatActivity {
             pref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    CatListDialog.showDialog(getFragmentManager(), SettingsFragment.this,
-                            REQUEST_EDIT_CAT);
+                    final FragmentManager fm = getFragmentManager();
+                    if(fm != null) {
+                        CatListDialog.showDialog(fm, SettingsFragment.this, REQUEST_EDIT_CAT);
+                    }
                     return false;
                 }
             });
@@ -208,9 +215,13 @@ public class SettingsActivity extends AppCompatActivity {
          * Set up the location detection preference.
          */
         private void setupLocationPref() {
-            final LocationManager lm =
-                    (LocationManager)getActivity().getSystemService(LOCATION_SERVICE);
-            if(!lm.getProviders(true).contains(LocationManager.NETWORK_PROVIDER)) {
+            final Activity activity = getActivity();
+            if(activity == null) {
+                return;
+            }
+
+            final LocationManager lm = (LocationManager)activity.getSystemService(LOCATION_SERVICE);
+            if(lm == null || !lm.getProviders(true).contains(LocationManager.NETWORK_PROVIDER)) {
                 mPrefLocation.setVisible(false);
                 return;
             }
@@ -231,10 +242,15 @@ public class SettingsActivity extends AppCompatActivity {
          * @return Whether Google Play Services is available
          */
         private boolean isGoogleAvailable() {
+            final Activity activity = getActivity();
+            if(activity == null) {
+                return false;
+            }
+
             final GoogleApiAvailability gaa = GoogleApiAvailability.getInstance();
-            final int availability = gaa.isGooglePlayServicesAvailable(getContext());
+            final int availability = gaa.isGooglePlayServicesAvailable(activity);
             if(availability != ConnectionResult.SUCCESS) {
-                gaa.showErrorDialogFragment(getActivity(), availability, 0);
+                gaa.showErrorDialogFragment(activity, availability, 0);
                 return false;
             }
             return true;
@@ -267,7 +283,10 @@ public class SettingsActivity extends AppCompatActivity {
                     .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                         @Override
                         public boolean onPreferenceClick(Preference preference) {
-                            AccountDialog.showDialog(getFragmentManager());
+                            final FragmentManager fm = getFragmentManager();
+                            if(fm != null) {
+                                AccountDialog.showDialog(fm);
+                            }
                             return false;
                         }
                     });
@@ -299,10 +318,17 @@ public class SettingsActivity extends AppCompatActivity {
                         @Override
                         public boolean onPreferenceChange(Preference preference, Object o) {
                             if(!(boolean)o) {
-                                new UnregisterTask(getContext()).execute();
+                                final Context context = getContext();
+                                if(context != null) {
+                                    new UnregisterTask(context).execute();
+                                }
                                 return true;
                             }
-                            BackendRegistrationDialog.showDialog(getFragmentManager());
+
+                            final FragmentManager fm = getFragmentManager();
+                            if(fm != null) {
+                                BackendRegistrationDialog.showDialog(fm);
+                            }
                             return false;
                         }
                     });
@@ -312,14 +338,22 @@ public class SettingsActivity extends AppCompatActivity {
          * Set up the photo syncing preference.
          */
         private void setupSyncPhotosPref() {
-            mPrefSyncPhotos.setEnabled(PermissionUtils.hasExternalStoragePerm(getContext()));
+            final Context context = getContext();
+            if(context == null) {
+                return;
+            }
+
+            mPrefSyncPhotos.setEnabled(PermissionUtils.hasExternalStoragePerm(context));
 
             mPrefSyncPhotos.setOnPreferenceChangeListener(
                     new Preference.OnPreferenceChangeListener() {
                         @Override
                         public boolean onPreferenceChange(Preference preference, Object o) {
                             if((Boolean)o) {
-                                DriveConnectDialog.showDialog(getFragmentManager());
+                                final FragmentManager fm = getFragmentManager();
+                                if(fm != null) {
+                                    DriveConnectDialog.showDialog(fm);
+                                }
                                 return false;
                             }
                             return true;
@@ -331,16 +365,25 @@ public class SettingsActivity extends AppCompatActivity {
         public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                                @NonNull int[] grantResults) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            PermissionUtils.onRequestPermissionsResult(getContext(), requestCode, permissions,
-                    grantResults);
+
+            final Context context = getContext();
+            if(context != null) {
+                PermissionUtils.onRequestPermissionsResult(context, requestCode, permissions,
+                        grantResults);
+            }
         }
 
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            final Context context = getContext();
+            if(context == null) {
+                return;
+            }
+
             switch(requestCode) {
                 case REQUEST_EDIT_CAT:
                     if(resultCode == Activity.RESULT_OK) {
-                        EditCatActivity.startActivity(getContext(),
+                        EditCatActivity.startActivity(context,
                                 data.getLongExtra(CatListDialog.EXTRA_CAT_ID, 0),
                                 data.getStringExtra(CatListDialog.EXTRA_CAT_NAME));
                     }
@@ -356,7 +399,10 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             } else if(FlavordexApp.PREF_ACCOUNT.equals(key)) {
                 if(!sharedPreferences.getBoolean(key, false)) {
-                    new LogoutTask(getContext()).execute();
+                    final Context context = getContext();
+                    if(context != null) {
+                        new LogoutTask(context).execute();
+                    }
                     mPrefAccount.setChecked(false);
                 }
                 invalidateEditAccountPref();

@@ -95,12 +95,18 @@ public class AppChooserDialog extends DialogFragment {
     @Override
     @SuppressLint("InflateParams")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final boolean multiChoice = getArguments().getBoolean(ARG_MULTI_CHOICE);
+        final Context context = getContext();
+        if(context == null) {
+            return super.onCreateDialog(savedInstanceState);
+        }
+
+        final Bundle args = getArguments();
+        final boolean multiChoice = args != null && args.getBoolean(ARG_MULTI_CHOICE);
         final View root =
-                LayoutInflater.from(getContext()).inflate(R.layout.dialog_app_chooser, null);
+                LayoutInflater.from(context).inflate(R.layout.dialog_app_chooser, null);
 
         mListView = root.findViewById(R.id.list);
-        mListView.setAdapter(new AppListAdapter(getContext(), multiChoice));
+        mListView.setAdapter(new AppListAdapter(context, multiChoice));
 
         final int count;
         if(multiChoice) {
@@ -131,7 +137,7 @@ public class AppChooserDialog extends DialogFragment {
         final String appsString = getResources().getQuantityString(R.plurals.app, count);
         header.setText(getString(R.string.header_select_app, appsString));
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context)
                 .setTitle(R.string.title_import_app)
                 .setIcon(R.drawable.ic_import)
                 .setView(root)
@@ -165,7 +171,10 @@ public class AppChooserDialog extends DialogFragment {
      * @param id The selected item position
      */
     private void selectItem(long id) {
-        AppImportDialog.showDialog(getFragmentManager(), (int)id);
+        final FragmentManager fm = getFragmentManager();
+        if(fm != null) {
+            AppImportDialog.showDialog(fm, (int)id);
+        }
         dismiss();
     }
 
@@ -173,6 +182,11 @@ public class AppChooserDialog extends DialogFragment {
      * Import all of the entries from the selected apps.
      */
     private void importSelected() {
+        final FragmentManager fm = getFragmentManager();
+        if(fm == null) {
+            return;
+        }
+
         final AppListAdapter adapter = (AppListAdapter)mListView.getAdapter();
 
         final int[] appIds = new int[mListView.getCheckedItemCount()];
@@ -188,7 +202,7 @@ public class AppChooserDialog extends DialogFragment {
             }
         }
 
-        ImporterFragment.init(getFragmentManager(), appIds, appNames);
+        ImporterFragment.init(fm, appIds, appNames);
     }
 
     /**
@@ -341,8 +355,10 @@ public class AppChooserDialog extends DialogFragment {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             final Bundle args = getArguments();
-            mApps = args.getIntArray(ARG_APP_IDS);
-            mAppNames = args.getCharSequenceArray(ARG_APP_NAMES);
+            if(args != null) {
+                mApps = args.getIntArray(ARG_APP_IDS);
+                mAppNames = args.getCharSequenceArray(ARG_APP_NAMES);
+            }
         }
 
         @SuppressWarnings("deprecation")
@@ -362,7 +378,10 @@ public class AppChooserDialog extends DialogFragment {
 
         @Override
         protected void startTask() {
-            new ImportTask().execute();
+            final Context context = getContext();
+            if(context != null) {
+                new ImportTask(context).execute();
+            }
         }
 
         /**
@@ -375,8 +394,11 @@ public class AppChooserDialog extends DialogFragment {
             @NonNull
             private final Context mContext;
 
-            ImportTask() {
-                mContext = getContext().getApplicationContext();
+            /**
+             * @param context The Context
+             */
+            ImportTask(@NonNull Context context) {
+                mContext = context.getApplicationContext();
             }
 
             @Override
@@ -391,10 +413,12 @@ public class AppChooserDialog extends DialogFragment {
                     final String[] projection = {AppImportUtils.EntriesColumns._ID};
                     final Cursor cursor = cr.query(uri, projection, null, null, null);
                     int count;
+
+                    if(cursor == null) {
+                        continue;
+                    }
+
                     try {
-                        if(cursor == null) {
-                            continue;
-                        }
                         EntryHolder entry;
                         count = cursor.getCount();
                         int j = 0;

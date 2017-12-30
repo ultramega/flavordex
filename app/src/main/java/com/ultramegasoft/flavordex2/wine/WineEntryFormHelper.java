@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.wine;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -56,9 +57,14 @@ class WineEntryFormHelper extends EntryFormHelper {
     @Override
     protected void loadLayout(@NonNull View root) {
         super.loadLayout(root);
+
         mTxtVarietal = root.findViewById(R.id.entry_varietal);
-        mTxtVarietal.setAdapter(SpecialArrayAdapter.createFromResource(mFragment.getContext(),
-                R.array.wine_varietals, android.R.layout.simple_dropdown_item_1line));
+
+        final Context context = mFragment.getContext();
+        if(context != null) {
+            mTxtVarietal.setAdapter(SpecialArrayAdapter.createFromResource(context,
+                    R.array.wine_varietals, android.R.layout.simple_dropdown_item_1line));
+        }
 
         mTxtVintage = root.findViewById(R.id.entry_stats_vintage);
         mTxtABV = root.findViewById(R.id.entry_stats_abv);

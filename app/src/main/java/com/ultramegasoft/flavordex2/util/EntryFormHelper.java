@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.util;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -285,9 +286,14 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch(id) {
             case LOADER_MAKERS:
-                final String order = Tables.Makers.NAME + " ASC";
-                final Uri uri = args.getParcelable("uri");
-                return new CursorLoader(mFragment.getContext(), uri, null, null, null, order);
+                final Context context = mFragment.getContext();
+                if(context != null) {
+                    final String order = Tables.Makers.NAME + " ASC";
+                    final Uri uri = args.getParcelable("uri");
+                    if(uri != null) {
+                        return new CursorLoader(context, uri, null, null, null, order);
+                    }
+                }
         }
         return null;
     }

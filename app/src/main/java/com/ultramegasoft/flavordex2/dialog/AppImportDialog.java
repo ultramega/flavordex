@@ -96,9 +96,12 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         final Bundle args = getArguments();
-        mApp = args.getInt(ARG_APP);
+        if(args != null) {
+            mApp = args.getInt(ARG_APP);
+        }
 
-        if(!AppImportUtils.isAppInstalled(getContext(), mApp, true)) {
+        final Context context = getContext();
+        if(context == null || !AppImportUtils.isAppInstalled(context, mApp, true)) {
             dismiss();
             return;
         }
@@ -108,20 +111,33 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
 
     @Override
     protected void insertSelected() {
-        ImporterFragment.init(getFragmentManager(), mApp, getListView().getCheckedItemIds());
+        final FragmentManager fm = getFragmentManager();
+        if(fm != null) {
+            ImporterFragment.init(fm, mApp, getListView().getCheckedItemIds());
+        }
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        final Context context = getContext();
+        if(context == null) {
+            return null;
+        }
+
         setListShown(false);
         final Uri uri = AppImportUtils.getEntriesUri(mApp);
-        return new CursorLoader(getContext(), uri, LIST_PROJECTION, null, null, null);
+        return new CursorLoader(context, uri, LIST_PROJECTION, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        final Context context = getContext();
+        if(context == null) {
+            return;
+        }
+
         setListShown(true);
-        final EntryListAdapter adapter = new EntryListAdapter(getContext());
+        final EntryListAdapter adapter = new EntryListAdapter(context);
         adapter.setMultiChoiceMode(true);
         adapter.swapCursor(data);
         setListAdapter(adapter);
@@ -186,8 +202,10 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             final Bundle args = getArguments();
-            mApp = args.getInt(ARG_APP);
-            mEntryIds = args.getLongArray(ARG_ENTRY_IDS);
+            if(args != null) {
+                mApp = args.getInt(ARG_APP);
+                mEntryIds = args.getLongArray(ARG_ENTRY_IDS);
+            }
         }
 
         @SuppressWarnings("deprecation")
@@ -207,7 +225,10 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
 
         @Override
         protected void startTask() {
-            new ImportTask().execute();
+            final Context context = getContext();
+            if(context != null) {
+                new ImportTask(context).execute();
+            }
         }
 
         /**
@@ -220,8 +241,11 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
             @NonNull
             private final Context mContext;
 
-            ImportTask() {
-                mContext = getContext().getApplicationContext();
+            /**
+             * @param context The Context
+             */
+            ImportTask(@NonNull Context context) {
+                mContext = context.getApplicationContext();
             }
 
             @Override

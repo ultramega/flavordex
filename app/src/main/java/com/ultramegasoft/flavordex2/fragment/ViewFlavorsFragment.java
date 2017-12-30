@@ -35,6 +35,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -115,7 +116,12 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ENTRY_ID);
+
+        final Bundle args = getArguments();
+        if(args != null) {
+            mEntryId = args.getLong(ViewEntryFragment.ARG_ENTRY_ID);
+        }
+
         setHasOptionsMenu(true);
     }
 
@@ -213,9 +219,12 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
                 setEditMode(true, true);
                 return true;
             case R.id.menu_reset_flavor:
-                ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_RESET,
-                        getString(R.string.title_reset_flavor),
-                        getString(R.string.message_reset_flavor));
+                final FragmentManager fm = getFragmentManager();
+                if(fm != null) {
+                    ConfirmationDialog.showDialog(fm, this, REQUEST_RESET,
+                            getString(R.string.title_reset_flavor),
+                            getString(R.string.message_reset_flavor));
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -260,17 +269,27 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
 
         mRadarView.setInteractive(editMode);
         mEditMode = editMode;
-        ActivityCompat.invalidateOptionsMenu(getActivity());
+
+        final Activity activity = getActivity();
+        if(activity != null) {
+            ActivityCompat.invalidateOptionsMenu(activity);
+        }
     }
 
     /**
      * Save the current flavor data to the database.
      */
     private void saveData() {
+        final Context context = getContext();
+        if(context == null) {
+            cancelEdit();
+            return;
+        }
+
         setEditMode(false, true);
         mData = mRadarView.getData();
         if(mData != null) {
-            new DataSaver(getContext(), mEntryId, mData).execute();
+            new DataSaver(context, mEntryId, mData).execute();
         }
     }
 
@@ -297,18 +316,25 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
+        final Context context = getContext();
+        if(context == null) {
+            return null;
+        }
+
         Uri uri;
         switch(id) {
             case LOADER_FLAVOR:
                 uri = Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE,
                         mEntryId + "/flavor");
-                return new CursorLoader(getContext(), uri, null, null, null,
+                return new CursorLoader(context, uri, null, null, null,
                         Tables.EntriesFlavors.POS + " ASC");
             case LOADER_DEFAULT_FLAVOR:
             case LOADER_RESET_FLAVOR:
-                final long catId = getArguments().getLong(ViewEntryFragment.ARG_ENTRY_CAT_ID);
+                final Bundle args = getArguments();
+                final long catId =
+                        args != null ? args.getLong(ViewEntryFragment.ARG_ENTRY_CAT_ID) : 0;
                 uri = Uri.withAppendedPath(Tables.Cats.CONTENT_ID_URI_BASE, catId + "/flavor");
-                return new CursorLoader(getContext(), uri, null, null, null,
+                return new CursorLoader(context, uri, null, null, null,
                         Tables.Flavors.POS + " ASC");
         }
         return null;

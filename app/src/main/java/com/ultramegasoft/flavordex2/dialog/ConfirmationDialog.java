@@ -24,6 +24,7 @@ package com.ultramegasoft.flavordex2.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -114,16 +115,22 @@ public class ConfirmationDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final Context context = getContext();
+        if(context == null) {
+            return super.onCreateDialog(savedInstanceState);
+        }
+
         final Bundle args = getArguments();
-        return new AlertDialog.Builder(getContext())
-                .setIcon(args.getInt(ARG_ICON))
-                .setTitle(args.getString(ARG_TITLE))
-                .setMessage(HtmlCompat.fromHtml(args.getString(ARG_MESSAGE)))
+        return new AlertDialog.Builder(context)
+                .setIcon(args != null ? args.getInt(ARG_ICON) : 0)
+                .setTitle(args != null ? args.getString(ARG_TITLE) : null)
+                .setMessage(args != null ? HtmlCompat.fromHtml(args.getString(ARG_MESSAGE)) : null)
                 .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         final Fragment target = getTargetFragment();
                         if(target != null) {
-                            final Intent data = args.getParcelable(ARG_DATA);
+                            final Intent data =
+                                    args != null ? (Intent)args.getParcelable(ARG_DATA) : null;
                             target.onActivityResult(getTargetRequestCode(),
                                     Activity.RESULT_OK, data);
                         }

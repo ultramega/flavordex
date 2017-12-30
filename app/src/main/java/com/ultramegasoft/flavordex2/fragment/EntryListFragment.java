@@ -25,6 +25,7 @@ package com.ultramegasoft.flavordex2.fragment;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -34,6 +35,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -228,12 +230,13 @@ public class EntryListFragment extends ListFragment
         super.onCreate(savedInstanceState);
 
         final Bundle args = getArguments();
-        mCatId = args.getLong(ARG_CAT, mCatId);
-        mTwoPane = args.getBoolean(ARG_TWO_PANE, mTwoPane);
-        mActivatedItem = args.getLong(ARG_SELECTED_ITEM, mActivatedItem);
-        mWhere = args.getString(ARG_WHERE);
-        mWhereArgs = args.getStringArray(ARG_WHERE_ARGS);
-        mExportMode = args.getBoolean(ARG_EXPORT_MODE, mExportMode);
+        mCatId = args != null ? args.getLong(ARG_CAT, mCatId) : mCatId;
+        mTwoPane = args != null && args.getBoolean(ARG_TWO_PANE, mTwoPane);
+        mActivatedItem =
+                args != null ? args.getLong(ARG_SELECTED_ITEM, mActivatedItem) : mActivatedItem;
+        mWhere = args != null ? args.getString(ARG_WHERE) : null;
+        mWhereArgs = args != null ? args.getStringArray(ARG_WHERE_ARGS) : null;
+        mExportMode = args != null && args.getBoolean(ARG_EXPORT_MODE, mExportMode);
 
         if(savedInstanceState != null) {
             mActivatedItem = savedInstanceState.getLong(STATE_SELECTED_ITEM, mActivatedItem);
@@ -256,9 +259,12 @@ public class EntryListFragment extends ListFragment
 
         setEmptyText();
 
-        mAdapter = new EntryListAdapter(getContext());
-        setListShown(false);
-        setListAdapter(mAdapter);
+        final Context context = getContext();
+        if(context != null) {
+            mAdapter = new EntryListAdapter(context);
+            setListShown(false);
+            setListAdapter(mAdapter);
+        }
 
         setExportMode(mExportMode, false);
 
@@ -269,8 +275,10 @@ public class EntryListFragment extends ListFragment
             setCatName(null);
         }
 
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        prefs.edit().putLong(FlavordexApp.PREF_LIST_CAT_ID, mCatId).apply();
+        if(context != null) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            prefs.edit().putLong(FlavordexApp.PREF_LIST_CAT_ID, mCatId).apply();
+        }
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -296,16 +304,22 @@ public class EntryListFragment extends ListFragment
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
+        super.onListItemClick(listView, view, position, id);
+
         if(mExportMode) {
             invalidateExportMenu();
             return;
         }
-        super.onListItemClick(listView, view, position, id);
+
         mActivatedItem = id;
-        final Cursor cursor = (Cursor)mAdapter.getItem(position);
-        final String catName = cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT));
-        final long catId = cursor.getLong(cursor.getColumnIndex(Tables.Entries.CAT_ID));
-        ((EntryListActivity)getActivity()).onItemSelected(id, catName, catId);
+
+        final EntryListActivity activity = (EntryListActivity)getActivity();
+        if(activity != null) {
+            final Cursor cursor = (Cursor)mAdapter.getItem(position);
+            final String catName = cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT));
+            final long catId = cursor.getLong(cursor.getColumnIndex(Tables.Entries.CAT_ID));
+            activity.onItemSelected(id, catName, catId);
+        }
     }
 
     @Override
@@ -326,7 +340,10 @@ public class EntryListFragment extends ListFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case android.R.id.home:
-                ((EntryListActivity)getActivity()).onCatSelected(-1, false);
+                final EntryListActivity activity = (EntryListActivity)getActivity();
+                if(activity != null) {
+                    activity.onCatSelected(-1, false);
+                }
                 return true;
             case R.id.menu_sort_name:
                 item.setChecked(true);
@@ -344,7 +361,10 @@ public class EntryListFragment extends ListFragment
                 if(mCatName != null) {
                     addEntry(mCatId, mCatName);
                 } else {
-                    CatListDialog.showDialog(getFragmentManager(), this, REQUEST_SELECT_CAT);
+                    final FragmentManager fm = getFragmentManager();
+                    if(fm != null) {
+                        CatListDialog.showDialog(fm, this, REQUEST_SELECT_CAT);
+                    }
                 }
                 return true;
         }
@@ -355,38 +375,50 @@ public class EntryListFragment extends ListFragment
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getActivity().getMenuInflater().inflate(R.menu.entry_context_menu, menu);
+
+        final Activity activity = getActivity();
+        if(activity != null) {
+            activity.getMenuInflater().inflate(R.menu.entry_context_menu, menu);
+        }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        final Context context = getContext();
+
         final AdapterView.AdapterContextMenuInfo info =
                 (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         final Cursor cursor = (Cursor)mAdapter.getItem(info.position);
+
         switch(item.getItemId()) {
             case R.id.menu_share:
-                if(cursor != null) {
+                if(context != null && cursor != null) {
                     final String title =
                             cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
                     final float rating =
                             cursor.getFloat(cursor.getColumnIndex(Tables.Entries.RATING));
-                    EntryUtils.share(getContext(), title, rating);
+                    EntryUtils.share(context, title, rating);
                 }
                 return true;
             case R.id.menu_edit_entry:
-                EditEntryActivity.startActivity(getContext(), info.id,
-                        cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT)));
+                if(context != null && cursor != null) {
+                    EditEntryActivity.startActivity(context, info.id,
+                            cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT)));
+                }
                 return true;
             case R.id.menu_delete_entry:
                 if(cursor != null) {
-                    final String title =
-                            cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
-                    final Intent deleteIntent = new Intent();
-                    deleteIntent.putExtra(EXTRA_ENTRY_ID, info.id);
-                    ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_ENTRY,
-                            getString(R.string.title_delete_entry),
-                            getString(R.string.message_confirm_delete, title), R.drawable.ic_delete,
-                            deleteIntent);
+                    final FragmentManager fm = getFragmentManager();
+                    if(fm != null) {
+                        final String title =
+                                cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
+                        final Intent deleteIntent = new Intent();
+                        deleteIntent.putExtra(EXTRA_ENTRY_ID, info.id);
+                        ConfirmationDialog.showDialog(fm, this, REQUEST_DELETE_ENTRY,
+                                getString(R.string.title_delete_entry),
+                                getString(R.string.message_confirm_delete, title),
+                                R.drawable.ic_delete, deleteIntent);
+                    }
                 }
                 return true;
         }
@@ -402,18 +434,26 @@ public class EntryListFragment extends ListFragment
                             data.getStringExtra(CatListDialog.EXTRA_CAT_NAME));
                     break;
                 case REQUEST_ADD_ENTRY:
-                    CatListDialog.closeDialog(getFragmentManager());
+                    final FragmentManager fm = getFragmentManager();
+                    if(fm != null) {
+                        CatListDialog.closeDialog(fm);
+                    }
+
+                    final EntryListActivity activity = (EntryListActivity)getActivity();
                     final long entryId = data.getLongExtra(AddEntryActivity.EXTRA_ENTRY_ID, 0);
-                    if(entryId > 0) {
+                    if(activity != null && entryId > 0) {
                         mActivatedItem = entryId;
-                        ((EntryListActivity)getActivity()).onItemSelected(entryId,
+                        activity.onItemSelected(entryId,
                                 data.getStringExtra(AddEntryActivity.EXTRA_ENTRY_CAT),
                                 data.getLongExtra(AddEntryActivity.EXTRA_ENTRY_CAT_ID, 0));
                     }
                     break;
                 case REQUEST_DELETE_ENTRY:
-                    final long id = data.getLongExtra(EXTRA_ENTRY_ID, 0);
-                    new EntryDeleter(getContext(), id).execute();
+                    final Context context = getContext();
+                    if(context != null) {
+                        final long id = data.getLongExtra(EXTRA_ENTRY_ID, 0);
+                        new EntryDeleter(context, id).execute();
+                    }
                     break;
             }
         }
@@ -426,8 +466,11 @@ public class EntryListFragment extends ListFragment
      * @param catName The category name
      */
     private void addEntry(long catId, @Nullable String catName) {
-        final Intent addIntent = AddEntryActivity.getIntent(getContext(), catId, catName);
-        startActivityForResult(addIntent, REQUEST_ADD_ENTRY);
+        final Context context = getContext();
+        if(context != null) {
+            final Intent addIntent = AddEntryActivity.getIntent(context, catId, catName);
+            startActivityForResult(addIntent, REQUEST_ADD_ENTRY);
+        }
     }
 
     /**
@@ -435,14 +478,19 @@ public class EntryListFragment extends ListFragment
      */
     @SuppressLint("PrivateResource")
     private void setupToolbar() {
-        mToolbar = getActivity().findViewById(R.id.list_toolbar);
+        final EntryListActivity activity = (EntryListActivity)getActivity();
+        if(activity == null) {
+            return;
+        }
+
+        mToolbar = activity.findViewById(R.id.list_toolbar);
         if(mToolbar != null) {
             mToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
             mToolbar.setNavigationContentDescription(R.string.abc_action_bar_up_description);
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((EntryListActivity)getActivity()).onCatSelected(-1, false);
+                    activity.onCatSelected(-1, false);
                 }
             });
             final Menu menu = mToolbar.getMenu();
@@ -457,7 +505,7 @@ public class EntryListFragment extends ListFragment
             setupMenu(menu);
         } else {
             setHasOptionsMenu(true);
-            final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+            final ActionBar actionBar = activity.getSupportActionBar();
             if(actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
             }
@@ -539,9 +587,12 @@ public class EntryListFragment extends ListFragment
         if(mToolbar != null) {
             mToolbar.setTitle(subtitle);
         } else {
-            final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-            if(actionBar != null) {
-                actionBar.setSubtitle(subtitle);
+            final AppCompatActivity activity = (AppCompatActivity)getActivity();
+            if(activity != null) {
+                final ActionBar actionBar = activity.getSupportActionBar();
+                if(actionBar != null) {
+                    actionBar.setSubtitle(subtitle);
+                }
             }
         }
     }
@@ -585,17 +636,20 @@ public class EntryListFragment extends ListFragment
      * @param show Whether to show the export Toolbar
      */
     private void showExportToolbar(boolean show, boolean animate) {
-        if(mExportToolbar == null) {
-            mExportToolbar = getActivity().findViewById(R.id.export_toolbar);
+        final Activity activity = getActivity();
+        if(activity != null && mExportToolbar == null) {
+            mExportToolbar = activity.findViewById(R.id.export_toolbar);
             mExportToolbar.inflateMenu(R.menu.export_menu);
             mExportToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     switch(item.getItemId()) {
                         case R.id.menu_export_selected:
-                            ExportDialog.showDialog(getFragmentManager(),
-                                    getListView().getCheckedItemIds());
-                            setExportMode(false, true);
+                            final FragmentManager fm = getFragmentManager();
+                            if(fm != null) {
+                                ExportDialog.showDialog(fm, getListView().getCheckedItemIds());
+                                setExportMode(false, true);
+                            }
                             return true;
                         case R.id.menu_cancel:
                             setExportMode(false, true);
@@ -653,17 +707,27 @@ public class EntryListFragment extends ListFragment
      * Clear the selected list item.
      */
     public void clearSelection() {
-        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        final EntryListActivity activity = (EntryListActivity)getActivity();
+        if(activity == null) {
+            return;
+        }
+
+        final ActionBar actionBar = activity.getSupportActionBar();
         if(actionBar != null) {
             actionBar.setSubtitle(null);
         }
         getListView().setItemChecked(mAdapter.getItemIndex(mActivatedItem), false);
         mActivatedItem = -1;
-        ((EntryListActivity)getActivity()).onItemSelected(mActivatedItem, null, 0);
+        activity.onItemSelected(mActivatedItem, null, 0);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        final Context context = getContext();
+        if(context == null) {
+            return null;
+        }
+
         switch(id) {
             case LOADER_ENTRIES:
                 Uri uri;
@@ -673,10 +737,9 @@ public class EntryListFragment extends ListFragment
                     uri = Tables.Entries.CONTENT_URI;
                 }
                 final String sort = mSortField + (mSortReversed ? " DESC" : " ASC");
-                return new CursorLoader(getContext(), uri, LIST_PROJECTION, mWhere, mWhereArgs,
-                        sort);
+                return new CursorLoader(context, uri, LIST_PROJECTION, mWhere, mWhereArgs, sort);
             case LOADER_CAT:
-                return new CursorLoader(getContext(),
+                return new CursorLoader(context,
                         ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId),
                         new String[] {Tables.Cats.NAME}, null, null, null);
         }
@@ -717,7 +780,10 @@ public class EntryListFragment extends ListFragment
                     new Handler().post(new Runnable() {
                         @Override
                         public void run() {
-                            getFragmentManager().popBackStack();
+                            final FragmentManager fm = getFragmentManager();
+                            if(fm != null) {
+                                fm.popBackStack();
+                            }
                         }
                     });
                 }

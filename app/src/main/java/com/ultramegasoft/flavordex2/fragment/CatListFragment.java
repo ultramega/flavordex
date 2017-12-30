@@ -22,12 +22,15 @@
  */
 package com.ultramegasoft.flavordex2.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -80,7 +83,12 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
      * Set up the list Toolbar.
      */
     private void setupToolbar() {
-        final Toolbar toolbar = getActivity().findViewById(R.id.list_toolbar);
+        final Activity activity = getActivity();
+        if(activity == null) {
+            return;
+        }
+
+        final Toolbar toolbar = activity.findViewById(R.id.list_toolbar);
         if(toolbar != null) {
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.cat_list_menu);
@@ -122,12 +130,18 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
+
+        final Activity activity = getActivity();
+        if(activity == null) {
+            return;
+        }
+
         final AdapterView.AdapterContextMenuInfo info =
                 (AdapterView.AdapterContextMenuInfo)menuInfo;
         if(mAdapter.getShowAllCats() && info.position == 0) {
             return;
         }
-        getActivity().getMenuInflater().inflate(R.menu.cat_context_menu, menu);
+        activity.getMenuInflater().inflate(R.menu.cat_context_menu, menu);
 
         if(mAdapter.getItem(info.position).preset) {
             menu.findItem(R.id.menu_delete).setEnabled(false).setVisible(false);
@@ -136,15 +150,21 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        final Context context = getContext();
+        final FragmentManager fm = getFragmentManager();
+        if(context == null || fm == null) {
+            return super.onContextItemSelected(item);
+        }
+
         final AdapterView.AdapterContextMenuInfo info =
                 (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         switch(item.getItemId()) {
             case R.id.menu_edit:
-                EditCatActivity.startActivity(getContext(), info.id,
+                EditCatActivity.startActivity(context, info.id,
                         mAdapter.getItem(info.position).name);
                 return true;
             case R.id.menu_delete:
-                CatDeleteDialog.showDialog(getFragmentManager(), null, 0, info.id);
+                CatDeleteDialog.showDialog(fm, null, 0, info.id);
                 return true;
         }
         return super.onContextItemSelected(item);
@@ -162,17 +182,31 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        ((EntryListActivity)getActivity()).onCatSelected(id, false);
+
+        final EntryListActivity activity = (EntryListActivity)getActivity();
+        if(activity != null) {
+            activity.onCatSelected(id, false);
+        }
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getContext(), Tables.Cats.CONTENT_URI, null, null, null, null);
+        final Context context = getContext();
+        if(context == null) {
+            return null;
+        }
+
+        return new CursorLoader(context, Tables.Cats.CONTENT_URI, null, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mAdapter = new CatListAdapter(getContext(), data, android.R.layout.simple_list_item_2);
+        final Context context = getContext();
+        if(context == null) {
+            return;
+        }
+
+        mAdapter = new CatListAdapter(context, data, android.R.layout.simple_list_item_2);
         mAdapter.setShowAllCats(true);
         setListAdapter(mAdapter);
     }

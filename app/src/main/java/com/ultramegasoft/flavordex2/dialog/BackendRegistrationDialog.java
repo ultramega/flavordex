@@ -24,6 +24,7 @@ package com.ultramegasoft.flavordex2.dialog;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -54,7 +55,10 @@ public class BackendRegistrationDialog extends BackgroundProgressDialog {
 
     @Override
     protected void startTask() {
-        new RegisterTask().execute();
+        final Context context = getContext();
+        if(context != null) {
+            new RegisterTask(context).execute();
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -70,15 +74,25 @@ public class BackendRegistrationDialog extends BackgroundProgressDialog {
      * Task to register the client with the backend.
      */
     private class RegisterTask extends AsyncTask<Void, Void, Boolean> {
+        /**
+         * The Context
+         */
+        @NonNull
+        private final Context mContext;
+
+        RegisterTask(@NonNull Context context) {
+            mContext = context.getApplicationContext();
+        }
+
         @Override
         protected Boolean doInBackground(Void... params) {
-            return BackendUtils.registerClient(getContext());
+            return BackendUtils.registerClient(mContext);
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
             if(!result) {
-                Toast.makeText(getContext(), R.string.error_register_failed, Toast.LENGTH_LONG)
+                Toast.makeText(mContext, R.string.error_register_failed, Toast.LENGTH_LONG)
                         .show();
             }
             dismiss();

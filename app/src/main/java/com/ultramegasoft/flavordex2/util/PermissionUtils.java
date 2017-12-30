@@ -142,11 +142,14 @@ public class PermissionUtils {
      * @return Whether we already have location permissions
      */
     public static boolean checkLocationPerm(@NonNull Fragment fragment) {
-        if(hasLocationPerm(fragment.getContext())) {
-            return true;
-        }
+        final Context context = fragment.getContext();
+        if(context != null) {
+            if(hasLocationPerm(context)) {
+                return true;
+            }
 
-        requestLocationPerm(fragment);
+            requestLocationPerm(fragment);
+        }
 
         return false;
     }
@@ -159,7 +162,11 @@ public class PermissionUtils {
     private static void requestLocationPerm(@NonNull Fragment fragment) {
         fragment.requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION},
                 REQUEST_LOCATION);
-        getPreferences(fragment.getContext()).edit().putBoolean(PREF_ASKED_LOCATION, true).apply();
+
+        final Context context = fragment.getContext();
+        if(context != null) {
+            getPreferences(context).edit().putBoolean(PREF_ASKED_LOCATION, true).apply();
+        }
     }
 
     /**
@@ -262,10 +269,16 @@ public class PermissionUtils {
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return new AlertDialog.Builder(getContext())
+            final Context context = getContext();
+            if(context == null) {
+                return super.onCreateDialog(savedInstanceState);
+            }
+
+            final Bundle args = getArguments();
+            return new AlertDialog.Builder(context)
                     .setIcon(R.drawable.ic_info)
                     .setTitle(R.string.title_permission)
-                    .setMessage(getArguments().getCharSequence(ARG_MESSAGE))
+                    .setMessage(args != null ? args.getCharSequence(ARG_MESSAGE) : null)
                     .setPositiveButton(R.string.button_ok, null)
                     .create();
         }
@@ -273,13 +286,22 @@ public class PermissionUtils {
         @Override
         public void onDismiss(DialogInterface dialog) {
             super.onDismiss(dialog);
-            final String permission = getArguments().getString(ARG_PERMISSION);
+
+            final Bundle args = getArguments();
+            if(args == null) {
+                return;
+            }
+
+            final String permission = args.getString(ARG_PERMISSION);
             final Fragment target = getTargetFragment();
             if(target != null) {
                 target.requestPermissions(new String[] {permission}, getTargetRequestCode());
             } else {
-                ActivityCompat.requestPermissions(getActivity(), new String[] {permission},
-                        getTargetRequestCode());
+                final Activity activity = getActivity();
+                if(activity != null) {
+                    ActivityCompat.requestPermissions(activity, new String[] {permission},
+                            getTargetRequestCode());
+                }
             }
         }
     }

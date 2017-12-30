@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.fragment;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -100,13 +101,19 @@ public class AddEntryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        final Bundle args = getArguments();
-        mCatId = args.getLong(ARG_CAT_ID);
-        mCatName = args.getString(ARG_CAT_NAME);
+        final AppCompatActivity activity = (AppCompatActivity)getActivity();
+        if(activity == null) {
+            return;
+        }
 
-        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        final Bundle args = getArguments();
+        if(args != null) {
+            mCatId = args.getLong(ARG_CAT_ID);
+            mCatName = args.getString(ARG_CAT_NAME);
+        }
+        final ActionBar actionBar = activity.getSupportActionBar();
         if(actionBar != null) {
-            final String name = FlavordexApp.getRealCatName(getContext(), mCatName);
+            final String name = FlavordexApp.getRealCatName(activity, mCatName);
             final String title = getString(R.string.title_add_cat_entry, name);
             actionBar.setTitle(title);
         }
@@ -188,7 +195,7 @@ public class AddEntryFragment extends Fragment {
             return;
         }
 
-        final FragmentManager fm = getChildFragmentManager();
+        FragmentManager fm = getChildFragmentManager();
 
         boolean isValid = false;
         final EntryHolder entry = new EntryHolder();
@@ -213,8 +220,16 @@ public class AddEntryFragment extends Fragment {
 
         if(isValid) {
             mIsSaving = true;
-            ActivityCompat.invalidateOptionsMenu(getActivity());
-            DataSaverFragment.init(getFragmentManager(), entry);
+
+            final Activity activity = getActivity();
+            if(activity != null) {
+                ActivityCompat.invalidateOptionsMenu(activity);
+            }
+
+            fm = getFragmentManager();
+            if(fm != null) {
+                DataSaverFragment.init(fm, entry);
+            }
         } else {
             mPager.setCurrentItem(0);
         }
@@ -311,9 +326,14 @@ public class AddEntryFragment extends Fragment {
             setRetainInstance(true);
 
             final Bundle args = getArguments();
-            mEntry = args.getParcelable(ARG_ENTRY);
+            if(args != null) {
+                mEntry = args.getParcelable(ARG_ENTRY);
+            }
 
-            new DataSaver(getContext()).execute();
+            final Context context = getContext();
+            if(context != null) {
+                new DataSaver(context).execute();
+            }
         }
 
         @Override
@@ -382,10 +402,12 @@ public class AddEntryFragment extends Fragment {
              * @param newLocationName The name of the location supplied by the user
              */
             private void checkLocation(@Nullable String newLocationName) {
-                if(TextUtils.isEmpty(newLocationName)) {
+                final Activity activity = getActivity();
+                if(activity == null || TextUtils.isEmpty(newLocationName)) {
                     return;
                 }
-                final FlavordexApp app = (FlavordexApp)getActivity().getApplication();
+
+                final FlavordexApp app = (FlavordexApp)activity.getApplication();
                 final Location location = app.getLocation();
                 final String locationName = app.getLocationName();
                 if(location != null && !TextUtils.isEmpty(locationName)

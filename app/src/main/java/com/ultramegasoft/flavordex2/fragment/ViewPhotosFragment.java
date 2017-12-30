@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -99,7 +100,12 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mEntryId = getArguments().getLong(ViewEntryFragment.ARG_ENTRY_ID);
+
+        final Bundle args = getArguments();
+        if(args != null) {
+            mEntryId = args.getLong(ViewEntryFragment.ARG_ENTRY_ID);
+        }
+
         if(savedInstanceState != null) {
             mCurrentItem = savedInstanceState.getInt(STATE_CURRENT_ITEM, mCurrentItem);
         }
@@ -196,13 +202,20 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         notifyDataChanged();
         mPager.setCurrentItem(getPhotos().size() - 1, true);
 
-        new PhotoSaver(getContext(), mEntryId, photo).execute();
+        final Context context = getContext();
+        if(context != null) {
+            new PhotoSaver(context, mEntryId, photo).execute();
+        }
     }
 
     @Override
     protected void onPhotoRemoved(@NonNull PhotoHolder photo) {
         notifyDataChanged();
-        new PhotoDeleter(getContext(), mEntryId, photo).execute();
+
+        final Context context = getContext();
+        if(context != null) {
+            new PhotoDeleter(context, mEntryId, photo).execute();
+        }
     }
 
     /**
@@ -245,11 +258,13 @@ public class ViewPhotosFragment extends AbsPhotosFragment
      * Show a confirmation dialog to delete the shown image.
      */
     public void confirmDeletePhoto() {
-        if(getPhotos().isEmpty()) {
+        final FragmentManager fm = getFragmentManager();
+        if(fm == null || getPhotos().isEmpty()) {
             return;
         }
+
         mCurrentItem = mPager.getCurrentItem();
-        ConfirmationDialog.showDialog(getFragmentManager(), this, REQUEST_DELETE_IMAGE,
+        ConfirmationDialog.showDialog(fm, this, REQUEST_DELETE_IMAGE,
                 getString(R.string.title_remove_photo),
                 getString(R.string.message_confirm_remove_photo), R.drawable.ic_delete);
     }
@@ -268,12 +283,14 @@ public class ViewPhotosFragment extends AbsPhotosFragment
      * Locate a missing image.
      */
     public void locatePhoto() {
-        if(getPhotos().isEmpty()) {
+        final Fragment parent = getParentFragment();
+        if(parent == null || getPhotos().isEmpty()) {
             return;
         }
+
         mCurrentItem = mPager.getCurrentItem();
         final Intent intent = PhotoUtils.getSelectPhotoIntent();
-        getParentFragment().startActivityForResult(intent, REQUEST_LOCATE_IMAGE);
+        parent.startActivityForResult(intent, REQUEST_LOCATE_IMAGE);
     }
 
     /**
@@ -282,14 +299,16 @@ public class ViewPhotosFragment extends AbsPhotosFragment
      * @param uri The Uri for the new image
      */
     private void replacePhoto(@Nullable Uri uri) {
-        if(uri == null || getPhotos().isEmpty()) {
+        final Context context = getContext();
+        if(context == null || uri == null || getPhotos().isEmpty()) {
             return;
         }
+
         final PhotoHolder photo = getPhotos().get(mCurrentItem);
         if(photo != null) {
             photo.uri = uri;
             photo.hash = null;
-            new PhotoSaver(getContext(), mEntryId, photo).execute();
+            new PhotoSaver(context, mEntryId, photo).execute();
             notifyDataChanged();
         }
     }
@@ -300,7 +319,10 @@ public class ViewPhotosFragment extends AbsPhotosFragment
      */
     private void notifyDataChanged() {
         if(mPager != null) {
-            mPager.getAdapter().notifyDataSetChanged();
+            final PagerAdapter adapter = (PagerAdapter)mPager.getAdapter();
+            if(adapter != null) {
+                adapter.notifyDataSetChanged();
+            }
         }
 
         if(!getPhotos().isEmpty()) {
@@ -311,14 +333,22 @@ public class ViewPhotosFragment extends AbsPhotosFragment
             showNoDataLayout();
         }
 
-        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.invalidateOptionsMenu();
+        final AppCompatActivity activity = (AppCompatActivity)getActivity();
+        if(activity != null) {
+            final ActionBar actionBar = activity.getSupportActionBar();
+            if(actionBar != null) {
+                actionBar.invalidateOptionsMenu();
+            }
         }
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        final Context context = getContext();
+        if(context == null) {
+            return null;
+        }
+
         final Uri uri =
                 Uri.withAppendedPath(Tables.Entries.CONTENT_ID_URI_BASE, mEntryId + "/photos");
         final String[] projection = new String[] {
@@ -329,7 +359,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         };
         final String where = Tables.Photos.PATH + " NOT NULL";
         final String order = Tables.Photos.POS + " ASC";
-        return new CursorLoader(getContext(), uri, projection, where, null, order);
+        return new CursorLoader(context, uri, projection, where, null, order);
     }
 
     @Override

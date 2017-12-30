@@ -114,14 +114,22 @@ public class ExportDialog extends DialogFragment {
     @Override
     @SuppressLint({"InflateParams", "SetTextI18n"})
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mEntryIDs = getArguments().getLongArray(ARG_ENTRY_IDS);
+        final Context context = getContext();
+        if(context == null) {
+            return super.onCreateDialog(savedInstanceState);
+        }
+
+        final Bundle args = getArguments();
+        if(args != null) {
+            mEntryIDs = args.getLongArray(ARG_ENTRY_IDS);
+        }
         mBasePath = getBasePath();
 
-        final View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_export, null);
+        final View view = LayoutInflater.from(context).inflate(R.layout.dialog_export, null);
         ((TextView)view.findViewById(R.id.file_path)).setText(mBasePath + "/");
         setupFileField((EditText)view.findViewById(R.id.file_name));
 
-        return new AlertDialog.Builder(getContext())
+        return new AlertDialog.Builder(context)
                 .setIcon(R.drawable.ic_export)
                 .setTitle(R.string.title_export)
                 .setView(view)
@@ -242,9 +250,14 @@ public class ExportDialog extends DialogFragment {
      * Export the entries to the specified file.
      */
     private void export() {
+        final FragmentManager fm = getFragmentManager();
+        if(fm == null) {
+            return;
+        }
+
         final String fileName = mTxtFileName.getText().toString();
         final File file = new File(mBasePath, fileName + ".csv");
-        ExporterFragment.init(getFragmentManager(), mEntryIDs, file.getPath());
+        ExporterFragment.init(fm, mEntryIDs, file.getPath());
     }
 
     /**
@@ -291,9 +304,12 @@ public class ExportDialog extends DialogFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+
             final Bundle args = getArguments();
-            mEntryIds = args.getLongArray(ARG_ENTRY_IDS);
-            mFilePath = args.getString(ARG_FILE_PATH);
+            if(args != null) {
+                mEntryIds = args.getLongArray(ARG_ENTRY_IDS);
+                mFilePath = args.getString(ARG_FILE_PATH);
+            }
         }
 
         @SuppressWarnings("deprecation")
@@ -314,7 +330,10 @@ public class ExportDialog extends DialogFragment {
         @Override
         protected void startTask() {
             try {
-                new DataExporter(new CSVWriter(new FileWriter(mFilePath))).execute();
+                final Context context = getContext();
+                if(context != null) {
+                    new DataExporter(context, new CSVWriter(new FileWriter(mFilePath))).execute();
+                }
             } catch(IOException e) {
                 Log.e(TAG, "Failed to open new file for writing", e);
                 showError(R.string.error_csv_export_file);
@@ -326,8 +345,11 @@ public class ExportDialog extends DialogFragment {
          * Show an error message.
          */
         private void showError(int errorString) {
-            MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
-                    getString(errorString), R.drawable.ic_warning);
+            final FragmentManager fm = getFragmentManager();
+            if(fm != null) {
+                MessageDialog.showDialog(fm, getString(R.string.title_error),
+                        getString(errorString), R.drawable.ic_warning);
+            }
         }
 
         /**
@@ -359,11 +381,12 @@ public class ExportDialog extends DialogFragment {
             private Uri mEntryUri;
 
             /**
-             * @param writer The CSVWriter to use for writing
+             * @param context The Context
+             * @param writer  The CSVWriter to use for writing
              */
-            DataExporter(@NonNull CSVWriter writer) {
-                mContext = getContext().getApplicationContext();
-                mResolver = mContext.getContentResolver();
+            DataExporter(@NonNull Context context, @NonNull CSVWriter writer) {
+                mContext = context.getApplicationContext();
+                mResolver = context.getContentResolver();
                 mWriter = writer;
             }
 

@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.whiskey;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -56,9 +57,14 @@ class WhiskeyEntryFormHelper extends EntryFormHelper {
     @Override
     protected void loadLayout(@NonNull View root) {
         super.loadLayout(root);
+
         mTxtType = root.findViewById(R.id.entry_type);
-        mTxtType.setAdapter(ArrayAdapter.createFromResource(mFragment.getContext(),
-                R.array.whiskey_types, android.R.layout.simple_dropdown_item_1line));
+
+        final Context context = mFragment.getContext();
+        if(context != null) {
+            mTxtType.setAdapter(ArrayAdapter.createFromResource(context,
+                    R.array.whiskey_types, android.R.layout.simple_dropdown_item_1line));
+        }
 
         mTxtAge = root.findViewById(R.id.entry_stats_age);
         mTxtABV = root.findViewById(R.id.entry_stats_abv);

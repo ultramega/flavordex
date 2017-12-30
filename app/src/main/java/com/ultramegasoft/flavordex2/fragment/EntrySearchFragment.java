@@ -24,6 +24,7 @@ package com.ultramegasoft.flavordex2.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -142,12 +143,16 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
     private void setCategory() {
         final FragmentManager fm = getChildFragmentManager();
         final CatListAdapter.Category cat = (CatListAdapter.Category)mSpnCat.getSelectedItem();
+
         final Bundle args = getArguments();
         if(fm.findFragmentById(R.id.search_form) != null
-                && args.getLong(ARG_CAT_ID, -1) == cat.id) {
+                && (args != null ? args.getLong(ARG_CAT_ID, -1) : -1) == cat.id) {
             return;
         }
-        args.putLong(ARG_CAT_ID, cat.id);
+
+        if(args != null) {
+            args.putLong(ARG_CAT_ID, cat.id);
+        }
 
         final Fragment fragment;
         switch(cat.name) {
@@ -166,6 +171,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
             default:
                 fragment = new SearchFormFragment();
         }
+
         fragment.setArguments(args);
         fm.beginTransaction().replace(R.id.search_form, fragment).commit();
     }
@@ -190,32 +196,40 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        final Context context = getContext();
+        if(context == null) {
+            return null;
+        }
+
         switch(id) {
             case LOADER_CAT:
-                return new CursorLoader(getContext(), Tables.Cats.CONTENT_URI, null, null, null,
-                        null);
+                return new CursorLoader(context, Tables.Cats.CONTENT_URI, null, null, null, null);
         }
         return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        final Context context = getContext();
+        if(context == null) {
+            return;
+        }
+
         switch(loader.getId()) {
             case LOADER_CAT:
-                final CatListAdapter adapter = new CatListAdapter(getContext(), data,
+                final CatListAdapter adapter = new CatListAdapter(context, data,
                         android.R.layout.simple_spinner_item,
                         android.R.layout.simple_spinner_dropdown_item);
                 adapter.setShowAllCats(true);
                 mSpnCat.setAdapter(adapter);
 
-                if(getArguments() != null) {
-                    final long catId = getArguments().getLong(ARG_CAT_ID);
-                    if(catId > 0) {
-                        for(int i = 0; i < adapter.getCount(); i++) {
-                            if(adapter.getItemId(i) == catId) {
-                                mSpnCat.setSelection(i);
-                                break;
-                            }
+                final Bundle args = getArguments();
+                final long catId = args != null ? args.getLong(ARG_CAT_ID) : 0;
+                if(catId > 0) {
+                    for(int i = 0; i < adapter.getCount(); i++) {
+                        if(adapter.getItemId(i) == catId) {
+                            mSpnCat.setSelection(i);
+                            break;
                         }
                     }
                 }
@@ -611,6 +625,11 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            final Context context = getContext();
+            if(context == null) {
+                return null;
+            }
+
             switch(id) {
                 case LOADER_EXTRAS:
                     final Uri uri = Tables.Cats.getExtrasUri(mCatId);
@@ -620,7 +639,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
                             Tables.Extras.PRESET
                     };
                     final String sort = Tables.Extras.POS;
-                    return new CursorLoader(getContext(), uri, projection, null, null, sort);
+                    return new CursorLoader(context, uri, projection, null, null, sort);
             }
             return null;
         }
@@ -629,23 +648,22 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             switch(loader.getId()) {
                 case LOADER_EXTRAS:
-                    ContentValues filters = null;
-                    if(getArguments() != null) {
-                        filters = getArguments().getParcelable(ARG_FILTERS);
-                        if(filters != null) {
-                            mFormHelper.mTxtTitle
-                                    .setText(filters.getAsString(Tables.Entries.TITLE));
-                            mFormHelper.mTxtMaker
-                                    .setText(filters.getAsString(Tables.Entries.MAKER));
-                            mFormHelper.mTxtOrigin
-                                    .setText(filters.getAsString(Tables.Entries.ORIGIN));
-                            mFormHelper.mTxtPrice
-                                    .setText(filters.getAsString(Tables.Entries.PRICE));
-                            mFormHelper.mTxtLocation
-                                    .setText(filters.getAsString(Tables.Entries.LOCATION));
-                            mFormHelper.mTxtNotes
-                                    .setText(filters.getAsString(Tables.Entries.NOTES));
-                        }
+                    final Bundle args = getArguments();
+                    final ContentValues filters =
+                            args != null ? (ContentValues)args.getParcelable(ARG_FILTERS) : null;
+                    if(filters != null) {
+                        mFormHelper.mTxtTitle
+                                .setText(filters.getAsString(Tables.Entries.TITLE));
+                        mFormHelper.mTxtMaker
+                                .setText(filters.getAsString(Tables.Entries.MAKER));
+                        mFormHelper.mTxtOrigin
+                                .setText(filters.getAsString(Tables.Entries.ORIGIN));
+                        mFormHelper.mTxtPrice
+                                .setText(filters.getAsString(Tables.Entries.PRICE));
+                        mFormHelper.mTxtLocation
+                                .setText(filters.getAsString(Tables.Entries.LOCATION));
+                        mFormHelper.mTxtNotes
+                                .setText(filters.getAsString(Tables.Entries.NOTES));
                     }
 
                     if(data != null) {

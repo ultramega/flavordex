@@ -61,7 +61,7 @@ class BeerEntryFormHelper extends EntryFormHelper {
     protected void loadLayout(@NonNull View root) {
         super.loadLayout(root);
         mTxtStyle = root.findViewById(R.id.entry_style);
-        mTxtStyle.setAdapter(SpecialArrayAdapter.createFromResource(mFragment.getContext(),
+        mTxtStyle.setAdapter(SpecialArrayAdapter.createFromResource(root.getContext(),
                 R.array.beer_styles, android.R.layout.simple_dropdown_item_1line));
 
         mSpnServing = root.findViewById(R.id.entry_serving_type);

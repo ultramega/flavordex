@@ -74,7 +74,8 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        mUri = getArguments().getParcelable(ARG_URI);
+        final Bundle args = getArguments();
+        mUri = args != null ? (Uri)args.getParcelable(ARG_URI) : null;
         if(mUri == null) {
             return null;
         }
@@ -176,7 +177,12 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<Bitmap> onCreateLoader(int id, Bundle args) {
-        return new PhotoLoader(getContext(), mUri, mImageView.getWidth(), mImageView.getHeight());
+        final Context context = getContext();
+        if(context == null) {
+            return null;
+        }
+
+        return new PhotoLoader(context, mUri, mImageView.getWidth(), mImageView.getHeight());
     }
 
     @Override

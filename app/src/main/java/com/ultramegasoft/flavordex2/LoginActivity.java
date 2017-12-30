@@ -231,7 +231,11 @@ public class LoginActivity extends AppCompatActivity
                             mSwitcher.setDisplayedChild(0);
                             mTxtPassword.setText(null);
                             try {
-                                throw task.getException();
+                                final Exception exception = task.getException();
+                                if(exception == null) {
+                                    throw new NullPointerException("exception is null");
+                                }
+                                throw exception;
                             } catch(FirebaseAuthInvalidUserException e) {
                                 mTxtEmail.setError(getString(R.string.error_unknown_user));
                                 mTxtEmail.requestFocus();
@@ -267,7 +271,11 @@ public class LoginActivity extends AppCompatActivity
                             mSwitcher.setDisplayedChild(0);
                             mTxtPassword.setText(null);
                             try {
-                                throw task.getException();
+                                final Exception exception = task.getException();
+                                if(exception == null) {
+                                    throw new NullPointerException("exception is null");
+                                }
+                                throw exception;
                             } catch(FirebaseAuthWeakPasswordException e) {
                                 mTxtPassword.setError(getString(R.string.error_weak_password));
                                 mTxtPassword.requestFocus();
@@ -321,7 +329,11 @@ public class LoginActivity extends AppCompatActivity
             public void onComplete(@NonNull Task<Void> task) {
                 if(!task.isSuccessful()) {
                     try {
-                        throw task.getException();
+                        final Exception exception = task.getException();
+                        if(exception == null) {
+                            throw new NullPointerException("exception is null");
+                        }
+                        throw exception;
                     } catch(FirebaseAuthInvalidUserException e) {
                         mTxtEmail.setError(getString(R.string.error_unknown_user));
                     } catch(Exception e) {

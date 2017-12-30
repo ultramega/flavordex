@@ -109,13 +109,18 @@ public class FileImportDialog extends ImportDialog
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFilePath = getArguments().getString(ARG_FILE_PATH);
+
+        final Bundle args = getArguments();
+        mFilePath = args != null ? args.getString(ARG_FILE_PATH) : null;
         if(savedInstanceState != null) {
             mData = savedInstanceState.getParcelable(STATE_DATA);
         }
 
         if(mData != null) {
-            setListAdapter(new CSVListAdapter(getContext(), mData));
+            final Context context = getContext();
+            if(context != null) {
+                setListAdapter(new CSVListAdapter(context, mData));
+            }
         } else if(mFilePath != null) {
             getLoaderManager().initLoader(0, null, this).forceLoad();
         }
@@ -136,7 +141,11 @@ public class FileImportDialog extends ImportDialog
                 }
                 break;
             case REQUEST_SET_CATEGORY:
-                CatListDialog.closeDialog(getFragmentManager());
+                final FragmentManager fm = getFragmentManager();
+                if(fm != null) {
+                    CatListDialog.closeDialog(fm);
+                }
+
                 if(resultCode == Activity.RESULT_OK && data != null && mData != null) {
                     final long catId = data.getLongExtra(CatListDialog.EXTRA_CAT_ID, 0);
                     for(EntryHolder entry : mData.entries) {
@@ -176,20 +185,26 @@ public class FileImportDialog extends ImportDialog
 
     @Override
     protected void insertSelected() {
+        final FragmentManager fm = getFragmentManager();
         final CSVListAdapter adapter = (CSVListAdapter)getListAdapter();
-        if(adapter != null) {
+        if(fm != null && adapter != null) {
             final ArrayList<EntryHolder> entries = new ArrayList<>();
             for(long i : getListView().getCheckedItemIds()) {
                 entries.add(adapter.getItem((int)i));
             }
-            DataSaverFragment.init(getFragmentManager(), entries);
+            DataSaverFragment.init(fm, entries);
         }
     }
 
     @Override
     public Loader<CSVUtils.CSVHolder> onCreateLoader(int id, Bundle args) {
+        final Context context = getContext();
+        if(context == null) {
+            return null;
+        }
+
         setListShown(false);
-        return new AsyncTaskLoader<CSVUtils.CSVHolder>(getContext()) {
+        return new AsyncTaskLoader<CSVUtils.CSVHolder>(context) {
             @Override
             public CSVUtils.CSVHolder loadInBackground() {
                 return CSVUtils.importCSV(getContext(), new File(mFilePath));
@@ -202,22 +217,25 @@ public class FileImportDialog extends ImportDialog
      */
     private void validateData() {
         invalidateButtons();
-        if(mData == null) {
+
+        final FragmentManager fm = getFragmentManager();
+        if(fm == null || mData == null) {
             return;
         }
+
         if(!mData.hasCategory) {
-            CatListDialog.showDialog(getFragmentManager(), this, REQUEST_SET_CATEGORY);
+            CatListDialog.showDialog(fm, this, REQUEST_SET_CATEGORY);
         } else if(!mData.duplicates.isEmpty()) {
-            DuplicatesDialog.showDialog(getFragmentManager(), this, REQUEST_DUPLICATES,
-                    mData.duplicates.size());
+            DuplicatesDialog.showDialog(fm, this, REQUEST_DUPLICATES, mData.duplicates.size());
         }
     }
 
     @Override
     public void onLoadFinished(Loader<CSVUtils.CSVHolder> loader, CSVUtils.CSVHolder data) {
-        if(data != null) {
+        final Context context = getContext();
+        if(context != null && data != null) {
             setListShown(true);
-            setListAdapter(new CSVListAdapter(getContext(), data));
+            setListAdapter(new CSVListAdapter(context, data));
 
             final ListView listView = getListView();
             for(int i = 0; i < data.entries.size(); i++) {
@@ -235,8 +253,11 @@ public class FileImportDialog extends ImportDialog
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    MessageDialog.showDialog(getFragmentManager(), getString(R.string.title_error),
-                            getString(R.string.error_csv_parse), R.drawable.ic_warning);
+                    final FragmentManager fm = getFragmentManager();
+                    if(fm != null) {
+                        MessageDialog.showDialog(fm, getString(R.string.title_error),
+                                getString(R.string.error_csv_parse), R.drawable.ic_warning);
+                    }
                     dismiss();
                 }
             });
@@ -284,7 +305,8 @@ public class FileImportDialog extends ImportDialog
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final int num = getArguments().getInt(ARG_NUM);
+            final Bundle args = getArguments();
+            final int num = args != null ? args.getInt(ARG_NUM) : 0;
 
             final Resources res = getResources();
             final String duplicates = res.getQuantityString(R.plurals.duplicates, num);
@@ -351,8 +373,11 @@ public class FileImportDialog extends ImportDialog
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+
             final Bundle args = getArguments();
-            mEntries = args.getParcelableArrayList(ARG_ENTRIES);
+            if(args != null) {
+                mEntries = args.getParcelableArrayList(ARG_ENTRIES);
+            }
         }
 
         @SuppressWarnings("deprecation")
@@ -372,7 +397,10 @@ public class FileImportDialog extends ImportDialog
 
         @Override
         protected void startTask() {
-            new SaveTask().execute();
+            final Context context = getContext();
+            if(context != null) {
+                new SaveTask(context).execute();
+            }
         }
 
         /**
@@ -385,8 +413,11 @@ public class FileImportDialog extends ImportDialog
             @NonNull
             private final Context mContext;
 
-            SaveTask() {
-                mContext = getContext().getApplicationContext();
+            /**
+             * @param context The Context
+             */
+            SaveTask(@NonNull Context context) {
+                mContext = context.getApplicationContext();
             }
 
             @Override

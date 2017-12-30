@@ -118,8 +118,17 @@ public class CatDeleteDialog extends DialogFragment
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mCatId = getArguments().getLong(ARG_CAT_ID);
-        return new AlertDialog.Builder(getContext())
+        final Context context = getContext();
+        if(context == null) {
+            return super.onCreateDialog(savedInstanceState);
+        }
+
+        final Bundle args = getArguments();
+        if(args != null) {
+            mCatId = args.getLong(ARG_CAT_ID);
+        }
+
+        return new AlertDialog.Builder(context)
                 .setIcon(R.drawable.ic_delete)
                 .setTitle(R.string.title_delete_cat)
                 .setView(getLayout(savedInstanceState))
@@ -217,8 +226,13 @@ public class CatDeleteDialog extends DialogFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        final Context context = getContext();
+        if(context == null) {
+            return null;
+        }
+
         final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
-        return new CursorLoader(getContext(), uri, null, null, null, null);
+        return new CursorLoader(context, uri, null, null, null, null);
     }
 
     @Override

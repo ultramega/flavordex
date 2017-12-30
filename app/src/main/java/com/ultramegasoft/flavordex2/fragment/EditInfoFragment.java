@@ -22,6 +22,7 @@
  */
 package com.ultramegasoft.flavordex2.fragment;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -105,8 +106,10 @@ public class EditInfoFragment extends LoadingProgressFragment
         setHasOptionsMenu(true);
 
         final Bundle args = getArguments();
-        mCatId = args.getLong(AddEntryFragment.ARG_CAT_ID);
-        mEntryId = args.getLong(ARG_ENTRY_ID);
+        if(args != null) {
+            mCatId = args.getLong(AddEntryFragment.ARG_CAT_ID);
+            mEntryId = args.getLong(ARG_ENTRY_ID);
+        }
     }
 
     @Override
@@ -141,8 +144,11 @@ public class EditInfoFragment extends LoadingProgressFragment
         mDateInputWidget.setDate(date);
         mDateInputWidget.setMaxDate(date);
 
-        mFormHelper.mTxtLocation.setText(((FlavordexApp)getActivity().getApplication())
-                .getLocationName());
+        final Activity activity = getActivity();
+        if(activity != null) {
+            mFormHelper.mTxtLocation.setText(((FlavordexApp)activity.getApplication())
+                    .getLocationName());
+        }
 
         return root;
     }
@@ -239,8 +245,11 @@ public class EditInfoFragment extends LoadingProgressFragment
         switch(id) {
             case LOADER_MAIN:
                 mIsLoading = true;
-                ActivityCompat.invalidateOptionsMenu(getActivity());
-                return new DataLoader(getContext(), mCatId, mEntryId);
+                final Activity activity = getActivity();
+                if(activity != null) {
+                    ActivityCompat.invalidateOptionsMenu(activity);
+                    return new DataLoader(activity, mCatId, mEntryId);
+                }
         }
         return null;
     }
@@ -261,7 +270,11 @@ public class EditInfoFragment extends LoadingProgressFragment
                 mFormHelper.mTxtTitle.setSelection(mFormHelper.mTxtTitle.getText().length());
 
                 mIsLoading = false;
-                ActivityCompat.invalidateOptionsMenu(getActivity());
+
+                final Activity activity = getActivity();
+                if(activity != null) {
+                    ActivityCompat.invalidateOptionsMenu(activity);
+                }
                 break;
         }
     }

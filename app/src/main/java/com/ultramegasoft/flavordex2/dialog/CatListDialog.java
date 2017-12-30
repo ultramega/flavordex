@@ -24,6 +24,7 @@ package com.ultramegasoft.flavordex2.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -96,16 +97,27 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAdapter = new CatListAdapter(getContext(), null, android.R.layout.simple_list_item_1);
+
+        final Context context = getContext();
+        if(context == null) {
+            return;
+        }
+
+        mAdapter = new CatListAdapter(context, null, android.R.layout.simple_list_item_1);
         getLoaderManager().initLoader(0, null, this);
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final Context context = getContext();
+        if(context == null) {
+            return super.onCreateDialog(savedInstanceState);
+        }
+
         final ListView listView = getLayout();
         listView.setAdapter(mAdapter);
-        return new AlertDialog.Builder(getContext())
+        return new AlertDialog.Builder(context)
                 .setTitle(R.string.title_select_cat)
                 .setIcon(R.drawable.ic_list)
                 .setView(listView)
@@ -169,7 +181,12 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getContext(), Tables.Cats.CONTENT_URI, null, null, null, null);
+        final Context context = getContext();
+        if(context == null) {
+            return null;
+        }
+
+        return new CursorLoader(context, Tables.Cats.CONTENT_URI, null, null, null, null);
     }
 
     @Override

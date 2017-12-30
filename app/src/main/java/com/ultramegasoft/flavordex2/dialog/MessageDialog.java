@@ -23,6 +23,7 @@
 package com.ultramegasoft.flavordex2.dialog;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -83,11 +84,16 @@ public class MessageDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final Context context = getContext();
+        if(context == null) {
+            return super.onCreateDialog(savedInstanceState);
+        }
+
         final Bundle args = getArguments();
         return new AlertDialog.Builder(getContext())
-                .setIcon(args.getInt(ARG_ICON))
-                .setTitle(args.getString(ARG_TITLE))
-                .setMessage(HtmlCompat.fromHtml(args.getString(ARG_MESSAGE)))
+                .setIcon(args != null ? args.getInt(ARG_ICON) : 0)
+                .setTitle(args != null ? args.getString(ARG_TITLE) : null)
+                .setMessage(args != null ? HtmlCompat.fromHtml(args.getString(ARG_MESSAGE)) : null)
                 .setPositiveButton(R.string.button_ok, null)
                 .create();
     }

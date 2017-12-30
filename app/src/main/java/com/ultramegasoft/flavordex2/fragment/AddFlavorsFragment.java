@@ -23,6 +23,7 @@
 package com.ultramegasoft.flavordex2.fragment;
 
 import android.content.ContentUris;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -64,7 +65,11 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCatId = getArguments().getLong(AddEntryFragment.ARG_CAT_ID);
+
+        final Bundle args = getArguments();
+        if(args != null) {
+            mCatId = args.getLong(AddEntryFragment.ARG_CAT_ID);
+        }
     }
 
     @Override
@@ -103,8 +108,13 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        final Context context = getContext();
+        if(context == null) {
+            return null;
+        }
+
         final Uri uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
-        return new CursorLoader(getContext(), Uri.withAppendedPath(uri, "flavor"), null, null,
+        return new CursorLoader(context, Uri.withAppendedPath(uri, "flavor"), null, null,
                 null, Tables.Flavors.POS + " ASC");
     }
 
