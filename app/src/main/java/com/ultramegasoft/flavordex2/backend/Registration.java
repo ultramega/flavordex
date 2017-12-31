@@ -53,14 +53,15 @@ public class Registration extends Endpoint {
      * @return The RegistrationRecord or null if the client is not registered with FCM
      */
     @Nullable
-    RegistrationRecord register() throws ApiException {
+    RegistrationRecord register() throws FlavordexApiException {
         final String fcmId = FirebaseInstanceId.getInstance().getToken();
         if(fcmId != null) {
             try {
                 final RegistrationRecord record =
                         new Gson().fromJson(post("register", fcmId), RegistrationRecord.class);
                 if(record.clientId <= 0) {
-                    throw new ApiException("Received invalid client ID: " + record.clientId);
+                    throw new FlavordexApiException("Received invalid client ID: "
+                            + record.clientId);
                 }
                 return record;
             } catch(JsonSyntaxException e) {
@@ -73,7 +74,7 @@ public class Registration extends Endpoint {
     /**
      * Unregister the client from the backend.
      */
-    void unregister() throws ApiException {
+    void unregister() throws FlavordexApiException {
         final long id = BackendUtils.getClientId(getContext());
         if(id > 0) {
             post("unregister", id);

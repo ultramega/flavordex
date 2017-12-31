@@ -52,14 +52,14 @@ public class Sync extends Endpoint {
     /**
      * Start a synchronization session.
      */
-    public void startSync() throws ApiException {
+    public void startSync() throws FlavordexApiException {
         post("startSync", null, BackendUtils.getClientId(getContext()));
     }
 
     /**
      * End the synchronization session.
      */
-    public void endSync() throws ApiException {
+    public void endSync() throws FlavordexApiException {
         post("endSync", null, BackendUtils.getClientId(getContext()));
     }
 
@@ -69,7 +69,7 @@ public class Sync extends Endpoint {
      * @return The SyncRecord
      */
     @Nullable
-    public SyncRecord getUpdates() throws ApiException {
+    public SyncRecord getUpdates() throws FlavordexApiException {
         final String response = get("getUpdates", BackendUtils.getClientId(getContext()));
         try {
             return new Gson().fromJson(response, SyncRecord.class);
@@ -85,7 +85,7 @@ public class Sync extends Endpoint {
      * @return The CatRecord
      */
     @Nullable
-    public CatRecord getCat(@NonNull String catUuid) throws ApiException {
+    public CatRecord getCat(@NonNull String catUuid) throws FlavordexApiException {
         final String response = get("getCat", BackendUtils.getClientId(getContext()), catUuid);
         try {
             return new Gson().fromJson(response, CatRecord.class);
@@ -101,7 +101,7 @@ public class Sync extends Endpoint {
      * @return The UpdateResponse
      */
     @Nullable
-    public UpdateResponse putCat(@NonNull CatRecord catRecord) throws ApiException {
+    public UpdateResponse putCat(@NonNull CatRecord catRecord) throws FlavordexApiException {
         final String response = post("putCat", catRecord, BackendUtils.getClientId(getContext()));
         try {
             return new Gson().fromJson(response, UpdateResponse.class);
@@ -117,7 +117,7 @@ public class Sync extends Endpoint {
      * @return The EntryRecord
      */
     @Nullable
-    public EntryRecord getEntry(@NonNull String entryUuid) throws ApiException {
+    public EntryRecord getEntry(@NonNull String entryUuid) throws FlavordexApiException {
         final String response = get("getEntry", BackendUtils.getClientId(getContext()), entryUuid);
         try {
             return new Gson().fromJson(response, EntryRecord.class);
@@ -133,7 +133,7 @@ public class Sync extends Endpoint {
      * @return The UpdateResponse
      */
     @Nullable
-    public UpdateResponse putEntry(@NonNull EntryRecord entryRecord) throws ApiException {
+    public UpdateResponse putEntry(@NonNull EntryRecord entryRecord) throws FlavordexApiException {
         final String response =
                 post("putEntry", entryRecord, BackendUtils.getClientId(getContext()));
         try {

@@ -205,7 +205,7 @@ public class BackendUtils {
 
                 return true;
             }
-        } catch(ApiException e) {
+        } catch(FlavordexApiException e) {
             Log.w(TAG, "Client registration failed", e);
         }
 
@@ -221,7 +221,7 @@ public class BackendUtils {
         try {
             new Registration(context).unregister();
             setClientId(context, 0);
-        } catch(ApiException e) {
+        } catch(FlavordexApiException e) {
             Log.w(TAG, "Client unregistration failed", e);
         }
     }

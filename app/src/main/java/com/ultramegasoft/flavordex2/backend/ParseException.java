@@ -27,7 +27,7 @@ package com.ultramegasoft.flavordex2.backend;
  *
  * @author Steve Guidetti
  */
-class ParseException extends ApiException {
+class ParseException extends FlavordexApiException {
     ParseException(Throwable cause) {
         super(cause);
     }

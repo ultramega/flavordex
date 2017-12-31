@@ -199,13 +199,13 @@ abstract class Endpoint {
      * @return The response from the API.
      */
     @NonNull
-    String get(@NonNull String method, @NonNull Object... params) throws ApiException {
+    String get(@NonNull String method, @NonNull Object... params) throws FlavordexApiException {
         try {
             final HttpURLConnection conn = openConnection(method, params);
             conn.setRequestMethod("GET");
             return readResponse(conn);
         } catch(IOException e) {
-            throw new ApiException("Request failed", e);
+            throw new FlavordexApiException("Request failed", e);
         }
     }
 
@@ -217,7 +217,7 @@ abstract class Endpoint {
      * @return The response from the API.
      */
     @NonNull
-    String post(@NonNull String method, @Nullable Object data) throws ApiException {
+    String post(@NonNull String method, @Nullable Object data) throws FlavordexApiException {
         return post(method, data, new Object[0]);
     }
 
@@ -230,7 +230,8 @@ abstract class Endpoint {
      * @return The response from the API.
      */
     @NonNull
-    String post(@NonNull String method, @Nullable Object data, @NonNull Object... params) throws ApiException {
+    String post(@NonNull String method, @Nullable Object data, @NonNull Object... params)
+            throws FlavordexApiException {
         try {
             final HttpURLConnection conn = openConnection(method, params);
             conn.setRequestMethod("POST");
@@ -252,7 +253,7 @@ abstract class Endpoint {
 
             return readResponse(conn);
         } catch(IOException e) {
-            throw new ApiException("Request failed", e);
+            throw new FlavordexApiException("Request failed", e);
         }
     }
 
@@ -263,14 +264,15 @@ abstract class Endpoint {
      * @return The response body as a string
      */
     @NonNull
-    private String readResponse(@NonNull HttpURLConnection conn) throws IOException, ApiException {
+    private String readResponse(@NonNull HttpURLConnection conn)
+            throws IOException, FlavordexApiException {
         try {
             final int code = conn.getResponseCode();
             if(code != HttpURLConnection.HTTP_OK) {
                 if(code == HttpURLConnection.HTTP_UNAUTHORIZED) {
                     throw new UnauthorizedException();
                 } else {
-                    throw new ApiException(conn.getResponseMessage());
+                    throw new FlavordexApiException(conn.getResponseMessage());
                 }
             }
         } catch(IOException e) {

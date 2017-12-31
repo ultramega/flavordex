@@ -27,5 +27,5 @@ package com.ultramegasoft.flavordex2.backend;
  *
  * @author Steve Guidetti
  */
-public class UnauthorizedException extends ApiException {
+public class UnauthorizedException extends FlavordexApiException {
 }

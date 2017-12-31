@@ -34,8 +34,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
-import com.ultramegasoft.flavordex2.backend.ApiException;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
+import com.ultramegasoft.flavordex2.backend.FlavordexApiException;
 import com.ultramegasoft.flavordex2.backend.Sync;
 import com.ultramegasoft.flavordex2.backend.UnauthorizedException;
 import com.ultramegasoft.flavordex2.backend.model.CatRecord;
@@ -114,7 +114,7 @@ class DataSyncHelper {
             PreferenceManager.getDefaultSharedPreferences(mContext).edit()
                     .putBoolean(FlavordexApp.PREF_SYNC_DATA, false).apply();
             return true;
-        } catch(ApiException e) {
+        } catch(FlavordexApiException e) {
             Log.w(TAG, "Syncing with the backend failed", e);
         }
 
@@ -124,7 +124,7 @@ class DataSyncHelper {
     /**
      * Send updated journal data to the backend.
      */
-    private void pushUpdates() throws ApiException {
+    private void pushUpdates() throws FlavordexApiException {
         if(mSync == null) {
             return;
         }
@@ -492,7 +492,7 @@ class DataSyncHelper {
     /**
      * Fetch all the changed records from the backend.
      */
-    private void fetchUpdates() throws ApiException {
+    private void fetchUpdates() throws FlavordexApiException {
         if(mSync == null) {
             return;
         }

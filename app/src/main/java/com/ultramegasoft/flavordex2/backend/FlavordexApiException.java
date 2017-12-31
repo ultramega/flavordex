@@ -28,20 +28,20 @@ package com.ultramegasoft.flavordex2.backend;
  * @author Steve Guidetti
  */
 @SuppressWarnings("SameParameterValue")
-public class ApiException extends Exception {
-    ApiException() {
+public class FlavordexApiException extends Exception {
+    FlavordexApiException() {
         super();
     }
 
-    ApiException(String message) {
+    FlavordexApiException(String message) {
         super(message);
     }
 
-    ApiException(String message, Throwable cause) {
+    FlavordexApiException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    ApiException(Throwable cause) {
+    FlavordexApiException(Throwable cause) {
         super(cause);
     }
 }
