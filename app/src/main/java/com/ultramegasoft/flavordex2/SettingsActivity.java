@@ -44,10 +44,13 @@ import android.view.MenuItem;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.drive.Drive;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -60,7 +63,6 @@ import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.dialog.AccountDialog;
 import com.ultramegasoft.flavordex2.dialog.BackendRegistrationDialog;
 import com.ultramegasoft.flavordex2.dialog.CatListDialog;
-import com.ultramegasoft.flavordex2.dialog.DriveConnectDialog;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 import java.lang.ref.WeakReference;
@@ -75,6 +77,7 @@ public class SettingsActivity extends AppCompatActivity {
      * Request codes for external Activities
      */
     private static final int REQUEST_EDIT_CAT = 400;
+    private static final int REQUEST_DRIVE_SIGNIN = 401;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,21 +103,6 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch(requestCode) {
-            case DriveConnectDialog.REQUEST_RESOLVE_CONNECTION:
-                final Fragment fragment =
-                        getSupportFragmentManager().findFragmentByTag(DriveConnectDialog.TAG);
-                if(fragment != null) {
-                    fragment.onActivityResult(requestCode, resultCode, data);
-                }
-                break;
-        }
     }
 
     /**
@@ -352,15 +340,29 @@ public class SettingsActivity extends AppCompatActivity {
                         @Override
                         public boolean onPreferenceChange(Preference preference, Object o) {
                             if((Boolean)o) {
-                                final FragmentManager fm = getFragmentManager();
-                                if(fm != null) {
-                                    DriveConnectDialog.showDialog(fm);
-                                }
+                                signInDrive();
                                 return false;
                             }
                             return true;
                         }
                     });
+        }
+
+        /**
+         * Sign in to the Google Drive service.
+         */
+        private void signInDrive() {
+            final Context context = getContext();
+            if(context == null) {
+                return;
+            }
+
+            final GoogleSignInOptions options =
+                    new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestScopes(Drive.SCOPE_APPFOLDER)
+                            .build();
+            final GoogleSignInClient client = GoogleSignIn.getClient(context, options);
+            startActivityForResult(client.getSignInIntent(), REQUEST_DRIVE_SIGNIN);
         }
 
         @Override
@@ -392,6 +394,11 @@ public class SettingsActivity extends AppCompatActivity {
                                 data.getStringExtra(CatListDialog.EXTRA_CAT_NAME));
                     }
                     break;
+                case REQUEST_DRIVE_SIGNIN:
+                    if(resultCode == Activity.RESULT_OK) {
+                        PreferenceManager.getDefaultSharedPreferences(getContext()).edit()
+                                .putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, true).apply();
+                    }
             }
         }
 

@@ -35,14 +35,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.DriveClient;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveFolder;
-import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.DriveResourceClient;
 import com.google.android.gms.drive.ExecutionOptions;
 import com.google.android.gms.drive.Metadata;
 import com.google.android.gms.drive.MetadataBuffer;
@@ -50,6 +54,7 @@ import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.metadata.CustomPropertyKey;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
+import com.google.android.gms.tasks.Tasks;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.provider.Tables;
@@ -63,6 +68,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Helper for synchronizing photos with Google Drive.
@@ -79,10 +85,16 @@ class PhotoSyncHelper {
             new CustomPropertyKey("hash", CustomPropertyKey.PUBLIC);
 
     /**
-     * The Google API Client
+     * The Google Drive API Client
      */
     @Nullable
-    private GoogleApiClient mClient;
+    private DriveClient mClient;
+
+    /**
+     * The Google Drive resource API Client
+     */
+    @Nullable
+    private DriveResourceClient mResourceClient;
 
     /**
      * The Drive folder for the application
@@ -141,51 +153,92 @@ class PhotoSyncHelper {
             mMediaMounted = false;
         }
 
-        mClient = new GoogleApiClient.Builder(mContext)
-                .addApi(Drive.API)
-                .addScope(Drive.SCOPE_APPFOLDER)
-                .build();
-        final ConnectionResult result = mClient.blockingConnect();
-        if(result.isSuccess()) {
-            Log.d(TAG, "Connection successful. sync: " + mShouldSync + " media: " + mMediaMounted);
-            Drive.DriveApi.requestSync(mClient).await();
-            mDriveFolder = Drive.DriveApi.getAppFolder(mClient);
+        if(setupClient(prefs)) {
+            mDriveFolder = getDriveFolder();
             if(mDriveFolder != null) {
                 return true;
             }
-            Log.w(TAG, "Failed to get application folder.");
-        } else {
-            switch(result.getErrorCode()) {
-                case ConnectionResult.SIGN_IN_REQUIRED:
-                case ConnectionResult.SIGN_IN_FAILED:
-                case ConnectionResult.INVALID_ACCOUNT:
+        }
+
+        disconnect();
+        return false;
+    }
+
+    /**
+     * Set up the Drive API client.
+     *
+     * @param prefs The SharedPreferences
+     * @return Whether the setup was successful
+     */
+    private boolean setupClient(@NonNull SharedPreferences prefs) {
+        final GoogleSignInOptions signInOptions =
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestScopes(Drive.SCOPE_APPFOLDER)
+                        .build();
+        final GoogleSignInClient signInClient = GoogleSignIn.getClient(mContext, signInOptions);
+        try {
+            final GoogleSignInAccount signInAccount = Tasks.await(signInClient.silentSignIn());
+
+            mClient = Drive.getDriveClient(mContext, signInAccount);
+            mResourceClient = Drive.getDriveResourceClient(mContext, signInAccount);
+
+            Log.d(TAG, "Connection successful. sync: " + mShouldSync + " media: " + mMediaMounted);
+
+            return true;
+        } catch(ExecutionException e) {
+            final ApiException result = (ApiException)e.getCause();
+            switch(result.getStatusCode()) {
+                case GoogleSignInStatusCodes.SIGN_IN_REQUIRED:
+                case GoogleSignInStatusCodes.INVALID_ACCOUNT:
                     Log.i(TAG, "User not signed in. Disabling photo syncing.");
                     prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false).apply();
                     break;
-                case ConnectionResult.API_UNAVAILABLE:
-                case ConnectionResult.LICENSE_CHECK_FAILED:
-                case ConnectionResult.SERVICE_DISABLED:
-                case ConnectionResult.SERVICE_MISSING:
-                case ConnectionResult.SERVICE_INVALID:
-                case ConnectionResult.SERVICE_MISSING_PERMISSION:
+                case GoogleSignInStatusCodes.API_NOT_CONNECTED:
+                case GoogleSignInStatusCodes.NETWORK_ERROR:
+                case GoogleSignInStatusCodes.INTERNAL_ERROR:
                     Log.i(TAG, "Google Drive service unavailable. Disabling photo syncing.");
                     prefs.edit().putBoolean(FlavordexApp.PREF_SYNC_PHOTOS, false).apply();
             }
+
+            Log.w(TAG, "Connection failed! Reason: " + result.getMessage());
+        } catch(InterruptedException ignored) {
         }
 
-        Log.w(TAG, "Connection failed! Reason: " + result.getErrorMessage());
-        mClient.disconnect();
         return false;
+    }
+
+    /**
+     * Get the application folder.
+     *
+     * @return The DriveFolder
+     */
+    @Nullable
+    private DriveFolder getDriveFolder() {
+        if(mClient == null || mResourceClient == null) {
+            return null;
+        }
+
+        try {
+            Tasks.await(mClient.requestSync());
+        } catch(ExecutionException | InterruptedException ignored) {
+        }
+
+        try {
+            return Tasks.await(mResourceClient.getAppFolder());
+        } catch(ExecutionException | InterruptedException ignored) {
+        }
+
+        Log.w(TAG, "Failed to get application folder.");
+        return null;
     }
 
     /**
      * Disconnect the client from Google Drive.
      */
     void disconnect() {
-        if(mClient != null) {
-            mDriveFolder = null;
-            mClient.disconnect();
-        }
+        mClient = null;
+        mResourceClient = null;
+        mDriveFolder = null;
     }
 
     /**
@@ -282,6 +335,10 @@ class PhotoSyncHelper {
      * Delete photos from Drive that were removed from the app.
      */
     void deletePhotos() {
+        if(mResourceClient == null) {
+            return;
+        }
+
         Log.d(TAG, "Deleting photos.");
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
@@ -298,7 +355,13 @@ class PhotoSyncHelper {
                 while(cursor.moveToNext()) {
                     hash = cursor.getString(cursor.getColumnIndex(Tables.Deleted.UUID));
                     driveFile = getDriveFile(hash);
-                    if(driveFile != null && !driveFile.delete(mClient).await().isSuccess()) {
+                    if(driveFile == null) {
+                        continue;
+                    }
+
+                    try {
+                        Tasks.await(mResourceClient.delete(driveFile));
+                    } catch(ExecutionException | InterruptedException e) {
                         continue;
                     }
                     id = cursor.getLong(cursor.getColumnIndex(Tables.Deleted._ID));
@@ -366,9 +429,10 @@ class PhotoSyncHelper {
      * Ensure that the local Drive IDs exists in the Drive folder.
      */
     private void validateDriveIds() {
-        if(mDriveFolder == null) {
+        if(mResourceClient == null || mDriveFolder == null) {
             return;
         }
+
         Log.d(TAG, "Validating Drive IDs.");
         final ContentResolver cr = mContext.getContentResolver();
         final String[] projection = new String[] {
@@ -382,14 +446,15 @@ class PhotoSyncHelper {
         }
         try {
             final ArrayList<String> driveIds = new ArrayList<>();
-            final DriveApi.MetadataBufferResult result = mDriveFolder.listChildren(mClient).await();
             try {
-                final MetadataBuffer buffer = result.getMetadataBuffer();
+                final MetadataBuffer buffer =
+                        Tasks.await(mResourceClient.listChildren(mDriveFolder));
                 for(Metadata metadata : buffer) {
                     driveIds.add(metadata.getDriveId().getResourceId());
                 }
-            } finally {
-                result.release();
+                buffer.release();
+            } catch(ExecutionException | InterruptedException e) {
+                return;
             }
 
             long id;
@@ -423,7 +488,7 @@ class PhotoSyncHelper {
             return driveFile;
         }
 
-        if(!mShouldSync || !mMediaMounted) {
+        if(mResourceClient == null || !mShouldSync || !mMediaMounted) {
             return null;
         }
 
@@ -434,14 +499,9 @@ class PhotoSyncHelper {
             return null;
         }
 
-        final DriveApi.DriveContentsResult result =
-                Drive.DriveApi.newDriveContents(mClient).await();
-        if(!result.getStatus().isSuccess()) {
-            return null;
-        }
-
-        final DriveContents driveContents = result.getDriveContents();
+        DriveContents driveContents = null;
         try {
+            driveContents = Tasks.await(mResourceClient.createContents());
             final InputStream inputStream = cr.openInputStream(uri);
             if(inputStream == null) {
                 return null;
@@ -459,12 +519,15 @@ class PhotoSyncHelper {
             }
 
             createNewFile(name, hash, driveContents);
+
             return null;
-        } catch(IOException e) {
+        } catch(ExecutionException | InterruptedException | IOException e) {
             Log.w(TAG, "Upload failed", e);
         }
 
-        driveContents.discard(mClient);
+        if(driveContents != null) {
+            mResourceClient.discardContents(driveContents);
+        }
         return null;
     }
 
@@ -476,30 +539,16 @@ class PhotoSyncHelper {
      */
     @Nullable
     private File downloadPhoto(@NonNull String resourceId) {
-        if(!mMediaMounted) {
-            return null;
-        }
-
-        final DriveId driveId =
-                Drive.DriveApi.fetchDriveId(mClient, resourceId).await().getDriveId();
-        if(driveId == null) {
-            return null;
-        }
-        final DriveFile driveFile = driveId.asDriveFile();
-
-        final DriveApi.DriveContentsResult result =
-                driveFile.open(mClient, DriveFile.MODE_READ_ONLY, null).await();
-        if(!result.getStatus().isSuccess()) {
-            return null;
-        }
-
-        final DriveContents driveContents = result.getDriveContents();
-        if(driveContents == null) {
+        if(mClient == null || mResourceClient == null || !mMediaMounted) {
             return null;
         }
 
         try {
-            final Metadata metadata = driveFile.getMetadata(mClient).await().getMetadata();
+            final DriveFile driveFile = Tasks.await(mClient.getDriveId(resourceId)).asDriveFile();
+            final DriveContents driveContents =
+                    Tasks.await(mResourceClient.openFile(driveFile, DriveFile.MODE_READ_ONLY));
+
+            final Metadata metadata = Tasks.await(mResourceClient.getMetadata(driveFile));
             final String fileName = metadata.getOriginalFilename();
             File outputFile = new File(PhotoUtils.getMediaStorageDir(), fileName);
             if(outputFile.exists()) {
@@ -529,10 +578,8 @@ class PhotoSyncHelper {
                 outputStream.close();
             }
             return outputFile;
-        } catch(IOException e) {
+        } catch(ExecutionException | InterruptedException | IOException e) {
             Log.w(TAG, "Download failed", e);
-        } finally {
-            driveContents.discard(mClient);
         }
 
         return null;
@@ -546,20 +593,22 @@ class PhotoSyncHelper {
      */
     @Nullable
     private DriveFile getDriveFile(@NonNull String hash) {
-        if(mDriveFolder == null) {
+        if(mResourceClient == null || mDriveFolder == null) {
             return null;
         }
-        final Query query = new Query.Builder().addFilter(Filters.eq(sHashKey, hash)).build();
-        final DriveApi.MetadataBufferResult result =
-                mDriveFolder.queryChildren(mClient, query).await();
+
         try {
-            final MetadataBuffer buffer = result.getMetadataBuffer();
+            final Query query = new Query.Builder().addFilter(Filters.eq(sHashKey, hash)).build();
+            final MetadataBuffer buffer =
+                    Tasks.await(mResourceClient.queryChildren(mDriveFolder, query));
             if(buffer != null && buffer.getCount() > 0) {
-                return buffer.get(0).getDriveId().asDriveFile();
+                final DriveFile driveFile = buffer.get(0).getDriveId().asDriveFile();
+                buffer.release();
+                return driveFile;
             }
-        } finally {
-            result.release();
+        } catch(ExecutionException | InterruptedException ignored) {
         }
+
         return null;
     }
 
@@ -572,7 +621,7 @@ class PhotoSyncHelper {
      */
     private void createNewFile(@NonNull String title, @NonNull String hash,
                                @NonNull DriveContents contents) {
-        if(mDriveFolder == null) {
+        if(mResourceClient == null || mDriveFolder == null) {
             return;
         }
         final MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
@@ -580,7 +629,11 @@ class PhotoSyncHelper {
                 .setCustomProperty(sHashKey, hash).build();
         final ExecutionOptions options = new ExecutionOptions.Builder()
                 .setNotifyOnCompletion(true).build();
-        mDriveFolder.createFile(mClient, changeSet, contents, options).await();
+        try {
+            Tasks.await(mResourceClient.createFile(mDriveFolder, changeSet, contents, options));
+        } catch(ExecutionException | InterruptedException e) {
+            Log.w(TAG, "Failed to create remote file", e);
+        }
     }
 
     /**
