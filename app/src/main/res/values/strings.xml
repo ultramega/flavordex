@@ -204,7 +204,6 @@
     <string name="message_copyright">Copyright © %d UltraMega Software</string>
     <string name="message_duplicate_photo">The selected photo has already been added.</string>
     <string name="message_registering_client">Registering device with the sync service…</string>
-    <string name="message_connecting_drive">Connecting to Google Drive…</string>
     <string name="message_authenticating">Authenticating…</string>
     <string name="message_reset_password">An email has been sent to &lt;b>%s&lt;/b> with instructions.</string>
     <string name="message_email_changed">Success! Your email address has been changed.</string>
