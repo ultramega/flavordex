@@ -195,16 +195,6 @@ public class PermissionUtils {
                                                   @NonNull String[] permissions,
                                                   @NonNull int[] grantResults) {
         switch(requestCode) {
-            case REQUEST_STORAGE:
-                for(int i = 0; i < grantResults.length; i++) {
-                    if(!Manifest.permission.WRITE_EXTERNAL_STORAGE.equals(permissions[i])) {
-                        continue;
-                    }
-                    if(grantResults[i] == PermissionChecker.PERMISSION_GRANTED) {
-                        Runtime.getRuntime().exit(0);
-                    }
-                }
-                break;
             case REQUEST_LOCATION:
                 for(int i = 0; i < grantResults.length; i++) {
                     if(!Manifest.permission.ACCESS_COARSE_LOCATION.equals(permissions[i])) {
