@@ -24,7 +24,6 @@ package com.ultramegasoft.flavordex2.backend;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -33,7 +32,6 @@ import android.util.Log;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
-import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,24 +40,30 @@ import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.backend.model.Model;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
+import okhttp3.CacheControl;
+import okhttp3.Call;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * Represents an endpoint of the API.
@@ -68,10 +72,6 @@ import javax.net.ssl.X509TrustManager;
  */
 abstract class Endpoint {
     private static final String TAG = "Endpoint";
-
-    static {
-        configureSSL();
-    }
 
     /**
      * The Context
@@ -83,7 +83,7 @@ abstract class Endpoint {
      * The base for all API URLs
      */
     @NonNull
-    private final Uri mBaseUrl;
+    private final HttpUrl mBaseUrl;
 
     /**
      * The user agent string
@@ -98,6 +98,12 @@ abstract class Endpoint {
     private String mAuthToken;
 
     /**
+     * The HTTP client
+     */
+    @NonNull
+    private final OkHttpClient mClient;
+
+    /**
      * Constructor.
      *
      * @param context The Context to use
@@ -108,11 +114,19 @@ abstract class Endpoint {
         } catch(GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
             Log.e(TAG, e.getMessage(), e);
         }
+
         mContext = context;
-        //noinspection ConstantConditions
-        final Uri apiUri = Uri.parse(context.getString(
-                BuildConfig.DEBUG ? R.string.api_url_debug : R.string.api_url));
-        mBaseUrl = Uri.withAppendedPath(apiUri, getName());
+
+        final OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS);
+        configureSSL(builder);
+        mClient = builder.build();
+
+        final String apiUri =
+                context.getString(BuildConfig.DEBUG ? R.string.api_url_debug : R.string.api_url);
+        mBaseUrl = HttpUrl.parse(apiUri).newBuilder()
+                .addEncodedPathSegment(getName())
+                .build();
         mUserAgent = context.getString(R.string.user_agent, BuildConfig.VERSION_NAME);
 
         loadAuthToken();
@@ -120,22 +134,25 @@ abstract class Endpoint {
 
     /**
      * Set up the SSL environment for HTTPS connections.
+     *
+     * @param builder The HTTP client builder
      */
-    private static void configureSSL() {
+    private void configureSSL(OkHttpClient.Builder builder) {
         if(BuildConfig.DEBUG) {
-            @SuppressLint("TrustAllX509TrustManager")
-            final TrustManager trustManager = new X509TrustManager() {
+            Log.d(TAG, "Disabling SSL verification for debug mode...");
+
+            @SuppressLint("TrustAllX509TrustManager") final X509TrustManager trustManager = new X509TrustManager() {
                 public X509Certificate[] getAcceptedIssuers() {
-                    return null;
+                    return new X509Certificate[0];
                 }
 
                 @Override
-                public void checkClientTrusted(X509Certificate[] arg0, String arg1)
+                public void checkClientTrusted(X509Certificate[] chain, String authType)
                         throws CertificateException {
                 }
 
                 @Override
-                public void checkServerTrusted(X509Certificate[] arg0, String arg1)
+                public void checkServerTrusted(X509Certificate[] chain, String authType)
                         throws CertificateException {
                 }
             };
@@ -143,15 +160,16 @@ abstract class Endpoint {
             try {
                 SSLContext sslContext = SSLContext.getInstance("TLS");
                 sslContext.init(null, new TrustManager[] {trustManager}, new SecureRandom());
-                HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+                builder.sslSocketFactory(sslContext.getSocketFactory(), trustManager);
             } catch(KeyManagementException | NoSuchAlgorithmException e) {
                 Log.e(TAG, "Unable to disable SSL certificate checking for debugging", e);
             }
 
-            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+            builder.hostnameVerifier(new HostnameVerifier() {
                 @Override
-                public boolean verify(String s, SSLSession sslSession) {
-                    return BuildConfig.DEBUG;
+                @SuppressLint("BadHostnameVerifier")
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
                 }
             });
         }
@@ -163,9 +181,8 @@ abstract class Endpoint {
     private void loadAuthToken() {
         final FirebaseUser auth = FirebaseAuth.getInstance().getCurrentUser();
         if(auth != null) {
-            final Task<GetTokenResult> tokenTask = auth.getIdToken(true);
             try {
-                final GetTokenResult result = Tasks.await(tokenTask);
+                final GetTokenResult result = Tasks.await(auth.getIdToken(true));
                 mAuthToken = result.getToken();
             } catch(ExecutionException | InterruptedException e) {
                 Log.e(TAG, "Failed to obtain authorization token", e);
@@ -201,9 +218,11 @@ abstract class Endpoint {
     @NonNull
     String get(@NonNull String method, @NonNull Object... params) throws FlavordexApiException {
         try {
-            final HttpURLConnection conn = openConnection(method, params);
-            conn.setRequestMethod("GET");
-            return readResponse(conn);
+            final Request request = getRequestBuilder(method, params)
+                    .get()
+                    .build();
+            final Call call = mClient.newCall(request);
+            return readResponse(call.execute());
         } catch(IOException e) {
             throw new FlavordexApiException("Request failed", e);
         }
@@ -233,25 +252,25 @@ abstract class Endpoint {
     String post(@NonNull String method, @Nullable Object data, @NonNull Object... params)
             throws FlavordexApiException {
         try {
-            final HttpURLConnection conn = openConnection(method, params);
-            conn.setRequestMethod("POST");
+            final Request.Builder builder = getRequestBuilder(method, params);
             if(data != null) {
-                conn.setDoOutput(true);
-                conn.setChunkedStreamingMode(0);
-
-                final String dataString;
                 if(data instanceof Model) {
-                    conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-                    dataString = ((Model)data).toJson();
+                    final MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+                    final RequestBody body = RequestBody.create(mediaType, ((Model)data).toJson());
+                    builder.post(body);
                 } else {
-                    conn.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
-                    dataString = data.toString();
+                    final MediaType mediaType = MediaType.parse("text/plain; charset=utf-8");
+                    final RequestBody body = RequestBody.create(mediaType, data.toString());
+                    builder.post(body);
                 }
-
-                conn.getOutputStream().write(dataString.getBytes());
+            } else {
+                builder.post(RequestBody.create(null, new byte[0]));
             }
 
-            return readResponse(conn);
+            final Request request = builder.build();
+            final Response response = mClient.newCall(request).execute();
+
+            return readResponse(response);
         } catch(IOException e) {
             throw new FlavordexApiException("Request failed", e);
         }
@@ -260,78 +279,62 @@ abstract class Endpoint {
     /**
      * Read a response from the server.
      *
-     * @param conn The HTTP connection
+     * @param response The HTTP response
      * @return The response body as a string
      */
     @NonNull
-    private String readResponse(@NonNull HttpURLConnection conn)
-            throws IOException, FlavordexApiException {
-        try {
-            final int code = conn.getResponseCode();
-            if(code != HttpURLConnection.HTTP_OK) {
-                if(code == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                    throw new UnauthorizedException();
-                } else {
-                    throw new FlavordexApiException(conn.getResponseMessage());
-                }
-            }
-        } catch(IOException e) {
-            if(e.getMessage().equals("Received authentication challenge is null")) {
+    private String readResponse(@NonNull Response response) throws IOException, FlavordexApiException {
+        if(!response.isSuccessful()) {
+            if(response.code() == 401) {
                 throw new UnauthorizedException();
+            } else {
+                throw new FlavordexApiException(response.message());
             }
-            throw e;
         }
 
-        final InputStream inputStream = conn.getInputStream();
-        final ByteArrayOutputStream content = new ByteArrayOutputStream();
+        final ResponseBody body = response.body();
         try {
-            final byte[] buffer = new byte[8192];
-            int readBytes;
-            while((readBytes = inputStream.read(buffer)) != -1) {
-                content.write(buffer, 0, readBytes);
-            }
-            return new String(content.toByteArray());
+            return body.string();
         } finally {
-            inputStream.close();
-            content.close();
+            body.close();
         }
-
     }
 
     /**
-     * Open a connection to the backend server.
+     * Initialize a request to the backend server.
      *
      * @param method The method to access
      * @param params The parameters for the method
-     * @return The HTTP connection
+     * @return The HTTP request builder
      */
     @NonNull
-    private HttpURLConnection openConnection(@NonNull String method, @NonNull Object... params) throws IOException {
-        final Uri uri = mBaseUrl.buildUpon()
-                .appendEncodedPath(method)
-                .appendEncodedPath(TextUtils.join("/", params))
+    private Request.Builder getRequestBuilder(@NonNull String method, @NonNull Object... params)
+            throws IOException {
+        final HttpUrl url = mBaseUrl.newBuilder()
+                .addEncodedPathSegment(method)
+                .addEncodedPathSegments(TextUtils.join("/", params))
                 .build();
-        return openConnection(new URL(uri.toString()));
+        return getRequestBuilder(url);
     }
 
     /**
-     * Open an HTTP connection.
+     * Initialize an HTTP request.
      *
      * @param url The URL to connect to
-     * @return The HTTP connection
+     * @return The HTTP request builder
      */
     @NonNull
-    private HttpURLConnection openConnection(@NonNull URL url) throws IOException {
-        final HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-        conn.setDoInput(true);
-        conn.setUseCaches(false);
-        conn.setConnectTimeout(30000);
-        conn.setRequestProperty("User-Agent", mUserAgent);
+    private Request.Builder getRequestBuilder(@NonNull HttpUrl url) {
+        final Request.Builder builder = new Request.Builder()
+                .url(url)
+                .addHeader("User-Agent", mUserAgent)
+                .cacheControl(new CacheControl.Builder().noCache().build());
 
         if(mAuthToken != null) {
-            conn.setRequestProperty("Auth-Token", mAuthToken);
+            builder.addHeader("Auth-Token", mAuthToken);
         }
-        return conn;
+
+        return builder;
     }
 
 }
