@@ -308,8 +308,7 @@ abstract class Endpoint {
      * @return The HTTP request builder
      */
     @NonNull
-    private Request.Builder getRequestBuilder(@NonNull String method, @NonNull Object... params)
-            throws IOException {
+    private Request.Builder getRequestBuilder(@NonNull String method, @NonNull Object... params) {
         final HttpUrl url = mBaseUrl.newBuilder()
                 .addEncodedPathSegment(method)
                 .addEncodedPathSegments(TextUtils.join("/", params))
