@@ -22,10 +22,13 @@
  */
 package com.ultramegasoft.flavordex2.util;
 
+import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -58,6 +61,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -110,7 +114,21 @@ public class PhotoUtils {
             final Uri uri = FileProvider.getUriForFile(context,
                     BuildConfig.APPLICATION_ID + ".fileprovider", getOutputMediaFile());
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                intent.setClipData(ClipData.newUri(context.getContentResolver(), null, uri));
+                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            } else {
+                final List<ResolveInfo> activities = context.getPackageManager()
+                        .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                for(ResolveInfo activity : activities) {
+                    final String name = activity.activityInfo.packageName;
+                    context.grantUriPermission(name, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                }
+            }
+
             return intent;
         } catch(IOException e) {
             Log.e(TAG, "Failed to create new file", e);
