@@ -1,5 +1,16 @@
 # Flavordex Changelog
 
+## v2.4.3 (1/1/18):
+
+   * Fixed crash when trying to use the camera
+   * Removed application restart after allowing external storage permission
+   * Updated the application launch icon
+   * Updated Google Drive API
+   * Updated HTTP client
+   * Fixed improper handling of resources in background threads
+   * Updated platform and all dependencies to the latest versions
+   * Miscellaneous fixes
+
 ## v2.4.2 (7/24/17):
 
    * Updated the Website URL
