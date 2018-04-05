@@ -35,5 +35,5 @@
         android:id="@+id/value"
         style="@style/TextInput.Name"
         android:saveEnabled="false"
-        tools:ignore="TextFields" />
+        tools:ignore="LabelFor,TextFields" />
 </TableRow>

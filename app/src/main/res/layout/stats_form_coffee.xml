@@ -148,7 +148,7 @@
             <EditText
                 android:enabled="false"
                 android:visibility="invisible"
-                tools:ignore="TextFields" />
+                tools:ignore="LabelFor,TextFields" />
         </TableRow>
 
         <TableRow>
