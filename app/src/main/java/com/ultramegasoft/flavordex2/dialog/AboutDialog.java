@@ -94,6 +94,13 @@ public class AboutDialog extends DialogFragment {
             }
         });
 
+        root.findViewById(R.id.license).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openLicense();
+            }
+        });
+
         return root;
     }
 
@@ -103,6 +110,15 @@ public class AboutDialog extends DialogFragment {
     private void openWebsite() {
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(getString(R.string.about_website_url)));
+        startActivity(intent);
+    }
+
+    /**
+     * Open the software license in a browser.
+     */
+    private void openLicense() {
+        final Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(getString(R.string.about_license_url)));
         startActivity(intent);
     }
 }

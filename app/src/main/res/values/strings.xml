@@ -252,7 +252,10 @@
     <string name="welcome_header">Welcome to Flavordex</string>
     <string name="welcome_description">Tasting Journal</string>
 
-    <string name="about_website_url" translatable="false">https://github.com/ultramega/flavordex</string>
     <string name="about_version">Version: </string>
     <string name="about_website">Website: </string>
+    <string name="about_license">License: </string>
+    <string name="about_website_url" translatable="false">https://github.com/ultramega/flavordex</string>
+    <string name="about_license_name" translatable="false">MIT License</string>
+    <string name="about_license_url" translatable="false">https://raw.githubusercontent.com/ultramega/flavordex/master/LICENSE.txt</string>
 </resources>

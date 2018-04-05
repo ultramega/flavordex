@@ -64,6 +64,21 @@
                 android:layout_height="wrap_content"
                 android:text="@string/about_website_url" />
         </TableRow>
+
+        <TableRow android:paddingTop="8dp">
+
+            <TextView
+                style="@style/TableText.Label"
+                android:text="@string/about_license" />
+
+            <TextView
+                android:id="@+id/license"
+                style="@style/Link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="start"
+                android:text="@string/about_license_name" />
+        </TableRow>
     </TableLayout>
 
     <TextView
