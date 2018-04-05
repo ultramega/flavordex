@@ -230,7 +230,6 @@
     <string name="error_camera">Error: Unable to launch camera</string>
     <string name="error_required">required</string>
     <string name="error_no_app">Error: No applications found to complete your request</string>
-    <string name="error_no_email">Error: No email client found</string>
     <string name="error_insert_photo">Error: Failed to save photo</string>
     <string name="error_insert_entry">Error: Failed to create new entry</string>
     <string name="error_read_dir">Error: Unable to open directory for reading</string>
@@ -253,11 +252,7 @@
     <string name="welcome_header">Welcome to Flavordex</string>
     <string name="welcome_description">Tasting Journal</string>
 
-    <string name="about_website_url" translatable="false">http://flavordex.ultramegasoft.com/</string>
-    <string name="about_email" translatable="false">flavordex@ultramegasoft.com</string>
+    <string name="about_website_url" translatable="false">https://github.com/ultramega/flavordex</string>
     <string name="about_version">Version: </string>
-    <string name="about_support">Support: </string>
     <string name="about_website">Website: </string>
-    <string name="about_send_email">Contact Support</string>
-    <string name="about_email_subject">Flavordex %s</string>
 </resources>
