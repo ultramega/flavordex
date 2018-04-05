@@ -34,8 +34,6 @@ import android.widget.TextView;
 import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.R;
 
-import java.util.Calendar;
-
 /**
  * Fragment to welcome the user to the app.
  *
@@ -51,10 +49,6 @@ public class WelcomeFragment extends Fragment {
 
         final TextView version = root.findViewById(R.id.text_version);
         version.setText(getString(R.string.message_version, BuildConfig.VERSION_NAME));
-
-        ((TextView)root.findViewById(R.id.text_copyright))
-                .setText(getString(R.string.message_copyright,
-                        Calendar.getInstance().get(Calendar.YEAR)));
 
         return root;
     }

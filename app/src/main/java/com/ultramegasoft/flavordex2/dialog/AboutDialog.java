@@ -39,8 +39,6 @@ import android.widget.TextView;
 import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.R;
 
-import java.util.Calendar;
-
 /**
  * Dialog that shows information about the application.
  *
@@ -95,9 +93,6 @@ public class AboutDialog extends DialogFragment {
                 openWebsite();
             }
         });
-        ((TextView)root.findViewById(R.id.about_copyright))
-                .setText(getString(R.string.message_copyright,
-                        Calendar.getInstance().get(Calendar.YEAR)));
 
         return root;
     }

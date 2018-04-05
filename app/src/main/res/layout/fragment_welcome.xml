@@ -85,9 +85,9 @@
             android:textIsSelectable="true" />
 
         <TextView
-            android:id="@+id/text_copyright"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/message_copyright"
             android:textIsSelectable="true" />
     </LinearLayout>
 </RelativeLayout>
