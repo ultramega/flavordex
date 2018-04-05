@@ -53,7 +53,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.R;
-import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
@@ -491,8 +490,6 @@ public class ViewPhotosFragment extends AbsPhotosFragment
 
             PhotoUtils.deleteThumb(context, mEntryId);
             EntryUtils.markChanged(cr, mEntryId);
-            BackendUtils.requestDataSync(context);
-            BackendUtils.requestPhotoSync(context);
 
             return true;
         }
@@ -551,7 +548,6 @@ public class ViewPhotosFragment extends AbsPhotosFragment
 
             EntryUtils.deletePhoto(context, mPhoto.id);
             EntryUtils.markChanged(context.getContentResolver(), mEntryId);
-            BackendUtils.requestDataSync(context);
 
             return null;
         }

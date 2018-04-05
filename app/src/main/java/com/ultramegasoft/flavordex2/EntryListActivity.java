@@ -38,7 +38,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.twitter.sdk.android.core.Twitter;
 import com.ultramegasoft.flavordex2.dialog.AboutDialog;
 import com.ultramegasoft.flavordex2.dialog.AppChooserDialog;
 import com.ultramegasoft.flavordex2.dialog.FileImportDialog;
@@ -137,8 +136,6 @@ public class EntryListActivity extends AppCompatActivity
             mSelectedItem = savedInstanceState.getLong(STATE_SELECTED_ENTRY, mSelectedItem);
             mFilters = savedInstanceState.getParcelable(STATE_FILTERS);
         }
-
-        Twitter.initialize(this);
     }
 
     @Override
@@ -165,11 +162,6 @@ public class EntryListActivity extends AppCompatActivity
         final int oldVersion = prefs.getInt(FlavordexApp.PREF_VERSION, 0);
         final int newVersion = BuildConfig.VERSION_CODE;
         if(newVersion > oldVersion) {
-            if(oldVersion < 14) {
-                if(prefs.getBoolean(FlavordexApp.PREF_SYNC_DATA, false)) {
-                    startActivity(new Intent(this, LoginActivity.class));
-                }
-            }
             prefs.edit().putInt(FlavordexApp.PREF_VERSION, newVersion).apply();
         }
 

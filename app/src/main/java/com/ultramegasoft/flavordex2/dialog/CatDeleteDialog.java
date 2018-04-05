@@ -50,7 +50,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ultramegasoft.flavordex2.R;
-import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.HtmlCompat;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
@@ -310,7 +309,6 @@ public class CatDeleteDialog extends DialogFragment
             uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);
             cr.delete(uri, null, null);
             cr.notifyChange(Tables.Entries.CONTENT_URI, null);
-            BackendUtils.requestDataSync(context);
             return null;
         }
     }

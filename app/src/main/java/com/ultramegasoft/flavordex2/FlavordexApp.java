@@ -37,9 +37,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.provider.Tables;
 
 import java.lang.ref.WeakReference;
@@ -65,10 +62,6 @@ public class FlavordexApp extends Application
     public static final String PREF_LIST_CAT_ID = "pref_list_cat_id";
     public static final String PREF_FIRST_RUN = "pref_first_run";
     public static final String PREF_VERSION = "pref_version";
-    public static final String PREF_ACCOUNT = "pref_account";
-    public static final String PREF_SYNC_DATA = "pref_sync_data";
-    public static final String PREF_SYNC_PHOTOS = "pref_sync_photos";
-    public static final String PREF_SYNC_PHOTOS_UNMETERED = "pref_sync_photos_unmetered";
     public static final String PREF_DETECT_LOCATION = "pref_detect_location";
 
     /**
@@ -143,27 +136,9 @@ public class FlavordexApp extends Application
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
 
-        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                final FirebaseUser user = firebaseAuth.getCurrentUser();
-                if(user != null) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BackendUtils.setUid(FlavordexApp.this, user.getUid());
-                        }
-                    }).start();
-                }
-                prefs.edit().putBoolean(PREF_ACCOUNT, user != null).apply();
-            }
-        });
-
         if(prefs.getBoolean(PREF_DETECT_LOCATION, false)) {
             setLocationEnabled(true);
         }
-        BackendUtils.requestDataSync(this);
-        BackendUtils.requestPhotoSync(this);
     }
 
     @Override
@@ -171,26 +146,6 @@ public class FlavordexApp extends Application
         switch(key) {
             case PREF_DETECT_LOCATION:
                 setLocationEnabled(sharedPreferences.getBoolean(key, false));
-                break;
-            case PREF_ACCOUNT:
-            case PREF_SYNC_DATA:
-                if(sharedPreferences.getBoolean(key, false)) {
-                    BackendUtils.requestDataSync(this);
-                    BackendUtils.requestPhotoSync(this);
-                } else {
-                    BackendUtils.cancelDataSync();
-                    BackendUtils.cancelPhotoSync();
-                }
-                break;
-            case PREF_SYNC_PHOTOS:
-                if(sharedPreferences.getBoolean(key, false)) {
-                    BackendUtils.requestPhotoSync(this);
-                } else {
-                    BackendUtils.cancelPhotoSync();
-                }
-                break;
-            case PREF_SYNC_PHOTOS_UNMETERED:
-                BackendUtils.requestPhotoSync(this);
                 break;
         }
     }

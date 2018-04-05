@@ -37,7 +37,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.R;
-import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
@@ -100,11 +99,6 @@ public class EntryUtils {
 
         entry.id = ContentUris.parseId(entryUri);
         PhotoUtils.deleteThumb(context, entry.id);
-
-        BackendUtils.requestDataSync(context);
-        if(!entry.getPhotos().isEmpty()) {
-            BackendUtils.requestPhotoSync(context);
-        }
 
         return entryUri;
     }
@@ -376,7 +370,6 @@ public class EntryUtils {
         final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, id);
         cr.delete(uri, null, null);
         PhotoUtils.deleteThumb(context, id);
-        BackendUtils.requestDataSync(context);
     }
 
     /**

@@ -32,7 +32,6 @@ import android.support.annotation.NonNull;
 import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
-import com.ultramegasoft.flavordex2.backend.BackendUtils;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -94,7 +93,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 execRawFile(db, R.raw.upgrade_v3);
             case 3:
                 execRawFile(db, R.raw.upgrade_v4);
-                BackendUtils.requestDataSync(mContext);
         }
 
         execRawFile(db, R.raw.triggers);

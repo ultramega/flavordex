@@ -57,7 +57,6 @@ import android.widget.TableLayout;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
-import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.dialog.CatDeleteDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
@@ -794,7 +793,6 @@ public class EditCatFragment extends LoadingProgressFragment
             if(catUri != null) {
                 updateExtras(catUri);
                 updateFlavors(catUri);
-                BackendUtils.requestDataSync(context);
             }
 
             return null;

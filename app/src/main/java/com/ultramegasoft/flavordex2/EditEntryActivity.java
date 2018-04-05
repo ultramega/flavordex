@@ -39,7 +39,6 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.beer.EditBeerInfoFragment;
 import com.ultramegasoft.flavordex2.coffee.EditCoffeeInfoFragment;
 import com.ultramegasoft.flavordex2.fragment.EditInfoFragment;
@@ -225,8 +224,6 @@ public class EditEntryActivity extends AppCompatActivity {
             cr.update(uri, values, null, null);
 
             updateExtras(cr, uri);
-
-            BackendUtils.requestDataSync(context);
 
             return null;
         }

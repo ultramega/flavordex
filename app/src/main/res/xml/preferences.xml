@@ -33,34 +33,4 @@
             android:summary="@string/pref_summary_detect_location"
             android:title="@string/pref_detect_location" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_cat_sync">
-        <!--suppress AndroidElementNotAllowed -->
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:key="pref_account"
-            android:summaryOff="@string/pref_summary_account_off"
-            android:title="@string/pref_account" />
-        <Preference
-            android:key="pref_edit_account"
-            android:summary="@string/pref_summary_edit_account"
-            android:title="@string/pref_edit_account" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:dependency="pref_account"
-            android:key="pref_sync_data"
-            android:summary="@string/pref_summary_sync_data"
-            android:title="@string/pref_sync_data" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:dependency="pref_sync_data"
-            android:key="pref_sync_photos"
-            android:summary="@string/pref_summary_sync_photos"
-            android:title="@string/pref_sync_photos" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:dependency="pref_sync_photos"
-            android:key="pref_sync_photos_unmetered"
-            android:summary="@string/pref_summary_sync_photos_unmetered"
-            android:title="@string/pref_sync_photos_unmetered" />
-    </PreferenceCategory>
 </PreferenceScreen>

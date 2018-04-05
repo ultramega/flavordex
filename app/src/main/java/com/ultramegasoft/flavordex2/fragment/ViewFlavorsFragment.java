@@ -48,7 +48,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.ultramegasoft.flavordex2.R;
-import com.ultramegasoft.flavordex2.backend.BackendUtils;
 import com.ultramegasoft.flavordex2.dialog.ConfirmationDialog;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
@@ -453,8 +452,6 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
             cr.bulkInsert(uri, valuesArray);
 
             EntryUtils.markChanged(cr, mEntryId);
-
-            BackendUtils.requestDataSync(context);
 
             return null;
         }
