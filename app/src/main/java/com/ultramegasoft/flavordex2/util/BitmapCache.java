@@ -109,6 +109,7 @@ public class BitmapCache implements Parcelable {
         mCache.remove(key.toString());
     }
 
+    @SuppressWarnings("SameReturnValue")
     @Override
     public int describeContents() {
         return 0;

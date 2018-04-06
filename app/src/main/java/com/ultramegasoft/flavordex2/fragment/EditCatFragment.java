@@ -266,6 +266,7 @@ public class EditCatFragment extends LoadingProgressFragment
         menu.findItem(R.id.menu_save).setEnabled(!mIsLoading);
     }
 
+    @SuppressWarnings("SameReturnValue")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
@@ -593,6 +594,7 @@ public class EditCatFragment extends LoadingProgressFragment
         }
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public void onLoaderReset(@NonNull Loader<DataLoader.Holder> loader) {
     }
@@ -944,6 +946,7 @@ public class EditCatFragment extends LoadingProgressFragment
             return id == 0 && TextUtils.isEmpty(name);
         }
 
+        @SuppressWarnings("SameReturnValue")
         @Override
         public int describeContents() {
             return 0;

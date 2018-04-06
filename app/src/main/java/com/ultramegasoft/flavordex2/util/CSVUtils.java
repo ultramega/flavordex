@@ -649,6 +649,7 @@ public class CSVUtils {
             }
         }
 
+        @SuppressWarnings("SameReturnValue")
         @Override
         public int describeContents() {
             return 0;
