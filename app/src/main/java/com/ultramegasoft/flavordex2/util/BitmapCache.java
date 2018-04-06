@@ -60,6 +60,7 @@ public class BitmapCache implements Parcelable {
         final long maxMem = Runtime.getRuntime().maxMemory();
         final int cacheSize = (int)maxMem / 8;
         mCache = new LruCache<String, Bitmap>(cacheSize) {
+            @SuppressWarnings("MethodDoesntCallSuperMethod")
             @Override
             protected int sizeOf(String key, Bitmap value) {
                 return value.getByteCount();
