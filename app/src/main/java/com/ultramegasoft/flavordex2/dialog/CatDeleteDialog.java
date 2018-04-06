@@ -225,6 +225,7 @@ public class CatDeleteDialog extends DialogFragment
         return root;
     }
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         final Context context = getContext();
@@ -237,7 +238,7 @@ public class CatDeleteDialog extends DialogFragment
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         if(data.moveToFirst()) {
             final String name = data.getString(data.getColumnIndex(Tables.Cats.NAME));
             final String message = getString(R.string.message_confirm_delete_cat, name);
@@ -257,7 +258,7 @@ public class CatDeleteDialog extends DialogFragment
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
     }
 
     /**

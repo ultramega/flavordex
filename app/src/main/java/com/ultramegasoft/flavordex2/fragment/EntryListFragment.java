@@ -724,6 +724,7 @@ public class EntryListFragment extends ListFragment
         activity.onItemSelected(mActivatedItem, null, 0);
     }
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         final Context context = getContext();
@@ -750,7 +751,7 @@ public class EntryListFragment extends ListFragment
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         switch(loader.getId()) {
             case LOADER_ENTRIES:
                 if(mExportMode) {
@@ -795,7 +796,7 @@ public class EntryListFragment extends ListFragment
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         switch(loader.getId()) {
             case LOADER_ENTRIES:
                 setActivatedPosition(ListView.INVALID_POSITION);

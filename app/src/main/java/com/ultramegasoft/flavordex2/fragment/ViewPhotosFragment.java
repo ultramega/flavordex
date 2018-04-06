@@ -335,6 +335,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         }
     }
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         final Context context = getContext();
@@ -356,7 +357,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         final ArrayList<PhotoHolder> photos = getPhotos();
         photos.clear();
         long id;
@@ -381,7 +382,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
     }
 
     /**

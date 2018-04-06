@@ -239,6 +239,7 @@ public class EditInfoFragment extends LoadingProgressFragment
         entry.getExtras().addAll(mFormHelper.getExtras().values());
     }
 
+    @NonNull
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
         switch(id) {
@@ -254,7 +255,7 @@ public class EditInfoFragment extends LoadingProgressFragment
     }
 
     @Override
-    public void onLoadFinished(Loader loader, Object data) {
+    public void onLoadFinished(@NonNull Loader loader, Object data) {
         switch(loader.getId()) {
             case LOADER_MAIN:
                 final DataLoader.Holder holder = (DataLoader.Holder)data;
@@ -279,7 +280,7 @@ public class EditInfoFragment extends LoadingProgressFragment
     }
 
     @Override
-    public void onLoaderReset(Loader loader) {
+    public void onLoaderReset(@NonNull Loader loader) {
     }
 
     /**

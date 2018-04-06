@@ -347,6 +347,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
         return extra.value;
     }
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         final Context context = getContext();
@@ -368,7 +369,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         final int id = loader.getId();
         switch(id) {
             case LOADER_MAIN:
@@ -396,6 +397,6 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
     }
 }

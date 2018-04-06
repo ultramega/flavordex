@@ -197,6 +197,7 @@ public class FileImportDialog extends ImportDialog
         }
     }
 
+    @NonNull
     @Override
     public Loader<CSVUtils.CSVHolder> onCreateLoader(int id, Bundle args) {
         final Context context = getContext();
@@ -227,7 +228,8 @@ public class FileImportDialog extends ImportDialog
     }
 
     @Override
-    public void onLoadFinished(Loader<CSVUtils.CSVHolder> loader, CSVUtils.CSVHolder data) {
+    public void onLoadFinished(@NonNull Loader<CSVUtils.CSVHolder> loader,
+                               CSVUtils.CSVHolder data) {
         final Context context = getContext();
         if(context != null && data != null) {
             setListShown(true);
@@ -263,7 +265,7 @@ public class FileImportDialog extends ImportDialog
     }
 
     @Override
-    public void onLoaderReset(Loader<CSVUtils.CSVHolder> loader) {
+    public void onLoaderReset(@NonNull Loader<CSVUtils.CSVHolder> loader) {
     }
 
     /**

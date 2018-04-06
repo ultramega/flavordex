@@ -282,6 +282,7 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
         });
     }
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch(id) {
@@ -299,7 +300,7 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
     }
 
     @Override
-    public void onLoadFinished(Loader loader, Cursor data) {
+    public void onLoadFinished(@NonNull Loader loader, Cursor data) {
         switch(loader.getId()) {
             case LOADER_MAKERS:
                 ((CursorAdapter)mTxtMaker.getAdapter()).swapCursor(data);
@@ -307,7 +308,7 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
     }
 
     @Override
-    public void onLoaderReset(Loader loader) {
+    public void onLoaderReset(@NonNull Loader loader) {
         switch(loader.getId()) {
             case LOADER_MAKERS:
                 ((CursorAdapter)mTxtMaker.getAdapter()).swapCursor(null);

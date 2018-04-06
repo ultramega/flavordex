@@ -107,6 +107,7 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
         }
     }
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         final Context context = getContext();
@@ -120,7 +121,7 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         final ArrayList<RadarHolder> holders = new ArrayList<>();
         String name;
         while(data.moveToNext()) {
@@ -136,6 +137,6 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
     }
 }

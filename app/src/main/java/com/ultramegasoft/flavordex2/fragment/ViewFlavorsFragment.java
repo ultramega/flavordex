@@ -316,6 +316,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
         return false;
     }
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         final Context context = getContext();
@@ -343,7 +344,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         if(data == null) {
             return;
         }
@@ -393,7 +394,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
     }
 
     /**

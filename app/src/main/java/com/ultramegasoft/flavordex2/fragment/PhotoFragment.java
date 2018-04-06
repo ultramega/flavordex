@@ -176,6 +176,7 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
         return false;
     }
 
+    @NonNull
     @Override
     public Loader<Bitmap> onCreateLoader(int id, Bundle args) {
         final Context context = getContext();
@@ -187,7 +188,7 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     @Override
-    public void onLoadFinished(Loader<Bitmap> loader, Bitmap data) {
+    public void onLoadFinished(@NonNull Loader<Bitmap> loader, Bitmap data) {
         mProgressBar.setVisibility(View.INVISIBLE);
         if(data != null) {
             showPhoto(data);
@@ -197,7 +198,7 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     @Override
-    public void onLoaderReset(Loader<Bitmap> loader) {
+    public void onLoaderReset(@NonNull Loader<Bitmap> loader) {
     }
 
     /**

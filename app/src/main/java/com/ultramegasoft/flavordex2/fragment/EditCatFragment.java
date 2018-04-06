@@ -559,6 +559,7 @@ public class EditCatFragment extends LoadingProgressFragment
         }
     }
 
+    @NonNull
     @Override
     public Loader<DataLoader.Holder> onCreateLoader(int id, Bundle args) {
         final Activity activity = getActivity();
@@ -572,7 +573,7 @@ public class EditCatFragment extends LoadingProgressFragment
     }
 
     @Override
-    public void onLoadFinished(Loader<DataLoader.Holder> loader, DataLoader.Holder data) {
+    public void onLoadFinished(@NonNull Loader<DataLoader.Holder> loader, DataLoader.Holder data) {
         mIsLoading = false;
         getLoaderManager().destroyLoader(0);
         hideLoadingIndicator(true);
@@ -593,7 +594,7 @@ public class EditCatFragment extends LoadingProgressFragment
     }
 
     @Override
-    public void onLoaderReset(Loader<DataLoader.Holder> loader) {
+    public void onLoaderReset(@NonNull Loader<DataLoader.Holder> loader) {
     }
 
     /**

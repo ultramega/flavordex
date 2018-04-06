@@ -195,6 +195,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         }
     }
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         final Context context = getContext();
@@ -210,7 +211,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         final Context context = getContext();
         if(context == null) {
             return;
@@ -238,7 +239,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         switch(loader.getId()) {
             case LOADER_CAT:
                 ((CatListAdapter)mSpnCat.getAdapter()).swapCursor(null);
@@ -625,6 +626,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
             }
         }
 
+        @NonNull
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             final Context context = getContext();
@@ -647,7 +649,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         }
 
         @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
             switch(loader.getId()) {
                 case LOADER_EXTRAS:
                     final Bundle args = getArguments();
@@ -691,7 +693,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         }
 
         @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
+        public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         }
     }
 }
