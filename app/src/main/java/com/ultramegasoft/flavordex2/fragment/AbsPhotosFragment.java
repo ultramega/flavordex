@@ -387,7 +387,7 @@ abstract class AbsPhotosFragment extends Fragment {
          * @return The Uri being loaded
          */
         @NonNull
-        public Uri getUri() {
+        Uri getUri() {
             return mUri;
         }
 

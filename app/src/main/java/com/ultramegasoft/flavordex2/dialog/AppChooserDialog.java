@@ -307,8 +307,8 @@ public class AppChooserDialog extends DialogFragment {
          * Holder for View references
          */
         private static class Holder {
-            public ImageView icon;
-            public TextView title;
+            ImageView icon;
+            TextView title;
         }
     }
 
@@ -341,8 +341,8 @@ public class AppChooserDialog extends DialogFragment {
          * @param appIds   The source app IDs
          * @param appNames The names of the apps
          */
-        public static void init(@NonNull FragmentManager fm, @NonNull int[] appIds,
-                                @NonNull CharSequence[] appNames) {
+        static void init(@NonNull FragmentManager fm, @NonNull int[] appIds,
+                         @NonNull CharSequence[] appNames) {
             final DialogFragment fragment = new ImporterFragment();
 
             final Bundle args = new Bundle();

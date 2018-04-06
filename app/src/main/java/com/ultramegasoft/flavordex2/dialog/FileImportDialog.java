@@ -313,8 +313,8 @@ public class FileImportDialog extends ImportDialog
          * @param requestCode A number to identify this request
          * @param num         The number of duplicates
          */
-        public static void showDialog(@NonNull FragmentManager fm, @Nullable Fragment target,
-                                      int requestCode, int num) {
+        static void showDialog(@NonNull FragmentManager fm, @Nullable Fragment target,
+                               int requestCode, int num) {
             final DialogFragment fragment = new DuplicatesDialog();
             fragment.setTargetFragment(target, requestCode);
 
@@ -383,8 +383,8 @@ public class FileImportDialog extends ImportDialog
          * @param fm      The FragmentManager to use
          * @param entries The list of entries
          */
-        public static void init(@NonNull FragmentManager fm,
-                                @NonNull ArrayList<EntryHolder> entries) {
+        static void init(@NonNull FragmentManager fm,
+                         @NonNull ArrayList<EntryHolder> entries) {
             final DialogFragment fragment = new DataSaverFragment();
 
             final Bundle args = new Bundle();

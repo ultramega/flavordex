@@ -190,7 +190,7 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
          * @param app      The source app
          * @param entryIds The list of source entry IDs to import
          */
-        public static void init(@NonNull FragmentManager fm, int app, @NonNull long[] entryIds) {
+        static void init(@NonNull FragmentManager fm, int app, @NonNull long[] entryIds) {
             final DialogFragment fragment = new ImporterFragment();
 
             final Bundle args = new Bundle();

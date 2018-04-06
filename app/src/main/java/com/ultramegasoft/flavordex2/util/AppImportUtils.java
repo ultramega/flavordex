@@ -546,12 +546,12 @@ public class AppImportUtils {
     public static class EntriesColumns implements BaseColumns {
         public static final String TITLE = "title";
         public static final String MAKER = "maker";
-        public static final String ORIGIN = "origin";
-        public static final String LOCATION = "location";
+        static final String ORIGIN = "origin";
+        static final String LOCATION = "location";
         public static final String DATE = "date";
-        public static final String PRICE = "price";
+        static final String PRICE = "price";
         public static final String RATING = "rating";
-        public static final String NOTES = "notes";
+        static final String NOTES = "notes";
     }
 
     /**

@@ -295,7 +295,7 @@ public class AddEntryFragment extends Fragment {
         /**
          * Keys for the Fragment arguments
          */
-        public static final String ARG_ENTRY = "entry";
+        static final String ARG_ENTRY = "entry";
 
         /**
          * The entry to insert
@@ -315,7 +315,7 @@ public class AddEntryFragment extends Fragment {
          * @param fm    The FragmentManager to use
          * @param entry The entry to insert
          */
-        public static void init(@NonNull FragmentManager fm, @NonNull EntryHolder entry) {
+        static void init(@NonNull FragmentManager fm, @NonNull EntryHolder entry) {
             final Bundle args = new Bundle();
             args.putParcelable(ARG_ENTRY, entry);
 

@@ -712,17 +712,17 @@ public class EditCatFragment extends LoadingProgressFragment
              * The name of the category
              */
             @Nullable
-            public String catName;
+            String catName;
 
             /**
              * The list of extra fields for the category
              */
-            public final ArrayList<Field> extras = new ArrayList<>();
+            final ArrayList<Field> extras = new ArrayList<>();
 
             /**
              * The list of flavors for the category
              */
-            public final ArrayList<Field> flavors = new ArrayList<>();
+            final ArrayList<Field> flavors = new ArrayList<>();
         }
     }
 
@@ -897,18 +897,18 @@ public class EditCatFragment extends LoadingProgressFragment
         /**
          * The database ID for this field
          */
-        public final long id;
+        final long id;
 
         /**
          * The name of this field
          */
         @Nullable
-        public String name;
+        String name;
 
         /**
          * Whether this field is marked for deletion
          */
-        public boolean delete;
+        boolean delete;
 
         /**
          * @param id   The database ID for this field, or 0 if new
@@ -940,7 +940,7 @@ public class EditCatFragment extends LoadingProgressFragment
          *
          * @return True if the ID is 0 and the name is blank
          */
-        public boolean isEmpty() {
+        boolean isEmpty() {
             return id == 0 && TextUtils.isEmpty(name);
         }
 

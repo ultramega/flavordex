@@ -460,7 +460,7 @@ public class PhotoUtils {
      * @return The media storage directory
      */
     @NonNull
-    public static File getMediaStorageDir() throws IOException {
+    private static File getMediaStorageDir() throws IOException {
         final File mediaStorageDir =
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         final File albumDir = new File(mediaStorageDir, ALBUM_DIR);
@@ -545,7 +545,7 @@ public class PhotoUtils {
      * @return The file name
      */
     @Nullable
-    public static String getName(@NonNull ContentResolver cr, @NonNull Uri uri) {
+    private static String getName(@NonNull ContentResolver cr, @NonNull Uri uri) {
         if("file".equals(uri.getScheme())) {
             return uri.getLastPathSegment();
         } else {

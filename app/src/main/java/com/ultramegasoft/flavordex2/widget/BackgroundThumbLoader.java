@@ -174,7 +174,7 @@ abstract class BackgroundThumbLoader<K> {
          * The key to reference this thumbnail
          */
         @NonNull
-        public final Object key;
+        final Object key;
 
         /**
          * @param key The key to reference this thumbnail

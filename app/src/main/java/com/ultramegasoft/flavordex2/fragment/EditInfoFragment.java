@@ -422,12 +422,12 @@ public class EditInfoFragment extends LoadingProgressFragment
             /**
              * The entry
              */
-            public EntryHolder entry;
+            EntryHolder entry;
 
             /**
              * Map of extra field names to their data
              */
-            public final LinkedHashMap<String, ExtraFieldHolder> extras = new LinkedHashMap<>();
+            final LinkedHashMap<String, ExtraFieldHolder> extras = new LinkedHashMap<>();
         }
     }
 }

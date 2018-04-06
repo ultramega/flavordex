@@ -290,8 +290,8 @@ public class ExportDialog extends DialogFragment {
          * @param entryIds The list of entry IDs to export
          * @param filePath The path to the CSV file to save to
          */
-        public static void init(@NonNull FragmentManager fm, @NonNull long[] entryIds,
-                                @NonNull String filePath) {
+        static void init(@NonNull FragmentManager fm, @NonNull long[] entryIds,
+                         @NonNull String filePath) {
             final DialogFragment fragment = new ExporterFragment();
 
             final Bundle args = new Bundle();
