@@ -34,7 +34,8 @@
         <EditText
             android:id="@+id/entry_location"
             style="@style/TextInput.Name"
-            android:hint="@string/hint_location_filter" />
+            android:hint="@string/hint_location_filter"
+            android:inputType="text" />
     </TableRow>
 
     <TableRow>

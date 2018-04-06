@@ -43,7 +43,8 @@
             <EditText
                 android:id="@+id/entry_title"
                 style="@style/TextInput.Name"
-                android:hint="@string/whiskey_hint_entry_title" />
+                android:hint="@string/whiskey_hint_entry_title"
+                android:inputType="text" />
         </TableRow>
 
         <TableRow>
@@ -81,7 +82,8 @@
             <EditText
                 android:id="@+id/entry_origin"
                 style="@style/TextInput.Name"
-                android:hint="@string/hint_origin" />
+                android:hint="@string/hint_origin"
+                android:inputType="text" />
         </TableRow>
 
         <TableRow>
@@ -93,7 +95,8 @@
             <EditText
                 android:id="@+id/entry_price"
                 style="@style/TextInput.Name"
-                android:hint="@string/hint_price" />
+                android:hint="@string/hint_price"
+                android:inputType="text" />
         </TableRow>
 
         <include layout="@layout/search_info_shared" />

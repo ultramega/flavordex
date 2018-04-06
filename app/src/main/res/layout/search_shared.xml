@@ -100,5 +100,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:hint="@string/hint_notes"
+        android:inputType="text"
         android:minLines="2" />
 </merge>

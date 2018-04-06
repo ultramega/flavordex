@@ -49,6 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:hint="@string/hint_notes"
+        android:inputType="text"
         android:minLines="4"
         android:padding="14dp"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />

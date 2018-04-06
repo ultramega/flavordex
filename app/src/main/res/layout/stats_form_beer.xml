@@ -45,6 +45,7 @@
                 android:id="@+id/entry_stats_ibu"
                 style="@style/TextInput.Stats"
                 android:hint="@string/beer_hint_ibu"
+                android:inputType="number"
                 android:nextFocusDown="@+id/entry_stats_abv"
                 android:nextFocusForward="@+id/entry_stats_abv" />
 
@@ -56,6 +57,7 @@
                 android:id="@+id/entry_stats_og"
                 style="@style/TextInput.Stats"
                 android:hint="@string/beer_hint_og"
+                android:inputType="numberDecimal"
                 android:nextFocusDown="@+id/entry_stats_fg"
                 android:nextFocusForward="@+id/entry_stats_fg" />
         </TableRow>
@@ -70,6 +72,7 @@
                 android:id="@+id/entry_stats_abv"
                 style="@style/TextInput.Stats"
                 android:hint="@string/beer_hint_abv"
+                android:inputType="numberDecimal"
                 android:nextFocusDown="@+id/entry_stats_og"
                 android:nextFocusForward="@+id/entry_stats_og" />
 
@@ -80,7 +83,8 @@
             <EditText
                 android:id="@+id/entry_stats_fg"
                 style="@style/TextInput.Stats"
-                android:hint="@string/beer_hint_fg" />
+                android:hint="@string/beer_hint_fg"
+                android:inputType="numberDecimal" />
         </TableRow>
     </TableLayout>
 </merge>

@@ -44,7 +44,8 @@
             <EditText
                 android:id="@+id/entry_title"
                 style="@style/TextInput.Name"
-                android:hint="@string/coffee_hint_entry_title" />
+                android:hint="@string/coffee_hint_entry_title"
+                android:inputType="text" />
         </TableRow>
 
         <TableRow>
@@ -68,7 +69,8 @@
             <EditText
                 android:id="@+id/entry_origin"
                 style="@style/TextInput.Name"
-                android:hint="@string/hint_origin" />
+                android:hint="@string/hint_origin"
+                android:inputType="text" />
         </TableRow>
 
         <TableRow>
@@ -80,7 +82,8 @@
             <EditText
                 android:id="@+id/entry_roaster"
                 style="@style/TextInput.Name"
-                android:hint="@string/coffee_hint_roaster" />
+                android:hint="@string/coffee_hint_roaster"
+                android:inputType="text" />
         </TableRow>
 
         <TableRow>
@@ -105,7 +108,8 @@
             <EditText
                 android:id="@+id/entry_grind"
                 style="@style/TextInput"
-                android:hint="@string/coffee_hint_grind" />
+                android:hint="@string/coffee_hint_grind"
+                android:inputType="text" />
         </TableRow>
 
         <TableRow>
@@ -117,7 +121,8 @@
             <EditText
                 android:id="@+id/entry_price"
                 style="@style/TextInput.Name"
-                android:hint="@string/hint_price" />
+                android:hint="@string/hint_price"
+                android:inputType="text" />
         </TableRow>
 
         <TableRow>

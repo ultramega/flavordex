@@ -48,6 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="@string/whiskey_hint_age"
+            android:inputType="text"
             android:nextFocusDown="@+id/entry_stats_abv"
             android:nextFocusForward="@+id/entry_stats_abv" />
 
@@ -63,6 +64,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="@string/whiskey_hint_abv" />
+            android:hint="@string/whiskey_hint_abv"
+            android:inputType="numberDecimal" />
     </LinearLayout>
 </merge>
