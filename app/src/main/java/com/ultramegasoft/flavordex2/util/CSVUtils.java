@@ -33,11 +33,11 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
-import com.ultramegasoft.flavordex2.util.csv.CSVReader;
-import com.ultramegasoft.flavordex2.util.csv.CSVWriter;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 import com.ultramegasoft.flavordex2.widget.ExtraFieldHolder;
 import com.ultramegasoft.flavordex2.widget.PhotoHolder;
