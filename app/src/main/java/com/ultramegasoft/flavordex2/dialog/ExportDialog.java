@@ -631,8 +631,8 @@ public class ExportDialog extends DialogFragment {
                     if(mZipOutputStream == null) {
                         entry.addPhoto(0, null, photoUri);
                     } else {
-                        final String outName = String.format(Locale.US, "%d_%s/%d_%s", entry.id,
-                                entry.title, sort, photoUri.getLastPathSegment());
+                        final String outName = String.format(Locale.US, "%s/%d_%s", entry.uuid,
+                                sort, photoUri.getLastPathSegment());
                         addToZipFile(mZipOutputStream, photoUri.getPath(), outName);
                         entry.addPhoto(0, null,
                                 Uri.parse(outName.substring(outName.lastIndexOf('/') + 1)));
