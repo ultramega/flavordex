@@ -40,6 +40,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.LoginFilter;
@@ -48,6 +49,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,16 +58,23 @@ import com.opencsv.CSVWriter;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.CSVUtils;
+import com.ultramegasoft.flavordex2.util.FileUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Dialog for exporting journal entries to CSV files.
@@ -94,6 +103,11 @@ public class ExportDialog extends DialogFragment {
      * The directory where the file will be saved
      */
     private String mBasePath;
+
+    /**
+     * Whether to include images in the export
+     */
+    private boolean mIncludeImages;
 
     /**
      * Show the dialog.
@@ -128,6 +142,18 @@ public class ExportDialog extends DialogFragment {
 
         final View view = LayoutInflater.from(context).inflate(R.layout.dialog_export, null);
         ((TextView)view.findViewById(R.id.file_path)).setText(mBasePath + "/");
+
+        final TextView extension = view.findViewById(R.id.extension);
+        extension.setText(FileUtils.EXT_CSV);
+        ((AppCompatCheckBox)view.findViewById(R.id.include_images)).setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        extension.setText(isChecked ? FileUtils.EXT_ZIP : FileUtils.EXT_CSV);
+                        mIncludeImages = isChecked;
+                    }
+                });
+
         setupFileField((EditText)view.findViewById(R.id.file_name));
 
         return new AlertDialog.Builder(context)
@@ -226,16 +252,11 @@ public class ExportDialog extends DialogFragment {
 
         final String baseName = getString(R.string.app_name).toLowerCase();
 
-        String fileName = baseName + "_" + dateString;
-        File file = new File(mBasePath, fileName + ".csv");
+        final String fileName = baseName + "_" + dateString;
+        final String extension = mIncludeImages ? FileUtils.EXT_ZIP : FileUtils.EXT_CSV;
+        final String unique = FileUtils.getUniqueFileName(mBasePath, fileName, extension);
 
-        int i = 1;
-        while(file.exists()) {
-            fileName = baseName + "_" + dateString + "_" + i++;
-            file = new File(mBasePath, fileName + ".csv");
-        }
-
-        return fileName;
+        return unique.substring(0, unique.lastIndexOf('.'));
     }
 
     /**
@@ -256,9 +277,11 @@ public class ExportDialog extends DialogFragment {
             return;
         }
 
-        final String fileName = mTxtFileName.getText().toString();
-        final File file = new File(mBasePath, fileName + ".csv");
-        ExporterFragment.init(fm, mEntryIDs, file.getPath());
+        final String extension = mIncludeImages ? FileUtils.EXT_ZIP : FileUtils.EXT_CSV;
+        final String fileName = FileUtils.getUniqueFileName(mBasePath,
+                mTxtFileName.getText().toString(), extension);
+        final File file = new File(mBasePath, fileName.substring(0, fileName.lastIndexOf('.')));
+        ExporterFragment.init(fm, mEntryIDs, file.getPath(), mIncludeImages);
     }
 
     /**
@@ -272,6 +295,7 @@ public class ExportDialog extends DialogFragment {
          */
         private static final String ARG_ENTRY_IDS = "entry_ids";
         private static final String ARG_FILE_PATH = "file_path";
+        private static final String ARG_INCLUDE_IMAGES = "include_images";
 
         /**
          * The list of entry IDs to export
@@ -284,19 +308,26 @@ public class ExportDialog extends DialogFragment {
         private String mFilePath;
 
         /**
+         * Whether to include images in the export
+         */
+        private boolean mIncludeImages;
+
+        /**
          * Start a new instance of this Fragment.
          *
-         * @param fm       The FragmentManager to use
-         * @param entryIds The list of entry IDs to export
-         * @param filePath The path to the CSV file to save to
+         * @param fm            The FragmentManager to use
+         * @param entryIds      The list of entry IDs to export
+         * @param filePath      The path to the CSV file to save to
+         * @param includeImages Whether to include images in the export
          */
         static void init(@NonNull FragmentManager fm, @NonNull long[] entryIds,
-                         @NonNull String filePath) {
+                         @NonNull String filePath, boolean includeImages) {
             final DialogFragment fragment = new ExporterFragment();
 
             final Bundle args = new Bundle();
             args.putLongArray(ARG_ENTRY_IDS, entryIds);
             args.putString(ARG_FILE_PATH, filePath);
+            args.putBoolean(ARG_INCLUDE_IMAGES, includeImages);
             fragment.setArguments(args);
 
             fragment.show(fm, TAG);
@@ -310,6 +341,7 @@ public class ExportDialog extends DialogFragment {
             if(args != null) {
                 mEntryIds = args.getLongArray(ARG_ENTRY_IDS);
                 mFilePath = args.getString(ARG_FILE_PATH);
+                mIncludeImages = args.getBoolean(ARG_INCLUDE_IMAGES);
             }
         }
 
@@ -333,7 +365,8 @@ public class ExportDialog extends DialogFragment {
             try {
                 final Context context = getContext();
                 if(context != null) {
-                    new DataExporter(context, this, mEntryIds, new CSVWriter(new FileWriter(mFilePath))).execute();
+                    final String fileName = mFilePath;
+                    new DataExporter(context, this, mEntryIds, fileName, mIncludeImages).execute();
                 }
             } catch(IOException e) {
                 Log.e(TAG, "Failed to open new file for writing", e);
@@ -388,50 +421,97 @@ public class ExportDialog extends DialogFragment {
             private final long[] mEntryIds;
 
             /**
+             * The path to the output file without extension
+             */
+            @NonNull
+            private final String mFileName;
+
+            /**
              * The Uri for the current entry
              */
             @Nullable
             private Uri mEntryUri;
 
             /**
-             * @param context The Context
-             * @param writer  The CSVWriter to use for writing
+             * The OutputStream for writing to a Zip file
+             */
+            @Nullable
+            private ZipOutputStream mZipOutputStream = null;
+
+            /**
+             * Buffer for reading and writing files
+             */
+            @Nullable
+            private static byte[] sBuffer = null;
+
+            /**
+             * @param context       The Context
+             * @param fragment      The Fragment
+             * @param entryIds      The list of entry IDs to export
+             * @param fileName      The path to the output file without extension
+             * @param includeImages Whether to include images in the export
              */
             DataExporter(@NonNull Context context, @NonNull ExporterFragment fragment,
-                         @NonNull long[] entryIds, @NonNull CSVWriter writer) {
+                         @NonNull long[] entryIds, @NonNull String fileName,
+                         boolean includeImages) throws IOException {
                 mContext = new WeakReference<>(context.getApplicationContext());
                 mFragment = fragment;
                 mEntryIds = entryIds;
+                mFileName = fileName;
                 mResolver = context.getContentResolver();
-                mWriter = writer;
+                mWriter = new CSVWriter(new FileWriter(fileName + FileUtils.EXT_CSV));
+
+                if(includeImages) {
+                    mZipOutputStream = new ZipOutputStream(new BufferedOutputStream(
+                            new FileOutputStream(fileName + FileUtils.EXT_ZIP)));
+                }
             }
 
             @Override
             protected Boolean doInBackground(Void... params) {
-                CSVUtils.writeCSVHeader(mWriter);
-
-                Cursor cursor;
-                int i = 0;
-                for(long id : mEntryIds) {
-                    mEntryUri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, id);
-                    cursor = mResolver.query(mEntryUri, null, null, null, null);
-                    if(cursor != null) {
-                        try {
-                            if(cursor.moveToFirst()) {
-                                CSVUtils.writeEntry(mWriter, readEntry(cursor));
-                            }
-                        } finally {
-                            cursor.close();
-                        }
-                    }
-                    publishProgress(++i);
-                }
-
                 try {
-                    mWriter.close();
+                    CSVUtils.writeCSVHeader(mWriter);
+
+                    Cursor cursor;
+                    int i = 0;
+                    for(long id : mEntryIds) {
+                        mEntryUri =
+                                ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, id);
+                        cursor = mResolver.query(mEntryUri, null, null, null, null);
+                        if(cursor != null) {
+                            try {
+                                if(cursor.moveToFirst()) {
+                                    CSVUtils.writeEntry(mWriter, readEntry(cursor));
+                                }
+                            } finally {
+                                cursor.close();
+                            }
+                        }
+                        publishProgress(++i);
+                    }
                 } catch(IOException e) {
                     Log.e(TAG, "Failed to write to file", e);
                     return false;
+                } finally {
+                    try {
+                        mWriter.close();
+                    } catch(IOException ignored) {
+                    }
+                }
+
+                if(mZipOutputStream != null) {
+                    try {
+                        final String fileName = mFileName.substring(mFileName.lastIndexOf('/') + 1)
+                                + FileUtils.EXT_CSV;
+                        addToZipFile(mZipOutputStream, mFileName + FileUtils.EXT_CSV, fileName);
+
+                        mZipOutputStream.close();
+                        //noinspection ResultOfMethodCallIgnored
+                        new File(mFileName + FileUtils.EXT_CSV).delete();
+                    } catch(IOException e) {
+                        Log.e(TAG, "Failed to write to file", e);
+                        return false;
+                    }
                 }
 
                 return true;
@@ -443,8 +523,9 @@ public class ExportDialog extends DialogFragment {
              * @param cursor The Cursor for the entry row
              * @return The entry
              */
-            private EntryHolder readEntry(@NonNull Cursor cursor) {
+            private EntryHolder readEntry(@NonNull Cursor cursor) throws IOException {
                 final EntryHolder entry = new EntryHolder();
+                entry.id = cursor.getLong(cursor.getColumnIndex(Tables.Entries._ID));
                 entry.uuid = cursor.getString(cursor.getColumnIndex(Tables.Entries.UUID));
                 entry.title = cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
                 entry.catName = cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT));
@@ -520,22 +601,71 @@ public class ExportDialog extends DialogFragment {
              *
              * @param entry The entry
              */
-            private void loadPhotos(@NonNull EntryHolder entry) {
+            private void loadPhotos(@NonNull EntryHolder entry) throws IOException {
                 final Uri uri = Uri.withAppendedPath(mEntryUri, "photos");
                 final Cursor cursor = mResolver.query(uri, null, null, null, Tables.Photos.POS);
                 if(cursor != null) {
                     try {
-                        String path;
-                        Uri photoUri;
                         while(cursor.moveToNext()) {
-                            path = cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH));
-                            photoUri = PhotoUtils.parsePath(path);
-                            if(photoUri != null) {
-                                entry.addPhoto(0, null, photoUri);
-                            }
+                            addPhoto(entry,
+                                    cursor.getString(cursor.getColumnIndex(Tables.Photos.PATH)),
+                                    cursor.getInt(cursor.getColumnIndex(Tables.Photos.POS)));
                         }
                     } finally {
                         cursor.close();
+                    }
+                }
+            }
+
+            /**
+             * Add a photo to an entry export.
+             *
+             * @param entry The entry
+             * @param path  The path to the source photo file
+             * @param sort  The sort position of this photo
+             */
+            private void addPhoto(@NonNull EntryHolder entry, @NonNull String path, int sort)
+                    throws IOException {
+                Uri photoUri = PhotoUtils.parsePath(path);
+                if(photoUri != null) {
+                    if(mZipOutputStream == null) {
+                        entry.addPhoto(0, null, photoUri);
+                    } else {
+                        final String outName = String.format(Locale.US, "%d_%s/%d_%s", entry.id,
+                                entry.title, sort, photoUri.getLastPathSegment());
+                        addToZipFile(mZipOutputStream, photoUri.getPath(), outName);
+                        entry.addPhoto(0, null,
+                                Uri.parse(outName.substring(outName.lastIndexOf('/') + 1)));
+                    }
+                }
+            }
+
+            /**
+             * Add a file to the Zip file.
+             *
+             * @param zipOutputStream The open ZipOutputStream
+             * @param sourcePath      The path to the source file
+             * @param destName        The destination file name
+             */
+            private static void addToZipFile(@NonNull ZipOutputStream zipOutputStream,
+                                             @NonNull String sourcePath, @NonNull String destName)
+                    throws IOException {
+                if(sBuffer == null) {
+                    sBuffer = new byte[2048];
+                }
+
+                BufferedInputStream source = null;
+                try {
+                    source = new BufferedInputStream(new FileInputStream(sourcePath));
+                    zipOutputStream.putNextEntry(new ZipEntry(destName));
+
+                    int bytes;
+                    while((bytes = source.read(sBuffer, 0, sBuffer.length)) != -1) {
+                        zipOutputStream.write(sBuffer, 0, bytes);
+                    }
+                } finally {
+                    if(source != null) {
+                        source.close();
                     }
                 }
             }
