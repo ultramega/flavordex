@@ -278,6 +278,7 @@ public class ViewEntryFragment extends Fragment implements LoaderManager.LoaderC
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

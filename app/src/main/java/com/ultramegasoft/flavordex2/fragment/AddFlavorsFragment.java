@@ -107,6 +107,7 @@ public class AddFlavorsFragment extends Fragment implements LoaderManager.Loader
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

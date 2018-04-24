@@ -560,6 +560,7 @@ public class EditCatFragment extends LoadingProgressFragment
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<DataLoader.Holder> onCreateLoader(int id, Bundle args) {

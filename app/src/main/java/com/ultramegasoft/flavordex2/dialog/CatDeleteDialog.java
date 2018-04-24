@@ -225,6 +225,7 @@ public class CatDeleteDialog extends DialogFragment
         return root;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

@@ -282,6 +282,7 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
         });
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

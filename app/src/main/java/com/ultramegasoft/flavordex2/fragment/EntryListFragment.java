@@ -724,6 +724,7 @@ public class EntryListFragment extends ListFragment
         activity.onItemSelected(mActivatedItem, null, 0);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

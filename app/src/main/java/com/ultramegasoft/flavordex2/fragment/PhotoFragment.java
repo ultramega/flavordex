@@ -176,6 +176,7 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
         return false;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<Bitmap> onCreateLoader(int id, Bundle args) {

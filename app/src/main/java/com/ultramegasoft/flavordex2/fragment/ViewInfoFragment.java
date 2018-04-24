@@ -347,6 +347,7 @@ public class ViewInfoFragment extends Fragment implements LoaderManager.LoaderCa
         return extra.value;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

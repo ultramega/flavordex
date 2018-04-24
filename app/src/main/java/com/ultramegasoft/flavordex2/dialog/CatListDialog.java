@@ -179,6 +179,7 @@ public class CatListDialog extends DialogFragment implements LoaderManager.Loade
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

@@ -191,6 +191,7 @@ public class CatListFragment extends ListFragment implements LoaderManager.Loade
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

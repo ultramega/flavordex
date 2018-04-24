@@ -239,6 +239,7 @@ public class EditInfoFragment extends LoadingProgressFragment
         entry.getExtras().addAll(mFormHelper.getExtras().values());
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader onCreateLoader(int id, Bundle args) {

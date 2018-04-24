@@ -315,6 +315,7 @@ public class ViewFlavorsFragment extends Fragment implements LoaderManager.Loade
         return false;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {

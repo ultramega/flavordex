@@ -335,6 +335,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

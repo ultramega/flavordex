@@ -119,6 +119,7 @@ public class AppImportDialog extends ImportDialog implements LoaderManager.Loade
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

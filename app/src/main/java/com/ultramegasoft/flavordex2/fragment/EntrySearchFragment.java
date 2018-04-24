@@ -196,6 +196,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -627,6 +628,7 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
             }
         }
 
+        @SuppressWarnings("ConstantConditions")
         @NonNull
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {

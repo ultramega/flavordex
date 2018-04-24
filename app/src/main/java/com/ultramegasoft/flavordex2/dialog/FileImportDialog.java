@@ -226,6 +226,7 @@ public class FileImportDialog extends ImportDialog
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<CSVUtils.CSVHolder> onCreateLoader(int id, Bundle args) {
