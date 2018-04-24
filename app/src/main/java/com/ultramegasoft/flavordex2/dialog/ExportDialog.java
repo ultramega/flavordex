@@ -647,11 +647,12 @@ public class ExportDialog extends DialogFragment {
              * @param sourcePath      The path to the source file
              * @param destName        The destination file name
              */
-            private static void addToZipFile(@NonNull ZipOutputStream zipOutputStream,
-                                             @NonNull String sourcePath, @NonNull String destName)
+            private static synchronized void addToZipFile(@NonNull ZipOutputStream zipOutputStream,
+                                                          @NonNull String sourcePath,
+                                                          @NonNull String destName)
                     throws IOException {
                 if(sBuffer == null) {
-                    sBuffer = new byte[2048];
+                    sBuffer = new byte[4096];
                 }
 
                 BufferedInputStream source = null;
