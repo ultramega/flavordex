@@ -70,15 +70,8 @@ public class EntryUtils {
         final Uri catUri = getCatUri(cr, entry);
         values.put(Tables.Entries.CAT, entry.catId);
 
-        if(entry.uuid != null) {
-            try {
-                //noinspection ResultOfMethodCallIgnored
-                UUID.fromString(entry.uuid);
-                values.put(Tables.Entries.UUID, entry.uuid);
-            } catch(IllegalArgumentException e) {
-                Log.w(TAG, entry.uuid + " is not a valid UUID. Ignoring.");
-            }
-        }
+        checkUuid(cr, entry);
+        values.put(Tables.Entries.UUID, entry.uuid);
         values.put(Tables.Entries.TITLE, getUniqueTitle(cr, entry.title));
         values.put(Tables.Entries.MAKER, entry.maker);
         values.put(Tables.Entries.ORIGIN, entry.origin);
@@ -101,6 +94,43 @@ public class EntryUtils {
         PhotoUtils.deleteThumb(context, entry.id);
 
         return entryUri;
+    }
+
+    /**
+     * Check the UUID of a new entry, removing it if it is invalid or not unique.
+     *
+     * @param cr    The ContentResolver
+     * @param entry The entry
+     */
+    private static void checkUuid(@NonNull ContentResolver cr, @NonNull EntryHolder entry) {
+        if(entry.uuid != null) {
+            try {
+                //noinspection ResultOfMethodCallIgnored
+                UUID.fromString(entry.uuid);
+            } catch(IllegalArgumentException e) {
+                Log.w(TAG, entry.uuid + " is not a valid UUID. Ignoring.");
+                entry.uuid = null;
+            }
+        }
+
+        if(entry.uuid == null) {
+            return;
+        }
+
+        final String[] projection = new String[] {Tables.Entries._ID};
+        final String where = Tables.Entries.UUID + " = ?";
+        final String[] whereArgs = new String[] {entry.uuid};
+        final Cursor cursor = cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs,
+                null);
+        if(cursor != null) {
+            try {
+                if(cursor.getCount() > 0) {
+                    entry.uuid = null;
+                }
+            } finally {
+                cursor.close();
+            }
+        }
     }
 
     /**

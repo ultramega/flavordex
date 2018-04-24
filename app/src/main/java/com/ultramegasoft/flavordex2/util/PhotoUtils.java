@@ -51,6 +51,7 @@ import com.ultramegasoft.flavordex2.provider.Tables;
 
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -538,6 +539,45 @@ public class PhotoUtils {
     }
 
     /**
+     * Save a photo from a stream, checking for duplicates.
+     *
+     * @param inputStream The source stream
+     * @param fileName    The output file name
+     * @return The saved file
+     */
+    @NonNull
+    public static File savePhotoFromStream(@NonNull InputStream inputStream,
+                                           @NonNull String fileName) throws IOException {
+        final File tempFile = File.createTempFile("import_", fileName);
+        FileUtils.dumpStream(inputStream, tempFile);
+
+        final File directory = getMediaStorageDir();
+        final String name = fileName.substring(0, fileName.lastIndexOf('.'));
+        final String extension = fileName.substring(fileName.lastIndexOf('.'));
+        File outputFile = new File(directory, fileName);
+        if(outputFile.exists()) {
+            int i = 2;
+            final String sourceHash = getMD5Hash(tempFile);
+            if(sourceHash != null) {
+                while(outputFile.exists()) {
+                    final String targetHash = getMD5Hash(outputFile);
+                    if(targetHash != null && sourceHash.equals(targetHash)) {
+                        break;
+                    }
+
+                    outputFile = new File(directory, name + " (" + i++ + ")" + extension);
+                }
+            }
+        }
+
+        FileUtils.dumpStream(new FileInputStream(tempFile), outputFile);
+        //noinspection ResultOfMethodCallIgnored
+        tempFile.delete();
+
+        return outputFile;
+    }
+
+    /**
      * Get the file name from a content Uri.
      *
      * @param cr  The ContentResolver
@@ -567,6 +607,56 @@ public class PhotoUtils {
     /**
      * Get the MD5 hash of a file as a 32 character hex string.
      *
+     * @param file The input file
+     * @return The MD5 hash of the file or null on failure
+     */
+    @Nullable
+    private static String getMD5Hash(@NonNull File file) {
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
+            return getMD5Hash(inputStream);
+        } catch(FileNotFoundException e) {
+            Log.e(TAG, "Failed to generate MD5 hash", e);
+        } finally {
+            if(inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch(IOException ignored) {
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the MD5 hash of a file as a 32 character hex string.
+     *
+     * @param inputStream The input stream
+     * @return The MD5 hash of the file or null on failure
+     */
+    @Nullable
+    private static String getMD5Hash(@NonNull InputStream inputStream) {
+        try {
+            final MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            final byte[] buffer = new byte[8192];
+            int read;
+            while((read = inputStream.read(buffer)) > 0) {
+                messageDigest.update(buffer, 0, read);
+            }
+            final BigInteger digest = new BigInteger(1, messageDigest.digest());
+            return String.format("%32s", digest.toString(16)).replace(" ", "0");
+        } catch(NoSuchAlgorithmException | IOException e) {
+            Log.e(TAG, "Failed to generate MD5 hash", e);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the MD5 hash of a file as a 32 character hex string.
+     *
      * @param cr  The ContentResolver
      * @param uri The Uri representing the file
      * @return The MD5 hash of the file or null on failure
@@ -579,21 +669,14 @@ public class PhotoUtils {
                 Log.w(TAG, "Unable to open stream from " + uri.toString());
                 return null;
             }
-            final MessageDigest messageDigest = MessageDigest.getInstance("MD5");
             try {
-                final byte[] buffer = new byte[8192];
-                int read;
-                while((read = inputStream.read(buffer)) > 0) {
-                    messageDigest.update(buffer, 0, read);
-                }
-                final BigInteger digest = new BigInteger(1, messageDigest.digest());
-                return String.format("%32s", digest.toString(16)).replace(" ", "0");
+                return getMD5Hash(inputStream);
             } finally {
                 inputStream.close();
             }
         } catch(FileNotFoundException e) {
             Log.i(TAG, e.getMessage());
-        } catch(NoSuchAlgorithmException | IOException e) {
+        } catch(IOException e) {
             Log.e(TAG, "Failed to generate MD5 hash", e);
         }
 

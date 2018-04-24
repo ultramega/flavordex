@@ -172,7 +172,7 @@
     <string name="message_photo_not_found">Photo not found</string>
     <string name="message_import_no_data">No valid entries were found.</string>
     <string name="message_empty_dir">No files found.</string>
-    <string name="message_empty_dir_filtered">No %s files found.</string>
+    <string name="message_empty_dir_filtered">No valid files found.</string>
     <string name="message_import_complete">Import complete.</string>
     <string name="message_export_complete">Export complete.</string>
     <string name="message_app_requires_update">%s (requires update)</string>

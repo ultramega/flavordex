@@ -30,6 +30,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteException;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,19 +42,30 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.util.CSVUtils;
 import com.ultramegasoft.flavordex2.util.EntryUtils;
+import com.ultramegasoft.flavordex2.util.FileUtils;
+import com.ultramegasoft.flavordex2.util.PhotoUtils;
 import com.ultramegasoft.flavordex2.widget.CSVListAdapter;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
+import com.ultramegasoft.flavordex2.widget.PhotoHolder;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * Dialog for importing journal entries from CSV files.
@@ -92,6 +104,11 @@ public class FileImportDialog extends ImportDialog
     private String mFilePath;
 
     /**
+     * Whether the import is a Zip file
+     */
+    private boolean mIsZipFile;
+
+    /**
      * Show the dialog.
      *
      * @param fm       The FragmentManager to use
@@ -112,7 +129,10 @@ public class FileImportDialog extends ImportDialog
         super.onActivityCreated(savedInstanceState);
 
         final Bundle args = getArguments();
-        mFilePath = args != null ? args.getString(ARG_FILE_PATH) : null;
+        if(args != null) {
+            mFilePath = args.getString(ARG_FILE_PATH);
+            mIsZipFile = mFilePath != null && mFilePath.endsWith(FileUtils.EXT_ZIP);
+        }
         if(savedInstanceState != null) {
             mData = savedInstanceState.getParcelable(STATE_DATA);
         }
@@ -124,6 +144,10 @@ public class FileImportDialog extends ImportDialog
             }
         } else if(mFilePath != null) {
             getLoaderManager().initLoader(0, null, this).forceLoad();
+        }
+
+        if(mIsZipFile) {
+            mIncludeImages.setVisibility(View.VISIBLE);
         }
     }
 
@@ -193,7 +217,12 @@ public class FileImportDialog extends ImportDialog
             for(long i : getListView().getCheckedItemIds()) {
                 entries.add(adapter.getItem((int)i));
             }
-            DataSaverFragment.init(fm, entries);
+
+            if(mIsZipFile && mIncludeImages.isChecked()) {
+                DataSaverFragment.init(fm, entries, mFilePath);
+            } else {
+                DataSaverFragment.init(fm, entries);
+            }
         }
     }
 
@@ -289,7 +318,52 @@ public class FileImportDialog extends ImportDialog
 
         @Override
         public CSVUtils.CSVHolder loadInBackground() {
-            return CSVUtils.importCSV(getContext(), new File(mFilePath));
+            if(mFilePath.substring(mFilePath.lastIndexOf('.')).toLowerCase()
+                    .equals(FileUtils.EXT_ZIP)) {
+                final File file = getCsvFromZip();
+                if(file == null) {
+                    return null;
+                }
+                final CSVUtils.CSVHolder holder = CSVUtils.importCSV(getContext(), file);
+                //noinspection ResultOfMethodCallIgnored
+                file.delete();
+                return holder;
+            } else {
+                return CSVUtils.importCSV(getContext(), new File(mFilePath));
+            }
+        }
+
+        /**
+         * Extract the CSV file from the Zip archive to a temp file.
+         *
+         * @return The CSV file
+         */
+        @Nullable
+        private File getCsvFromZip() {
+            ZipFile zipFile = null;
+            try {
+                zipFile = new ZipFile(mFilePath);
+                final String entryName = mFilePath.substring(0, mFilePath.lastIndexOf('.'))
+                        .substring(mFilePath.lastIndexOf('/') + 1) + FileUtils.EXT_CSV;
+                final ZipEntry zipEntry = zipFile.getEntry(entryName);
+                if(zipEntry != null) {
+                    final File file = File.createTempFile("import_", entryName);
+                    FileUtils.dumpStream(zipFile.getInputStream(zipEntry), file);
+
+                    return file;
+                }
+            } catch(IOException e) {
+                Log.e(TAG, "Unable to extract file", e);
+            } finally {
+                if(zipFile != null) {
+                    try {
+                        zipFile.close();
+                    } catch(IOException ignored) {
+                    }
+                }
+            }
+
+            return null;
         }
     }
 
@@ -371,6 +445,7 @@ public class FileImportDialog extends ImportDialog
          * Keys for the Fragment arguments
          */
         private static final String ARG_ENTRIES = "entries";
+        private static final String ARG_ZIP_FILE = "zip_file";
 
         /**
          * The list of entries
@@ -378,17 +453,35 @@ public class FileImportDialog extends ImportDialog
         private ArrayList<EntryHolder> mEntries;
 
         /**
+         * The path to the Zip file containing images
+         */
+        @Nullable
+        private String mImageZip;
+
+        /**
          * Start a new instance of this Fragment.
          *
          * @param fm      The FragmentManager to use
          * @param entries The list of entries
          */
-        static void init(@NonNull FragmentManager fm,
-                         @NonNull ArrayList<EntryHolder> entries) {
+        static void init(@NonNull FragmentManager fm, @NonNull ArrayList<EntryHolder> entries) {
+            init(fm, entries, null);
+        }
+
+        /**
+         * Start a new instance of this Fragment.
+         *
+         * @param fm       The FragmentManager to use
+         * @param entries  The list of entries
+         * @param imageZip The path to the Zip file containing images
+         */
+        static void init(@NonNull FragmentManager fm, @NonNull ArrayList<EntryHolder> entries,
+                         @Nullable String imageZip) {
             final DialogFragment fragment = new DataSaverFragment();
 
             final Bundle args = new Bundle();
             args.putParcelableArrayList(ARG_ENTRIES, entries);
+            args.putString(ARG_ZIP_FILE, imageZip);
             fragment.setArguments(args);
 
             fragment.show(fm, TAG);
@@ -401,6 +494,7 @@ public class FileImportDialog extends ImportDialog
             final Bundle args = getArguments();
             if(args != null) {
                 mEntries = args.getParcelableArrayList(ARG_ENTRIES);
+                mImageZip = args.getString(ARG_ZIP_FILE);
             }
         }
 
@@ -423,7 +517,7 @@ public class FileImportDialog extends ImportDialog
         protected void startTask() {
             final Context context = getContext();
             if(context != null) {
-                new SaveTask(context, this, mEntries).execute();
+                new SaveTask(context, this, mEntries, mImageZip).execute();
             }
         }
 
@@ -450,13 +544,34 @@ public class FileImportDialog extends ImportDialog
             private final ArrayList<EntryHolder> mEntries;
 
             /**
-             * @param context The Context
+             * The path to the Zip file containing images
+             */
+            @Nullable
+            private String mImageZip;
+
+            /**
+             * The Zip file containing the files being imported
+             */
+            @Nullable
+            private ZipFile mZipFile;
+
+            /**
+             * Map of directories in the Zip file
+             */
+            private HashMap<String, HashMap<String, ZipEntry>> mZipDirs;
+
+            /**
+             * @param context  The Context
+             * @param fragment The Fragment
+             * @param entries  The list of entries
+             * @param imageZip The path to the Zip file containing images
              */
             SaveTask(@NonNull Context context, @NonNull DataSaverFragment fragment,
-                     @NonNull ArrayList<EntryHolder> entries) {
+                     @NonNull ArrayList<EntryHolder> entries, @Nullable String imageZip) {
                 mContext = new WeakReference<>(context.getApplicationContext());
                 mFragment = fragment;
                 mEntries = entries;
+                mImageZip = imageZip;
             }
 
             @Override
@@ -466,9 +581,34 @@ public class FileImportDialog extends ImportDialog
                     return null;
                 }
 
+                if(mImageZip != null) {
+                    try {
+                        mZipFile = new ZipFile(mImageZip);
+                        mZipDirs = new HashMap<>();
+                        ZipEntry entry;
+                        String[] parts;
+                        for(Enumeration<? extends ZipEntry> e = mZipFile.entries(); e.hasMoreElements(); ) {
+                            entry = e.nextElement();
+                            parts = TextUtils.split(entry.getName(), "/");
+                            if(parts.length != 2) {
+                                continue;
+                            }
+
+                            if(!mZipDirs.containsKey(parts[0])) {
+                                mZipDirs.put(parts[0], new HashMap<String, ZipEntry>());
+                            }
+
+                            mZipDirs.get(parts[0]).put(parts[1], entry);
+                        }
+                    } catch(IOException e) {
+                        Log.w(TAG, "Failed to open Zip file", e);
+                    }
+                }
+
                 int i = 0;
                 for(EntryHolder entry : mEntries) {
                     try {
+                        importImages(entry);
                         EntryUtils.insertEntry(context, entry);
                     } catch(SQLiteException e) {
                         Log.e(TAG, "Failed to insert entry: " + entry.title, e);
@@ -476,7 +616,54 @@ public class FileImportDialog extends ImportDialog
                     publishProgress(++i);
                 }
 
+                if(mZipFile != null) {
+                    try {
+                        mZipFile.close();
+                    } catch(IOException ignored) {
+                    }
+                }
+
                 return null;
+            }
+
+            /**
+             * Import images from the Zip file.
+             *
+             * @param entry The entry
+             */
+            private void importImages(@NonNull EntryHolder entry) {
+                if(mZipFile == null) {
+                    return;
+                }
+
+                final HashMap<String, ZipEntry> zipEntries = mZipDirs.get(entry.uuid);
+                if(zipEntries == null) {
+                    return;
+                }
+
+                InputStream inputStream = null;
+                for(PhotoHolder photoHolder : entry.getPhotos()) {
+                    String fileName = photoHolder.uri.getLastPathSegment();
+                    if(!zipEntries.containsKey(fileName)) {
+                        continue;
+                    }
+
+                    try {
+                        inputStream = mZipFile.getInputStream(zipEntries.get(fileName));
+                        final File file = PhotoUtils.savePhotoFromStream(inputStream,
+                                fileName.substring(fileName.indexOf('_') + 1));
+                        photoHolder.uri = Uri.fromFile(file);
+                    } catch(IOException e) {
+                        Log.w(TAG, "Failed to save image file", e);
+                    } finally {
+                        if(inputStream != null) {
+                            try {
+                                inputStream.close();
+                            } catch(IOException ignored) {
+                            }
+                        }
+                    }
+                }
             }
 
             @Override

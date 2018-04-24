@@ -31,6 +31,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
@@ -55,6 +56,7 @@ public abstract class ImportDialog extends DialogFragment {
     private FrameLayout mListContainer;
     private ListView mListView;
     private ProgressBar mProgressBar;
+    protected AppCompatCheckBox mIncludeImages;
 
     @NonNull
     @Override
@@ -65,7 +67,7 @@ public abstract class ImportDialog extends DialogFragment {
             return super.onCreateDialog(savedInstanceState);
         }
 
-        final View root = LayoutInflater.from(context).inflate(R.layout.list_dialog, null);
+        final View root = LayoutInflater.from(context).inflate(R.layout.dialog_import, null);
 
         mListContainer = root.findViewById(R.id.list_container);
 
@@ -83,6 +85,8 @@ public abstract class ImportDialog extends DialogFragment {
         mListView.setEmptyView(emptyView);
 
         mProgressBar = root.findViewById(R.id.progress);
+
+        mIncludeImages = root.findViewById(R.id.include_images);
 
         return new AlertDialog.Builder(context)
                 .setTitle(R.string.title_import)

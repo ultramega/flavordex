@@ -49,6 +49,7 @@ import com.ultramegasoft.flavordex2.fragment.ViewEntryFragment;
 import com.ultramegasoft.flavordex2.fragment.WelcomeFragment;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.AppImportUtils;
+import com.ultramegasoft.flavordex2.util.FileUtils;
 import com.ultramegasoft.flavordex2.util.PermissionUtils;
 
 /**
@@ -202,7 +203,7 @@ public class EntryListActivity extends AppCompatActivity
                 }
                 final String rootPath = Environment.getExternalStorageDirectory().getPath();
                 FileSelectorDialog.showDialog(getSupportFragmentManager(), null, 0, rootPath, false,
-                        ".csv");
+                        new String[] {FileUtils.EXT_CSV, FileUtils.EXT_ZIP});
                 return true;
             case R.id.menu_import_app:
                 AppChooserDialog.showDialog(getSupportFragmentManager(), false);

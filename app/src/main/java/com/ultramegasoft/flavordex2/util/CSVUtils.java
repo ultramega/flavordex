@@ -574,7 +574,6 @@ public class CSVUtils {
         if(cursor != null) {
             try {
                 if(cursor.moveToFirst()) {
-                    entry.uuid = null;
                     return true;
                 }
             } finally {

@@ -25,6 +25,9 @@ package com.ultramegasoft.flavordex2.util;
 import android.support.annotation.NonNull;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Helpers for dealing with files.
@@ -39,6 +42,31 @@ public class FileUtils {
     public static final String EXT_ZIP = ".zip";
 
     /**
+     * Buffer to use for reading and writing files
+     */
+    private static byte[] sBuffer;
+
+    public static synchronized void dumpStream(@NonNull InputStream inputStream, @NonNull File file) throws IOException {
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(file);
+            if(sBuffer == null) {
+                sBuffer = new byte[4096];
+            }
+
+            int bytes;
+            while((bytes = inputStream.read(sBuffer, 0, sBuffer.length)) != -1) {
+                outputStream.write(sBuffer, 0, bytes);
+            }
+        } finally {
+            inputStream.close();
+            if(outputStream != null) {
+                outputStream.close();
+            }
+        }
+    }
+
+    /**
      * Get a unique file name based on a given name.
      *
      * @param basePath  The path to the directory
@@ -50,7 +78,7 @@ public class FileUtils {
     public static String getUniqueFileName(@NonNull String basePath, @NonNull String baseName,
                                            @NonNull String extension) {
         String newName = baseName + extension;
-        int i = 1;
+        int i = 2;
         while(new File(basePath, newName).exists()) {
             newName = baseName + " (" + i++ + ")" + extension;
         }

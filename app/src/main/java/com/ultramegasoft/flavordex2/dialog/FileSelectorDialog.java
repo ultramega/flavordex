@@ -97,10 +97,10 @@ public class FileSelectorDialog extends DialogFragment {
     private boolean mAllowDirectories;
 
     /**
-     * Filter out files that do not contain this string
+     * Filter out files that do not contain any of these strings
      */
     @Nullable
-    private String mNameFilter;
+    private String[] mNameFilter;
 
     /**
      * The ListView from the layout
@@ -140,11 +140,11 @@ public class FileSelectorDialog extends DialogFragment {
      * @param requestCode      The request code
      * @param rootPath         The initial starting path
      * @param allowDirectories Whether to allow directories to be selected
-     * @param nameFilter       Filter out files that do not contain this string
+     * @param nameFilter       Filter out files that do not contain any of these string
      */
     public static void showDialog(@NonNull FragmentManager fm, @Nullable Fragment target,
                                   int requestCode, @Nullable String rootPath,
-                                  boolean allowDirectories, @Nullable String nameFilter) {
+                                  boolean allowDirectories, @Nullable String[] nameFilter) {
         showDialog(fm, target, requestCode, rootPath, allowDirectories, nameFilter, rootPath);
     }
 
@@ -154,12 +154,12 @@ public class FileSelectorDialog extends DialogFragment {
      * @param requestCode      The request code
      * @param rootPath         The initial starting path
      * @param allowDirectories Whether to allow directories to be selected
-     * @param nameFilter       Filter out files that do not contain this string
+     * @param nameFilter       Filter out files that do not contain any of these string
      * @param path             The current path
      */
     private static void showDialog(@NonNull FragmentManager fm, @Nullable Fragment target,
                                    int requestCode, @Nullable String rootPath,
-                                   boolean allowDirectories, @Nullable String nameFilter,
+                                   boolean allowDirectories, @Nullable String[] nameFilter,
                                    @Nullable String path) {
         final DialogFragment fragment = new FileSelectorDialog();
         fragment.setTargetFragment(target, requestCode);
@@ -168,7 +168,7 @@ public class FileSelectorDialog extends DialogFragment {
         args.putString(ARG_ROOT_PATH, rootPath);
         args.putString(ARG_PATH, path);
         args.putBoolean(ARG_ALLOW_DIRECTORIES, allowDirectories);
-        args.putString(ARG_NAME_FILTER, nameFilter);
+        args.putStringArray(ARG_NAME_FILTER, nameFilter);
         fragment.setArguments(args);
 
         fragment.show(fm, TAG);
@@ -188,7 +188,13 @@ public class FileSelectorDialog extends DialogFragment {
             mPath = args.getString(ARG_PATH);
             mRootPath = args.getString(ARG_ROOT_PATH);
             mAllowDirectories = args.getBoolean(ARG_ALLOW_DIRECTORIES, false);
-            mNameFilter = args.getString(ARG_NAME_FILTER);
+            mNameFilter = args.getStringArray(ARG_NAME_FILTER);
+
+            if(mNameFilter != null) {
+                for(int i = 0; i < mNameFilter.length; i++) {
+                    mNameFilter[i] = mNameFilter[i].toLowerCase();
+                }
+            }
         }
 
         if(savedInstanceState != null) {
@@ -240,7 +246,7 @@ public class FileSelectorDialog extends DialogFragment {
         if(mNameFilter == null) {
             mEmpty.setText(R.string.message_empty_dir);
         } else {
-            mEmpty.setText(getString(R.string.message_empty_dir_filtered, mNameFilter));
+            mEmpty.setText(R.string.message_empty_dir_filtered);
         }
         mEmpty.setVisibility(View.VISIBLE);
         ((ViewGroup)root.findViewById(R.id.list_container)).removeView(mEmpty);
@@ -369,8 +375,7 @@ public class FileSelectorDialog extends DialogFragment {
             public boolean accept(File dir, String filename) {
                 final File file = new File(dir, filename);
                 return !(!file.canRead() || file.isDirectory() || filename.startsWith("."))
-                        && (mNameFilter == null
-                        || filename.toLowerCase().contains(mNameFilter.toLowerCase()));
+                        && matchesFilter(filename);
             }
         };
 
@@ -381,6 +386,27 @@ public class FileSelectorDialog extends DialogFragment {
         Arrays.sort(fileList, String.CASE_INSENSITIVE_ORDER);
 
         return fileList;
+    }
+
+    /**
+     * Check if a string matches the file name filter.
+     *
+     * @param string The string to check
+     * @return Whether the string matches the filter
+     */
+    private boolean matchesFilter(@NonNull String string) {
+        if(mNameFilter == null || mNameFilter.length < 1) {
+            return true;
+        }
+
+        string = string.toLowerCase();
+        for(String s : mNameFilter) {
+            if(string.contains(s)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
