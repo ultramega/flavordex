@@ -56,7 +56,7 @@ public abstract class ImportDialog extends DialogFragment {
     private FrameLayout mListContainer;
     private ListView mListView;
     private ProgressBar mProgressBar;
-    protected AppCompatCheckBox mIncludeImages;
+    AppCompatCheckBox mIncludeImages;
 
     @NonNull
     @Override
