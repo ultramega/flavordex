@@ -547,7 +547,7 @@ public class FileImportDialog extends ImportDialog
              * The path to the Zip file containing images
              */
             @Nullable
-            private String mImageZip;
+            private final String mImageZip;
 
             /**
              * The Zip file containing the files being imported
