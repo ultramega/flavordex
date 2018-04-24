@@ -23,6 +23,7 @@
 package com.ultramegasoft.flavordex2.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -636,7 +637,8 @@ public class EntrySearchFragment extends Fragment implements LoaderManager.Loade
 
             switch(id) {
                 case LOADER_EXTRAS:
-                    final Uri uri = Tables.Cats.getExtrasUri(mCatId);
+                    final Uri uri = Uri.withAppendedPath(ContentUris.withAppendedId(
+                            Tables.Cats.CONTENT_ID_URI_BASE, mCatId), "extras");
                     final String[] projection = new String[] {
                             Tables.Extras._ID,
                             Tables.Extras.NAME,
