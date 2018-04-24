@@ -41,22 +41,16 @@ public class FileUtils {
     public static final String EXT_CSV = ".csv";
     public static final String EXT_ZIP = ".zip";
 
-    /**
-     * Buffer to use for reading and writing files
-     */
-    private static byte[] sBuffer;
-
-    public static synchronized void dumpStream(@NonNull InputStream inputStream, @NonNull File file) throws IOException {
+    public static void dumpStream(@NonNull InputStream inputStream, @NonNull File file)
+            throws IOException {
         FileOutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(file);
-            if(sBuffer == null) {
-                sBuffer = new byte[4096];
-            }
 
+            final byte[] buffer = new byte[8192];
             int bytes;
-            while((bytes = inputStream.read(sBuffer, 0, sBuffer.length)) != -1) {
-                outputStream.write(sBuffer, 0, bytes);
+            while((bytes = inputStream.read(buffer, 0, buffer.length)) != -1) {
+                outputStream.write(buffer, 0, bytes);
             }
         } finally {
             inputStream.close();

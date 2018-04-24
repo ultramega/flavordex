@@ -441,8 +441,7 @@ public class ExportDialog extends DialogFragment {
             /**
              * Buffer for reading and writing files
              */
-            @Nullable
-            private static byte[] sBuffer = null;
+            private final byte[] mBuffer = new byte[8192];
 
             /**
              * @param context       The Context
@@ -646,22 +645,17 @@ public class ExportDialog extends DialogFragment {
              * @param sourcePath      The path to the source file
              * @param destName        The destination file name
              */
-            private static synchronized void addToZipFile(@NonNull ZipOutputStream zipOutputStream,
-                                                          @NonNull String sourcePath,
-                                                          @NonNull String destName)
+            private void addToZipFile(@NonNull ZipOutputStream zipOutputStream,
+                                      @NonNull String sourcePath, @NonNull String destName)
                     throws IOException {
-                if(sBuffer == null) {
-                    sBuffer = new byte[4096];
-                }
-
                 BufferedInputStream source = null;
                 try {
                     source = new BufferedInputStream(new FileInputStream(sourcePath));
                     zipOutputStream.putNextEntry(new ZipEntry(destName));
 
                     int bytes;
-                    while((bytes = source.read(sBuffer, 0, sBuffer.length)) != -1) {
-                        zipOutputStream.write(sBuffer, 0, bytes);
+                    while((bytes = source.read(mBuffer, 0, mBuffer.length)) != -1) {
+                        zipOutputStream.write(mBuffer, 0, bytes);
                     }
                 } finally {
                     if(source != null) {
