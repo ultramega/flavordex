@@ -525,7 +525,6 @@ public class ExportDialog extends DialogFragment {
              */
             private EntryHolder readEntry(@NonNull Cursor cursor) throws IOException {
                 final EntryHolder entry = new EntryHolder();
-                entry.id = cursor.getLong(cursor.getColumnIndex(Tables.Entries._ID));
                 entry.uuid = cursor.getString(cursor.getColumnIndex(Tables.Entries.UUID));
                 entry.title = cursor.getString(cursor.getColumnIndex(Tables.Entries.TITLE));
                 entry.catName = cursor.getString(cursor.getColumnIndex(Tables.Entries.CAT));
