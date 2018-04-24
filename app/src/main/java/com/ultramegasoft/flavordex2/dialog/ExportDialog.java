@@ -54,12 +54,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.opencsv.CSVWriter;
 import com.ultramegasoft.flavordex2.R;
 import com.ultramegasoft.flavordex2.provider.Tables;
 import com.ultramegasoft.flavordex2.util.CSVUtils;
 import com.ultramegasoft.flavordex2.util.FileUtils;
 import com.ultramegasoft.flavordex2.util.PhotoUtils;
+import com.ultramegasoft.flavordex2.util.csv.CSVWriter;
 import com.ultramegasoft.flavordex2.widget.EntryHolder;
 
 import java.io.BufferedInputStream;
