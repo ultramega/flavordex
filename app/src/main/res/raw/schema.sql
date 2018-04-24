@@ -1,12 +1,7 @@
 CREATE TABLE cats (
   _id INTEGER PRIMARY KEY,
-  uuid TEXT,
   name  TEXT COLLATE NOCASE,
-  preset INTEGER DEFAULT 0,
-  updated INTEGER DEFAULT 0,
-  published INTEGER DEFAULT 0,
-  synced INTEGER DEFAULT 0,
-  UNIQUE(uuid) ON CONFLICT FAIL
+  preset INTEGER DEFAULT 0
 );
 --
 CREATE TABLE entries (
@@ -20,9 +15,6 @@ CREATE TABLE entries (
   date INTEGER,
   rating REAL,
   notes TEXT COLLATE NOCASE,
-  updated INTEGER DEFAULT 0,
-  published INTEGER DEFAULT 0,
-  synced INTEGER DEFAULT 0,
   UNIQUE(uuid) ON CONFLICT FAIL
 );
 --
@@ -44,13 +36,11 @@ CREATE TABLE entries_flavors (
 --
 CREATE TABLE extras (
   _id INTEGER PRIMARY KEY,
-  uuid TEXT,
   cat INTEGER,
   name TEXT,
   pos INTEGER DEFAULT 0,
   preset INTEGER DEFAULT 0,
-  deleted INTEGER DEFAULT 0,
-  UNIQUE(uuid) ON CONFLICT FAIL
+  deleted INTEGER DEFAULT 0
 );
 --
 CREATE TABLE flavors (
@@ -80,15 +70,6 @@ CREATE TABLE photos (
   entry INTEGER,
   hash TEXT,
   path TEXT,
-  drive_id TEXT,
   pos INTEGER DEFAULT 0,
   UNIQUE(entry, hash) ON CONFLICT REPLACE
-);
---
-CREATE TABLE deleted (
-  _id INTEGER PRIMARY KEY,
-  type INTEGER,
-  cat INTEGER,
-  uuid TEXT,
-  time INTEGER DEFAULT (CAST((julianday('now') - 2440587.5)*86400000.0 AS INTEGER))
 );

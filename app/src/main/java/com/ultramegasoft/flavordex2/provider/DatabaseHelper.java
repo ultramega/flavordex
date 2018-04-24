@@ -51,7 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * The current version of the schema, incremented by 1 for each iteration
      */
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     /**
      * The Context
@@ -90,9 +90,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 execRawFile(db, R.raw.upgrade_v2);
                 generateUuids(db);
             case 2:
-                execRawFile(db, R.raw.upgrade_v3);
             case 3:
-                execRawFile(db, R.raw.upgrade_v4);
+            case 4:
+                execRawFile(db, R.raw.upgrade_v5);
         }
 
         execRawFile(db, R.raw.triggers);
@@ -114,40 +114,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Generate UUIDs for all categories, extras, and entries.
+     * Generate UUIDs for all entries.
      *
      * @param db The database
      */
     private static void generateUuids(@NonNull SQLiteDatabase db) {
-        String[] columns = new String[] {
-                Tables.Cats._ID,
-                Tables.Cats.NAME,
-                Tables.Cats.PRESET
-        };
-        Cursor cursor = db.query(Tables.Cats.TABLE_NAME, columns, null, null, null, null, null);
-        if(cursor != null) {
-            try {
-                long id;
-                String name;
-                final ContentValues values = new ContentValues();
-                while(cursor.moveToNext()) {
-                    id = cursor.getLong(cursor.getColumnIndex(Tables.Cats._ID));
-                    name = cursor.getString(cursor.getColumnIndex(Tables.Cats.NAME));
-                    if(cursor.getInt(cursor.getColumnIndex(Tables.Cats.PRESET)) == 1) {
-                        values.put(Tables.Cats.UUID, name);
-                    } else {
-                        values.put(Tables.Cats.UUID, UUID.randomUUID().toString());
-                    }
-                    db.update(Tables.Cats.TABLE_NAME, values, Tables.Cats._ID + " = " + id, null);
-                    generateExtraUuids(db, id, name);
-                }
-            } finally {
-                cursor.close();
-            }
-        }
-
-        columns = new String[] {Tables.Entries._ID};
-        cursor = db.query(Tables.Entries.TABLE_NAME, columns, null, null, null, null, null);
+        final String[] columns = new String[] {Tables.Entries._ID};
+        final Cursor cursor = db.query(Tables.Entries.TABLE_NAME, columns, null, null, null, null,
+                null);
         if(cursor != null) {
             try {
                 long id;
@@ -156,45 +130,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     id = cursor.getLong(cursor.getColumnIndex(Tables.Entries._ID));
                     values.put(Tables.Entries.UUID, UUID.randomUUID().toString());
                     db.update(Tables.Entries.TABLE_NAME, values, Tables.Entries._ID + " = " + id,
-                            null);
-                }
-            } finally {
-                cursor.close();
-            }
-        }
-    }
-
-    /**
-     * Generate UUIDs for all the extras of a category.
-     *
-     * @param db      The database
-     * @param catId   The database ID of the category
-     * @param catName The name of the category
-     */
-    private static void generateExtraUuids(@NonNull SQLiteDatabase db, long catId,
-                                           @NonNull String catName) {
-        final String[] columns = new String[] {
-                Tables.Extras._ID,
-                Tables.Extras.NAME,
-                Tables.Extras.PRESET
-        };
-        final String where = Tables.Extras.CAT + " = " + catId;
-        final Cursor cursor =
-                db.query(Tables.Extras.TABLE_NAME, columns, where, null, null, null, null);
-        if(cursor != null) {
-            try {
-                long id;
-                String name;
-                final ContentValues values = new ContentValues();
-                while(cursor.moveToNext()) {
-                    id = cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
-                    if(cursor.getInt(cursor.getColumnIndex(Tables.Extras.PRESET)) == 1) {
-                        name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
-                        values.put(Tables.Extras.UUID, catName + name);
-                    } else {
-                        values.put(Tables.Extras.UUID, UUID.randomUUID().toString());
-                    }
-                    db.update(Tables.Extras.TABLE_NAME, values, Tables.Extras._ID + " = " + id,
                             null);
                 }
             } finally {
@@ -215,7 +150,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                               @NonNull String[] extras, int flavorRes) {
         final ContentValues values = new ContentValues();
 
-        values.put(Tables.Cats.UUID, name);
         values.put(Tables.Cats.NAME, name);
         values.put(Tables.Cats.PRESET, 1);
         final long id = db.insert(Tables.Cats.TABLE_NAME, null, values);
@@ -224,7 +158,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Tables.Extras.CAT, id);
         values.put(Tables.Extras.PRESET, 1);
         for(int i = 0; i < extras.length; i++) {
-            values.put(Tables.Extras.UUID, name + extras[i]);
             values.put(Tables.Extras.NAME, extras[i]);
             values.put(Tables.Extras.POS, i);
             db.insert(Tables.Extras.TABLE_NAME, null, values);

@@ -80,7 +80,6 @@ public class EntryUtils {
         values.put(Tables.Entries.DATE, entry.date);
         values.put(Tables.Entries.RATING, entry.rating);
         values.put(Tables.Entries.NOTES, entry.notes);
-        values.put(Tables.Entries.UPDATED, System.currentTimeMillis());
 
         final Uri entryUri = cr.insert(Tables.Entries.CONTENT_URI, values);
         if(entryUri == null) {
@@ -429,20 +428,6 @@ public class EntryUtils {
                 cursor.close();
             }
         }
-    }
-
-    /**
-     * Set the changed time of an entry and mark it as not synced.
-     *
-     * @param cr      The ContentResolver
-     * @param entryId The entry's database ID
-     */
-    public static void markChanged(@NonNull ContentResolver cr, long entryId) {
-        final Uri uri = ContentUris.withAppendedId(Tables.Entries.CONTENT_ID_URI_BASE, entryId);
-        final ContentValues values = new ContentValues();
-        values.put(Tables.Entries.UPDATED, System.currentTimeMillis());
-        values.put(Tables.Entries.SYNCED, false);
-        cr.update(uri, values, null, null);
     }
 
     /**

@@ -808,8 +808,6 @@ public class EditCatFragment extends LoadingProgressFragment
          */
         @Nullable
         private Uri updateCat() {
-            mCatInfo.put(Tables.Cats.UPDATED, System.currentTimeMillis());
-            mCatInfo.put(Tables.Cats.SYNCED, false);
             final Uri uri;
             if(mCatId > 0) {
                 uri = ContentUris.withAppendedId(Tables.Cats.CONTENT_ID_URI_BASE, mCatId);

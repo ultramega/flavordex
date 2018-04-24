@@ -82,7 +82,6 @@ public class FlavordexProvider extends ContentProvider {
     private static final int MAKERS_FILTER = 21;
     private static final int LOCATIONS = 22;
     private static final int LOCATIONS_ID = 23;
-    private static final int DELETED = 24;
 
     /**
      * The UriMatcher to use
@@ -113,7 +112,6 @@ public class FlavordexProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "makers/filter/*", MAKERS_FILTER);
         sUriMatcher.addURI(AUTHORITY, "locations", LOCATIONS);
         sUriMatcher.addURI(AUTHORITY, "locations/#", LOCATIONS_ID);
-        sUriMatcher.addURI(AUTHORITY, "deleted", DELETED);
     }
 
     /**
@@ -185,8 +183,6 @@ public class FlavordexProvider extends ContentProvider {
                 return Tables.Locations.DATA_TYPE;
             case LOCATIONS_ID:
                 return Tables.Locations.DATA_TYPE_ITEM;
-            case DELETED:
-                return Tables.Deleted.DATA_TYPE;
         }
 
         return null;
@@ -296,9 +292,6 @@ public class FlavordexProvider extends ContentProvider {
                 queryBuilder.setTables(Tables.Locations.TABLE_NAME);
                 queryBuilder.appendWhere(Tables.Locations._ID + " = " + uri.getLastPathSegment());
                 break;
-            case DELETED:
-                queryBuilder.setTables(Tables.Deleted.TABLE_NAME);
-                break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri.toString());
         }
@@ -329,23 +322,14 @@ public class FlavordexProvider extends ContentProvider {
                 break;
             case CATS:
                 table = Tables.Cats.TABLE_NAME;
-                if(!values.containsKey(Tables.Cats.UUID)) {
-                    values.put(Tables.Cats.UUID, UUID.randomUUID().toString());
-                }
                 values.remove(Tables.Cats.PRESET);
                 break;
             case EXTRAS:
                 table = Tables.Extras.TABLE_NAME;
-                if(!values.containsKey(Tables.Extras.UUID)) {
-                    values.put(Tables.Extras.UUID, UUID.randomUUID().toString());
-                }
                 values.remove(Tables.Extras.PRESET);
                 break;
             case CATS_EXTRAS:
                 table = Tables.Extras.TABLE_NAME;
-                if(!values.containsKey(Tables.Extras.UUID)) {
-                    values.put(Tables.Extras.UUID, UUID.randomUUID().toString());
-                }
                 values.remove(Tables.Extras.PRESET);
                 values.put(Tables.Extras.CAT, uri.getPathSegments().get(1));
                 break;
@@ -373,9 +357,6 @@ public class FlavordexProvider extends ContentProvider {
                 break;
             case LOCATIONS:
                 table = Tables.Locations.TABLE_NAME;
-                break;
-            case DELETED:
-                table = Tables.Deleted.TABLE_NAME;
                 break;
             case ENTRIES_ID:
             case CATS_ID:
@@ -524,7 +505,6 @@ public class FlavordexProvider extends ContentProvider {
                 break;
             case LOCATIONS:
             case LOCATIONS_ID:
-            case DELETED:
                 throw new IllegalArgumentException("Update not permitted on: " + uri.toString());
             case ENTRIES_FILTER:
             case ENTRIES_CAT:
@@ -625,9 +605,6 @@ public class FlavordexProvider extends ContentProvider {
                 table = Tables.Photos.TABLE_NAME;
                 selection = appendWhere(selection,
                         Tables.Photos.ENTRY + " = " + uri.getPathSegments().get(1));
-                break;
-            case DELETED:
-                table = Tables.Deleted.TABLE_NAME;
                 break;
             case LOCATIONS:
             case LOCATIONS_ID:

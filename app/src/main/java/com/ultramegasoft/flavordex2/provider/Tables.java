@@ -65,7 +65,6 @@ public class Tables {
         public static final String UUID = "uuid";
         public static final String TITLE = "title";
         public static final String CAT_ID = "cat_id";
-        public static final String CAT_UUID = "cat_uuid";
         public static final String CAT = "cat";
         public static final String MAKER_ID = "maker_id";
         public static final String MAKER = "maker";
@@ -75,9 +74,6 @@ public class Tables {
         public static final String DATE = "date";
         public static final String RATING = "rating";
         public static final String NOTES = "notes";
-        public static final String UPDATED = "updated";
-        public static final String PUBLISHED = "published";
-        public static final String SYNCED = "synced";
 
         /**
          * Content data types
@@ -210,7 +206,6 @@ public class Tables {
         /**
          * Column names
          */
-        public static final String UUID = "uuid";
         public static final String CAT = "cat";
         public static final String NAME = "name";
         public static final String POS = "pos";
@@ -371,7 +366,6 @@ public class Tables {
         public static final String ENTRY = "entry";
         public static final String HASH = "hash";
         public static final String PATH = "path";
-        public static final String DRIVE_ID = "drive_id";
         public static final String POS = "pos";
 
         /**
@@ -443,12 +437,8 @@ public class Tables {
         /**
          * Column names
          */
-        public static final String UUID = "uuid";
         public static final String NAME = "name";
         public static final String PRESET = "preset";
-        public static final String UPDATED = "updated";
-        public static final String PUBLISHED = "published";
-        public static final String SYNCED = "synced";
         public static final String NUM_ENTRIES = "num_entries";
 
         /**
@@ -490,47 +480,6 @@ public class Tables {
         }
 
         private Cats() {
-        }
-    }
-
-    /**
-     * Data contract for the 'deleted' table.
-     *
-     * @author Steve Guidetti
-     */
-    public static class Deleted implements BaseColumns {
-        /**
-         * Table names
-         */
-        public static final String TABLE_NAME = "deleted";
-
-        /**
-         * Column names
-         */
-        public static final String TYPE = "type";
-        public static final String CAT = "cat";
-        public static final String UUID = "uuid";
-        public static final String TIME = "time";
-
-        /**
-         * Values for the 'type' column
-         */
-        public static final int TYPE_CAT = 0;
-        public static final int TYPE_ENTRY = 1;
-        public static final int TYPE_PHOTO = 2;
-
-        /**
-         * Content data types
-         */
-        public static final String DATA_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd." + AUTHORITY + ".deleted";
-
-        /**
-         * Content Uris
-         */
-        public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
-
-        private Deleted() {
         }
     }
 }

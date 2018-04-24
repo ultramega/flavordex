@@ -213,7 +213,7 @@ public class ViewPhotosFragment extends AbsPhotosFragment
 
         final Context context = getContext();
         if(context != null) {
-            new PhotoDeleter(context, mEntryId, photo).execute();
+            new PhotoDeleter(context, photo).execute();
         }
     }
 
@@ -490,7 +490,6 @@ public class ViewPhotosFragment extends AbsPhotosFragment
             }
 
             PhotoUtils.deleteThumb(context, mEntryId);
-            EntryUtils.markChanged(cr, mEntryId);
 
             return true;
         }
@@ -519,11 +518,6 @@ public class ViewPhotosFragment extends AbsPhotosFragment
         private final WeakReference<Context> mContext;
 
         /**
-         * The entry ID the photo is assigned to
-         */
-        private final long mEntryId;
-
-        /**
          * The photo to delete
          */
         @NonNull
@@ -531,12 +525,10 @@ public class ViewPhotosFragment extends AbsPhotosFragment
 
         /**
          * @param context The Context
-         * @param entryId The entry ID
          * @param photo   The photo to delete
          */
-        PhotoDeleter(@NonNull Context context, long entryId, @NonNull PhotoHolder photo) {
+        PhotoDeleter(@NonNull Context context, @NonNull PhotoHolder photo) {
             mContext = new WeakReference<>(context.getApplicationContext());
-            mEntryId = entryId;
             mPhoto = photo;
         }
 
@@ -548,7 +540,6 @@ public class ViewPhotosFragment extends AbsPhotosFragment
             }
 
             EntryUtils.deletePhoto(context, mPhoto.id);
-            EntryUtils.markChanged(context.getContentResolver(), mEntryId);
 
             return null;
         }

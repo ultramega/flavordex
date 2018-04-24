@@ -219,8 +219,6 @@ public class EditEntryActivity extends AppCompatActivity {
             values.put(Tables.Entries.DATE, mEntry.date);
             values.put(Tables.Entries.RATING, mEntry.rating);
             values.put(Tables.Entries.NOTES, mEntry.notes);
-            values.put(Tables.Entries.UPDATED, System.currentTimeMillis());
-            values.put(Tables.Entries.SYNCED, false);
             cr.update(uri, values, null, null);
 
             updateExtras(cr, uri);
