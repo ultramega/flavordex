@@ -170,7 +170,6 @@ public class Tables {
         /**
          * Content Uris
          */
-        public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
 
         private Extras() {
@@ -252,7 +251,6 @@ public class Tables {
         /**
          * Content Uris
          */
-        public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
 
         private Flavors() {
@@ -288,7 +286,6 @@ public class Tables {
          * Content Uris
          */
         public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
-        public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
         public static final Uri CONTENT_FILTER_URI_BASE =
                 Uri.parse(URI_BASE + TABLE_NAME + "/filter/");
 
@@ -326,7 +323,6 @@ public class Tables {
         /**
          * Content Uris
          */
-        public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
         public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
 
         private Photos() {
@@ -363,7 +359,6 @@ public class Tables {
          * Content Uris
          */
         public static final Uri CONTENT_URI = Uri.parse(URI_BASE + TABLE_NAME);
-        public static final Uri CONTENT_ID_URI_BASE = Uri.parse(URI_BASE + TABLE_NAME + "/");
 
         private Locations() {
         }
