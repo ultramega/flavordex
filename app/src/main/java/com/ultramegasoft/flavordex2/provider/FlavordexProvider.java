@@ -683,6 +683,7 @@ public class FlavordexProvider extends ContentProvider {
         final Cursor cursor = db.query(Tables.Makers.TABLE_NAME, new String[] {Tables.Makers._ID},
                 Tables.Makers.NAME + " = ? AND " + Tables.Makers.LOCATION + " = ?",
                 new String[] {maker, origin}, null, null, null, "1");
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             if(cursor.getCount() > 0) {
                 cursor.moveToFirst();
