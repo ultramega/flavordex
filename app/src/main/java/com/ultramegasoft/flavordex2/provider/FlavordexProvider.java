@@ -312,7 +312,7 @@ public class FlavordexProvider extends ContentProvider {
         switch(sUriMatcher.match(uri)) {
             case ENTRIES:
                 table = Tables.Entries.TABLE_NAME;
-                if(!values.containsKey(Tables.Entries.UUID)) {
+                if(values.get(Tables.Entries.UUID) == null) {
                     values.put(Tables.Entries.UUID, UUID.randomUUID().toString());
                 }
                 if(values.containsKey(Tables.Entries.MAKER)
