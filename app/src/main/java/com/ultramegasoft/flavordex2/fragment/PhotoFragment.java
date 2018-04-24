@@ -196,6 +196,7 @@ public class PhotoFragment extends Fragment implements LoaderManager.LoaderCallb
         } else {
             showNoPhoto();
         }
+        getLoaderManager().destroyLoader(loader.getId());
     }
 
     @Override
