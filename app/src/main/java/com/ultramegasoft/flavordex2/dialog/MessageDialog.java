@@ -38,6 +38,7 @@ import com.ultramegasoft.flavordex2.util.HtmlCompat;
  *
  * @author Steve Guidetti
  */
+@SuppressWarnings("unused")
 public class MessageDialog extends DialogFragment {
     private static final String TAG = "MessageDialog";
 
