@@ -20,7 +20,7 @@ ALTER TABLE new_cats RENAME TO cats;
 --
 CREATE TABLE new_entries (
   _id INTEGER PRIMARY KEY,
-  uuid TEXT,
+  uuid TEXT NOT NULL ON CONFLICT FAIL,
   cat INTEGER,
   title TEXT COLLATE NOCASE,
   maker INTEGER,

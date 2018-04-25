@@ -113,21 +113,24 @@ public class EntryUtils {
         }
 
         if(entry.uuid == null) {
-            return;
+            entry.uuid = UUID.randomUUID().toString();
         }
 
-        final String[] projection = new String[] {Tables.Entries._ID};
-        final String where = Tables.Entries.UUID + " = ?";
-        final String[] whereArgs = new String[] {entry.uuid};
-        final Cursor cursor = cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs,
-                null);
-        if(cursor != null) {
-            try {
-                if(cursor.getCount() > 0) {
-                    entry.uuid = null;
+        while(true) {
+            final String[] projection = new String[] {Tables.Entries._ID};
+            final String where = Tables.Entries.UUID + " = ?";
+            final String[] whereArgs = new String[] {entry.uuid};
+            final Cursor cursor = cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs,
+                    null);
+            if(cursor != null) {
+                try {
+                    if(cursor.getCount() < 1) {
+                        return;
+                    }
+                    entry.uuid = UUID.randomUUID().toString();
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
         }
     }

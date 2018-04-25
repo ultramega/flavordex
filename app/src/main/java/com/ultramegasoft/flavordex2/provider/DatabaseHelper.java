@@ -28,6 +28,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.FlavordexApp;
@@ -88,10 +89,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         switch(oldVersion) {
             case 1:
                 execRawFile(db, R.raw.upgrade_v2);
-                generateUuids(db);
             case 2:
             case 3:
             case 4:
+                generateUuids(db);
                 execRawFile(db, R.raw.upgrade_v5);
         }
 
@@ -119,21 +120,65 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param db The database
      */
     private static void generateUuids(@NonNull SQLiteDatabase db) {
-        final String[] columns = new String[] {Tables.Entries._ID};
+        final String[] columns = new String[] {
+                Tables.Entries._ID,
+                Tables.Entries.UUID
+        };
         final Cursor cursor = db.query(Tables.Entries.TABLE_NAME, columns, null, null, null, null,
                 null);
         if(cursor != null) {
             try {
                 long id;
+                String uuid;
                 final ContentValues values = new ContentValues();
                 while(cursor.moveToNext()) {
                     id = cursor.getLong(cursor.getColumnIndex(Tables.Entries._ID));
-                    values.put(Tables.Entries.UUID, UUID.randomUUID().toString());
+                    uuid = cursor.getString(cursor.getColumnIndex(Tables.Entries.UUID));
+                    values.put(Tables.Entries.UUID, generateUuid(db, uuid));
                     db.update(Tables.Entries.TABLE_NAME, values, Tables.Entries._ID + " = " + id,
                             null);
                 }
             } finally {
                 cursor.close();
+            }
+        }
+    }
+
+    /**
+     * Generate a unique UUID for a single entry.
+     *
+     * @param db   The database
+     * @param uuid The current UUID if it exists
+     */
+    private static String generateUuid(@NonNull SQLiteDatabase db, @Nullable String uuid) {
+        if(uuid != null) {
+            try {
+                //noinspection ResultOfMethodCallIgnored
+                UUID.fromString(uuid);
+            } catch(IllegalArgumentException e) {
+                uuid = null;
+            }
+        }
+
+        if(uuid == null) {
+            uuid = UUID.randomUUID().toString();
+        }
+
+        while(true) {
+            final String[] projection = new String[] {Tables.Entries._ID};
+            final String where = Tables.Entries.UUID + " = ?";
+            final String[] whereArgs = new String[] {uuid};
+            final Cursor cursor = db.query(Tables.Entries.TABLE_NAME, projection, where, whereArgs,
+                    null, null, null, "1");
+            if(cursor != null) {
+                try {
+                    if(cursor.getCount() < 1) {
+                        return uuid;
+                    }
+                    uuid = UUID.randomUUID().toString();
+                } finally {
+                    cursor.close();
+                }
             }
         }
     }

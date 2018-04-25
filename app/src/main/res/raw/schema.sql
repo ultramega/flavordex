@@ -6,7 +6,7 @@ CREATE TABLE cats (
 --
 CREATE TABLE entries (
   _id INTEGER PRIMARY KEY,
-  uuid TEXT,
+  uuid TEXT NOT NULL ON CONFLICT FAIL,
   cat INTEGER,
   title TEXT COLLATE NOCASE,
   maker INTEGER,
