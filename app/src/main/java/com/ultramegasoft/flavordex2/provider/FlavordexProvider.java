@@ -40,6 +40,9 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.ultramegasoft.flavordex2.FlavordexApp;
+import com.ultramegasoft.flavordex2.util.EntryUtils;
+
+import java.util.UUID;
 
 /**
  * The ContentProvider backing the application.
@@ -310,6 +313,9 @@ public class FlavordexProvider extends ContentProvider {
         switch(sUriMatcher.match(uri)) {
             case ENTRIES:
                 table = Tables.Entries.TABLE_NAME;
+                if(!EntryUtils.isValidUuid(values.getAsString(Tables.Entries.UUID))) {
+                    values.put(Tables.Entries.UUID, UUID.randomUUID().toString());
+                }
                 if(values.containsKey(Tables.Entries.MAKER)
                         || values.containsKey(Tables.Entries.ORIGIN)) {
                     processMaker(values);

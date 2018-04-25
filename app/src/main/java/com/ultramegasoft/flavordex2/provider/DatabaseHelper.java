@@ -28,11 +28,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.ultramegasoft.flavordex2.BuildConfig;
 import com.ultramegasoft.flavordex2.FlavordexApp;
 import com.ultramegasoft.flavordex2.R;
+import com.ultramegasoft.flavordex2.util.EntryUtils;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -134,51 +134,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 while(cursor.moveToNext()) {
                     id = cursor.getLong(cursor.getColumnIndex(Tables.Entries._ID));
                     uuid = cursor.getString(cursor.getColumnIndex(Tables.Entries.UUID));
-                    values.put(Tables.Entries.UUID, generateUuid(db, uuid));
+                    if(EntryUtils.isValidUuid(uuid)) {
+                        continue;
+                    }
+                    values.put(Tables.Entries.UUID, UUID.randomUUID().toString());
                     db.update(Tables.Entries.TABLE_NAME, values, Tables.Entries._ID + " = " + id,
                             null);
                 }
             } finally {
                 cursor.close();
-            }
-        }
-    }
-
-    /**
-     * Generate a unique UUID for a single entry.
-     *
-     * @param db   The database
-     * @param uuid The current UUID if it exists
-     */
-    private static String generateUuid(@NonNull SQLiteDatabase db, @Nullable String uuid) {
-        if(uuid != null) {
-            try {
-                //noinspection ResultOfMethodCallIgnored
-                UUID.fromString(uuid);
-            } catch(IllegalArgumentException e) {
-                uuid = null;
-            }
-        }
-
-        if(uuid == null) {
-            uuid = UUID.randomUUID().toString();
-        }
-
-        while(true) {
-            final String[] projection = new String[] {Tables.Entries._ID};
-            final String where = Tables.Entries.UUID + " = ?";
-            final String[] whereArgs = new String[] {uuid};
-            final Cursor cursor = db.query(Tables.Entries.TABLE_NAME, projection, where, whereArgs,
-                    null, null, null, "1");
-            if(cursor != null) {
-                try {
-                    if(cursor.getCount() < 1) {
-                        return uuid;
-                    }
-                    uuid = UUID.randomUUID().toString();
-                } finally {
-                    cursor.close();
-                }
             }
         }
     }

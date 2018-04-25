@@ -96,41 +96,50 @@ public class EntryUtils {
     }
 
     /**
+     * Check if a string is a valid UUID.
+     *
+     * @param uuid The string to check
+     * @return Whether the string is a valid UUID
+     */
+    public static boolean isValidUuid(@Nullable String uuid) {
+        if(uuid == null) {
+            return false;
+        }
+
+        try {
+            //noinspection ResultOfMethodCallIgnored
+            UUID.fromString(uuid);
+        } catch(IllegalArgumentException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Check the UUID of a new entry, removing it if it is invalid or not unique.
      *
      * @param cr    The ContentResolver
      * @param entry The entry
      */
     private static void checkUuid(@NonNull ContentResolver cr, @NonNull EntryHolder entry) {
-        if(entry.uuid != null) {
+        if(!isValidUuid(entry.uuid)) {
+            entry.uuid = null;
+            return;
+        }
+
+        final String[] projection = new String[] {Tables.Entries._ID};
+        final String where = Tables.Entries.UUID + " = ?";
+        final String[] whereArgs = new String[] {entry.uuid};
+        final Cursor cursor = cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs,
+                null);
+        if(cursor != null) {
             try {
-                //noinspection ResultOfMethodCallIgnored
-                UUID.fromString(entry.uuid);
-            } catch(IllegalArgumentException e) {
-                Log.w(TAG, entry.uuid + " is not a valid UUID. Ignoring.");
-                entry.uuid = null;
-            }
-        }
-
-        if(entry.uuid == null) {
-            entry.uuid = UUID.randomUUID().toString();
-        }
-
-        while(true) {
-            final String[] projection = new String[] {Tables.Entries._ID};
-            final String where = Tables.Entries.UUID + " = ?";
-            final String[] whereArgs = new String[] {entry.uuid};
-            final Cursor cursor = cr.query(Tables.Entries.CONTENT_URI, projection, where, whereArgs,
-                    null);
-            if(cursor != null) {
-                try {
-                    if(cursor.getCount() < 1) {
-                        return;
-                    }
-                    entry.uuid = UUID.randomUUID().toString();
-                } finally {
-                    cursor.close();
+                if(cursor.getCount() > 0) {
+                    entry.uuid = null;
                 }
+            } finally {
+                cursor.close();
             }
         }
     }
