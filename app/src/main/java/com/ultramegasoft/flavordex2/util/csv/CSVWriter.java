@@ -23,6 +23,7 @@
 package com.ultramegasoft.flavordex2.util.csv;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -77,8 +78,8 @@ public class CSVWriter implements Closeable {
      * @return The value as a quoted and escaped string
      */
     @NonNull
-    private static String prepareValue(@NonNull Object value) {
-        return '"' + value.toString().replace("\"", "\"\"") + '"';
+    private static String prepareValue(@Nullable Object value) {
+        return '"' + (value != null ? value.toString().replace("\"", "\"\"") : "") + '"';
     }
 
     @Override
