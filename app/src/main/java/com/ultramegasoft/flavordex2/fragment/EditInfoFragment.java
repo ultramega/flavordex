@@ -379,12 +379,14 @@ public class EditInfoFragment extends LoadingProgressFragment
                 long id;
                 String name;
                 boolean preset;
+                boolean deleted;
                 try {
                     while(cursor.moveToNext()) {
                         id = cursor.getLong(cursor.getColumnIndex(Tables.Extras._ID));
                         name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
                         preset = cursor.getInt(cursor.getColumnIndex(Tables.Extras.PRESET)) == 1;
-                        holder.extras.put(name, new ExtraFieldHolder(id, name, preset));
+                        deleted = cursor.getInt(cursor.getColumnIndex(Tables.Extras.DELETED)) == 1;
+                        holder.extras.put(name, new ExtraFieldHolder(id, name, preset, deleted));
                     }
                 } finally {
                     cursor.close();
@@ -404,11 +406,14 @@ public class EditInfoFragment extends LoadingProgressFragment
             if(cursor != null) {
                 String name;
                 String value;
+                ExtraFieldHolder extra;
                 try {
                     while(cursor.moveToNext()) {
                         name = cursor.getString(cursor.getColumnIndex(Tables.Extras.NAME));
                         value = cursor.getString(cursor.getColumnIndex(Tables.EntriesExtras.VALUE));
-                        holder.extras.get(name).value = value;
+                        extra = holder.extras.get(name);
+                        extra.value = value;
+                        extra.deleted = false;
                     }
                 } finally {
                     cursor.close();

@@ -68,12 +68,28 @@ public class ExtraFieldHolder implements Parcelable {
     public String value;
 
     /**
+     * Whether this entry extra field is deleted
+     */
+    public boolean deleted;
+
+    /**
      * @param id     The database ID of the extra
      * @param name   The name of the field
      * @param preset Whether this is a preset extra
      */
     public ExtraFieldHolder(long id, @NonNull String name, boolean preset) {
         this(id, name, preset, null);
+    }
+
+    /**
+     * @param id      The database ID of the extra
+     * @param name    The name of the field
+     * @param deleted Whether this entry extra field is deleted
+     * @param preset  Whether this is a preset extra
+     */
+    public ExtraFieldHolder(long id, @NonNull String name, boolean preset, boolean deleted) {
+        this(id, name, preset, null);
+        this.deleted = deleted;
     }
 
     /**

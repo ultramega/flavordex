@@ -131,7 +131,7 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
         final LayoutInflater inflater = LayoutInflater.from(mFragment.getContext());
         for(Map.Entry<String, ExtraFieldHolder> extra : extras.entrySet()) {
             mExtras.put(extra.getKey(), extra.getValue());
-            if(!extra.getValue().preset) {
+            if(!extra.getValue().preset && !extra.getValue().deleted) {
                 final View root = inflater.inflate(R.layout.edit_info_extra, mInfoTable, false);
                 final TextView label = root.findViewById(R.id.label);
                 final EditText value = root.findViewById(R.id.value);

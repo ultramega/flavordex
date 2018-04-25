@@ -253,6 +253,9 @@ public class EntryUtils {
         final Uri uri = Uri.withAppendedPath(entryUri, "extras");
         final ContentValues values = new ContentValues();
         for(ExtraFieldHolder extra : entry.getExtras()) {
+            if(TextUtils.isEmpty(extra.value)) {
+                continue;
+            }
             try {
                 values.put(Tables.EntriesExtras.EXTRA, getExtraId(cr, catUri, extra.name));
                 values.put(Tables.EntriesExtras.VALUE, extra.value);
