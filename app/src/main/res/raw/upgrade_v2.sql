@@ -33,7 +33,7 @@ CREATE TABLE new_photos (
   UNIQUE(entry, hash) ON CONFLICT REPLACE
 );
 --
-INSERT INTO new_photos (_id, entry, path) SELECT * FROM photos;
+INSERT INTO new_photos (_id, entry, path) SELECT _id, entry, path FROM photos;
 --
 DROP TABLE photos;
 --
