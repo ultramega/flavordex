@@ -1,5 +1,9 @@
 # Flavordex Changelog
 
+## v2.5.1 (4/30/18):
+
+   * Fixed maker field autocomplete
+
 ## v2.5.0 (4/25/18):
 
    * Added the option to include images with importing/exporting entries packed in a Zip file
