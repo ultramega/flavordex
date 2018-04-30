@@ -26,6 +26,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -96,6 +97,11 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
      * Map of extra fields to the input views
      */
     private final HashMap<ExtraFieldHolder, EditText> mExtraViews = new HashMap<>();
+
+    /**
+     * Handler for posting to the main thread
+     */
+    private final Handler mHandler = new Handler();
 
     /**
      * @param fragment   The Fragment using this helper object
@@ -187,8 +193,13 @@ public class EntryFormHelper implements LoaderManager.LoaderCallbacks<Cursor> {
                 final Bundle args = new Bundle();
                 args.putParcelable("uri", uri);
 
-                mFragment.getLoaderManager()
-                        .restartLoader(LOADER_MAKERS, args, EntryFormHelper.this);
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mFragment.getLoaderManager()
+                                .restartLoader(LOADER_MAKERS, args, EntryFormHelper.this);
+                    }
+                });
 
                 return adapter.getCursor();
             }
